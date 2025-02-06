@@ -1,14 +1,31 @@
-#include <stdio.h>
+#include "minishell.h"
 
-extern char **environ;
+// read, parse, execute
+void	minishell_loop(void)
+{
+	char	*line;
+	char	**args;
+	int	status;
 
-void mini_env(void) {
-	for (int i = 0; environ[i]; i++) {
-		printf("%s\n", environ[i]);
+	while(status)
+	{
+		printf("> ");
+		line = read_line();
+		args = split_line(line);
+		status = execute(args);
 	}
+	free(line);
+	free(args);
 }
 
-int main() {
-	mini_env();
-	return 0;
+int	main(int argc, char **argv)
+{
+	// Config files ?
+
+
+	minishell_loop(); // basic program loop
+
+	// Cleanup
+
+	return (EXIT_SUCCESS);
 }
