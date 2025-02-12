@@ -1,37 +1,43 @@
-#include "minishell.h"
+#include "../include/minishell.h"
 
-// read, parse, execute
-void	minishell_loop(char **argv)
+void	minishell(void)
 {
-	char	*line;
-	char	**args;
-	int	status;
+	char	*input;
+	// t_cmds	*cmds;
 
-	status = 1;
-	while(status)
+	while (1)
 	{
-		printf("> "); // add some feature to display, working dir, hostname, username ...
-		line = read_line(argv);
-		if(line)
+		// Step 1: read input from terminal, return a line for parser
+		input = readline("minishell:> "); // add some fearures like "username@hostname:> "
+
+		// check for EOF / Ctrl+D
+		if (!input)
 		{
-			args = split_line(line);
-			if (args)
-			{
-				status = execute(args);
-			}
+			printf("\nExit minishell.\n"); // set error func later
+			break ;
 		}
+
+		// Step 2: add input to history
+		if (*input)
+			add_history(input);  // need to be freed?
+
+		printf("Return: %s\n", input); // test print statment
+
+		// Step 3: process input
+		// use input from readline and return commands table for executor
+		//cmds = parse(input);
+
+		// Step 4: use command table and execute commands one by one, void func
+		//execute(cmds);
+
+		free(input);
 	}
-	free(line); // exemple
-	free(args); // exemple
 }
 
-int	main(int argc, char **argv)
+// Compile in src/ dir with
+// cc -I../include main.c -lreadline
+int	main(void)
 {
-	// Config files ?
-
-	minishell_loop(argv); // basic program loop
-
-	// Cleanup
-
-	return (EXIT_SUCCESS);
+	minishell();
+	return (0);
 }
