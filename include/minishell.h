@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/16 16:53:22 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/16 22:49:00 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,15 @@
 
 # include <stdlib.h>
 # include <stdio.h>
+# include <unistd.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <string.h>
+
+//Definition of AT_* constants
+# include <fcntl.h>
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64
@@ -67,6 +71,7 @@ typedef struct s_redir
  * @brief Represents a single command in a pipeline.
  *
  * - `argv`:		NULL-terminated array of command arguments.
+ * - `binary`:		Binary from PATH env for execve().
  * - `in_redir`:	Pointer to input redirection struct, if any.
  * - `out_redir`:	Pointer to output redirection struct, if any.
  * - `next`:		Pointer to the next command in the pipeline.
@@ -80,6 +85,7 @@ typedef struct s_redir
 typedef struct s_command
 {
 	char				**argv;
+	char				*binary;
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	struct s_command	*next;
