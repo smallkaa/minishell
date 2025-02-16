@@ -40,6 +40,8 @@ __argv[1]:__	argv[n-1], arguments (["-l", "myfile"]).
 
 __argv[n]:__	NULL, required by execve().
 
+__binary:__		Binary from PATH env for execve().
+
 __in_redir:__	a pointer to t_redir struct for input redirection.
 
 __out_redir:__	a pointer to t_redir struct for out redirection.
@@ -53,6 +55,7 @@ __next:__		points to the next command in a pipeline.
 typedef struct s_command
 {
 	char				**argv;
+	char				*binary;
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	struct s_command	*next;
