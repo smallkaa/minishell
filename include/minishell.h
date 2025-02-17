@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/16 22:49:00 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/17 11:50:06 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,8 @@ typedef struct s_command
 	t_redir				*out_redir;
 	struct s_command	*next;
 }	t_command;
+
+// utils
+void	print_error(char *cmd, const char *msg);
 
 #endif /* MINISHELL_H */
