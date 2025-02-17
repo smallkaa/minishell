@@ -11,10 +11,11 @@ typedef struct s_command
 	char				*binary;
 }	t_cmd;
 
-static void	print_error(char *cmd, const char *msg)
+
+void	print_error(char *cmd)
 {
 	ft_putstr_fd(cmd, STDERR_FILENO);
-	ft_putstr_fd((char *)msg, STDERR_FILENO);
+	perror(": ");
 }
 static int	assign_binary(char *path, t_cmd *cmd)
 {
@@ -52,10 +53,10 @@ static int	handle_direct_path(t_cmd *cmd)
 		return (status);
 	if (status == 126)
 	{
-		print_error(cmd->argv[0], ": Permission denied\n");
+		print_error(cmd->argv[0]);
 		return (status);
 	}
-	print_error(cmd->argv[0], ": command not found\n");
+	print_error(cmd->argv[0]);
 	return (127);
 }
 
@@ -83,15 +84,15 @@ static int	handle_path_search(t_cmd *cmd)
 	paths = ft_split(getenv("PATH"), ':');
 	if (!paths)
 	{
-		print_error(cmd->argv[0], ": command not found\n");
+		print_error(cmd->argv[0]);
 		return (127);
 	}
 	status = search_paths(paths, cmd);
 	ft_free_arrstrs(paths);
 	if (status == 126)
-		print_error(cmd->argv[0], ": Permission denied\n");
+		print_error(cmd->argv[0]);
 	else if (status == 127)
-		print_error(cmd->argv[0], ": command not found\n");
+		print_error(cmd->argv[0]);
 	return (status);
 }
 

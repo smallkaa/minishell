@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 22:48:14 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/17 13:32:01 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/17 15:16:14 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,10 @@ static int	handle_direct_path(t_cmd *cmd)
 		return (status);
 	if (status == 126)
 	{
-		print_error(cmd->argv[0], ": Permission denied\n");
+		print_error(cmd->argv[0]);
 		return (status);
 	}
-	print_error(cmd->argv[0], ": command not found\n");
+	print_error(cmd->argv[0]);
 	return (127);
 }
 
@@ -126,15 +126,15 @@ static int	handle_path_search(t_cmd *cmd)
 	paths = ft_split(getenv("PATH"), ':');
 	if (!paths)
 	{
-		print_error(cmd->argv[0], ": command not found\n");
+		print_error(cmd->argv[0]);
 		return (127);
 	}
 	status = search_paths(paths, cmd);
 	ft_free_arrstrs(paths);
 	if (status == 126)
-		print_error(cmd->argv[0], ": Permission denied\n");
+		print_error(cmd->argv[0]);
 	else if (status == 127)
-		print_error(cmd->argv[0], ": command not found\n");
+		print_error(cmd->argv[0]);
 	return (status);
 }
 
@@ -154,7 +154,7 @@ int	find_binary(t_cmd *cmd)
 {
 	if (!cmd->argv[0])
 	{
-		print_error(cmd->argv[0], ": command not found\n");
+		print_error(cmd->argv[0]);
 		return (127);
 	}
 	if (cmd->argv[0][0] == '/' || cmd->argv[0][0] == '.')
