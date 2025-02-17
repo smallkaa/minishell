@@ -9,14 +9,14 @@ typedef struct s_command
 {
 	char				**argv;
 	char				*binary;
-}	t_command;
+}	t_cmd;
 
 static void	print_error(char *cmd, const char *msg)
 {
 	ft_putstr_fd(cmd, STDERR_FILENO);
 	ft_putstr_fd((char *)msg, STDERR_FILENO);
 }
-static int	assign_binary(char *path, t_command *cmd)
+static int	assign_binary(char *path, t_cmd *cmd)
 {
 	char	*binary;
 	char	*temp;
@@ -43,7 +43,7 @@ static int	assign_binary(char *path, t_command *cmd)
 	return (EXIT_SUCCESS);
 }
 
-static int	handle_direct_path(t_command *cmd)
+static int	handle_direct_path(t_cmd *cmd)
 {
 	int	status;
 
@@ -59,7 +59,7 @@ static int	handle_direct_path(t_command *cmd)
 	return (127);
 }
 
-static int	search_paths(char **paths, t_command *cmd)
+static int	search_paths(char **paths, t_cmd *cmd)
 {
 	int	i;
 	int	status;
@@ -75,7 +75,7 @@ static int	search_paths(char **paths, t_command *cmd)
 	return (127);
 }
 
-static int	handle_path_search(t_command *cmd)
+static int	handle_path_search(t_cmd *cmd)
 {
 	int		status;
 	char	**paths;
@@ -95,7 +95,7 @@ static int	handle_path_search(t_command *cmd)
 	return (status);
 }
 
-int	find_binary(t_command *cmd)
+int	find_binary(t_cmd *cmd)
 {
 	if (!cmd->argv[0])
 		return (127);
@@ -106,7 +106,7 @@ int	find_binary(t_command *cmd)
 
 void	test_find_binary(void)
 {
-	t_command	cmd;
+	t_cmd	cmd;
 
 	// Test 1: Valid command
 	char *argv1[] = {"ls", NULL};

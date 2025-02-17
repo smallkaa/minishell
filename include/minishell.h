@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/17 11:50:06 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/17 13:31:22 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ typedef struct s_redir
 }	t_redir;
 
 /**
- * @struct s_command
+ * @struct s_cmd
  * @brief Represents a single command in a pipeline.
  *
  * - `argv`:		NULL-terminated array of command arguments.
@@ -82,14 +82,15 @@ typedef struct s_redir
  * - cmd3:	`wc -l`
  * - cmd4:	`NULL` (end of pipeline)
  */
-typedef struct s_command
+typedef struct s_cmd
 {
 	char				**argv;
 	char				*binary;
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	struct s_command	*next;
-}	t_command;
+}	t_cmd;
+
 
 // utils
 void	print_error(char *cmd, const char *msg);

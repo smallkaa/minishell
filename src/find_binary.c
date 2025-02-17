@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 22:48:14 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/17 12:02:18 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/17 13:32:01 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
  *         127 if not found,
  *         126 if found but not executable.
  */
-static int	assign_binary(char *path, t_command *cmd)
+static int	assign_binary(char *path, t_cmd *cmd)
 {
 	char	*binary;
 	char	*temp;
@@ -64,7 +64,7 @@ static int	assign_binary(char *path, t_command *cmd)
  *         126 if permission is denied,
  *         127 if the command is not found.
  */
-static int	handle_direct_path(t_command *cmd)
+static int	handle_direct_path(t_cmd *cmd)
 {
 	int	status;
 
@@ -91,7 +91,7 @@ static int	handle_direct_path(t_command *cmd)
  * @return EXIT_SUCCESS if a valid binary is found,
  *         127 if not found.
  */
-static int	search_paths(char **paths, t_command *cmd)
+static int	search_paths(char **paths, t_cmd *cmd)
 {
 	int	i;
 	int	status;
@@ -118,7 +118,7 @@ static int	search_paths(char **paths, t_command *cmd)
  *         126 if permission is denied,
  *         127 if command is not found.
  */
-static int	handle_path_search(t_command *cmd)
+static int	handle_path_search(t_cmd *cmd)
 {
 	int		status;
 	char	**paths;
@@ -150,7 +150,7 @@ static int	handle_path_search(t_command *cmd)
  *         126 if permission is denied,
  *         127 if command is not found.
  */
-int	find_binary(t_command *cmd)
+int	find_binary(t_cmd *cmd)
 {
 	if (!cmd->argv[0])
 	{

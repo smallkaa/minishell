@@ -59,7 +59,7 @@ typedef struct s_command
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	struct s_command	*next;
-}	t_command;
+}	t_cmd;
 ```
 ## Examples
 
@@ -68,7 +68,7 @@ typedef struct s_command
 ls -l
 ```
 ```c
-t_command *cmd = malloc(sizeof(t_command));
+t_cmd *cmd = malloc(sizeof(t_cmd));
 cmd->argv = malloc(3 * sizeof(char *));
 
 cmd->argv[0] = ft_strdup("ls");
@@ -85,7 +85,7 @@ cmd->next = NULL;
 grep "hive" < input.txt
 ```
 ```c
-t_command *cmd = malloc(sizeof(t_command));
+t_cmd *cmd = malloc(sizeof(t_cmd));
 cmd->argv = malloc(3 * sizeof(char *));
 
 cmd->argv[0] = ft_strdup("grep");
@@ -104,7 +104,7 @@ cat file1 > out.txt | grep "Error" >> log.txt
 ```
 ```c
 // cmd1: "cat file1 > out.txt"
-t_command *cmd1 = malloc(sizeof(t_command));
+t_cmd *cmd1 = malloc(sizeof(t_cmd));
 cmd1->argv = malloc(3 * sizeof(char *));
 
 cmd1->argv[0] = strdup("cat");
@@ -116,7 +116,7 @@ cmd1->out_redir->type = R_OUTPUT;
 cmd1->out_redir->filename = ft_strdup("out.txt");
 
 // cmd2: "grep 'pattern' >> log.txt"
-t_command *cmd2 = malloc(sizeof(t_command));
+t_cmd *cmd2 = malloc(sizeof(t_cmd));
 cmd2->argv = malloc(3 * sizeof(char *));
 
 cmd2->argv[0] = ft_strdup("grep");
@@ -136,7 +136,7 @@ cmd2->next = NULL;
 grep "hive" < input1.txt < input2.txt
 ```
 ```c
-t_command *cmd = malloc(sizeof(t_command));
+t_cmd *cmd = malloc(sizeof(t_cmd));
 cmd->argv = malloc(3 * sizeof(char *));
 
 cmd->argv[0] = ft_strdup("grep");
@@ -159,7 +159,7 @@ cmd->next = NULL;
 grep "hive" < input.txt > output.txt
 ```
 ```c
-t_command *cmd = malloc(sizeof(t_command));
+t_cmd *cmd = malloc(sizeof(t_cmd));
 cmd->argv = malloc(3 * sizeof(char *));
 
 cmd->argv[0] = ft_strdup("grep");
