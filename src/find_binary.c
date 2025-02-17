@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 22:48:14 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/16 23:02:12 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/17 10:52:06 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
  *
  * @param path The directory path to check.
  * @param cmd The command structure.
- * @return EXIT_SUCCESS if the binary is assigned, otherwise EXIT_FAILURE.
+ * @return EXIT_SUCCESS if the binary is assigned,
+ * otherwise exit with coresponding status.
  */
 static int	assign_binary(char *path, t_command *cmd)
 {
@@ -35,8 +36,13 @@ static int	assign_binary(char *path, t_command *cmd)
 		cmd->binary = binary;
 		return (EXIT_SUCCESS);
 	}
+	if (access(binary, F_OK) != 0)
+	{
+		free(binary);
+		exit(126);
+	}
 	free(binary);
-	return (EXIT_FAILURE);
+	exit(127);
 }
 
 /**
