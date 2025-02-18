@@ -20,94 +20,21 @@ to indicate incorrect usage, generally invalid options or missing arguments
 bool	is_builtin(t_cmd *cmd)
 {
 	// do
-	return (true);
+	return (false);
 }
 
 void	exec_builtin(t_cmd *cmd)
 {
-
+	// do
+	return ;
 }
 
-/*
-void exec_cmd(t_cmd *cmd, char **envp)
+void	handle_heredoc_redirection(t_cmd *cmd)
 {
-	int		fd[2];
-	int		in_fd;
-	pid_t	pid;
-	int		in;
-	int		out;
-
-	in_fd = 0;
-
-	while (cmd)
-	{
-		if (cmd->next)
-		{
-			if (pipe(fd) == -1) // create a pipe
-				print_error_exit("pipe", EXIT_FAILURE);
-		}
-		pid = fork(); // fork the process / create a child process
-		if (pid == -1)
-			print_error_exit("fork", -1);
-		if (pid == 0) // Child process reads from pipe
-		{
-			if (cmd->in_redir && cmd->in_redir->type == R_INPUT)  // Read from input file
-			{
-				in = open(cmd->in_redir->filename, O_RDONLY);
-				if (in < 0)
-					print_error_exit("read", -1);
-
-				dup2(in, STDIN_FILENO);
-				if (close(in) == -1)
-					print_error_exit("close", -1);
-			}
-			else
-				dup2(in_fd, STDIN_FILENO);  // Read from previous command
-
-			if (cmd->out_redir && cmd->out_redir->type == R_OUTPUT) // Write output file
-			{
-				out = open(cmd->out_redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				if (out < 0)
-					print_error_exit("write", -1);
-				dup2(out, STDOUT_FILENO);
-				if (close(out) == -1)
-					print_error_exit("close", -1);
-			}
-			else if (cmd->out_redir && cmd->out_redir->type == R_APPEND) // Append to output file
-			{
-				out = open(cmd->out_redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				if (out < 0)
-					print_error_exit("write", -1);
-				dup2(out, STDOUT_FILENO);
-				if (close(out) == -1)
-					print_error_exit("close", -1);
-			}
-			else if (cmd->next)
-			{
-				dup2(fd[1], STDOUT_FILENO);  // Pipe output to next command
-				if (close(fd[1]) == -1)
-					print_error_exit("close", -1);
-			}
-			if (cmd->next)
-			{
-				if (close(fd[0]) == -1)
-					print_error_exit("close", -1);
-			}
-			execve(cmd->binary, cmd->argv, envp);
-				print_error_exit("execve", EXIT_FAILURE);
-		}
-		if (waitpid(pid, NULL, 0) == -1)  // Parent waits for child
-			print_error_exit("waitpid", EXIT_FAILURE);
-		if (cmd->next)
-		{
-			if (close(fd[1]) == -1)  // Close write end of pipe
-				print_error_exit("close", -1);
-			in_fd = fd[0]; // Store read end for next command
-		}
-		cmd = cmd->next;
-	}
+	// Heredoc logic to be implemented here
+	return ;
 }
-*/
+
 void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->binary == NULL)
@@ -148,11 +75,6 @@ void	handle_out_redirection(t_cmd *cmd)
 	dup2(out, STDOUT_FILENO);
 	if (close(out) == -1)
 		print_error_exit("close", EXIT_FAILURE);
-}
-
-void	handle_heredoc_redirection(t_cmd *cmd)
-{
-	// Heredoc logic to be implemented here
 }
 
 void	handle_stdin_redirection(t_cmd *cmd)
@@ -204,7 +126,7 @@ void	handle_redirection(t_cmd *cmd, int in_fd)
 
 void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
-	if (cmd->next)  // If there's a next command, set up output redirection
+	if (cmd->next)
 	{
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
 		{
@@ -217,9 +139,9 @@ void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 		if (close(fd[0]) == -1)
 			print_error_exit("close", EXIT_FAILURE);
 	}
-	if (cmd->in_redir || cmd->out_redir)  // Handle redirections
+	if (cmd->in_redir || cmd->out_redir)
 		handle_redirection(cmd, in_fd);
-	execute(cmd, in_fd, envp);  // Execute the command
+	execute(cmd, in_fd, envp);
 }
 
 void	exec_cmd(t_cmd *cmd, char **envp)
@@ -238,16 +160,16 @@ void	exec_cmd(t_cmd *cmd, char **envp)
 			print_error_exit("fork", EXIT_FAILURE);
 		if (pid == 0)
 			exec_fork_child(cmd, in_fd, fd, envp);
-		// Parent process: Close pipe write end, move to next command
 		if (cmd->next)
 		{
 			if(close(fd[1]) == -1)
 				print_error_exit("close", EXIT_FAILURE);
-			in_fd = fd[0];  // Pass read end for the next command
+			in_fd = fd[0];
 		}
+		waitpid(pid, NULL, 0);
 		cmd = cmd->next;
 	}
-	while (waitpid(-1, NULL, 0) > 0);  // Parent waits for all child processes
+	while (waitpid(-1, NULL, 0) > 0);
 }
 
 void	run_executor(t_cmd *cmd, char **envp)
