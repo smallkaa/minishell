@@ -1,36 +1,67 @@
-#include "minishell.h"
-/*
-https://www.gnu.org/software/bash/manual/html_node/Command-Execution-Environment.html
 
-Command substitution, commands grouped with parentheses,
-and asynchronous commands are invoked in a subshell environment
-that is a duplicate of the shell environment, except that traps caught by
-the shell are reset to the values that the shell inherited from
-its parent at invocation. Builtin commands that are invoked as part of
-a pipeline are also executed in a subshell environment.
-Changes made to the subshell environment cannot affect
-the shell’s execution environment.
+# include <stdlib.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdbool.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <sys/wait.h>
+# include <fcntl.h>
+# include <string.h>
+# include <signal.h>
 
-All of the Bash builtins return an exit status of zero
-if they succeed and a non-zero status on failure, so they may be used by
-the conditional and list constructs. All builtins return an exit status of 2
-to indicate incorrect usage, generally invalid options or missing arguments
-*/
+//Definition of AT_* constants
+# include <fcntl.h>
+
+# include "libft.h"
+typedef enum e_redir_type
+{
+	R_INPUT,
+	R_OUTPUT,
+	R_APPEND,
+	R_HEREDOC
+}	t_redir_type;
+
+typedef struct s_redir
+{
+	t_redir_type	type;
+	char			*filename;
+}	t_redir;
+
+typedef struct s_cmd
+{
+	char				**argv;
+	char				*binary;
+	t_redir				*in_redir;
+	t_redir				*out_redir;
+	struct s_cmd	*next;
+}	t_cmd;
+
+void	print_error_exit(char *cmd, int exit_status)
+{
+	ft_putstr_fd(cmd, STDERR_FILENO);
+	perror(": ");
+	exit(exit_status);
+}
 
 bool	is_builtin(t_cmd *cmd)
 {
+	(void)cmd;
 	// do
 	return (false);
 }
 
 void	exec_builtin(t_cmd *cmd)
 {
+	(void)cmd;
 	// do
 	return ;
 }
 
 void	handle_heredoc_redirection(t_cmd *cmd)
 {
+	(void)cmd;
+
 	// Heredoc logic to be implemented here
 	return ;
 }
@@ -76,6 +107,8 @@ void	handle_out_redirection(t_cmd *cmd)
 	if (close(out) == -1)
 		print_error_exit("close", EXIT_FAILURE);
 }
+
+
 
 void	handle_stdin_redirection(t_cmd *cmd)
 {
@@ -160,13 +193,13 @@ void	exec_cmd(t_cmd *cmd, char **envp)
 			print_error_exit("fork", EXIT_FAILURE);
 		if (pid == 0)
 			exec_fork_child(cmd, in_fd, fd, envp);
+		// Parent process: Close pipe write end, move to next command
 		if (cmd->next)
 		{
 			if(close(fd[1]) == -1)
 				print_error_exit("close", EXIT_FAILURE);
-			in_fd = fd[0];
+			in_fd = fd[0];  // Pass read end for the next command
 		}
-		waitpid(pid, NULL, 0);
 		cmd = cmd->next;
 	}
 	while (waitpid(-1, NULL, 0) > 0);
@@ -180,4 +213,79 @@ void	run_executor(t_cmd *cmd, char **envp)
 		return ;
 	}
 	exec_cmd(cmd, envp);
+}
+
+
+// cc -Wall -Wextra -Werror test_run_executor.c -Ilibft -Llibft -lft -o test_run_executor
+int main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	(void)argv;
+
+/*	// Test 1: simulate `ls -l | wc -l`
+	t_cmd cmd1 =
+	{
+		.argv = (char *[]){"ls", "-l", NULL},
+		.binary = "/bin/ls",
+		.in_redir = NULL,
+		.out_redir = NULL,
+		.next = NULL
+	};
+
+	t_cmd cmd2 =
+	{
+		.argv = (char *[]){"wc", "-l", NULL},
+		.binary = "/usr/bin/wc",
+		.in_redir = NULL,
+		.out_redir = NULL,
+		.next = NULL
+	};
+
+	cmd1.next = &cmd2;
+
+	printf("Executing: ls -l | wc -l\n");
+	run_executor(&cmd1, envp);
+	*/
+/*
+	// Test 2: simulate `ls -a`
+	t_cmd cmd1 =
+	{
+		.argv = (char *[]){"ls", "-a", NULL},
+		.binary = "/bin/ls",
+		.in_redir = NULL,
+		.out_redir = NULL,
+		.next = NULL
+	};
+
+	printf("Executing: ls -a\n");
+	run_executor(&cmd1, envp);
+*/
+	// Test 3: simulate `ls | grep .c | wc -l`
+	t_cmd cmd1 =
+	{
+		.argv = (char *[]){"ls", NULL},
+		.binary = "/bin/ls",
+		.next = NULL
+	};
+
+	t_cmd cmd2 =
+	{
+		.argv = (char *[]){"grep", ".c", NULL},
+		.binary = "/usr/bin/grep",
+		.next = NULL
+	};
+
+	t_cmd cmd3 =
+	{
+		.argv = (char *[]){"wc", "-l", NULL},
+		.binary = "/usr/bin/wc",
+		.next = NULL
+	};
+	cmd1.next = &cmd2;
+	cmd2.next = &cmd3;
+
+	printf("Executing: ls | grep .c | wc -l\n");
+	run_executor(&cmd1, envp);
+
+	return (EXIT_SUCCESS);
 }

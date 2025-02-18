@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/17 15:34:55 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/18 19:24:24 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 //Definition of AT_* constants
 # include <fcntl.h>
+# include "libft.h"
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64
@@ -90,7 +91,7 @@ typedef struct s_cmd
 	char				*binary;
 	t_redir				*in_redir;
 	t_redir				*out_redir;
-	struct s_command	*next;
+	struct s_cmd	*next;
 }	t_cmd;
 
 
