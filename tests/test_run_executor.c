@@ -222,8 +222,7 @@ int main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 
-
-	// Test 1: simulate `ls -l | wc -l`
+/*	// Test 1: simulate `ls -l | wc -l`
 	t_cmd cmd1 =
 	{
 		.argv = (char *[]){"ls", "-l", NULL},
@@ -246,6 +245,7 @@ int main(int argc, char **argv, char **envp)
 
 	printf("Executing: ls -l | wc -l\n");
 	run_executor(&cmd1, envp);
+	*/
 /*
 	// Test 2: simulate `ls -a`
 	t_cmd cmd1 =
@@ -260,6 +260,32 @@ int main(int argc, char **argv, char **envp)
 	printf("Executing: ls -a\n");
 	run_executor(&cmd1, envp);
 */
+	// Test 3: simulate `ls | grep .c | wc -l`
+	t_cmd cmd1 =
+	{
+		.argv = (char *[]){"ls", NULL},
+		.binary = "/bin/ls",
+		.next = NULL
+	};
+
+	t_cmd cmd2 =
+	{
+		.argv = (char *[]){"grep", ".c", NULL},
+		.binary = "/usr/bin/grep",
+		.next = NULL
+	};
+
+	t_cmd cmd3 =
+	{
+		.argv = (char *[]){"wc", "-l", NULL},
+		.binary = "/usr/bin/wc",
+		.next = NULL
+	};
+	cmd1.next = &cmd2;
+	cmd2.next = &cmd3;
+
+	printf("Executing: ls | grep .c | wc -l\n");
+	run_executor(&cmd1, envp);
 
 	return (EXIT_SUCCESS);
 }
