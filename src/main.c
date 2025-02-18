@@ -1,9 +1,9 @@
 #include "../include/minishell.h"
 
-void	minishell(void)
+void	minishell(char **envp)
 {
 	char	*input;
-	// t_cmds	*cmds;
+	t_cmd	*cmd; // linked list of commands
 
 	while (1)
 	{
@@ -25,19 +25,22 @@ void	minishell(void)
 
 		// Step 3: process input
 		// use input from readline and return commands table for executor
-		//cmds = parse(input);
+
+		//cmd = run_parser(input);
 
 		// Step 4: use command table and execute commands one by one, void func
-		//execute(cmds);
+		// if (cmd)
+			//run_executor(cmd, envp);
 
+		//	free_cmds(cmd);
 		free(input);
 	}
 }
 
 // Compile in src/ dir with
 // cc -I../include main.c -lreadline
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
-	minishell();
-	return (0);
+	minishell(envp);
+	return (EXIT_SUCCESS);
 }
