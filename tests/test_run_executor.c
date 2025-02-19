@@ -108,8 +108,6 @@ void	handle_out_redirection(t_cmd *cmd)
 		print_error_exit("close", EXIT_FAILURE);
 }
 
-
-
 void	handle_stdin_redirection(t_cmd *cmd)
 {
 	int	in;
@@ -127,7 +125,6 @@ void	handle_stdin_redirection(t_cmd *cmd)
 	}
 	if (close(in) == -1)
 		print_error_exit("close", EXIT_FAILURE);
-
 }
 
 void	handle_in_redirection(t_cmd *cmd)
