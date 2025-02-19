@@ -1,5 +1,15 @@
 #include "minishell.h"
 
+/**
+ * Handles output redirection for a command.
+ *
+ * - Opens the specified output file with the correct mode
+ * `O_TRUNC` or `O_APPEND`.
+ * - Redirects `STDOUT_FILENO` to the opened file.
+ * - Ensures the file is closed after redirection is set.
+ *
+ * @param cmd The command containing output redirection details.
+ */
 void	handle_out_redirection(t_cmd *cmd)
 {
 	int	out;
@@ -18,11 +28,25 @@ void	handle_out_redirection(t_cmd *cmd)
 	out = open(cmd->out_redir->filename, mode, 0644);
 	if (out < 0)
 		print_error_exit("write", EXIT_FAILURE);
-	dup2(out, STDOUT_FILENO);
+	if (dup2(out, STDOUT_FILENO) == -1)
+	{
+		if (close(out) == -1)
+			print_error_exit("close", EXIT_FAILURE);
+		print_error_exit("dup2", EXIT_FAILURE);
+	}
 	if (close(out) == -1)
 		print_error_exit("close", EXIT_FAILURE);
 }
 
+/**
+ * Handles input redirection for a command.
+ *
+ * - Opens the specified input file in read-only mode.
+ * - Redirects `STDIN_FILENO` to the opened file.
+ * - Ensures the file is closed after redirection is set.
+ *
+ * @param cmd The command containing input redirection details.
+ */
 void	handle_in_redirection(t_cmd *cmd)
 {
 	int	in;

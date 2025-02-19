@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/19 13:55:48 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:31:27 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_cmd
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);
+void	cleanup_heredoc(t_cmd *cmd);
 
 // redirections <, <<
 void	handle_in_redirection(t_cmd *cmd, char **envp);

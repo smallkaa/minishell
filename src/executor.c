@@ -1,4 +1,5 @@
 #include "minishell.h"
+
 /*
 https://www.gnu.org/software/bash/manual/html_node/Command-Execution-Environment.html
 
@@ -17,6 +18,13 @@ the conditional and list constructs. All builtins return an exit status of 2
 to indicate incorrect usage, generally invalid options or missing arguments
 */
 
+/**
+ * Executes a command by replacing the current process with the new command.
+ *
+ * @param cmd	The command to execute.
+ * @param in_fd	The file descriptor for input redirection.
+ * @param envp	The environment variables array.
+ */
 void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->binary == NULL)
@@ -38,6 +46,15 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 	print_error_exit("execve", EXIT_FAILURE);
 }
 
+/**
+ * Handles input and output redirections.
+ * If a file redirection is present, it adjusts the corresponding
+ * file descriptors.
+ *
+ * @param cmd	The command whose redirections need to be handled.
+ * @param in_fd	The file descriptor for input redirection.
+ * @param envp	The environment variables array.
+ */
 void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->in_redir)
@@ -53,7 +70,18 @@ void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
 		handle_out_redirection(cmd);
 }
 
-void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
+/**
+ * Forks a new process to execute the given command.
+ * - Redirects output to the next command in a pipeline if needed.
+ * - Handles input/output redirections.
+ * - Calls `execve()` to execute the command.
+ *
+ * @param cmd	The command to execute.
+ * @param in_fd	The file descriptor for input redirection.
+ * @param fd	The pipe file descriptors for inter-process communication.
+ * @param envp	The environment variables array.
+ */
+static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
 	if (cmd->next)
 	{
@@ -73,36 +101,68 @@ void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 	execute(cmd, in_fd, envp);
 }
 
-void	exec_cmd(t_cmd *cmd, char **envp)
+/**
+ * Forks and executes a command, setting up pipes for
+ * inter-process communication.
+ * - Waits for the child process to complete before continuing.
+ *
+ * @param cmd	The command to execute.
+ * @param in_fd	The file descriptor for input redirection.
+ * @param fd	The pipe file descriptors for communication.
+ * @param envp	The environment variables array.
+ */
+static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
-	int		fd[2];
-	int		in_fd;
-	pid_t	pid;
+	pid_t pid;
 
-	in_fd = 0;
+	pid = fork();
+	if (pid == -1)
+		print_error_exit("fork", EXIT_FAILURE);
+	if (pid == 0)
+		exec_fork_child(cmd, in_fd, fd, envp);
+	if (cmd->next)
+	{
+		if (close(fd[1]) == -1)
+			print_error_exit("close", EXIT_FAILURE);
+		in_fd = fd[0];
+	}
+	waitpid(pid, NULL, 0);
+}
+
+/**
+ * Executes a series of commands, handling pipelines and
+ * forking child processes.
+ * - Handles multiple commands in a loop.
+ * - Sets up pipes when needed.
+ * - Waits for child processes to complete.
+ *
+ * @param cmd	The first command in the command list.
+ * @param envp	The environment variables array.
+ */
+static void	exec_cmd(t_cmd *cmd, char **envp)
+{
+	int	fd[2];
+	int	in_fd = 0;
+
 	while (cmd)
 	{
 		if (cmd->next && pipe(fd) == -1)
 			print_error_exit("pipe", EXIT_FAILURE);
-		pid = fork();
-		if (pid == -1)
-			print_error_exit("fork", EXIT_FAILURE);
-		if (pid == 0)
-			exec_fork_child(cmd, in_fd, fd, envp);
-		if (cmd->next)
-		{
-			if(close(fd[1]) == -1)
-				print_error_exit("close", EXIT_FAILURE);
-			in_fd = fd[0];
-		}
-		waitpid(pid, NULL, 0);
+		fork_and_execute(cmd, in_fd, fd, envp);
 		cmd = cmd->next;
 	}
-	if (cmd->in_redir->type = R_HEREDOC)
-		if (unlink(HEREDOC_TFILE) == -1)
-			print_error_exit("unlink", EXIT_FAILURE);
+	cleanup_heredoc(cmd);
 }
 
+/**
+ * Entry point for command execution.
+ * - If a single built-in command is executed, it runs directly
+ * in the current shell.
+ * - Otherwise, it executes the full command pipeline using subshell.
+ *
+ * @param cmd The first command in the command list.
+ * @param envp The environment variables array.
+ */
 void	run_executor(t_cmd *cmd, char **envp)
 {
 	if (is_builtin(cmd) && !cmd->next)
