@@ -17,24 +17,6 @@ the conditional and list constructs. All builtins return an exit status of 2
 to indicate incorrect usage, generally invalid options or missing arguments
 */
 
-bool	is_builtin(t_cmd *cmd)
-{
-	// do
-	return (false);
-}
-
-void	exec_builtin(t_cmd *cmd)
-{
-	// do
-	return ;
-}
-
-void	handle_heredoc_redirection(t_cmd *cmd)
-{
-	// Heredoc logic to be implemented here
-	return ;
-}
-
 void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->binary == NULL)
@@ -50,69 +32,16 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 		if (close(in_fd) == -1)
 			print_error_exit("close", EXIT_FAILURE);
 	}
+	if (is_builtin(cmd))
+		exec_builtin(cmd);
 	execve(cmd->binary, cmd->argv, envp);
 	print_error_exit("execve", EXIT_FAILURE);
 }
 
-void	handle_out_redirection(t_cmd *cmd)
-{
-	int	out;
-	int	mode;
-
-	if (!cmd->out_redir)
-		return ;
-
-	mode = O_WRONLY | O_CREAT;
-	if (cmd->out_redir->type == R_OUTPUT)
-		mode |= O_TRUNC;
-	else if (cmd->out_redir->type == R_APPEND)
-		mode |= O_APPEND;
-	else
-		print_error_exit("redirection", EXIT_FAILURE);
-	out = open(cmd->out_redir->filename, mode, 0644);
-	if (out < 0)
-		print_error_exit("write", EXIT_FAILURE);
-	dup2(out, STDOUT_FILENO);
-	if (close(out) == -1)
-		print_error_exit("close", EXIT_FAILURE);
-}
-
-void	handle_stdin_redirection(t_cmd *cmd)
-{
-	int	in;
-
-	if (!cmd->in_redir)
-		return ;
-	in = open(cmd->in_redir->filename, O_RDONLY);
-	if (in < 0)
-		print_error_exit("read", EXIT_FAILURE);
-	if (dup2(in, STDIN_FILENO) == -1)
-	{
-		if (close(in) == -1)
-			print_error_exit("close", EXIT_FAILURE);
-		print_error_exit("dup2", EXIT_FAILURE);
-	}
-	if (close(in) == -1)
-		print_error_exit("close", EXIT_FAILURE);
-
-}
-
-void	handle_in_redirection(t_cmd *cmd)
-{
-	if (!cmd->in_redir)
-		return ;
-	if (cmd->in_redir->type == R_INPUT)
-		handle_stdin_redirection(cmd);
-	else if (cmd->in_redir->type == R_HEREDOC)
-		handle_heredoc_redirection(cmd);
-	else
-		print_error_exit("redirection", EXIT_FAILURE);
-}
-
-void	handle_redirection(t_cmd *cmd, int in_fd)
+void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->in_redir)
-		handle_in_redirection(cmd);
+		handle_in_redirection(cmd, envp);
 	else
 		if (dup2(in_fd, STDIN_FILENO) == -1)
 		{
@@ -140,7 +69,7 @@ void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 			print_error_exit("close", EXIT_FAILURE);
 	}
 	if (cmd->in_redir || cmd->out_redir)
-		handle_redirection(cmd, in_fd);
+		handle_redirection(cmd, in_fd, envp);
 	execute(cmd, in_fd, envp);
 }
 
@@ -169,7 +98,9 @@ void	exec_cmd(t_cmd *cmd, char **envp)
 		waitpid(pid, NULL, 0);
 		cmd = cmd->next;
 	}
-	while (waitpid(-1, NULL, 0) > 0);
+	if (cmd->in_redir->type = R_HEREDOC)
+		if (unlink(HEREDOC_TFILE) == -1)
+			print_error_exit("unlink", EXIT_FAILURE);
 }
 
 void	run_executor(t_cmd *cmd, char **envp)

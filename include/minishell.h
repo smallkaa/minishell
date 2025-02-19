@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/18 19:24:24 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/19 13:55:48 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@
 // Delimiter used for tokenizing input.
 # define DELIM " "
 
+// Heredoc temp file
+# define HEREDOC_TFILE "heredoc_tmp.txt"
 /**
  * @enum e_redir_type
  * @brief Enumeration for different types of I/O redirection.
@@ -67,6 +69,7 @@ typedef struct s_redir
 {
 	t_redir_type	type;
 	char			*filename;
+	bool			expand;
 }	t_redir;
 
 /**
@@ -97,5 +100,12 @@ typedef struct s_cmd
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);
+
+// redirections <, <<
+void	handle_in_redirection(t_cmd *cmd, char **envp);
+void	handle_heredoc(t_cmd *cmd, char **envp);
+
+// redirections >, >>
+void	handle_out_redirection(t_cmd *cmd);
 
 #endif /* MINISHELL_H */
