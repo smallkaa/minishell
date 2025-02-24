@@ -1,20 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/17 11:49:46 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/24 11:43:53 by imunaev-         ###   ########.fr       */
+/*   Created: 2024/11/07 08:37:46 by imunaev-          #+#    #+#             */
+/*   Updated: 2025/01/18 11:54:51 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	print_error_exit(char *cmd, int exit_status)
+/**
+ * @brief Erases data in a block of memory by setting it to zero.
+ *
+ * This function sets the first `n` bytes of the memory area
+ * pointed to by `s` to zero bytes ('\0').
+ *
+ * @param s Pointer to the memory area to be zeroed.
+ * @param n Number of bytes to set to zero.
+ * @return void This function does not return a value.
+ */
+void	ft_bzero(void *s, size_t n)
 {
-	ft_putstr_fd(cmd, STDERR_FILENO);
-	perror(": ");
-	exit(exit_status);
+	ft_memset(s, 0, n);
 }

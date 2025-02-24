@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/17 11:49:46 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/24 11:43:53 by imunaev-         ###   ########.fr       */
+/*   Created: 2025/01/21 22:23:06 by imunaev-          #+#    #+#             */
+/*   Updated: 2025/01/21 22:23:51 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-void	print_error_exit(char *cmd, int exit_status)
+int	ft_strcmp(char *s1, char *s2)
 {
-	ft_putstr_fd(cmd, STDERR_FILENO);
-	perror(": ");
-	exit(exit_status);
+	while (*s1 && *s1 == *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return (*s1 - *s2);
 }

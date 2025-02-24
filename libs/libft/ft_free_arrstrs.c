@@ -1,20 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_free_arrstrs.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/17 11:49:46 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/24 11:43:53 by imunaev-         ###   ########.fr       */
+/*   Created: 2025/02/16 22:56:00 by imunaev-          #+#    #+#             */
+/*   Updated: 2025/02/16 22:57:17 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	print_error_exit(char *cmd, int exit_status)
+/**
+ * @brief Frees a NULL-terminated array of strings.
+ *
+ * Iterates over the array, freeing each string, and then
+ * frees the array itself.
+ *
+ * @param arr The array of strings to free.
+ */
+void	ft_free_arrstrs(char **arr)
 {
-	ft_putstr_fd(cmd, STDERR_FILENO);
-	perror(": ");
-	exit(exit_status);
+	int	i;
+
+	i = 0;
+	if (!arr)
+		return ;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
 }
