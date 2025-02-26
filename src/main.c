@@ -3,7 +3,12 @@
 void	minishell(char **envp)
 {
 	char	*input;
-	t_cmd	*cmd; // linked list of commands
+
+	// uncoment for parser
+	// t_cmd	*cmd;
+
+	//remove(void) for parser
+	(void)envp;
 
 	while (1)
 	{
@@ -41,6 +46,10 @@ void	minishell(char **envp)
 // cc -I../include main.c -lreadline
 int	main(int argc, char **argv, char **envp)
 {
+	//remove(void) for parser
+	(void)argc;
+	(void)argv;
+
 	minishell(envp);
 	return (EXIT_SUCCESS);
 }

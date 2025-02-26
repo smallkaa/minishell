@@ -1,7 +1,8 @@
 #include "../include/minishell.h"
 
-t_cmd	* run_parser(char	*input, t_builtin const * builtins)
+t_cmd	* run_parser(char	*input)
 {
+//2do - trim all spaces before and after
 //if user typed "exit"
 if(0 == ft_strcmp(input,"exit"))
 {
