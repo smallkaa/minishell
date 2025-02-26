@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/26 12:39:37 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/02/26 14:21:32 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
-
 // utils
 void	print_error_exit(char *cmd, int exit_status);
 void	print_error(char *cmd);
@@ -111,5 +110,8 @@ void	handle_heredoc(t_cmd *cmd, char **envp);
 void	handle_out_redirection(t_cmd *cmd);
 bool	is_builtin(t_cmd *cmd);
 void	exec_builtin(t_cmd *cmd);
+
+// parser
+t_cmd	* run_parser(char	*input);
 
 #endif /* MINISHELL_H */
