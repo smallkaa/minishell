@@ -1,7 +1,7 @@
 NAME := minishell
 
 CC      := cc
-CFLAGS  := #-Wall -Wextra -Werror
+CFLAGS  := -Wall -Wextra -Werror
 RM      := rm -rf
 
 SRC_DIRS := src src/executor src/parser
