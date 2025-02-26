@@ -52,6 +52,7 @@ void	handle_heredoc(t_cmd *cmd, char **envp)
 {
 	int	tmp_fd;
 
+	(void)envp;
 	if (!cmd->in_redir || cmd->in_redir->type != R_HEREDOC)
 		return ;
 	tmp_fd = open(HEREDOC_TFILE, O_WRONLY | O_CREAT | O_TRUNC, 0644);

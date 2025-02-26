@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/19 14:31:27 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/26 12:39:37 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_cmd
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);
+void	print_error(char *cmd);
 void	cleanup_heredoc(t_cmd *cmd);
 
 // redirections <, <<
@@ -108,5 +109,7 @@ void	handle_heredoc(t_cmd *cmd, char **envp);
 
 // redirections >, >>
 void	handle_out_redirection(t_cmd *cmd);
+bool	is_builtin(t_cmd *cmd);
+void	exec_builtin(t_cmd *cmd);
 
 #endif /* MINISHELL_H */

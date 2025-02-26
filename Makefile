@@ -1,16 +1,18 @@
 NAME := minishell
 
 CC      := cc
-CFLAGS  := -Wall -Wextra -Werror
+CFLAGS  := #-Wall -Wextra -Werror
 RM      := rm -rf
 
-SRC_DIRS := src/executor src/parser
+SRC_DIRS := src src/executor src/parser
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft
 
-#src
-SRC_FILES := $(wildcard $(addsuffix /*.c, $(SRC_DIRS))) main.c
-OBJ_FILES := $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRC_FILES)))
+# Collect all source files
+SRC_FILES := $(wildcard $(addsuffix /*.c, $(SRC_DIRS)))
+
+# Convert source files to object files, preserving directory structure
+OBJ_FILES := $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 INCLUDES := -Iinclude -I$(LIBFT_DIR)
 
@@ -19,13 +21,12 @@ LIBFT := $(LIBFT_DIR)/libft.a
 
 # Compile all
 $(NAME): $(OBJ_FILES) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) -lreadline
 
-$(OBJ_DIR)/%.o: $(SRC_DIRS)/%.c | $(OBJ_DIR)
+# Rule for compiling object files with correct paths
+$(OBJ_DIR)/%.o: src/%.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
 
 # Build libft
 $(LIBFT):
@@ -40,6 +41,6 @@ fclean: clean
 	$(RM) $(NAME)
 	make -C $(LIBFT_DIR) fclean
 
-re: fclean all
+re: fclean $(NAME)
 
 .PHONY: all clean fclean re
