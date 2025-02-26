@@ -4,6 +4,8 @@ t_cmd	* run_parser(char	*input)
 {
 //2do - trim all spaces before and after
 //if user typed "exit"
+//char *trimmed_input;
+//trimmed_input = ft_strtrim(input, " ");
 if(0 == ft_strcmp(input,"exit"))
 {
 	t_cmd cmd1 =
