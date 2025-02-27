@@ -16,6 +16,7 @@
 //Definition of AT_* constants
 # include <fcntl.h>
 # include "libft.h"
+# include "tokenizer.h"
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64
