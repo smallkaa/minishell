@@ -12,7 +12,7 @@
  * @return      The number of bytes written on success.
  *              Returns `-1` on failure.
  */
-static int	ft_putstr(t_cmd *cmd, char *str, int fd)
+static int	ft_putstr_custom(char *str, int fd)
 {
 	if (!str || fd < 0)
 	{
@@ -43,13 +43,13 @@ static int	print_content(t_cmd *cmd, int i, int *newline_flag)
 	status = EXIT_SUCCESS;
 	while (cmd->argv[i])
 	{
-		if (ft_putstr(cmd, cmd->argv[i], STDOUT_FILENO) < 0)
+		if (ft_putstr_custom(cmd->argv[i], STDOUT_FILENO) < 0)
 			status = EXIT_FAILURE;
-		if (cmd->argv[i + 1] && ft_putstr(cmd, " ", STDOUT_FILENO) < 0)
+		if (cmd->argv[i + 1] && ft_putstr_custom(" ", STDOUT_FILENO) < 0)
 			status = EXIT_FAILURE;
 		i++;
 	}
-	if (*newline_flag == 1 && ft_putstr(cmd, "\n", STDOUT_FILENO) < 0)
+	if (*newline_flag == 1 && ft_putstr_custom("\n", STDOUT_FILENO) < 0)
 		status = EXIT_FAILURE;
 	return (status);
 }
