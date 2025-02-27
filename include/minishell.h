@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/28 12:16:35 by pvershin         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -23,6 +11,7 @@
 # include <fcntl.h>
 # include <string.h>
 # include <signal.h>
+#include <sys/types.h>
 
 //Definition of AT_* constants
 # include <fcntl.h>
@@ -82,6 +71,7 @@ typedef struct s_redir
  * - `in_redir`:	Pointer to input redirection struct, if any.
  * - `out_redir`:	Pointer to output redirection struct, if any.
  * - `next`:		Pointer to the next command in the pipeline.
+ * - `shell`:		Pointer to shell structure.
  *
  * Example pipeline: `ls -l | grep minishell | wc -l`
  * - cmd1:	`ls -l`
@@ -94,9 +84,22 @@ typedef struct s_cmd
 	char				**argv;
 	char				*binary;
 	t_redir				*in_redir;
-	t_redir				*out_redir;
-	struct s_cmd		*next;
+	t_redir				*out_redir;	
+	t_cmd				*next;
+	t_shell				*shell;
 }	t_cmd;
+
+/**
+ * @struct s_shell
+ * @brief Represents a general minishell structure.
+ *
+ * - `last_exit_stats`:	Int, the last exit status of 
+ * 						cmd, builtin, or cmd in pipe
+ */
+typedef struct s_shell
+{
+    int	last_exit_status;  // Stores the last exit status ($?)	
+}	t_shell;
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);

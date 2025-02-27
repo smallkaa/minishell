@@ -105,6 +105,8 @@ static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
  * Forks and executes a command, setting up pipes for
  * inter-process communication.
  * - Waits for the child process to complete before continuing.
+ * - Stores the last exit status in shell stuct 
+ * 	on success - WEXITSTATUS, else 128 + WTERMSIG.
  *
  * @param cmd	The command to execute.
  * @param in_fd	The file descriptor for input redirection.
@@ -126,7 +128,11 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 			print_error_exit("close", EXIT_FAILURE);
 		in_fd = fd[0];
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &cmd->shell->last_exit_status, 0);
+	if (WIFEXITED(cmd->shell->last_exit_status))
+		cmd->shell->last_exit_status = WEXITSTATUS(cmd->shell->last_exit_status);
+    else if (WIFSIGNALED(cmd->shell->last_exit_status))
+            cmd->shell->last_exit_status = 128 + WTERMSIG(cmd->shell->last_exit_status);
 }
 
 /**
