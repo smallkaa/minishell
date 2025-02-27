@@ -34,8 +34,8 @@ void	minishell(char **envp)
 		cmd = run_parser(input);
 		(void)cmd;
 		// Step 4: use command table and execute commands one by one, void func
-		// if (cmd)
-			//run_executor(cmd, envp);
+		if (cmd)
+			run_executor(cmd, envp);
 
 		//	free_cmds(cmd);
 		free(input);

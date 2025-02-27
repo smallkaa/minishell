@@ -80,9 +80,9 @@ void	exec_builtin(t_cmd *cmd)
 	if (!cmd || !cmd->argv[0])
 	{
 		ft_putstr_fd("minishell: Error exec_builtin(), no args\n", STDERR_FILENO);
-		return (EXIT_FAILURE);
+		return ;
 	}
-	if(is_builtin(cmd->argv[0]))
+	if(is_builtin(cmd))
 	{
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
 			handle_exit(cmd);

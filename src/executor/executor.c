@@ -137,5 +137,5 @@ void	run_executor(t_cmd *cmd, char **envp)
 		exec_builtin(cmd);
 		return ;
 	}
-	handle_exit(cmd, envp);
+	exec_cmd(cmd, envp);
 }

@@ -41,6 +41,8 @@
 
 // Heredoc temp file
 # define HEREDOC_TFILE "heredoc_tmp.txt"
+
+typedef struct s_cmd t_cmd;
 /**
  * @enum e_redir_type
  * @brief Enumeration for different types of I/O redirection.
@@ -75,6 +77,18 @@ typedef struct s_redir
 }	t_redir;
 
 /**
+ * @struct s_shell
+ * @brief Represents a general minishell structure.
+ *
+ * - `last_exit_stats`:	Int, the last exit status of 
+ * 						cmd, builtin, or cmd in pipe
+ */
+typedef struct s_shell
+{
+    int	l_exit_stat;  // Stores the last exit status ($?)	
+}	t_shell;
+
+/**
  * @struct s_cmd
  * @brief Represents a single command in a pipeline.
  *
@@ -101,17 +115,6 @@ typedef struct s_cmd
 	t_shell				*shell;
 }	t_cmd;
 
-/**
- * @struct s_shell
- * @brief Represents a general minishell structure.
- *
- * - `last_exit_stats`:	Int, the last exit status of 
- * 						cmd, builtin, or cmd in pipe
- */
-typedef struct s_shell
-{
-    int	l_exit_stat;  // Stores the last exit status ($?)	
-}	t_shell;
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);
@@ -137,6 +140,7 @@ int		handle_echo(t_cmd *cmd);
 t_cmd	*run_parser(char	*input);
 
 // executor
+void	run_executor(t_cmd *cmd, char **envp);
 void	execute(t_cmd *cmd, int in_fd, char **envp);
 
 // executor utils
