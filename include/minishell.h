@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/03/06 11:27:14 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:28:24 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,5 +134,9 @@ t_cmd	*run_parser(char	*input);
 
 // executor
 void	execute(t_cmd *cmd, int in_fd, char **envp);
+int		handle_exit(t_cmd *cmd);
+
+// executor utils
+void	update_last_exit_status(t_cmd *cmd, int status);
 
 #endif /* MINISHELL_H */
