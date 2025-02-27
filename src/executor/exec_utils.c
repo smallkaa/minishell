@@ -8,3 +8,8 @@ void	cleanup_heredoc(t_cmd *cmd)
 			print_error_exit("unlink", EXIT_FAILURE);
 	}
 }
+
+void	update_last_exit_status(t_cmd *cmd, int status)
+{
+	cmd->shell->l_exit_stat = status;
+}

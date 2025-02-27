@@ -75,6 +75,7 @@ static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
 	pid_t	pid;
+	int		status;
 
 	pid = fork();
 	if (pid == -1)
@@ -87,11 +88,11 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 			print_error_exit("close", EXIT_FAILURE);
 		in_fd = fd[0];
 	}
-	waitpid(pid, &cmd->shell->l_exit_stat, 0);
-	if (WIFEXITED(cmd->shell->l_exit_stat))
-		cmd->shell->l_exit_stat = WEXITSTATUS(cmd->shell->l_exit_stat);
-	else if (WIFSIGNALED(cmd->shell->l_exit_stat))
-		cmd->shell->l_exit_stat = 128 + WTERMSIG(cmd->shell->l_exit_stat);
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		update_last_exit_status(cmd, WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		update_last_exit_status(cmd, 128 + WTERMSIG(cmd->shell->l_exit_stat));
 }
 
 /**
@@ -136,5 +137,5 @@ void	run_executor(t_cmd *cmd, char **envp)
 		exec_builtin(cmd);
 		return ;
 	}
-	exec_cmd(cmd, envp);
+	handle_exit(cmd, envp);
 }
