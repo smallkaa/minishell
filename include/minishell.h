@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@studen.hive.fi>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/27 14:58:06 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/27 16:35:22 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,11 @@ void	handle_heredoc(t_cmd *cmd, char **envp);
 // redirections >, >>
 void	handle_out_redirection(t_cmd *cmd);
 bool	is_builtin(t_cmd *cmd);
+
+// builtin
 void	exec_builtin(t_cmd *cmd);
+int		handle_exit(t_cmd *cmd);
+int		handle_echo(t_cmd *cmd);
 
 // parser
 t_cmd	* run_parser(char	*input);
