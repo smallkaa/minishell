@@ -119,18 +119,24 @@ t_cmd	* run_parser(char	*input)
     tokenizer_cleanup();
     
     // Now, print all collected tokens
-    printf("Found %d tokens:\n", tokens->count);
+    printf("Found %d token(s):\n", tokens->count);
     for (int i = 0; i < tokens->count; i++) {
-        printf("\nToken %d:\n", i + 1);
+        printf("\nToken %d:\n", i);
         print_token(tokens->tokens[i]);
         explain_token(tokens->tokens[i]);
     }
     
-    // Free the token array
+ 
+
+if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD && ft_strcmp(tokens->tokens[0].value, "exit") == 0)
+{
+	printf("EXIT!\n");
+   // Free the token array
     token_array_free(tokens);
 
-
-
+	return NULL;
+    //return handle_exit_command();
+}
 /*	if(0 == ft_strcmp(input,"exit"))
 	{
 		t_cmd cmd1 =
