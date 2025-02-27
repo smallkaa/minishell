@@ -1,4 +1,15 @@
-#include "../include/minishell.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "tokenizer.h"
+
+// Token array for storing all tokens
+typedef struct {
+    Token *tokens;
+    int count;
+    int capacity;
+} TokenArray;
+
 // Initialize a token array
 static TokenArray* token_array_init() {
     TokenArray *array = (TokenArray*)malloc(sizeof(TokenArray));
@@ -45,7 +56,6 @@ static void token_array_free(TokenArray *array) {
     free(array->tokens);
     free(array);
 }
-
 
 // Helper function to print token information
 static void print_token(Token token) {
@@ -99,8 +109,8 @@ static void explain_token(Token token) {
     printf("\033[0m");
 }
 
-t_cmd	* run_parser(char	*input)
-{
+// Process input string, collect all tokens, then print them
+static void process_input(const char *input) {
     printf("\nTokenizing: %s\n\n", input);
     
     tokenizer_init(input);
@@ -128,21 +138,51 @@ t_cmd	* run_parser(char	*input)
     
     // Free the token array
     token_array_free(tokens);
+}
 
+static void run_test_case(const char *input) {
+    printf("\n-------------------------------------------\n");
+    printf("TEST CASE: %s\n", input);
+    printf("-------------------------------------------\n");
+    
+    process_input(input);
+    printf("\n");
+}
 
+static void run_wild_test_cases() {
+    // Test Case 1: Mixed Quotes with Special Characters
+    run_test_case("grep 'text with \"quotes\" inside' | sed \"s/$USER/'$HOME'/g\" > output.txt");
+    
+    // Test Case 2: Unclosed Quotes and Edge Cases
+    run_test_case("echo \"unclosed quote | grep 'closed quote' && echo $TERM");
+    
+    // Test Case 3: Complex Nesting and Spaces
+    run_test_case("find . -name \"file with 'single' quotes and $VARS\" -exec echo '\"$PATH\"' \\;");
+}
 
-/*	if(0 == ft_strcmp(input,"exit"))
-	{
-		t_cmd cmd1 =
-		{
-			.argv = (char *[]){"exit", "", NULL},
-			.binary = NULL,
-			.in_redir = NULL,
-			.out_redir = NULL,
-			.next = NULL
-		};
-		return &cmd1;
-	}
-	return NULL;*/
-return NULL;
+int main() {
+    char input[1024];
+    
+    printf("Enter a shell command (or press Enter to run test cases): ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    // Remove trailing newline if present
+    size_t len = strlen(input);
+    if (len > 0 && input[len-1] == '\n') {
+        input[len-1] = '\0';
+    }
+    
+    // Run test cases if empty input
+    if (len <= 1) {
+        run_wild_test_cases();
+        return 0;
+    }
+    
+    // Process the user input
+    process_input(input);
+    
+    return 0;
 }

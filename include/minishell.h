@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/26 14:40:27 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/02/27 13:12:23 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 //Definition of AT_* constants
 # include <fcntl.h>
 # include "libft.h"
+# include "tokenizer.h"
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64

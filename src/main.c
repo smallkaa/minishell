@@ -5,7 +5,7 @@ void	minishell(char **envp)
 	char	*input;
 
 	// uncoment for parser
-	// t_cmd	*cmd;
+	t_cmd	*cmd;
 
 	//remove(void) for parser
 	(void)envp;
@@ -32,7 +32,7 @@ void	minishell(char **envp)
 		// use input from readline and return commands table for executor
 
 		cmd = run_parser(input);
-
+		(void)cmd;
 		// Step 4: use command table and execute commands one by one, void func
 		// if (cmd)
 			//run_executor(cmd, envp);
