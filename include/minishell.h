@@ -138,7 +138,6 @@ t_cmd	*run_parser(char	*input);
 
 // executor
 void	execute(t_cmd *cmd, int in_fd, char **envp);
-int		handle_exit(t_cmd *cmd);
 
 // executor utils
 void	update_last_exit_status(t_cmd *cmd, int status);
