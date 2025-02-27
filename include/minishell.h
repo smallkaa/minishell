@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/03/06 11:28:24 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:29:10 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,11 @@ void	handle_heredoc(t_cmd *cmd, char **envp);
 // redirections >, >>
 void	handle_out_redirection(t_cmd *cmd);
 bool	is_builtin(t_cmd *cmd);
+
+// builtin
 void	exec_builtin(t_cmd *cmd);
+int		handle_exit(t_cmd *cmd);
+int		handle_echo(t_cmd *cmd);
 
 // parser
 t_cmd	*run_parser(char	*input);

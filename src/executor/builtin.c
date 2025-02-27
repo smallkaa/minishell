@@ -1,5 +1,4 @@
 #include "minishell.h"
-// exit
 /*
 https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#exit
 
@@ -27,7 +26,6 @@ considered to be the command that executed immediately
 preceding the trap action.
 */
 
-// echo
 // cd
 // pwd
 // export
@@ -87,6 +85,8 @@ void	exec_builtin(t_cmd *cmd)
 	if(is_builtin(cmd->argv[0]))
 	{
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
-			exec_exit(cmd);
+			handle_exit(cmd);
+		else if (ft_strcmp(cmd->argv[0], "echo") == 0)
+			handle_echo(cmd);
 	}
 }
