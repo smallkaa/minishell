@@ -64,10 +64,12 @@ void	handle_heredoc_redirection(t_cmd *cmd)
 	return ;
 }
 
-void	execute(t_cmd *cmd, int in_fd, char **envp)
+// void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->binary == NULL)
+	{
 		print_error_exit(cmd->binary, EXIT_FAILURE);
+	}
 	if (in_fd != 0)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)

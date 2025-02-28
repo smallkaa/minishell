@@ -81,12 +81,12 @@ typedef struct s_redir
  * @struct s_shell
  * @brief Represents a general minishell structure.
  *
- * - `last_exit_stats`:	Int, the last exit status of 
+ * - `last_exit_stats`:	Int, the last exit status of
  * 						cmd, builtin, or cmd in pipe
  */
 typedef struct s_shell
 {
-    int	l_exit_stat;  // Stores the last exit status ($?)	
+    int	l_exit_stat;  // Stores the last exit status ($?)
 }	t_shell;
 
 /**
@@ -111,16 +111,18 @@ typedef struct s_cmd
 	char				**argv;
 	char				*binary;
 	t_redir				*in_redir;
-	t_redir				*out_redir;	
+	t_redir				*out_redir;
 	t_cmd				*next;
 	t_shell				*shell;
 }	t_cmd;
 
+// init
+t_shell	*init_shell(void);
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);
 void	print_error(char *cmd);
-void	cleanup_heredoc(t_cmd *cmd);
+// void	cleanup_heredoc(t_cmd *cmd);
 bool	is_debug_mode(void);
 void	debug_printf(const char *format, ...);
 
@@ -138,7 +140,7 @@ int		handle_exit(t_cmd *cmd);
 int		handle_echo(t_cmd *cmd);
 
 // parser
-t_cmd	*run_parser(char	*input);
+t_cmd	*run_parser(t_shell *shell, char *input);
 
 // executor
 void	run_executor(t_cmd *cmd, char **envp);

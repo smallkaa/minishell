@@ -6,11 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/03/06 11:32:53 by pvershin         ###   ########.fr       */
-=======
-/*   Updated: 2025/02/28 13:33:20 by pvershin         ###   ########.fr       */
->>>>>>> d33a0c5 (Add: first provided command - can be processed now)
+/*   Updated: 2025/03/06 11:37:42 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +76,7 @@ static void	print_token(t_Token token)
 	const char	*type_names[] = {
 		"WORD", "PIPE", "REDIRECT_IN", "REDIRECT_OUT",
 		"APPEND_OUT", "BACKGROUND", "EOF"
-	};	
+	};
 
 	debug_printf("Token: { type: %s", type_names[token.type]);
 	if (token.type == TOKEN_WORD)
@@ -112,16 +108,16 @@ static void	explain_token(t_Token token)
 		{
 			in_single_quote = !in_single_quote;
 			debug_printf("%s'%s", in_single_quote ? "\033[33m" : "\033[0m", in_single_quote ? "\033[33m" : "\033[0m");
-		} 
+		}
 		else if (str[i] == '"' && !in_single_quote)
 		{
 			in_double_quote = !in_double_quote;
 			debug_printf("%s\"%s", in_double_quote ? "\033[36m" : "\033[0m", in_double_quote ? "\033[36m" : "\033[0m");
-		} 
+		}
 		else if (str[i] == '$' && (in_double_quote || !in_single_quote))
 		{
 			debug_printf("\033[32m$\033[0m");
-		} 
+		}
 		else
 		{
 			char color_code[10] = "\033[0m";
@@ -135,25 +131,26 @@ static void	explain_token(t_Token token)
 	debug_printf("\033[0m");
 }
 
-t_cmd *create_command_from_tokens(t_TokenArray *tokens)
+t_cmd *create_command_from_tokens(t_shell *shell, t_TokenArray *tokens)
 {
     if (tokens->count < 1 || tokens->tokens[0].type != TOKEN_WORD) {
         return NULL;
     }
-    
+
     // Allocate memory for the command structure
     t_cmd *cmd = (t_cmd *)malloc(sizeof(t_cmd));
     if (!cmd) {
         print_error( "Failed to allocate command structure\n");
         return NULL;
     }
-    
+
     // Initialize the structure
     cmd->binary = NULL;
     cmd->in_redir = NULL;
     cmd->out_redir = NULL;
     cmd->next = NULL;
-    
+	cmd->shell = shell;
+
     // Count how many word tokens we have for argv
     int argc = 0;
     for (int i = 0; i < tokens->count; i++) {
@@ -164,7 +161,7 @@ t_cmd *create_command_from_tokens(t_TokenArray *tokens)
             break;
         }
     }
-    
+
     // Allocate argv array (+ 1 for NULL terminator)
     cmd->argv = (char **)malloc((argc + 1) * sizeof(char *));
     if (!cmd->argv) {
@@ -172,7 +169,7 @@ t_cmd *create_command_from_tokens(t_TokenArray *tokens)
         free(cmd);
         return NULL;
     }
-    
+
     // Fill argv array with copies of token values
     for (int i = 0; i < argc; i++)
 	{
@@ -192,25 +189,25 @@ t_cmd *create_command_from_tokens(t_TokenArray *tokens)
     return cmd;
 }
 
-t_cmd	*run_parser(char	*input)
+t_cmd	*run_parser(t_shell *shell, char	*input)
 {
-    debug_printf("\nTokenizing: %s\n\n", input);   
+    debug_printf("\nTokenizing: %s\n\n", input);
     tokenizer_init(input);
-    
+
     // First, parse all tokens and accumulate them
     t_TokenArray *tokens = token_array_init();
     t_Token token;
     t_cmd *cmd;
-    
+
     do {
         token = get_next_token();
         if (token.type != TOKEN_EOF) {
             token_array_add(tokens, token);
         }
     } while (token.type != TOKEN_EOF);
-    cmd = create_command_from_tokens(tokens);
+    cmd = create_command_from_tokens(shell, tokens);
     tokenizer_cleanup();
-    
+
     // Now, print all collected tokens
     debug_printf("Found %d token(s):\n", tokens->count);
     for (int i = 0; i < tokens->count; i++) {
