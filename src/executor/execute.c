@@ -15,7 +15,6 @@ if they succeed and a non-zero status on failure, so they may be used by
 the conditional and list constructs. All builtins return an exit status of 2
 to indicate incorrect usage, generally invalid options or missing arguments
 */
-
 /**
  * Executes a command by replacing the current process with the new command.
  *
@@ -25,12 +24,8 @@ to indicate incorrect usage, generally invalid options or missing arguments
  */
 void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
-
-	// fprintf(stderr, "[DEBUG] cmd->argv[0]: %s, cmd->binary: %s\n", cmd->argv[0], cmd->binary);
-
 	if (cmd->binary == NULL)
 	{
-		// printf("[DEBUG]: execute() no binary for cmd: [%s]\n", cmd->argv[0]);
 		print_error_exit(cmd->binary, EXIT_FAILURE);
 	}
 	if (in_fd != 0)
@@ -44,15 +39,8 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 		if (close(in_fd) == -1)
 			print_error_exit("close", EXIT_FAILURE);
 	}
-
-	// printf("[DEBUG]: execute() input cmd: [%s]\n", cmd->argv[0]);
-	// fprintf(stderr, "[DEBUG] Calling execve(%s)\n",cmd->binary);
-
-
 	if (is_builtin(cmd))
 		exec_builtin(cmd);
-
-
 	execve(cmd->binary, cmd->argv, envp);
 	print_error_exit("execve", EXIT_FAILURE);
 }

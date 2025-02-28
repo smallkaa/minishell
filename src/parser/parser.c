@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/06 11:38:09 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:38:28 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ static void	explain_token(t_Token token)
 	debug_printf("\033[0m");
 }
 
-t_cmd *create_command_from_tokens(t_shell *shell, t_TokenArray *tokens)
+t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
 {
     if (tokens->count < 1 || tokens->tokens[0].type != TOKEN_WORD) {
         return NULL;
@@ -149,10 +149,8 @@ t_cmd *create_command_from_tokens(t_shell *shell, t_TokenArray *tokens)
     cmd->in_redir = NULL;
     cmd->out_redir = NULL;
     cmd->next = NULL;
-	cmd->shell = shell;
+	cmd->minishell = shell;
 	cmd->binary = NULL;
-
-
 
     // Count how many word tokens we have for argv
     int argc = 0;
@@ -190,12 +188,13 @@ t_cmd *create_command_from_tokens(t_shell *shell, t_TokenArray *tokens)
     }
     cmd->argv[argc] = NULL;  // NULL-terminate the array
 
-	// add exec command to cmd->binary
+	// Ilia for Pavel -------------------------
+	// find_binary() looking for execution command in PATH and assign value to cmd->binary
 	find_binary(cmd);
     return cmd;
 }
 
-t_cmd	*run_parser(t_shell *shell, char	*input)
+t_cmd	*run_parser(t_minishell *minishell, char	*input)
 {
     debug_printf("\nTokenizing: %s\n\n", input);
     tokenizer_init(input);
@@ -211,7 +210,7 @@ t_cmd	*run_parser(t_shell *shell, char	*input)
             token_array_add(tokens, token);
         }
     } while (token.type != TOKEN_EOF);
-    cmd = create_command_from_tokens(shell, tokens);
+    cmd = create_command_from_tokens(minishell, tokens);
     tokenizer_cleanup();
 
     // Now, print all collected tokens
