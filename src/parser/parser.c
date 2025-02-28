@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/02/28 14:24:43 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/02/28 15:26:03 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,9 @@ t_cmd *create_command_from_tokens(t_shell *shell, t_TokenArray *tokens)
     cmd->out_redir = NULL;
     cmd->next = NULL;
 	cmd->shell = shell;
+	cmd->binary = NULL;
+
+
 
     // Count how many word tokens we have for argv
     int argc = 0;
@@ -186,6 +189,9 @@ t_cmd *create_command_from_tokens(t_shell *shell, t_TokenArray *tokens)
         }
     }
     cmd->argv[argc] = NULL;  // NULL-terminate the array
+
+	// add exec command to cmd->binary
+	find_binary(cmd);
     return cmd;
 }
 

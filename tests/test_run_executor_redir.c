@@ -38,7 +38,7 @@ typedef struct s_cmd
 void	print_error_exit(char *cmd, int exit_status)
 {
 	ft_putstr_fd(cmd, STDERR_FILENO);
-	perror(": ");
+	perror("");
 	exit(exit_status);
 }
 
