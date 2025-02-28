@@ -26,7 +26,7 @@ void	minishell(char **envp)
 		if (*input)
 			add_history(input);  // need to be freed?
 
-		printf("Return: %s\n", input); // test print statment
+		debug_printf("Return: %s\n", input); // test print statment
 
 		// Step 3: process input
 		// use input from readline and return commands table for executor

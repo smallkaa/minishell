@@ -1,113 +1,202 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
+/*   Updated: 2025/02/28 13:33:20 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 // Initialize a token array
-static TokenArray* token_array_init() {
-    TokenArray *array = (TokenArray*)malloc(sizeof(TokenArray));
-    if (!array) {
-        fprintf(stderr, "Failed to allocate token array\n");
-        exit(1);
-    }
-    
-    array->capacity = 16;
-    array->tokens = (Token*)malloc(sizeof(Token) * array->capacity);
-    if (!array->tokens) {
-        fprintf(stderr, "Failed to allocate tokens buffer\n");
-        free(array);
-        exit(1);
-    }
-    
-    array->count = 0;
-    return array;
+static t_TokenArray	*token_array_init(void)
+{
+	t_TokenArray	*array;
+
+	array = (t_TokenArray *)malloc(sizeof(t_TokenArray));
+	if (!array)
+	{
+		print_error("Failed to allocate token array\n");
+		exit(1);
+	}
+	array->capacity = 16;
+	array->tokens = (t_Token *)malloc(sizeof(t_Token) * array->capacity);
+	if (!array->tokens)
+	{
+		print_error("Failed to allocate tokens buffer\n");
+		free(array);
+		exit(1);
+	}
+	array->count = 0;
+	return (array);
 }
 
 // Add a token to the array
-static void token_array_add(TokenArray *array, Token token) {
-    // Expand array if needed
-    if (array->count >= array->capacity) {
-        array->capacity *= 2;
-        array->tokens = (Token*)realloc(array->tokens, sizeof(Token) * array->capacity);
-        if (!array->tokens) {
-            fprintf(stderr, "Failed to reallocate tokens buffer\n");
-            exit(1);
-        }
-    }
-    
-    array->tokens[array->count++] = token;
+static void	token_array_add(t_TokenArray *array, t_Token token)
+{
+	if (array->count >= array->capacity)
+	{
+		array->capacity *= 2;
+		array->tokens = (t_Token *)realloc(array->tokens, \
+		sizeof(t_Token) * array->capacity);
+		if (!array->tokens)
+		{
+			print_error("Failed to reallocate tokens buffer\n");
+			exit(1);
+		}
+	}
+	array->tokens[array->count++] = token;
 }
 
 // Free token array resources
-static void token_array_free(TokenArray *array) {
-    if (!array) return;
-    
-    for (int i = 0; i < array->count; i++) {
-        free_token(&array->tokens[i]);
-    }
-    
-    free(array->tokens);
-    free(array);
+static void	token_array_free(t_TokenArray *array)
+{
+	int	i;
+
+	if (!array)
+	{
+		return ;
+	}
+	i = 0;
+	while (i < array->count)
+	{
+		free_token(&array->tokens[i]);
+		i++;
+	}
+	free(array->tokens);
+	free(array);
 }
 
-
 // Helper function to print token information
-static void print_token(Token token) {
-    const char *type_names[] = {
-        "WORD", "PIPE", "REDIRECT_IN", "REDIRECT_OUT",
-        "APPEND_OUT", "BACKGROUND", "EOF"
-    };
-    
-    printf("Token: { type: %s", type_names[token.type]);
-    
-    if (token.type == TOKEN_WORD) {
-        printf(", value: \"%s\"", token.value);
-    }
-    
-    printf(" }\n");
+static void	print_token(t_Token token)
+{
+	const char	*type_names[] = {
+		"WORD", "PIPE", "REDIRECT_IN", "REDIRECT_OUT",
+		"APPEND_OUT", "BACKGROUND", "EOF"
+	};	
+
+	debug_printf("Token: { type: %s", type_names[token.type]);
+	if (token.type == TOKEN_WORD)
+	{
+		debug_printf(", value: \"%s\"", token.value);
+	}
+	debug_printf(" }\n");
 }
 
 // Function to demonstrate how the tokenizer handles quotes
-static void explain_token(Token token) {
-    if (token.type != TOKEN_WORD || !token.value)
-        return;
-    
-    printf("  Analysis:\n");
-    const char *str = token.value;
-    int in_single_quote = 0;
-    int in_double_quote = 0;
-    
-    printf("    ");
-    for (size_t i = 0; i < strlen(str); i++) {
-        if (str[i] == '\'' && !in_double_quote) {
-            in_single_quote = !in_single_quote;
-            printf("%s'%s", in_single_quote ? "\033[33m" : "\033[0m", in_single_quote ? "\033[33m" : "\033[0m");
-        } 
-        else if (str[i] == '"' && !in_single_quote) {
-            in_double_quote = !in_double_quote;
-            printf("%s\"%s", in_double_quote ? "\033[36m" : "\033[0m", in_double_quote ? "\033[36m" : "\033[0m");
-        } 
-        else if (str[i] == '$' && (in_double_quote || !in_single_quote)) {
-            printf("\033[32m$\033[0m");
-        } 
-        else {
-            char color_code[10] = "\033[0m";
-            if (in_single_quote) strcpy(color_code, "\033[33m");
-            else if (in_double_quote) strcpy(color_code, "\033[36m");
-            printf("%s%c\033[0m", color_code, str[i]);
-        }
-    }
-    printf("\n");
-    
-    // Reset color in case something went wrong
-    printf("\033[0m");
+static void	explain_token(t_Token token)
+{
+	const char	*str;
+	int			in_single_quote;
+	int			in_double_quote;
+	size_t		i;
+
+	str = token.value;
+	in_single_quote = 0;
+	in_double_quote = 0;
+	if (token.type != TOKEN_WORD || !token.value)
+		return ;
+	debug_printf("  Analysis:\n");
+	debug_printf("    ");
+	i = 0;
+	while (i < strlen(str))
+	{
+		if (str[i] == '\'' && !in_double_quote)
+		{
+			in_single_quote = !in_single_quote;
+			debug_printf("%s'%s", in_single_quote ? "\033[33m" : "\033[0m", in_single_quote ? "\033[33m" : "\033[0m");
+		} 
+		else if (str[i] == '"' && !in_single_quote)
+		{
+			in_double_quote = !in_double_quote;
+			debug_printf("%s\"%s", in_double_quote ? "\033[36m" : "\033[0m", in_double_quote ? "\033[36m" : "\033[0m");
+		} 
+		else if (str[i] == '$' && (in_double_quote || !in_single_quote))
+		{
+			debug_printf("\033[32m$\033[0m");
+		} 
+		else
+		{
+			char color_code[10] = "\033[0m";
+			if (in_single_quote) ft_strcpy(color_code, "\033[33m");
+			else if (in_double_quote) ft_strcpy(color_code, "\033[36m");
+			debug_printf("%s%c\033[0m", color_code, str[i]);
+		}
+		i++;
+	}
+	debug_printf("\n");
+	debug_printf("\033[0m");
 }
 
-t_cmd	* run_parser(char	*input)
+t_cmd *create_command_from_tokens(t_TokenArray *tokens)
 {
-    printf("\nTokenizing: %s\n\n", input);
+    if (tokens->count < 1 || tokens->tokens[0].type != TOKEN_WORD) {
+        return NULL;
+    }
     
+    // Allocate memory for the command structure
+    t_cmd *cmd = (t_cmd *)malloc(sizeof(t_cmd));
+    if (!cmd) {
+        print_error( "Failed to allocate command structure\n");
+        return NULL;
+    }
+    
+    // Initialize the structure
+    cmd->binary = NULL;
+    cmd->in_redir = NULL;
+    cmd->out_redir = NULL;
+    cmd->next = NULL;
+    
+    // Count how many word tokens we have for argv
+    int argc = 0;
+    for (int i = 0; i < tokens->count; i++) {
+        if (tokens->tokens[i].type == TOKEN_WORD) {
+            argc++;
+        } else {
+            // For simplicity, stop at the first non-word token
+            break;
+        }
+    }
+    
+    // Allocate argv array (+ 1 for NULL terminator)
+    cmd->argv = (char **)malloc((argc + 1) * sizeof(char *));
+    if (!cmd->argv) {
+        print_error( "Failed to allocate argv array\n");
+        free(cmd);
+        return NULL;
+    }
+    
+    // Fill argv array with copies of token values
+    for (int i = 0; i < argc; i++)
+	{
+        cmd->argv[i] = ft_strdup(tokens->tokens[i].value);
+        if (!cmd->argv[i]) {
+            print_error( "Failed to duplicate argument string\n");
+            // Clean up previously allocated strings
+            for (int j = 0; j < i; j++) {
+                free(cmd->argv[j]);
+            }
+            free(cmd->argv);
+            free(cmd);
+            return NULL;
+        }
+    }
+    cmd->argv[argc] = NULL;  // NULL-terminate the array
+    return cmd;
+}
+
+t_cmd	*run_parser(char	*input)
+{
+    debug_printf("\nTokenizing: %s\n\n", input);   
     tokenizer_init(input);
     
     // First, parse all tokens and accumulate them
-    TokenArray *tokens = token_array_init();
-    Token token;
+    t_TokenArray *tokens = token_array_init();
+    t_Token token;
+    t_cmd *cmd;
     
     do {
         token = get_next_token();
@@ -115,40 +204,17 @@ t_cmd	* run_parser(char	*input)
             token_array_add(tokens, token);
         }
     } while (token.type != TOKEN_EOF);
-    
+    cmd = create_command_from_tokens(tokens);
     tokenizer_cleanup();
     
     // Now, print all collected tokens
-    printf("Found %d token(s):\n", tokens->count);
+    debug_printf("Found %d token(s):\n", tokens->count);
     for (int i = 0; i < tokens->count; i++) {
-        printf("\nToken %d:\n", i);
+        debug_printf("\nToken %d:\n", i);
         print_token(tokens->tokens[i]);
         explain_token(tokens->tokens[i]);
     }
-    
- 
-
-if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD && ft_strcmp(tokens->tokens[0].value, "exit") == 0)
-{
-	printf("EXIT!\n");
-   // Free the token array
     token_array_free(tokens);
-
-	return NULL;
-    //return handle_exit_command();
-}
-/*	if(0 == ft_strcmp(input,"exit"))
-	{
-		t_cmd cmd1 =
-		{
-			.argv = (char *[]){"exit", "", NULL},
-			.binary = NULL,
-			.in_redir = NULL,
-			.out_redir = NULL,
-			.next = NULL
-		};
-		return &cmd1;
-	}
-	return NULL;*/
+    return cmd;
 return NULL;
 }

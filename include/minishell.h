@@ -98,9 +98,14 @@ typedef struct s_cmd
 	char				**argv;
 	char				*binary;
 	t_redir				*in_redir;
+<<<<<<< HEAD
 	t_redir				*out_redir;	
 	t_cmd				*next;
 	t_shell				*shell;
+=======
+	t_redir				*out_redir;
+	struct s_cmd		*next;
+>>>>>>> 25de078 (Add: first provided command - can be processed now)
 }	t_cmd;
 
 
@@ -108,6 +113,8 @@ typedef struct s_cmd
 void	print_error_exit(char *cmd, int exit_status);
 void	print_error(char *cmd);
 void	cleanup_heredoc(t_cmd *cmd);
+bool	is_debug_mode(void);
+void	debug_printf(const char *format, ...);
 
 // redirections <, <<
 void	handle_in_redirection(t_cmd *cmd, char **envp);
@@ -123,7 +130,7 @@ int		handle_exit(t_cmd *cmd);
 int		handle_echo(t_cmd *cmd);
 
 // parser
-t_cmd	* run_parser(char	*input);
+t_cmd	*run_parser(char	*input);
 
 // executor
 void	run_executor(t_cmd *cmd, char **envp);

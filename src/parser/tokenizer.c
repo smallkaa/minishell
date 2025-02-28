@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "tokenizer.h"
+#include "../include/minishell.h"
 
 static const char *current_input = NULL;
 static char *token_buffer = NULL;
@@ -16,7 +16,7 @@ void tokenizer_init(const char *input) {
     token_buffer_size = 256;
     token_buffer = (char *)malloc(token_buffer_size);
     if (!token_buffer) {
-        fprintf(stderr, "Failed to allocate token buffer\n");
+        print_error("Failed to allocate token buffer\n");
         exit(1);
     }
 }
@@ -29,7 +29,7 @@ void tokenizer_cleanup() {
 }
 
 // Public API function - Free a token's resources
-void free_token(Token *token) {
+void free_token(t_Token *token) {
     if (token && token->value) {
         free(token->value);
         token->value = NULL;
@@ -37,13 +37,13 @@ void free_token(Token *token) {
 }
 
 // Check if character is a shell operator
-static int is_special_char(char c) {
+static int ft_is_special_char(char c) {
     return (c == '|' || c == '<' || c == '>' || c == '&');
 }
 
 // Skip whitespace in the input
 static void skip_whitespace() {
-    while (*current_input && isspace((unsigned char)*current_input)) {
+    while (*current_input && ft_isspace((unsigned char)*current_input)) {
         current_input++;
     }
 }
@@ -55,7 +55,7 @@ static void append_char_to_buffer(char c, size_t *buffer_index) {
         token_buffer_size *= 2;
         token_buffer = (char *)realloc(token_buffer, token_buffer_size);
         if (!token_buffer) {
-            fprintf(stderr, "Failed to reallocate token buffer\n");
+            print_error("Failed to reallocate token buffer\n");
             exit(1);
         }
     }
@@ -64,8 +64,8 @@ static void append_char_to_buffer(char c, size_t *buffer_index) {
 }
 
 // Public API function - Get the next token from the input
-Token get_next_token() {
-    Token token = {TOKEN_EOF, NULL};
+t_Token get_next_token() {
+    t_Token token = {TOKEN_EOF, NULL};
     
     skip_whitespace();
     
@@ -76,7 +76,7 @@ Token get_next_token() {
     }
     
     // Handle special characters (but not \ or ;)
-    if (is_special_char(*current_input)) {
+    if (ft_is_special_char(*current_input)) {
         switch (*current_input) {
             case '|':
                 token.type = TOKEN_PIPE;
@@ -107,7 +107,7 @@ Token get_next_token() {
     
     while (*current_input) {
         // If not in quotes, whitespace or special chars end the token
-        if (isspace((unsigned char)*current_input) || is_special_char(*current_input)) {
+        if (ft_isspace((unsigned char)*current_input) || ft_is_special_char(*current_input)) {
             break;
         }
         
@@ -166,7 +166,7 @@ Token get_next_token() {
         token.type = TOKEN_WORD;
         token.value = strdup(token_buffer);
         if (!token.value) {
-            fprintf(stderr, "Failed to allocate token value\n");
+            print_error("Failed to allocate token value\n");
             exit(1);
         }
     }
