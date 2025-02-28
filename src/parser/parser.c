@@ -6,7 +6,11 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/03/06 11:32:53 by pvershin         ###   ########.fr       */
+=======
+/*   Updated: 2025/02/28 13:33:20 by pvershin         ###   ########.fr       */
+>>>>>>> d33a0c5 (Add: first provided command - can be processed now)
 /*                                                                            */
 /* ************************************************************************** */
 
