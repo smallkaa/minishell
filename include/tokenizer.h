@@ -1,38 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/28 12:17:27 by pvershin          #+#    #+#             */
+/*   Updated: 2025/02/28 13:09:32 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef TOKENIZER_H
-#define TOKENIZER_H
+# define TOKENIZER_H
 
-typedef enum {
-    TOKEN_WORD,       // Regular word/command/argument
-    TOKEN_PIPE,       // |
-    TOKEN_REDIRECT_IN,// <
-    TOKEN_REDIRECT_OUT,// >
-    TOKEN_APPEND_OUT, // >>
-    TOKEN_BACKGROUND, // &
-    TOKEN_EOF         // End of input
-} TokenType;
+typedef enum e_possible_tokens
+{
+	TOKEN_WORD,
+	TOKEN_PIPE,
+	TOKEN_REDIRECT_IN,
+	TOKEN_REDIRECT_OUT,
+	TOKEN_APPEND_OUT,
+	TOKEN_BACKGROUND,
+	TOKEN_EOF
+}	t_TokenType;
 
-typedef struct {
-    TokenType type;
-    char *value;      // For TOKEN_WORD, contains the actual text
-} Token;
+typedef struct s_tkn
+{
+	t_TokenType	type;
+	char		*value;
+}	t_Token;
 
 // Token array for storing all tokens
-typedef struct {
-    Token *tokens;
-    int count;
-    int capacity;
-} TokenArray;
+typedef struct s_tokens_array
+{
+	t_Token	*tokens;
+	int		count;
+	int		capacity;
+}	t_TokenArray;
 
 // Initialize the tokenizer with input string
-void tokenizer_init(const char *input);
+void	tokenizer_init(const char *input);
 
 // Get the next token from the input
-Token get_next_token();
+t_Token	get_next_token(void);
 
 // Free resources used by a token
-void free_token(Token *token);
+void	free_token(t_Token *token);
 
 // Free tokenizer resources
-void tokenizer_cleanup();
+void	tokenizer_cleanup(void);
 
 #endif
