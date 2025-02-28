@@ -1,13 +1,13 @@
 #include "../include/minishell.h"
 
-t_shell	*init_shell(void)
+t_minishell	*init_minishell(void)
 {
-	t_shell	*shell;
+	t_minishell	*shell;
 
-	shell = malloc(sizeof(t_shell));
+	shell = malloc(sizeof(t_minishell));
 	if (!shell)
 	{
-		ft_putstr_fd("Error: init_shell() malloc fail\n", STDOUT_FILENO);
+		ft_putstr_fd("Error: init_minishell() malloc fail\n", STDOUT_FILENO);
 		return (NULL);
 	}
 	shell->l_exit_stat = 0;

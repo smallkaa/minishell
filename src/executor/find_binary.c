@@ -17,15 +17,10 @@ static int	assign_binary(char *path, t_cmd *cmd)
 {
 	char	*binary;
 	char	*temp;
-	// fprintf(stderr, "[DEBUG] assign_binary() cmd->argv[0]: %s, cmd->binary: %s\n", cmd->argv[0], cmd->binary);
-
-
 	if (path && *path)
 	{
 		temp = ft_strjoin(path, "/");
-		// printf("[DEBUG]: assign_binary() temp: %s\n", temp);
 		binary = ft_strjoin(temp, cmd->argv[0]);
-		// printf("[DEBUG]: assign_binary() binary: %s\n", binary);
 		free(temp);
 	}
 	else
@@ -122,8 +117,6 @@ static int	handle_path_search(t_cmd *cmd)
 		return (127);
 	}
 	status = search_paths(paths, cmd);
-	// printf("[DEBUG]: handle_path_search() status = search_paths(paths, cmd): %d\n", status);
-
 	ft_free_arrstrs(paths);
 	if (status == 126)
 		print_error(cmd->argv[0]);
@@ -147,18 +140,19 @@ static int	handle_path_search(t_cmd *cmd)
 void	find_binary(t_cmd *cmd)
 {
 	int	status;
-	// fprintf(stderr, "[DEBUG] find_binary() cmd->argv[0]: %s, cmd->binary: %s\n", cmd->argv[0], cmd->binary);
 
-
-	if (!cmd->argv[0])
+	if (!is_builtin(cmd))
 	{
-		print_error(cmd->argv[0]);
-		status = 127;
+		if (!cmd->argv[0])
+		{
+			print_error(cmd->argv[0]);
+			status = 127;
+			update_last_exit_status(cmd, status);
+		}
+		if (cmd->argv[0][0] == '/' || cmd->argv[0][0] == '.')
+			status = handle_direct_path(cmd);
+		else
+			status = handle_path_search(cmd);
 		update_last_exit_status(cmd, status);
 	}
-	if (cmd->argv[0][0] == '/' || cmd->argv[0][0] == '.')
-		status = handle_direct_path(cmd);
-	else
-		status = handle_path_search(cmd);
-	update_last_exit_status(cmd, status);
 }

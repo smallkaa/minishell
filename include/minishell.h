@@ -74,7 +74,7 @@ typedef struct s_redir
 typedef struct s_shell
 {
     int	l_exit_stat;  // Stores the last exit status ($?)
-}	t_shell;
+}	t_minishell;
 
 /**
  * @struct s_cmd
@@ -100,11 +100,11 @@ typedef struct s_cmd
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	t_cmd				*next;
-	t_shell				*shell;
+	t_minishell				*minishell;
 }	t_cmd;
 
 // init
-t_shell	*init_shell(void);
+t_minishell	*init_minishell(void);
 void	find_binary(t_cmd *cmd);
 
 // utils
@@ -128,7 +128,7 @@ int		handle_exit(t_cmd *cmd);
 int		handle_echo(t_cmd *cmd);
 
 // parser
-t_cmd	*run_parser(t_shell *shell, char *input);
+t_cmd	*run_parser(t_minishell *shell, char *input);
 
 // executor
 void	run_executor(t_cmd *cmd, char **envp);

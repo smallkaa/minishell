@@ -10,19 +10,19 @@ the shell shall exit from the subshell environment with
 the specified exit status and continue in the environment from
 which that subshell environment was invoked; otherwise,
 the shell utility shall terminate with the specified exit status.
-If n is specified, but its value is not between 0 and 255 inclusively, 
+If n is specified, but its value is not between 0 and 255 inclusively,
 the exit status is undefined.
 
-A trap on EXIT shall be executed before the shell terminates, 
-except when the exit utility is invoked in that trap itself, 
+A trap on EXIT shall be executed before the shell terminates,
+except when the exit utility is invoked in that trap itself,
 in which case the shell shall exit immediately.
 
-The exit status shall be n, if specified, except that the behavior 
-is unspecified if n is not an unsigned decimal integer or 
-is greater than 255. Otherwise, the value shall be the exit value of 
-the last command executed, or zero if no command was executed. 
-When exit is executed in a trap action, the last command is 
-considered to be the command that executed immediately 
+The exit status shall be n, if specified, except that the behavior
+is unspecified if n is not an unsigned decimal integer or
+is greater than 255. Otherwise, the value shall be the exit value of
+the last command executed, or zero if no command was executed.
+When exit is executed in a trap action, the last command is
+considered to be the command that executed immediately
 preceding the trap action.
 */
 
@@ -77,6 +77,8 @@ bool	is_builtin(t_cmd *cmd)
 
 void	exec_builtin(t_cmd *cmd)
 {
+	printf ("[DEBUG] we are in exec_builtin\n");
+
 	if (!cmd || !cmd->argv[0])
 	{
 		ft_putstr_fd("minishell: Error exec_builtin(), no args\n", STDERR_FILENO);
