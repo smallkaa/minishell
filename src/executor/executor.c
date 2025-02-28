@@ -42,6 +42,8 @@ void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
  */
 static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
+	printf("[DEBUG]: exec_fork_child() input cmd: [%s]\n", cmd->argv[0]);
+
 	if (cmd->next)
 	{
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
@@ -64,7 +66,7 @@ static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
  * Forks and executes a command, setting up pipes for
  * inter-process communication.
  * - Waits for the child process to complete before continuing.
- * - Stores the last exit status in shell stuct 
+ * - Stores the last exit status in shell stuct
  * 	on success - WEXITSTATUS, else 128 + WTERMSIG.
  *
  * @param cmd	The command to execute.
@@ -118,7 +120,7 @@ static void	exec_cmd(t_cmd *cmd, char **envp)
 		fork_and_execute(cmd, in_fd, fd, envp);
 		cmd = cmd->next;
 	}
-	cleanup_heredoc(cmd);
+	// cleanup_heredoc(cmd);
 }
 
 /**
@@ -132,10 +134,12 @@ static void	exec_cmd(t_cmd *cmd, char **envp)
  */
 void	run_executor(t_cmd *cmd, char **envp)
 {
+	// printf("[DEBUG]: input cmd: [%s]\n", cmd->argv[0]);
 	if (is_builtin(cmd) && !cmd->next)
 	{
 		exec_builtin(cmd);
 		return ;
 	}
+	printf("[DEBUG]: input cmd: [%s]\n", cmd->argv[0]);
 	exec_cmd(cmd, envp);
 }

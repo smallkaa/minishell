@@ -68,6 +68,7 @@ void	handle_heredoc_redirection(t_cmd *cmd)
 
 void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
+
 	if (cmd->binary == NULL)
 		print_error_exit(cmd->binary, EXIT_FAILURE);
 	if (in_fd != 0)
@@ -81,6 +82,8 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 		if (close(in_fd) == -1)
 			print_error_exit("close", EXIT_FAILURE);
 	}
+	printf("[DEBUG]: execute() input cmd: [%s]\n", cmd->argv[0]);
+
 	execve(cmd->binary, cmd->argv, envp);
 	print_error_exit("execve", EXIT_FAILURE);
 }
