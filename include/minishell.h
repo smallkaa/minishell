@@ -98,14 +98,9 @@ typedef struct s_cmd
 	char				**argv;
 	char				*binary;
 	t_redir				*in_redir;
-<<<<<<< HEAD
 	t_redir				*out_redir;	
 	t_cmd				*next;
 	t_shell				*shell;
-=======
-	t_redir				*out_redir;
-	struct s_cmd		*next;
->>>>>>> 25de078 (Add: first provided command - can be processed now)
 }	t_cmd;
 
 
