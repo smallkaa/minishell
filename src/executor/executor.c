@@ -42,7 +42,7 @@ void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
  */
 static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
-	printf("[DEBUG]: exec_fork_child() input cmd: [%s]\n", cmd->argv[0]);
+	// printf("[DEBUG]: exec_fork_child() input cmd: [%s]\n", cmd->argv[0]);
 
 	if (cmd->next)
 	{
@@ -140,6 +140,6 @@ void	run_executor(t_cmd *cmd, char **envp)
 		exec_builtin(cmd);
 		return ;
 	}
-	printf("[DEBUG]: input cmd: [%s]\n", cmd->argv[0]);
+	// printf("[DEBUG]: input cmd: [%s]\n", cmd->argv[0]);
 	exec_cmd(cmd, envp);
 }

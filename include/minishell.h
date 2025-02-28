@@ -118,6 +118,7 @@ typedef struct s_cmd
 
 // init
 t_shell	*init_shell(void);
+void	find_binary(t_cmd *cmd);
 
 // utils
 void	print_error_exit(char *cmd, int exit_status);
