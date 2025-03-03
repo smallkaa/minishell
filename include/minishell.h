@@ -123,6 +123,8 @@ void	find_binary(t_cmd *cmd);
 // utils
 void	print_error_exit(char *cmd, int exit_status);
 void	print_error(char *cmd);
+void	command_not_found_handle(t_cmd *cmd);
+
 // void	cleanup_heredoc(t_cmd *cmd);
 bool	is_debug_mode(void);
 void	debug_printf(const char *format, ...);

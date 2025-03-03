@@ -26,7 +26,9 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 {
 	if (cmd->binary == NULL)
 	{
-		print_error_exit(cmd->binary, EXIT_FAILURE);
+		printf("DEBUG: execute() cmd->binary == NULL status: %d\n", cmd->minishell->l_exit_stat);
+		command_not_found_handle(cmd);
+		exit(cmd->minishell->l_exit_stat);
 	}
 	if (in_fd != 0)
 	{
@@ -42,5 +44,4 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 	if (is_builtin(cmd))
 		exec_builtin(cmd);
 	execve(cmd->binary, cmd->argv, envp);
-	print_error_exit("execve", EXIT_FAILURE);
 }

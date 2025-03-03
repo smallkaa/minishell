@@ -215,6 +215,7 @@ void	run_executor(t_cmd *cmd, char **envp)
 		return ;
 	}
 	exec_cmd(cmd, envp);
+	printf("[DEBUG]: exit status: (%d)", );
 }
 // cc -Wall -Wextra -Werror test_run_executor_redir.c -Ilibft -Llibft -lft -o test_run_executor_redir
 int main(int argc, char **argv, char **envp)
