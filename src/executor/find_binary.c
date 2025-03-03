@@ -58,13 +58,11 @@ static int	handle_direct_path(t_cmd *cmd)
 	status = assign_binary("", cmd);
 	if (status == EXIT_SUCCESS)
 		return (status);
-	if (status == 126)
-	{
-		print_error(cmd->argv[0]);
-		return (status);
-	}
-	print_error(cmd->argv[0]);
-	return (127);
+	else
+		{
+			print_error(cmd->argv[0]);
+			return (status);
+		}
 }
 
 /**
@@ -118,10 +116,13 @@ static int	handle_path_search(t_cmd *cmd)
 	}
 	status = search_paths(paths, cmd);
 	ft_free_arrstrs(paths);
-	if (status == 126)
-		print_error(cmd->argv[0]);
-	else if (status == 127)
-		print_error(cmd->argv[0]);
+	// if (status == 126)
+	// 	print_error(cmd->argv[0]);
+	// else if (status == 127)
+	// 	print_error(cmd->argv[0]);
+
+	printf("DEBUG: handle_direct_path() status: %d\n", status);
+
 	return (status);
 }
 
@@ -153,6 +154,9 @@ void	find_binary(t_cmd *cmd)
 			status = handle_direct_path(cmd);
 		else
 			status = handle_path_search(cmd);
+
+		printf("DEBUG: find_binary() status: %d\n", status);
+
 		update_last_exit_status(cmd, status);
 	}
 }

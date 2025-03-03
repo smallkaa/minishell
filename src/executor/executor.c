@@ -109,7 +109,7 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
  */
 static void	exec_cmd(t_cmd *cmd, char **envp)
 {
-	printf ("[DEBUG] we are in exec_cmd\n");
+	// printf ("[DEBUG] we are in exec_cmd\n");
 
 	int	fd[2];
 	int	in_fd;
@@ -143,4 +143,5 @@ void	run_executor(t_cmd *cmd, char **envp)
 	}
 	else
 		exec_cmd(cmd, envp);
+	printf("\n[DEBUG]: run_executor() exit status (%d)\n", cmd->minishell->l_exit_stat);
 }

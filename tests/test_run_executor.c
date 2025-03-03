@@ -85,6 +85,7 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 	printf("[DEBUG]: execute() input cmd: [%s]\n", cmd->argv[0]);
 
 	execve(cmd->binary, cmd->argv, envp);
+	
 	print_error_exit("execve", EXIT_FAILURE);
 }
 

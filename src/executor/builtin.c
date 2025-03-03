@@ -77,7 +77,7 @@ bool	is_builtin(t_cmd *cmd)
 
 void	exec_builtin(t_cmd *cmd)
 {
-	printf ("[DEBUG] we are in exec_builtin\n");
+	// printf ("[DEBUG] we are in exec_builtin\n");
 
 	if (!cmd || !cmd->argv[0])
 	{
