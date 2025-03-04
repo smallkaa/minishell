@@ -2,14 +2,14 @@
 
 /**
  * Handles the `exit` command.
- * - If no command or no arguments are provided, 
+ * - If no command or no arguments are provided,
  * 	 exits with status `EXIT_FAILURE`.
- * - If more than one argument is provided, 
+ * - If more than one argument is provided,
  * 	 prints "too many arguments" and returns `EXIT_FAILURE` without exiting.
- * - If a single numeric argument is provided, 
+ * - If a single numeric argument is provided,
  * 	 converts it to an integer using `ft_atoi()`, else set to exit code to zero.
  * - Saves exit status to shell structer.
- * - Terminates the shell using `exit(status)`, 
+ * - Terminates the shell using `exit(status)`,
  * 	 where `status` is the provided exit code.
  *
  * @param cmd	The command structure containing arguments.
@@ -26,12 +26,12 @@ int	handle_exit(t_cmd *cmd)
 
 	if (!cmd || !cmd->argv[0])
 	{
-		ft_putstr_fd("minishell: Error exec_exit(), no args\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: handle_exit() no arguments found\n", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
 	if (cmd->argv[1] && cmd->argv[2])
 	{
-		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: handle_exit() too many arguments\n", STDERR_FILENO);
 		return (EXIT_FAILURE);
 	}
 	if (!cmd->argv[1])
