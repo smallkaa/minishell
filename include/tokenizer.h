@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 12:17:27 by pvershin          #+#    #+#             */
-/*   Updated: 2025/02/28 13:09:32 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/04 10:22:17 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKENIZER_H
 # define TOKENIZER_H
+
+# include <minishell.h>
 
 typedef enum e_possible_tokens
 {
