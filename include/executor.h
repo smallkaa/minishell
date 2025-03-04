@@ -20,9 +20,9 @@ void	execute(t_cmd *cmd, int in_fd, char **envp);
 // builtin exec functions
 bool	is_builtin(t_cmd *cmd);
 void	exec_builtin(t_cmd *cmd);
-int		handle_exit(t_cmd *cmd);
-int		handle_echo(t_cmd *cmd);
-int		handle_pwd(t_cmd *cmd);
+void	handle_exit(t_cmd *cmd);
+void	handle_echo(t_cmd *cmd);
+void	handle_pwd(t_cmd *cmd);
 
 void	find_binary(t_cmd *cmd);
 

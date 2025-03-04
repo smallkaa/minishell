@@ -31,7 +31,6 @@ void	command_not_found_handle(t_cmd *cmd)
 void	print_error(char *cmd)
 {
 	ft_putstr_fd(cmd, STDERR_FILENO);
-	perror(": ");
 }
 
 bool is_debug_mode()

@@ -110,7 +110,7 @@ int		run_executor(t_cmd *cmd, char **envp);
 
 // exit utils
 void		print_error_exit(char *cmd, int exit_status); // to be fixed
-void		print_error(char *cmd); // to be fixed
+void		print_error(char *cmd);
 
 bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);

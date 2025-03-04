@@ -26,7 +26,7 @@ int	exec_pwd(t_cmd *cmd)
 	working_dir = getcwd(buf, PATH_MAX);
 	if (!working_dir)
 	{
-		ft_putstr_fd("minishell: exec_pwd, pathname too long\n", STDERR_FILENO);
+		print_error("minishell: exec_pwd, pathname too long\n");
 		update_last_exit_status(cmd, EXIT_FAILURE);
 		if (cmd->in_pipe)
 			exit (EXIT_FAILURE);
@@ -57,22 +57,22 @@ int	exec_pwd(t_cmd *cmd)
  *              (e.g., extra arguments).
  *              If in a pipeline, calls `exit(status)`.
  */
-int	handle_pwd(t_cmd *cmd)
+void	handle_pwd(t_cmd *cmd)
 {
 	int	status;
 
 	if (cmd->argv[1])
 	{
 		update_last_exit_status(cmd, EXIT_FAILURE);
-		ft_putstr_fd("minishell: handle_pwd, too many args\n", STDERR_FILENO);
+		print_error("minishell: handle_pwd, too many args\n");
 		if (cmd->in_pipe)
 			exit (EXIT_FAILURE);
-		return (EXIT_FAILURE);
+		return ;
 	}
 	else
 		status = exec_pwd(cmd);
 	update_last_exit_status(cmd, status);
 	if (cmd->in_pipe)
 		exit (status);
-	return (status);
+	return ;
 }

@@ -138,11 +138,13 @@ int	run_executor(t_cmd *cmd, char **envp)
 	if (is_builtin(cmd) && !cmd->next)
 	{
 		exec_builtin(cmd);
+		printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
+
 		return (cmd->minishell->exit_stat);
 	}
 	exec_cmd(cmd, envp);
 
-	printf("\n[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
+	printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
 
 	return (cmd->minishell->exit_stat);
 }
