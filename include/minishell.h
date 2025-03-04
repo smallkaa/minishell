@@ -23,11 +23,10 @@
 # include <fcntl.h>
 # include <string.h>
 # include <signal.h>
-#include <sys/types.h>
+# include <sys/types.h>
 
-//Definition of AT_* constants
-# include <fcntl.h>
 # include "libft.h"
+# include "executor.h"
 # include "tokenizer.h"
 # include "signals.h"
 
@@ -40,10 +39,19 @@
 // Delimiter used for tokenizing input.
 # define DELIM " "
 
-// Heredoc temp file
-# define HEREDOC_TFILE "heredoc_tmp.txt"
 
-typedef struct s_cmd t_cmd;
+/**
+ * @struct s_shell
+ * @brief Represents a general minishell structure.
+ *
+ * - `last_exit_stats`:	Int, the last exit status of
+ * 						cmd, builtin, or cmd in pipe
+ */
+typedef struct s_minishell
+{
+	int	l_exit_stat;  // Stores the last exit status ($?)
+}	t_minishell;
+
 /**
  * @enum e_redir_type
  * @brief Enumeration for different types of I/O redirection.
@@ -78,18 +86,6 @@ typedef struct s_redir
 }	t_redir;
 
 /**
- * @struct s_shell
- * @brief Represents a general minishell structure.
- *
- * - `last_exit_stats`:	Int, the last exit status of
- * 						cmd, builtin, or cmd in pipe
- */
-typedef struct s_shell
-{
-    int	l_exit_stat;  // Stores the last exit status ($?)
-}	t_minishell;
-
-/**
  * @struct s_cmd
  * @brief Represents a single command in a pipeline.
  *
@@ -116,40 +112,23 @@ typedef struct s_cmd
 	t_minishell				*minishell;
 }	t_cmd;
 
-// init
+// init minishell
 t_minishell	*init_minishell(void);
-void	find_binary(t_cmd *cmd);
-
-// utils
-void	print_error_exit(char *cmd, int exit_status);
-void	print_error(char *cmd);
-void	command_not_found_handle(t_cmd *cmd);
-
-// void	cleanup_heredoc(t_cmd *cmd);
-bool	is_debug_mode(void);
-void	debug_printf(const char *format, ...);
-
-// redirections <, <<
-void	handle_in_redirection(t_cmd *cmd, char **envp);
-void	handle_heredoc(t_cmd *cmd, char **envp);
-
-// redirections >, >>
-void	handle_out_redirection(t_cmd *cmd);
-bool	is_builtin(t_cmd *cmd);
-
-// builtin
-void	exec_builtin(t_cmd *cmd);
-int		handle_exit(t_cmd *cmd);
-int		handle_echo(t_cmd *cmd);
 
 // parser
 t_cmd	*run_parser(t_minishell *shell, char *input);
 
 // executor
 void	run_executor(t_cmd *cmd, char **envp);
-void	execute(t_cmd *cmd, int in_fd, char **envp);
 
-// executor utils
-void	update_last_exit_status(t_cmd *cmd, int status);
+// exit utils
+void	print_error_exit(char *cmd, int exit_status); // to be fixed
+void	print_error(char *cmd); // to be fixed
+
+bool	is_debug_mode(void);
+void	debug_printf(const char *format, ...);
+
+// clean utils
+
 
 #endif /* MINISHELL_H */

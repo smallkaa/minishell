@@ -6,12 +6,14 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 12:17:27 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/06 11:35:10 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:38:56 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKENIZER_H
 # define TOKENIZER_H
+
+# include <minishell.h>
 
 typedef enum e_possible_tokens
 {
