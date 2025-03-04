@@ -15,7 +15,7 @@ int	minishell(char **envp)
 	while (1)
 	{
 		// Step 1: read input from terminal, return a line for parser
-		input = readline("minishell:> "); // add some fearures like "username@hostname:> "
+		input = readline("minishell: "); // add some fearures like "username@hostname:> "
 
 		// check for EOF / Ctrl+D
 		if (!input)
