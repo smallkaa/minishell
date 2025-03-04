@@ -48,7 +48,7 @@ int	main(int argc, char **argv, char **envp)
 	//remove(void) for parser
 	(void)argc;
 	(void)argv;
-
+	setup_signal_handlers(); // Set up signal handlers
 	minishell(envp);
 	return (EXIT_SUCCESS);
 }

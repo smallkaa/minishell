@@ -29,6 +29,7 @@
 # include <fcntl.h>
 # include "libft.h"
 # include "tokenizer.h"
+# include "signals.h"
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64
