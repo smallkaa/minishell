@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/02/28 15:43:15 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/03/04 20:13:04 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,7 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
     cmd->next = NULL;
 	cmd->minishell = shell;
 	cmd->binary = NULL;
+	cmd->in_pipe = false;
 
     // Count how many word tokens we have for argv
     int argc = 0;

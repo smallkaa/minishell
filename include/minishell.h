@@ -26,9 +26,8 @@
 // Delimiter used for tokenizing input.
 # define DELIM " "
 
-
 /**
- * @struct s_shell
+ * @struct s_minishell
  * @brief Represents a general minishell structure.
  *
  * - `last_exit_stats`:	Int, the last exit status of
@@ -36,7 +35,7 @@
  */
 typedef struct s_minishell
 {
-	int	l_exit_stat;  // Stores the last exit status ($?)
+	int	exit_stat;
 }	t_minishell;
 
 /**
@@ -96,26 +95,24 @@ typedef struct s_cmd
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	t_cmd				*next;
-	t_minishell				*minishell;
+	t_minishell			*minishell;
+	bool				in_pipe;
 }	t_cmd;
 
 // init minishell
 t_minishell	*init_minishell(void);
 
 // parser
-t_cmd	*run_parser(t_minishell *shell, char *input);
+t_cmd		*run_parser(t_minishell *shell, char *input);
 
 // executor
-void	run_executor(t_cmd *cmd, char **envp);
+int		run_executor(t_cmd *cmd, char **envp);
 
 // exit utils
-void	print_error_exit(char *cmd, int exit_status); // to be fixed
-void	print_error(char *cmd); // to be fixed
+void		print_error_exit(char *cmd, int exit_status); // to be fixed
+void		print_error(char *cmd);
 
-bool	is_debug_mode(void);
-void	debug_printf(const char *format, ...);
-
-// clean utils
-
+bool		is_debug_mode(void);
+void		debug_printf(const char *format, ...);
 
 #endif /* MINISHELL_H */

@@ -2,42 +2,41 @@
 
 /**
  * Handles the `exit` command.
- * - If no command or no arguments are provided, 
- * 	 exits with status `EXIT_FAILURE`.
- * - If more than one argument is provided, 
- * 	 prints "too many arguments" and returns `EXIT_FAILURE` without exiting.
- * - If a single numeric argument is provided, 
- * 	 converts it to an integer using `ft_atoi()`, else set to exit code to zero.
- * - Saves exit status to shell structer.
- * - Terminates the shell using `exit(status)`, 
- * 	 where `status` is the provided exit code.
+ * - If no arguments are provided, exits with `EXIT_SUCCESS (0)`.
+ * - If more than one argument is provided, prints an error and
+ *   exits with `EXIT_FAILURE (1)`.
+ * - If a single numeric argument is provided, converts it to an
+ *   integer using `ft_atoi()`
+ *   and exits with that status.
+ * - Updates the shell's last exit status before terminating the process.
  *
- * @param cmd	The command structure containing arguments.
- * 				- cmd->argv[0] should contain "exit".
- * 				- cmd->argv[1] (optional) is the exit status argument.
- * 				- If cmd->argv[2] exists, the function returns an error.
+ * Error Handling:
+ * - If too many arguments are given (`cmd->argv[2]` exists), prints an error
+ *   and exits with `EXIT_FAILURE`.
+ * - If `cmd->argv[1]` is not a valid integer, `ft_atoi()` should handle
+ *   it properly.
  *
- * @return		Returns `EXIT_FAILURE (1)` if "too many arguments" is detected.
- * 				Does not return if `exit()` is called.
+ * @param cmd   The command structure containing arguments.
+ *              - cmd->argv[0] should be `"exit"`.
+ *              - cmd->argv[1] (optional) is the exit status argument.
+ *              - cmd->argv[2] (if exists) triggers an error.
+ *
+ * @return      Does not return (calls `exit(status)`) unless an error occurs.
  */
-int	handle_exit(t_cmd *cmd)
+void	handle_exit(t_cmd *cmd)
 {
 	int	status;
 
-	if (!cmd || !cmd->argv[0])
-	{
-		ft_putstr_fd("minishell: Error exec_exit(), no args\n", STDERR_FILENO);
-		return (EXIT_FAILURE);
-	}
 	if (cmd->argv[1] && cmd->argv[2])
 	{
-		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
-		return (EXIT_FAILURE);
+		update_last_exit_status(cmd, EXIT_FAILURE);
+		print_error("minishell: handle_exit too many args\n");
+		exit (EXIT_FAILURE);
 	}
 	if (!cmd->argv[1])
-		status = 0;
+		status = EXIT_SUCCESS;
 	else
 		status = ft_atoi(cmd->argv[1]);
 	update_last_exit_status(cmd, status);
-	exit(status);
+	exit (status);
 }

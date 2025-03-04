@@ -121,7 +121,7 @@ static int	handle_path_search(t_cmd *cmd)
 	// else if (status == 127)
 	// 	print_error(cmd->argv[0]);
 
-	printf("DEBUG: handle_direct_path() status: %d\n", status);
+	// printf("DEBUG: handle_direct_path() status: %d\n", status);
 
 	return (status);
 }
@@ -155,7 +155,7 @@ void	find_binary(t_cmd *cmd)
 		else
 			status = handle_path_search(cmd);
 
-		printf("DEBUG: find_binary() status: %d\n", status);
+		// printf("DEBUG: find_binary() status: %d\n", status);
 
 		update_last_exit_status(cmd, status);
 	}

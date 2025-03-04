@@ -27,7 +27,6 @@ preceding the trap action.
 */
 
 // cd
-// pwd
 // export
 // unset
 // env
@@ -38,7 +37,7 @@ char	**setup_builtin(void)
 	builtin = malloc(8 * sizeof(char *));
 	if (!builtin)
 	{
-		print_error("Error: is_builtin() malloc failed");
+		print_error("Error: is_builtin() malloc failed\n");
 		return (NULL);
 	}
 	builtin[0] = ft_strdup("echo");
@@ -59,13 +58,13 @@ bool	is_builtin(t_cmd *cmd)
 
 	if (!cmd || !cmd->argv[0])
 	{
-		print_error("Error: is_builtin() no cmd provided");
+		print_error("Error: is_builtin() no cmd provided\n");
 		return (false);
 	}
 	builtin = setup_builtin();
 	if (!builtin)
 	{
-		print_error("Error: setup_builtin() failed");
+		print_error("Error: setup_builtin() failed\n");
 		return (false);
 	}
 	i = 0;
@@ -77,18 +76,13 @@ bool	is_builtin(t_cmd *cmd)
 
 void	exec_builtin(t_cmd *cmd)
 {
-	// printf ("[DEBUG] we are in exec_builtin\n");
-
-	if (!cmd || !cmd->argv[0])
-	{
-		ft_putstr_fd("minishell: Error exec_builtin(), no args\n", STDERR_FILENO);
-		return ;
-	}
 	if(is_builtin(cmd))
 	{
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
 			handle_exit(cmd);
 		else if (ft_strcmp(cmd->argv[0], "echo") == 0)
 			handle_echo(cmd);
+		else if (ft_strcmp(cmd->argv[0], "pwd") == 0)
+			handle_pwd(cmd);
 	}
 }

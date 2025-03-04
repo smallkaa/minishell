@@ -2,14 +2,14 @@
 
 t_minishell	*init_minishell(void)
 {
-	t_minishell	*shell;
+	t_minishell	*minishell;
 
-	shell = malloc(sizeof(t_minishell));
-	if (!shell)
+	minishell = malloc(sizeof(t_minishell));
+	if (!minishell)
 	{
 		ft_putstr_fd("Error: init_minishell() malloc fail\n", STDOUT_FILENO);
 		return (NULL);
 	}
-	shell->l_exit_stat = 0;
-	return (shell);
+	minishell->exit_stat = 0;
+	return (minishell);
 }
