@@ -30,6 +30,7 @@ void	handle_exit(t_cmd *cmd)
 	if (cmd->argv[1] && cmd->argv[2])
 	{
 		update_last_exit_status(cmd, EXIT_FAILURE);
+		// error_handler(cmd);
 		print_error("minishell: handle_exit too many args\n");
 		exit (EXIT_FAILURE);
 	}

@@ -41,7 +41,9 @@ void	command_not_found_handle(t_cmd *cmd)
 void	error_handler(t_cmd *cmd)
 {
 	char	*error_msg;
+	int		err_num;
 
+	err_num = errno;
 	write(STDERR_FILENO, "minishell: ", 11);
 	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
 	if (cmd->argv[1])
@@ -50,8 +52,9 @@ void	error_handler(t_cmd *cmd)
 		write(STDERR_FILENO, cmd->argv[1], ft_strlen(cmd->argv[1]));
 	}
 	write(STDERR_FILENO, ": ", 2);
-	error_msg = strerror(errno);
-	write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
+	error_msg = strerror(err_num);
+	if (write(STDERR_FILENO, error_msg, ft_strlen(error_msg)) < 0)
+		write(STDERR_FILENO, ": Error printing error message\n", 31);
 	write(STDERR_FILENO, "\n", 1);
 }
 
