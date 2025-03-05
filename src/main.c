@@ -9,9 +9,6 @@ int	minishell(char **envp)
 	t_cmd	*cmd;
 	t_minishell	*minishell;
 
-	//remove(void) for parser
-	(void)envp;
-
 	while (1)
 	{
 		// Step 1: read input from terminal, return a line for parser
@@ -19,10 +16,7 @@ int	minishell(char **envp)
 
 		// check for EOF / Ctrl+D
 		if (!input)
-		{
-			printf("\nExit minishell.\n"); // set error func later
 			return (EXIT_SUCCESS);
-		}
 
 		// Step 2: add input to history
 		if (*input)
@@ -31,7 +25,7 @@ int	minishell(char **envp)
 		debug_printf("Return: %s\n", input); // test print statment
 
 		// Step 3: init shell structure
-		minishell = init_minishell();
+		minishell = init_minishell(envp);
 		if (!minishell)
 			return (EXIT_FAILURE);
 

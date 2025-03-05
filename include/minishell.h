@@ -37,6 +37,7 @@
  */
 typedef struct s_minishell
 {
+	char **envp;
 	int	exit_stat;
 }	t_minishell;
 
@@ -102,7 +103,7 @@ typedef struct s_cmd
 }	t_cmd;
 
 // init minishell
-t_minishell	*init_minishell(void);
+t_minishell	*init_minishell(char **envp);
 
 // parser
 t_cmd		*run_parser(t_minishell *shell, char *input);

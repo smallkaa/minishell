@@ -24,6 +24,7 @@ void	handle_exit(t_cmd *cmd);
 void	handle_echo(t_cmd *cmd);
 void	handle_pwd(t_cmd *cmd);
 void	handle_cd(t_cmd *cmd);
+void	handle_env(t_cmd *cmd);
 
 void	find_binary(t_cmd *cmd);
 
