@@ -2,7 +2,7 @@
 UNAME := $(shell uname)
 
 # Default flags
-LDFLAGS := 
+LDFLAGS :=
 CFLAGS  := -g -Wall -Wextra -Werror
 
 # macOS-specific flags for Readline (2DO: fix extern void rl_replace_line(const char *, int) in signals.c)
@@ -19,7 +19,7 @@ NAME := minishell
 CC      := cc
 RM      := rm -rf
 
-SRC_DIRS := src src/executor src/parser
+SRC_DIRS := src src/executor src/parser src/executor/builins
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft
 

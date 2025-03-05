@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "../include/minishell.h"
+#include "minishell.h"
 
 static const char *current_input = NULL;
 static char *token_buffer = NULL;
@@ -11,7 +11,7 @@ static size_t token_buffer_size = 0;
 // Public API function - Initialize the tokenizer
 void tokenizer_init(const char *input) {
     current_input = input;
-    
+
     // Initial buffer allocation
     token_buffer_size = 256;
     token_buffer = (char *)malloc(token_buffer_size);
@@ -59,22 +59,22 @@ static void append_char_to_buffer(char c, size_t *buffer_index) {
             exit(1);
         }
     }
-    
+
     token_buffer[(*buffer_index)++] = c;
 }
 
 // Public API function - Get the next token from the input
 t_Token get_next_token() {
     t_Token token = {TOKEN_EOF, NULL};
-    
+
     skip_whitespace();
-    
+
     // Check for end of input
     if (*current_input == '\0') {
         token.type = TOKEN_EOF;
         return token;
     }
-    
+
     // Handle special characters (but not \ or ;)
     if (ft_is_special_char(*current_input)) {
         switch (*current_input) {
@@ -101,28 +101,28 @@ t_Token get_next_token() {
         }
         return token;
     }
-    
+
     // Handle words (including quoted strings)
     size_t buffer_index = 0;
-    
+
     while (*current_input) {
         // If not in quotes, whitespace or special chars end the token
         if (ft_isspace((unsigned char)*current_input) || ft_is_special_char(*current_input)) {
             break;
         }
-        
+
         // Handle single quotes - ignore all special characters
         if (*current_input == '\'') {
             // Add the opening quote to the token
             append_char_to_buffer(*current_input, &buffer_index);
             current_input++;
-            
+
             // Process everything inside quotes literally
             while (*current_input && *current_input != '\'') {
                 append_char_to_buffer(*current_input, &buffer_index);
                 current_input++;
             }
-            
+
             // Add closing quote if present
             if (*current_input == '\'') {
                 append_char_to_buffer(*current_input, &buffer_index);
@@ -131,19 +131,19 @@ t_Token get_next_token() {
             // Note: If no closing quote, just continue processing
             continue;
         }
-        
+
         // Handle double quotes - ignore all special characters except $
         if (*current_input == '"') {
             // Add the opening quote to the token
             append_char_to_buffer(*current_input, &buffer_index);
             current_input++;
-            
+
             while (*current_input && *current_input != '"') {
                 // If $ found inside double quotes, preserve its special meaning
                 append_char_to_buffer(*current_input, &buffer_index);
                 current_input++;
             }
-            
+
             // Add closing quote if present
             if (*current_input == '"') {
                 append_char_to_buffer(*current_input, &buffer_index);
@@ -152,15 +152,15 @@ t_Token get_next_token() {
             // Note: If no closing quote, just continue processing
             continue;
         }
-        
+
         // Regular character
         append_char_to_buffer(*current_input, &buffer_index);
         current_input++;
     }
-    
+
     // Null-terminate the buffer
     token_buffer[buffer_index] = '\0';
-    
+
     // Only create a WORD token if we have content
     if (buffer_index > 0) {
         token.type = TOKEN_WORD;
@@ -170,6 +170,6 @@ t_Token get_next_token() {
             exit(1);
         }
     }
-    
+
     return token;
 }
