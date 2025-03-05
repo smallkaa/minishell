@@ -59,9 +59,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 
 	int status;
-
+	setup_signal_handlers(); // Set up signal handlers
 	status = minishell(envp);
 	printf("\n[DEBUG]: main() exit status (%d)\n", status);
-
 	return (status);
 }

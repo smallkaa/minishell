@@ -1,7 +1,22 @@
+# Detect OS
+UNAME := $(shell uname)
+
+# Default flags
+LDFLAGS := 
+CFLAGS  := -g -Wall -Wextra -Werror
+
+# macOS-specific flags for Readline (2DO: fix extern void rl_replace_line(const char *, int) in signals.c)
+ifeq ($(UNAME), Darwin)
+    READLINE_PATH := $(shell brew --prefix readline 2>/dev/null)
+    ifneq ($(READLINE_PATH),)
+        LDFLAGS += -L$(READLINE_PATH)/lib
+        CFLAGS  += -I$(READLINE_PATH)/include
+    endif
+endif
+
 NAME := minishell
 
 CC      := cc
-CFLAGS  := -g -Wall -Wextra -Werror
 RM      := rm -rf
 
 SRC_DIRS := src src/executor src/parser
@@ -21,7 +36,7 @@ LIBFT := $(LIBFT_DIR)/libft.a
 
 # Compile all
 $(NAME): $(OBJ_FILES) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) -lreadline
+	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(LDFLAGS) -lreadline
 
 # Rule for compiling object files with correct paths
 $(OBJ_DIR)/%.o: src/%.c
@@ -54,6 +69,7 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	make -C $(LIBFT_DIR) fclean
+	rm -f sources_dump.txt
 
 re: fclean $(NAME)
 
