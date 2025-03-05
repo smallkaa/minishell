@@ -84,5 +84,7 @@ void	exec_builtin(t_cmd *cmd)
 			handle_echo(cmd);
 		else if (ft_strcmp(cmd->argv[0], "pwd") == 0)
 			handle_pwd(cmd);
+		else if (ft_strcmp(cmd->argv[0], "cd") == 0)
+			handle_cd(cmd);
 	}
 }

@@ -26,8 +26,35 @@ void	command_not_found_handle(t_cmd *cmd)
 	write(STDERR_FILENO, "Command '", 9);
 	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
 	write(STDERR_FILENO, "' not found.", 12);
-	exit(cmd->minishell->exit_stat);
 }
+
+/**
+ * error_handler - Prints an error message for a failed command.
+ *
+ * Behavior:
+ * - Prints the format: `minishell: <command>: <arg> (if available): <error_message>`
+ * - Retrieves the error message using `strerror(errno)`.
+ * - Writes the message to `STDERR_FILENO` using `write()`.
+ *
+ * @param cmd Pointer to the `t_cmd` structure containing command arguments.
+ */
+void	error_handler(t_cmd *cmd)
+{
+	char	*error_msg;
+
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
+	if (cmd->argv[1])
+	{
+		write(STDERR_FILENO, ": ", 2);
+		write(STDERR_FILENO, cmd->argv[1], ft_strlen(cmd->argv[1]));
+	}
+	write(STDERR_FILENO, ": ", 2);
+	error_msg = strerror(errno);
+	write(STDERR_FILENO, error_msg, ft_strlen(error_msg));
+	write(STDERR_FILENO, "\n", 1);
+}
+
 void	print_error(char *cmd)
 {
 	ft_putstr_fd(cmd, STDERR_FILENO);

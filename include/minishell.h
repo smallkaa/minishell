@@ -12,6 +12,7 @@
 # include <string.h>
 # include <signal.h>
 # include <sys/types.h>
+# include <errno.h>
 
 # include "libft.h"
 # include "executor.h"

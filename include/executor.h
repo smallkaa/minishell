@@ -23,6 +23,7 @@ void	exec_builtin(t_cmd *cmd);
 void	handle_exit(t_cmd *cmd);
 void	handle_echo(t_cmd *cmd);
 void	handle_pwd(t_cmd *cmd);
+void	handle_cd(t_cmd *cmd);
 
 void	find_binary(t_cmd *cmd);
 
@@ -36,7 +37,7 @@ void	handle_out_redirection(t_cmd *cmd);
 // exit utils
 void	update_last_exit_status(t_cmd *cmd, int status);
 void	command_not_found_handle(t_cmd *cmd);
-
+void	error_handler(t_cmd *cmd);
 // void	cleanup_heredoc(t_cmd *cmd);
 
 #endif /* EXECUTOR_H */
