@@ -69,7 +69,7 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 	make -C $(LIBFT_DIR) fclean
-	rm sources_dump.txt
+	rm -f sources_dump.txt
 
 re: fclean $(NAME)
 
