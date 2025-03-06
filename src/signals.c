@@ -1,4 +1,4 @@
-#include "../include/minishell.h"
+#include "minishell.h"
 
 volatile sig_atomic_t g_signal_flag = 0;  // Global flag for signal handling
 

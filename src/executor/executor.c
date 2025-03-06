@@ -43,7 +43,6 @@ void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
 static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 {
 	// printf("[DEBUG]: exec_fork_child() input cmd: [%s]\n", cmd->argv[0]);
-
 	if (cmd->next)
 	{
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
@@ -94,7 +93,7 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 	if (WIFEXITED(status))
 		update_last_exit_status(cmd, WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
-		update_last_exit_status(cmd, 128 + WTERMSIG(cmd->minishell->l_exit_stat));
+		update_last_exit_status(cmd, 128 + WTERMSIG(cmd->minishell->exit_stat));
 }
 
 /**
@@ -109,11 +108,10 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
  */
 static void	exec_cmd(t_cmd *cmd, char **envp)
 {
-	// printf ("[DEBUG] we are in exec_cmd\n");
-
 	int	fd[2];
 	int	in_fd;
 
+	cmd->in_pipe = true;
 	in_fd = 0;
 	while (cmd)
 	{
@@ -134,14 +132,19 @@ static void	exec_cmd(t_cmd *cmd, char **envp)
  * @param cmd The first command in the command list.
  * @param envp The environment variables array.
  */
-void	run_executor(t_cmd *cmd, char **envp)
+int	run_executor(t_cmd *cmd, char **envp)
 {
+	cmd->in_pipe = false;
 	if (is_builtin(cmd) && !cmd->next)
 	{
 		exec_builtin(cmd);
-		return ;
+		printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
+
+		return (cmd->minishell->exit_stat);
 	}
-	else
-		exec_cmd(cmd, envp);
-	printf("\n[DEBUG]: run_executor() exit status (%d)\n", cmd->minishell->l_exit_stat);
+	exec_cmd(cmd, envp);
+
+	printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
+
+	return (cmd->minishell->exit_stat);
 }
