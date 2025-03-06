@@ -28,11 +28,10 @@ void	handle_env(t_cmd *cmd)
 	char	**envp;
 
 	envp = cmd->minishell->envp;
-	envp = NULL;
 	if (!envp)
 	{
 		update_last_exit_status(cmd, EXIT_FAILURE);
-		print_error("minishell: no environment variables found\n");
+		print_error("Error: no environment variables found\n");
 		if (cmd->in_pipe)
 			exit (EXIT_FAILURE);
 		return ;
