@@ -138,7 +138,7 @@ void debug_print_redirection(t_redir *redir, char *type)
 void debug_print_parsed_commands(t_cmd *cmd)
 {
     int cmd_count = 1;
-    
+
     printf("\n==== Parsed Command Structure ====\n");
     while (cmd)
     {
@@ -228,8 +228,9 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
 
     // Ensure last command argv is NULL-terminated
     if (current && current->argv)
+    {
         current->argv[arg_index] = NULL;
-
+    }
 
 
 	find_binary(head);
@@ -257,7 +258,7 @@ t_cmd	*run_parser(t_minishell *minishell, char	*input)
     tokenizer_cleanup();
 
     // Now, print all collected tokens
-	
+
     debug_printf("Found %d token(s):\n", tokens->count);
     for (int i = 0; i < tokens->count; i++) {
         debug_printf("\nToken %d:\n", i);
@@ -284,7 +285,7 @@ t_cmd *run_parser(t_minishell *minishell, char *input)
         return (NULL);
     debug_printf("\nTokenizing: %s\n\n", expanded_input);
     tokenizer_init(expanded_input);
- 
+
     tokens = token_array_init();
     do {
         token = get_next_token();
