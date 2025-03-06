@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/06 11:38:28 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:39:11 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,125 @@ static void	explain_token(t_Token token)
 	debug_printf("\033[0m");
 }
 
+void debug_print_redirection(t_redir *redir, char *type)
+{
+    if (!redir)
+        return;
+    printf("  %s Redirection: ", type);
+    if (redir->type == R_INPUT)
+        printf("< ");
+    else if (redir->type == R_OUTPUT)
+        printf("> ");
+    else if (redir->type == R_APPEND)
+        printf(">> ");
+    else if (redir->type == R_HEREDOC)
+        printf("<< ");
+    printf("\"%s\"\n", redir->filename);
+}
+
+void debug_print_parsed_commands(t_cmd *cmd)
+{
+    int cmd_count = 1;
+    
+    printf("\n==== Parsed Command Structure ====\n");
+    while (cmd)
+    {
+        printf("Command %d:\n", cmd_count);
+        printf("  Executable: %s\n", cmd->binary ? cmd->binary : "(NULL)");
+
+        // Print arguments
+        if (cmd->argv)
+        {
+            printf("  Arguments: ");
+            for (int i = 0; cmd->argv[i]; i++)
+                printf("\"%s\" ", cmd->argv[i]);
+            printf("\n");
+        }
+
+        // Print input and output redirections
+        debug_print_redirection(cmd->in_redir, "Input");
+        debug_print_redirection(cmd->out_redir, "Output");
+
+        // Check if there's a next command in a pipeline
+        if (cmd->next)
+            printf("  Piped to next command ->\n");
+
+        cmd = cmd->next;
+        cmd_count++;
+    }
+    printf("==================================\n\n");
+}
+
+
+t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
+{
+    t_cmd *head = NULL;
+    t_cmd *current = NULL;
+    int i = 0;
+    int arg_index = 0;
+
+    while (i < tokens->count)
+    {
+        if (tokens->tokens[i].type == TOKEN_WORD)
+        {
+            // If we don't have a command yet, create one
+            if (!current)
+            {
+                t_cmd *new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
+                if (!new_cmd)
+                    return NULL;
+                memset(new_cmd, 0, sizeof(t_cmd));
+
+                // Allocate space for arguments
+                new_cmd->argv = (char **)malloc(sizeof(char *) * (tokens->count + 1));
+                if (!new_cmd->argv)
+                    return NULL;
+
+                // Set binary name
+                new_cmd->binary = strdup(tokens->tokens[i].value);
+                new_cmd->argv[0] = strdup(tokens->tokens[i].value);
+				new_cmd->minishell = shell;
+                arg_index = 1;
+
+                // Link new command in pipeline
+                if (current)
+                    current->next = new_cmd;
+                else
+                    head = new_cmd;
+
+                current = new_cmd;
+            }
+            else
+            {
+                // Attach as argument to the current command
+                current->argv[arg_index] = strdup(tokens->tokens[i].value);
+                arg_index++;
+            }
+        }
+        else if (tokens->tokens[i].type == TOKEN_PIPE)
+        {
+            // Close the current argument list
+            if (current && current->argv)
+                current->argv[arg_index] = NULL;
+
+            // Start new command for next pipe segment
+            current = NULL;
+        }
+        i++;
+    }
+
+    // Ensure last command argv is NULL-terminated
+    if (current && current->argv)
+        current->argv[arg_index] = NULL;
+
+
+
+	find_binary(head);
+
+    return head;
+}
+
+/* 
 t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
 {
     if (tokens->count < 1 || tokens->tokens[0].type != TOKEN_WORD) {
@@ -192,7 +311,8 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
 	// find_binary() looking for execution command in PATH and assign value to cmd->binary
 	find_binary(cmd);
     return cmd;
-}
+} */
+
 
 t_cmd	*run_parser(t_minishell *minishell, char	*input)
 {
@@ -214,6 +334,7 @@ t_cmd	*run_parser(t_minishell *minishell, char	*input)
     tokenizer_cleanup();
 
     // Now, print all collected tokens
+	
     debug_printf("Found %d token(s):\n", tokens->count);
     for (int i = 0; i < tokens->count; i++) {
         debug_printf("\nToken %d:\n", i);
@@ -221,6 +342,7 @@ t_cmd	*run_parser(t_minishell *minishell, char	*input)
         explain_token(tokens->tokens[i]);
     }
     token_array_free(tokens);
+	debug_print_parsed_commands(cmd);
     return cmd;
 return NULL;
 }
