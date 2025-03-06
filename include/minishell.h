@@ -38,6 +38,7 @@
 typedef struct s_minishell
 {
 	char **envp;
+	char **exp_vars;
 	int	exit_stat;
 }	t_minishell;
 

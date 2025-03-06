@@ -11,6 +11,7 @@ t_minishell	*init_minishell(char **envp)
 		return (NULL);
 	}
 	minishell->envp = envp;
+	minishell->exp_vars = NULL;
 	minishell->exit_stat = 0;
 	return (minishell);
 }
