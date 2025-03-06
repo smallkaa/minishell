@@ -64,6 +64,7 @@ static void append_char_to_buffer(char c, size_t *buffer_index) {
 }
 
 // Public API function - Get the next token from the input
+
 t_Token get_next_token() {
     t_Token token = {TOKEN_EOF, NULL};
     
@@ -173,3 +174,5 @@ t_Token get_next_token() {
     
     return token;
 }
+
+

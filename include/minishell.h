@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 16:46:44 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/03/06 11:35:53 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 13:58:34 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@
  */
 typedef struct s_minishell
 {
-	int	l_exit_stat;  // Stores the last exit status ($?)
+	char **envp;
+	int	exit_stat;
 }	t_minishell;
 
 /**

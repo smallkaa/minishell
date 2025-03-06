@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/06 11:39:11 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/06 13:36:38 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,72 +248,7 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
 
     return head;
 }
-
-/* 
-t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
-{
-    if (tokens->count < 1 || tokens->tokens[0].type != TOKEN_WORD) {
-        return NULL;
-    }
-
-    // Allocate memory for the command structure
-    t_cmd *cmd = (t_cmd *)malloc(sizeof(t_cmd));
-    if (!cmd) {
-        print_error( "Failed to allocate command structure\n");
-        return NULL;
-    }
-
-    // Initialize the structure
-    cmd->binary = NULL;
-    cmd->in_redir = NULL;
-    cmd->out_redir = NULL;
-    cmd->next = NULL;
-	cmd->minishell = shell;
-	cmd->binary = NULL;
-
-    // Count how many word tokens we have for argv
-    int argc = 0;
-    for (int i = 0; i < tokens->count; i++) {
-        if (tokens->tokens[i].type == TOKEN_WORD) {
-            argc++;
-        } else {
-            // For simplicity, stop at the first non-word token
-            break;
-        }
-    }
-
-    // Allocate argv array (+ 1 for NULL terminator)
-    cmd->argv = (char **)malloc((argc + 1) * sizeof(char *));
-    if (!cmd->argv) {
-        print_error( "Failed to allocate argv array\n");
-        free(cmd);
-        return NULL;
-    }
-
-    // Fill argv array with copies of token values
-    for (int i = 0; i < argc; i++)
-	{
-        cmd->argv[i] = ft_strdup(tokens->tokens[i].value);
-        if (!cmd->argv[i]) {
-            print_error( "Failed to duplicate argument string\n");
-            // Clean up previously allocated strings
-            for (int j = 0; j < i; j++) {
-                free(cmd->argv[j]);
-            }
-            free(cmd->argv);
-            free(cmd);
-            return NULL;
-        }
-    }
-    cmd->argv[argc] = NULL;  // NULL-terminate the array
-
-	// Ilia for Pavel -------------------------
-	// find_binary() looking for execution command in PATH and assign value to cmd->binary
-	find_binary(cmd);
-    return cmd;
-} */
-
-
+/*
 t_cmd	*run_parser(t_minishell *minishell, char	*input)
 {
     debug_printf("\nTokenizing: %s\n\n", input);
@@ -345,4 +280,41 @@ t_cmd	*run_parser(t_minishell *minishell, char	*input)
 	debug_print_parsed_commands(cmd);
     return cmd;
 return NULL;
+}*/
+
+t_cmd *run_parser(t_minishell *minishell, char *input)
+{
+    char *expanded_input;
+    t_TokenArray *tokens;
+    t_Token token;
+    t_cmd *cmd;
+    int i;
+
+    debug_printf("\nExpanding: %s\n\n", input);
+    expanded_input = expand_env_variables(input, minishell->envp);
+    if (!expanded_input)
+        return (NULL);
+    debug_printf("\nTokenizing: %s\n\n", expanded_input);
+    tokenizer_init(expanded_input);
+    free(expanded_input);
+    tokens = token_array_init();
+    do {
+        token = get_next_token();
+        if (token.type != TOKEN_EOF)
+            token_array_add(tokens, token);
+    } while (token.type != TOKEN_EOF);
+    cmd = create_command_from_tokens(minishell, tokens);
+    tokenizer_cleanup();
+    debug_printf("Found %d token(s):\n", tokens->count);
+    i = 0;
+    while (i < tokens->count)
+    {
+        debug_printf("\nToken %d:\n", i);
+        print_token(tokens->tokens[i]);
+        explain_token(tokens->tokens[i]);
+        i++;
+    }
+    token_array_free(tokens);
+    debug_print_parsed_commands(cmd);
+    return (cmd);
 }
