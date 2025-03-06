@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/28 13:11:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/06 13:36:38 by pvershin         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../include/minishell.h"
 // Initialize a token array
 static t_TokenArray	*token_array_init(void)
@@ -296,7 +284,7 @@ t_cmd *run_parser(t_minishell *minishell, char *input)
         return (NULL);
     debug_printf("\nTokenizing: %s\n\n", expanded_input);
     tokenizer_init(expanded_input);
-    free(expanded_input);
+ 
     tokens = token_array_init();
     do {
         token = get_next_token();
@@ -304,6 +292,7 @@ t_cmd *run_parser(t_minishell *minishell, char *input)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
     cmd = create_command_from_tokens(minishell, tokens);
+    free(expanded_input);
     tokenizer_cleanup();
     debug_printf("Found %d token(s):\n", tokens->count);
     i = 0;
