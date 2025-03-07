@@ -2,16 +2,16 @@
 
 /**
  * Prints the environment variables.
- * - Iterates through the `envp` array and prints each variable.
+ * - Iterates through the `env` array and prints each variable.
  *
- * @param envp  The NULL-terminated array of environment variables.
+ * @param env  The NULL-terminated array of environment variables.
  */
-void	print_env(char **envp)
+void	print_env(char **env)
 {
-	while (*envp)
+	while (*env)
 	{
-		printf("%s\n", *envp);
-		envp++;
+		printf("%s\n", *env);
+		env++;
 	}
 }
 
@@ -25,10 +25,10 @@ void	print_env(char **envp)
  */
 void	handle_env(t_cmd *cmd)
 {
-	char	**envp;
+	char	**env;
 
-	envp = cmd->minishell->envp;
-	if (!envp)
+	env = cmd->minishell->env;
+	if (!env)
 	{
 		update_last_exit_status(cmd, EXIT_FAILURE);
 		print_error("Error: no environment variables found\n");
@@ -36,7 +36,7 @@ void	handle_env(t_cmd *cmd)
 			exit (EXIT_FAILURE);
 		return ;
 	}
-	print_env(envp);
+	print_env(env);
 	update_last_exit_status(cmd, EXIT_SUCCESS);
 	if (cmd->in_pipe)
 		exit (EXIT_SUCCESS);

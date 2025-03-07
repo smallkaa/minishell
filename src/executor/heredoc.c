@@ -48,11 +48,10 @@ static void	write_heredoc_input(int tmp_fd, t_cmd *cmd)
  *
  * @param cmd The command containing heredoc information.
  */
-void	handle_heredoc(t_cmd *cmd, char **envp)
+void	handle_heredoc(t_cmd *cmd)
 {
 	int	tmp_fd;
 
-	(void)envp;
 	if (!cmd->in_redir || cmd->in_redir->type != R_HEREDOC)
 		return ;
 	tmp_fd = open(HEREDOC_TFILE, O_WRONLY | O_CREAT | O_TRUNC, 0644);

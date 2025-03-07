@@ -47,10 +47,10 @@ void	handle_out_redirection(t_cmd *cmd)
  *
  * @param cmd The command containing input redirection details.
  */
-void	handle_in_redirection(t_cmd *cmd, char **envp)
+void	handle_in_redirection(t_cmd *cmd)
 {
 	int	in;
-	(void) envp;
+	
 	if (!cmd->in_redir)
 		return ;
 	in = open(cmd->in_redir->filename, O_RDONLY);

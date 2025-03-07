@@ -88,5 +88,7 @@ void	exec_builtin(t_cmd *cmd)
 			handle_cd(cmd);
 		else if (ft_strcmp(cmd->argv[0], "env") == 0)
 			handle_env(cmd);
+		else if (ft_strcmp(cmd->argv[0], "export") == 0)
+			handle_export(cmd);
 	}
 }
