@@ -1,182 +1,178 @@
 #include "minishell.h"
 
-/**
- * Returns the number of environment variables.
- */
-int	env_size(char **envp)
-{
-	int	len = 0;
-
-	while (envp[len])
-		len++;
-	return (len);
-}
-
-/**
- * Prints all exported variables in `declare -x VAR="value"` format.
- */
-static void	print_export_exp_vars(char **exp_vars)
+int	find_local_var(char **local_var, char *key_value_pair)
 {
 	int		i;
-	char	*equal_sign;
+	size_t	key_value_pair_len;
 
-	if (!exp_vars)
-		return ;
+	key_value_pair_len = ft_strlen(key_value_pair);
 	i = 0;
-	while (exp_vars[i])
+	while (local_var && local_var[i])
 	{
-		equal_sign = ft_strchr(exp_vars[i], '=');
-		if (equal_sign)
-			printf("declare -x %.*s=\"%s\"\n", (int)(equal_sign - exp_vars[i]),
-				exp_vars[i], equal_sign + 1);
-		else
-			printf("declare -x %s\n", exp_vars[i]);
+		if (ft_strncmp(local_var[i], key_value_pair, key_value_pair_len) == 0
+			&& local_var[i][key_value_pair_len] == '\0')
+			{
+				return (i);
+			}
 		i++;
 	}
+	return (-1);
 }
 
-/**
- * Finds an exported variable by name.
- */
-int	find_exp_var(char **exp_var, char *var)
+void	update_local_var(t_cmd *cmd, char *key_value_pair)
+{
+	int		index;
+	int		i;
+	int		local_var_len;
+	char	**new_local_var;
+
+	if (!cmd || !cmd->minishell)
+	{
+		print_error("minishell: update_local_var, no cmd or minishell found\n");
+		update_last_exit_status(cmd, EXIT_FAILURE);
+		return ;
+	}
+	local_var_len = arr_size(cmd->minishell->local_var);
+	index = find_local_var(cmd->minishell->local_var, key_value_pair);
+	if (index >= 0)
+	{
+		free(cmd->minishell->local_var[index]);
+		cmd->minishell->local_var[index] = ft_strdup(key_value_pair);
+		return;
+	}
+	new_local_var = malloc((local_var_len + 2) * sizeof(char *));
+	if (!new_local_var)
+	{
+		print_error("minishell: update_local_var, new_local_var malloc failed\n");
+		update_last_exit_status(cmd, EXIT_FAILURE);
+		return ;
+	}
+	i = 0;
+	while (i < local_var_len)
+	{
+		new_local_var[i] = cmd->minishell->local_var[i];
+		i++;
+	}
+	new_local_var[i] = ft_strdup(key_value_pair);
+	new_local_var[i + 1] = NULL;
+	free(cmd->minishell->local_var);
+	cmd->minishell->local_var = new_local_var;
+}
+
+int	find_env_var(char **env, char *key_value_pair)
 {
 	int		i;
 	size_t	var_len;
 
-	var_len = ft_strlen(var);
+	var_len = ft_strlen(key_value_pair);
 	i = 0;
-	while (exp_var[i])
+	while (env && env[i])
 	{
-		if (ft_strncmp(exp_var[i], var, var_len) == 0 && exp_var[i][var_len] == '\0')
+		if (ft_strncmp(env[i], key_value_pair, var_len) == 0 && env[i][var_len] == '=')
 			return (i);
 		i++;
 	}
 	return (-1);
 }
 
-/**
- * Finds an environment variable by name.
- */
-int	find_env_var(char **envp, char *var)
+void	update_env(t_cmd *cmd, char *key_value_pair)
 {
+	int		index;
 	int		i;
-	size_t	var_len;
+	int		env_len;
+	char	**new_env;
 
-	var_len = ft_strlen(var);
-	i = 0;
-	while (envp[i])
+	if (!cmd || !cmd->minishell)
 	{
-		if (ft_strncmp(envp[i], var, var_len) == 0 && envp[i][var_len] == '=')
-			return (i);
+		print_error("minishell: update_env, no cmd or minishell found\n");
+		update_last_exit_status(cmd, EXIT_FAILURE);
+		return ;
+	}
+	env_len = arr_size(cmd->minishell->env);
+	index = find_env_var(cmd->minishell->env, key_value_pair);
+	if (index >= 0)
+	{
+		free(cmd->minishell->env[index]);
+		cmd->minishell->env[index] = ft_strdup(key_value_pair);
+		return ;
+	}
+	new_env = malloc((env_len + 2) * sizeof(char *));
+	if (!new_env)
+	{
+		print_error("minishell: update_env, new_env malloc failed\n");
+		update_last_exit_status(cmd, EXIT_FAILURE);
+		return ;
+	}
+	i = 0;
+	while (i < env_len)
+	{
+		new_env[i] = cmd->minishell->env[i];
 		i++;
 	}
-	return (-1);
+	new_env[i] = ft_strdup(key_value_pair);
+	printf("[TEST]: key_value_pair: %s, index: %d\n", new_env[i], i);
+	new_env[i + 1] = NULL;
+	free(cmd->minishell->env);
+	cmd->minishell->env = new_env;
+	printf("[TEST]: env: %s\n", new_env[47]);
+
 }
 
-/**
- * Updates an exported variable list.
- */
-void	update_exp_var(t_cmd *cmd, char *var)
+void print_all(t_cmd *cmd)
 {
-	int		index;
-	int		exp_var_len;
-	char	**new_exp_var;
+	print_export_env(cmd);
+	print_local_var(cmd);
+}
 
-	if (!cmd->minishell->exp_vars)
-		return ;
-
-	index = find_exp_var(cmd->minishell->exp_vars, var);
-	if (index >= 0)
+void	handle_var(t_cmd *cmd, char *key_value_pair)
+{
+	if (!ft_strchr(key_value_pair, '='))
 	{
-		free(cmd->minishell->exp_vars[index]);
-		cmd->minishell->exp_vars[index] = ft_strdup(var);
-		return ;
+		printf("Test: it's a local var\n");
+		update_local_var(cmd, key_value_pair);
 	}
-	exp_var_len = env_size(cmd->minishell->exp_vars);
-	new_exp_var = malloc((exp_var_len + 2) * sizeof(char *));
-	if (!new_exp_var)
-		return ;
-
-	for (int i = 0; i < exp_var_len; i++)
-		new_exp_var[i] = cmd->minishell->exp_vars[i];
-	new_exp_var[exp_var_len] = ft_strdup(var);
-	new_exp_var[exp_var_len + 1] = NULL;
-
-	free(cmd->minishell->exp_vars);
-	cmd->minishell->exp_vars = new_exp_var;
-}
-
-/**
- * Updates the environment variable list.
- */
-void	update_env(t_cmd *cmd, char *var)
-{
-	int		index;
-	int		envp_len;
-	char	**new_envp;
-
-	index = find_env_var(cmd->minishell->envp, var);
-	if (index >= 0)
-	{
-		free(cmd->minishell->envp[index]);
-		cmd->minishell->envp[index] = ft_strdup(var);
-		return ;
-	}
-
-	envp_len = env_size(cmd->minishell->envp);
-	new_envp = malloc((envp_len + 2) * sizeof(char *));
-	if (!new_envp)
-		return ;
-
-	for (int i = 0; i < envp_len; i++)
-		new_envp[i] = cmd->minishell->envp[i];
-	new_envp[envp_len] = ft_strdup(var);
-	new_envp[envp_len + 1] = NULL;
-
-	free(cmd->minishell->envp);
-	cmd->minishell->envp = new_envp;
-}
-
-/**
- * Adds or updates an environment variable.
- */
-static void	add_or_update_env(t_cmd *cmd, char *var)
-{
-	if (ft_strchr(var, '='))
-		update_env(cmd, var);
 	else
-		update_exp_var(cmd, var);
+	{
+		printf("Test: it's a env var\n");
+		update_env(cmd, key_value_pair);
+	}
 }
 
-/**
- * Handles the `export` built-in command.
- */
 void	handle_export(t_cmd *cmd)
 {
-	int i;
+	int		i;
+	char	**key_value_pairs;
 
-	// if (!cmd->minishell->envp)
-	// {
-	// 	update_last_exit_status(cmd, EXIT_FAILURE);
-	// 	print_error("Error: handle_export, no environment variables found\n");
-	// 	if (cmd->in_pipe)
-	// 		exit(EXIT_FAILURE);
-	// 	return ;
-	// }
-
-	if (!cmd->argv[1])
+	if (!cmd || !cmd->minishell)
 	{
-		print_export_exp_vars(cmd->minishell->exp_vars);
+		print_error("minishell: handle_export, no cmd or minishell found\n");
+		update_last_exit_status(cmd, EXIT_FAILURE);
+		return ;
+	}
+	key_value_pairs = cmd->argv;
+	if (!key_value_pairs[1])
+	{
+		print_all(cmd);
 		update_last_exit_status(cmd, EXIT_SUCCESS);
 		if (cmd->in_pipe)
 			exit(EXIT_SUCCESS);
 		return ;
 	}
-
 	i = 1;
-	while (cmd->argv[i])
+	while (key_value_pairs[i])
 	{
-		add_or_update_env(cmd, cmd->argv[i]);
+		if (!is_valid_varname(key_value_pairs[i]))
+		{
+			// error_handler(cmd);
+			print_error("minishell: export, not a valid identifier\n"); // fix
+			update_last_exit_status(cmd, EXIT_FAILURE);
+			i++;
+			continue ;
+		}
+		handle_var(cmd, key_value_pairs[i]);
+		update_last_exit_status(cmd, EXIT_SUCCESS);
+		if (cmd->in_pipe)
+			exit(EXIT_SUCCESS);
 		i++;
 	}
 }

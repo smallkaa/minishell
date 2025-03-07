@@ -15,7 +15,7 @@ typedef struct s_cmd	t_cmd;
 /*------FUNCTIONS----------------------------------------------------*/
 
 // standart cmd exec functions
-void	execute(t_cmd *cmd, int in_fd, char **envp);
+void	execute(t_cmd *cmd, int in_fd);
 
 // builtin exec functions
 bool	is_builtin(t_cmd *cmd);
@@ -26,12 +26,16 @@ void	handle_pwd(t_cmd *cmd);
 void	handle_cd(t_cmd *cmd);
 void	handle_env(t_cmd *cmd);
 void	handle_export(t_cmd *cmd);
+void	print_export_env(t_cmd *cmd);
+void	print_local_var(t_cmd *cmd);
+bool	is_valid_varname(const char *key_value_pair);
+int		arr_size(char **arr);
 
 void	find_binary(t_cmd *cmd);
 
 // redirections <, <<
-void	handle_in_redirection(t_cmd *cmd, char **envp);
-void	handle_heredoc(t_cmd *cmd, char **envp);
+void	handle_in_redirection(t_cmd *cmd);
+void	handle_heredoc(t_cmd *cmd);
 
 // redirections >, >>
 void	handle_out_redirection(t_cmd *cmd);

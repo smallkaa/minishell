@@ -37,9 +37,9 @@
  */
 typedef struct s_minishell
 {
-	char **envp;
-	char **exp_vars;
-	int	exit_stat;
+	char	**env;
+	char	**local_var;
+	int		exit_stat;
 }	t_minishell;
 
 /**
@@ -110,7 +110,7 @@ t_minishell	*init_minishell(char **envp);
 t_cmd		*run_parser(t_minishell *shell, char *input);
 
 // executor
-int		run_executor(t_cmd *cmd, char **envp);
+int			run_executor(t_cmd *cmd);
 
 // exit utils
 void		print_error_exit(char *cmd, int exit_status); // to be fixed

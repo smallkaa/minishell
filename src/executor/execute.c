@@ -20,9 +20,9 @@ to indicate incorrect usage, generally invalid options or missing arguments
  *
  * @param cmd	The command to execute.
  * @param in_fd	The file descriptor for input redirection.
- * @param envp	The environment variables array.
+ * @param env	The environment variables array.
  */
-void	execute(t_cmd *cmd, int in_fd, char **envp)
+void	execute(t_cmd *cmd, int in_fd)
 {
 	if (cmd->binary == NULL)
 	{
@@ -42,5 +42,5 @@ void	execute(t_cmd *cmd, int in_fd, char **envp)
 	}
 	if (is_builtin(cmd))
 		exec_builtin(cmd);
-	execve(cmd->binary, cmd->argv, envp);
+	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 }

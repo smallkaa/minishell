@@ -10,8 +10,8 @@
  * @param path The directory path where the binary might be located.
  * @param cmd Pointer to the command structure.
  * @return EXIT_SUCCESS if binary is found and executable,
- *         127 if not found,
- *         126 if found but not executable.
+ *		 127 if not found,
+ *		 126 if found but not executable.
  */
 static int	assign_binary(char *path, t_cmd *cmd)
 {
@@ -48,8 +48,8 @@ static int	assign_binary(char *path, t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure.
  * @return EXIT_SUCCESS if executable,
- *         126 if permission is denied,
- *         127 if the command is not found.
+ *		 126 if permission is denied,
+ *		 127 if the command is not found.
  */
 static int	handle_direct_path(t_cmd *cmd)
 {
@@ -74,7 +74,7 @@ static int	handle_direct_path(t_cmd *cmd)
  * @param paths Array of directory paths.
  * @param cmd Pointer to the command structure.
  * @return EXIT_SUCCESS if a valid binary is found,
- *         127 if not found.
+ *		 127 if not found.
  */
 static int	search_paths(char **paths, t_cmd *cmd)
 {
@@ -91,6 +91,24 @@ static int	search_paths(char **paths, t_cmd *cmd)
 	}
 	return (127);
 }
+char	*ft_getenv(t_cmd *cmd, char *env_name)
+{
+	int		i;
+	size_t	name_len;
+
+	name_len = ft_strlen(env_name);
+	i = 0;
+	while(cmd->minishell->env[i])
+	{
+		if (ft_strncmp(cmd->minishell->env[i], env_name, name_len) == 0 &&
+			cmd->minishell->env[i][name_len] == '=')
+		{
+			return (cmd->minishell->env[i] + name_len + 1);
+		}
+		i++;
+	}
+	return (NULL);
+}
 
 /**
  * @brief Handles binary search in system paths.
@@ -100,15 +118,23 @@ static int	search_paths(char **paths, t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure.
  * @return EXIT_SUCCESS if binary is found,
- *         126 if permission is denied,
- *         127 if command is not found.
+ *		 126 if permission is denied,
+ *		 127 if command is not found.
  */
 static int	handle_path_search(t_cmd *cmd)
 {
 	int		status;
+	char	*env;
 	char	**paths;
 
-	paths = ft_split(getenv("PATH"), ':');
+
+	env = ft_getenv(cmd, "PATH");
+	if (!env)
+	{
+		print_error("Error: handle_path_search, no PATH found\n");
+		return(127);
+	}
+	paths = ft_split(env, ':');
 	if (!paths)
 	{
 		print_error(cmd->argv[0]);
@@ -135,8 +161,8 @@ static int	handle_path_search(t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure.
  * @return EXIT_SUCCESS if binary is found and executable,
- *         126 if permission is denied,
- *         127 if command is not found.
+ *		 126 if permission is denied,
+ *		 127 if command is not found.
  */
 void	find_binary(t_cmd *cmd)
 {
@@ -154,8 +180,6 @@ void	find_binary(t_cmd *cmd)
 			status = handle_direct_path(cmd);
 		else
 			status = handle_path_search(cmd);
-
-		// printf("DEBUG: find_binary() status: %d\n", status);
 
 		update_last_exit_status(cmd, status);
 	}

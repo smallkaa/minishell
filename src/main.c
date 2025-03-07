@@ -27,7 +27,10 @@ int	minishell(char **envp)
 		// Step 3: init shell structure
 		minishell = init_minishell(envp);
 		if (!minishell)
+		{
+			print_error("Error: init_minishell failed\n");
 			return (EXIT_FAILURE);
+		}
 
 		// Step 3: process input
 		// use input from readline and return commands table for executor
@@ -36,7 +39,7 @@ int	minishell(char **envp)
 		if (!cmd)
 			return (EXIT_FAILURE);
 		// Step 4: use command table and execute commands one by one, void func
-		exit_status = run_executor(cmd, envp);
+		exit_status = run_executor(cmd);
 
 		//	free_cmds(cmd);
 		free(input);

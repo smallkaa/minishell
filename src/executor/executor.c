@@ -7,14 +7,13 @@
  *
  * @param cmd	The command whose redirections need to be handled.
  * @param in_fd	The file descriptor for input redirection.
- * @param envp	The environment variables array.
  */
-void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
+void	handle_redirection(t_cmd *cmd, int in_fd)
 {
 	int	status;
 
 	if (cmd->in_redir)
-		handle_in_redirection(cmd, envp);
+		handle_in_redirection(cmd);
 	else
 	{
 		status = dup2(in_fd, STDIN_FILENO);
@@ -38,9 +37,8 @@ void	handle_redirection(t_cmd *cmd, int in_fd, char **envp)
  * @param cmd	The command to execute.
  * @param in_fd	The file descriptor for input redirection.
  * @param fd	The pipe file descriptors for inter-process communication.
- * @param envp	The environment variables array.
  */
-static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
+static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2])
 {
 	// printf("[DEBUG]: exec_fork_child() input cmd: [%s]\n", cmd->argv[0]);
 	if (cmd->next)
@@ -57,8 +55,8 @@ static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 			print_error_exit("close", EXIT_FAILURE);
 	}
 	if (cmd->in_redir || cmd->out_redir)
-		handle_redirection(cmd, in_fd, envp);
-	execute(cmd, in_fd, envp);
+		handle_redirection(cmd, in_fd);
+	execute(cmd, in_fd);
 }
 
 /**
@@ -71,9 +69,8 @@ static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2], char **envp)
  * @param cmd	The command to execute.
  * @param in_fd	The file descriptor for input redirection.
  * @param fd	The pipe file descriptors for communication.
- * @param envp	The environment variables array.
  */
-static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
+static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2])
 {
 	pid_t	pid;
 	int		status;
@@ -82,7 +79,7 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
 	if (pid == -1)
 		print_error_exit("fork", EXIT_FAILURE);
 	if (pid == 0)
-		exec_fork_child(cmd, in_fd, fd, envp);
+		exec_fork_child(cmd, in_fd, fd);
 	if (cmd->next)
 	{
 		if (close(fd[1]) == -1)
@@ -104,9 +101,8 @@ static void	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2], char **envp)
  * - Waits for child processes to complete.
  *
  * @param cmd	The first command in the command list.
- * @param envp	The environment variables array.
  */
-static void	exec_cmd(t_cmd *cmd, char **envp)
+static void	exec_cmd(t_cmd *cmd)
 {
 	int	fd[2];
 	int	in_fd;
@@ -117,7 +113,7 @@ static void	exec_cmd(t_cmd *cmd, char **envp)
 	{
 		if (cmd->next && pipe(fd) == -1)
 			print_error_exit("pipe", EXIT_FAILURE);
-		fork_and_execute(cmd, in_fd, fd, envp);
+		fork_and_execute(cmd, in_fd, fd);
 		cmd = cmd->next;
 	}
 	// cleanup_heredoc(cmd);
@@ -130,9 +126,8 @@ static void	exec_cmd(t_cmd *cmd, char **envp)
  * - Otherwise, it executes the full command pipeline using subshell.
  *
  * @param cmd The first command in the command list.
- * @param envp The environment variables array.
  */
-int	run_executor(t_cmd *cmd, char **envp)
+int	run_executor(t_cmd *cmd)
 {
 	cmd->in_pipe = false;
 	if (is_builtin(cmd) && !cmd->next)
@@ -142,7 +137,7 @@ int	run_executor(t_cmd *cmd, char **envp)
 
 		return (cmd->minishell->exit_stat);
 	}
-	exec_cmd(cmd, envp);
+	exec_cmd(cmd);
 
 	printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
 
