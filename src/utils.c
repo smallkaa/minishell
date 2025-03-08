@@ -16,10 +16,10 @@ void	print_error_exit(char *cmd, int exit_status)
  * - Exits with the shell's last exit status (`cmd->minishell->exit_stat`).
  *
  * @param cmd  The command structure containing the attempted command.
- *             - `cmd->argv[0]` holds the name of the missing command.
- *             - `cmd->minishell->exit_stat` stores the exit status.
+ *			 - `cmd->argv[0]` holds the name of the missing command.
+ *			 - `cmd->minishell->exit_stat` stores the exit status.
  *
- * @return     This function does not return (calls `exit()`).
+ * @return	 This function does not return (calls `exit()`).
  */
 void	command_not_found_handle(t_cmd *cmd)
 {
@@ -78,3 +78,15 @@ void debug_printf(const char *format, ...)
 		va_end(args);
 	}
 }
+int	ft_array_size(char **arr)
+{
+	int len;
+
+	len = 0;
+	if (!arr)
+		return (0);
+	while (arr[len])
+		len++;
+	return (len);
+}
+
