@@ -44,12 +44,12 @@ int	run_minishell(t_minishell *minishell)
 // cc -I../include main.c -lreadline
 int	main(int argc, char **argv, char **envp)
 {
-	//remove(void) for parser
+
 	(void)argc;
 	(void)argv;
 	t_minishell	*minishell;
 	int status;
-	
+
 	setup_signal_handlers(); // Set up signal handlers
 
 	minishell = init_minishell(envp);

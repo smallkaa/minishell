@@ -35,10 +35,8 @@ void	find_binary(t_cmd *cmd);
 
 // redirections <, <<
 void	handle_in_redirection(t_cmd *cmd);
-void	handle_heredoc(t_cmd *cmd);
-
-// redirections >, >>
 void	handle_out_redirection(t_cmd *cmd);
+void	handle_heredoc(t_cmd *cmd);
 
 // exit utils
 void	update_last_exit_status(t_cmd *cmd, int status);
