@@ -32,7 +32,7 @@ void	update_local_var(t_cmd *cmd, char *key_value_pair)
 		update_last_exit_status(cmd, EXIT_FAILURE);
 		return ;
 	}
-	local_var_len = arr_size(cmd->minishell->local_var);
+	local_var_len = ft_arr_size(cmd->minishell->local_var);
 	index = find_local_var(cmd->minishell->local_var, key_value_pair);
 	if (index >= 0)
 	{
@@ -88,7 +88,7 @@ void	update_env(t_cmd *cmd, char *key_value_pair)
 		update_last_exit_status(cmd, EXIT_FAILURE);
 		return ;
 	}
-	env_len = arr_size(cmd->minishell->env);
+	env_len = ft_arr_size(cmd->minishell->env);
 	index = find_env_var(cmd->minishell->env, key_value_pair);
 	if (index >= 0)
 	{

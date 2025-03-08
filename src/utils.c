@@ -78,14 +78,12 @@ void debug_printf(const char *format, ...)
 		va_end(args);
 	}
 }
-int	ft_array_size(char **arr)
+int	ft_arr_size(char **arr)
 {
-	int len;
+	int	len;
 
 	len = 0;
-	if (!arr)
-		return (0);
-	while (arr[len])
+	while (arr && arr[len])
 		len++;
 	return (len);
 }

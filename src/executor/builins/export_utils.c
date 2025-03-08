@@ -60,14 +60,3 @@ bool	is_valid_varname(const char *key_value_pair)
 	}
 	return (true);
 }
-
-int	arr_size(char **arr)
-{
-	int	len;
-
-	len = 0;
-	while (arr && arr[len])
-		len++;
-	return (len);
-}
-
