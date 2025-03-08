@@ -56,11 +56,11 @@ bool	is_builtin(t_cmd *cmd)
 	char	**builtin;
 	int		i;
 
-	if (!cmd || !cmd->argv[0])
-	{
-		print_error("Error: is_builtin() no cmd provided\n");
-		return (false);
-	}
+	// if (!cmd || !cmd->argv[0])
+	// {
+	// 	print_error("Error: is_builtin() no cmd provided\n");
+	// 	return (false);
+	// }
 	builtin = setup_builtin();
 	if (!builtin)
 	{

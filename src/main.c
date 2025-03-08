@@ -1,18 +1,17 @@
 #include "minishell.h"
 
-int	minishell(char **envp)
+int	run_minishell(t_minishell *minishell)
 {
 	char	*input;
 	int		exit_status;
 
 	// uncoment for parser
 	t_cmd	*cmd;
-	t_minishell	*minishell;
 
 	while (1)
 	{
 		// Step 1: read input from terminal, return a line for parser
-		input = readline("minishell: "); // add some fearures like "username@hostname:> "
+		input = readline("minishell: ");
 
 		// check for EOF / Ctrl+D
 		if (!input)
@@ -22,22 +21,16 @@ int	minishell(char **envp)
 		if (*input)
 			add_history(input);  // need to be freed?
 
-		debug_printf("Return: %s\n", input); // test print statment
 
-		// Step 3: init shell structure
-		minishell = init_minishell(envp);
-		if (!minishell)
-		{
-			print_error("Error: init_minishell failed\n");
-			return (EXIT_FAILURE);
-		}
+		debug_printf("Return: %s\n", input); // test print statment
 
 		// Step 3: process input
 		// use input from readline and return commands table for executor
 
 		cmd = run_parser(minishell, input);
 		if (!cmd)
-			return (EXIT_FAILURE);
+			continue;
+
 		// Step 4: use command table and execute commands one by one, void func
 		exit_status = run_executor(cmd);
 
@@ -54,10 +47,18 @@ int	main(int argc, char **argv, char **envp)
 	//remove(void) for parser
 	(void)argc;
 	(void)argv;
-
+	t_minishell	*minishell;
 	int status;
+	
 	setup_signal_handlers(); // Set up signal handlers
-	status = minishell(envp);
+
+	minishell = init_minishell(envp);
+	if (!minishell)
+	{
+		print_error("Error: init_minishell failed\n");
+		return (EXIT_FAILURE);
+	}
+	status = run_minishell(minishell);
 	printf("\n[DEBUG]: main() exit status (%d)\n", status);
 	return (status);
 }

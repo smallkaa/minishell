@@ -176,6 +176,11 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
     int i = 0;
     int arg_index = 0;
 
+    // Ilia: with no commands passed - segfault
+    // I add this guard
+    if (!tokens || tokens->count == 0)
+        return NULL;
+
     while (i < tokens->count)
     {
         if (tokens->tokens[i].type == TOKEN_WORD)
@@ -280,9 +285,11 @@ t_cmd *run_parser(t_minishell *minishell, char *input)
     int i;
 
     debug_printf("\nExpanding: %s\n\n", input);
-    expanded_input = expand_env_variables(input, minishell->envp);
+
+    expanded_input = expand_env_variables(input, minishell->env);
     if (!expanded_input)
         return (NULL);
+
     debug_printf("\nTokenizing: %s\n\n", expanded_input);
     tokenizer_init(expanded_input);
 
@@ -292,8 +299,10 @@ t_cmd *run_parser(t_minishell *minishell, char *input)
         if (token.type != TOKEN_EOF)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
+
     cmd = create_command_from_tokens(minishell, tokens);
     free(expanded_input);
+
     tokenizer_cleanup();
     debug_printf("Found %d token(s):\n", tokens->count);
     i = 0;
@@ -306,5 +315,12 @@ t_cmd *run_parser(t_minishell *minishell, char *input)
     }
     token_array_free(tokens);
     debug_print_parsed_commands(cmd);
+
+    // //debug
+    // if (!cmd)
+    // {
+    //     print_error("[TEST]: run_parser(), No input from the user side / empty prompt\n");
+    //     print_error("[TEST]: It's no error, just continue waiting for the next command\n");
+    // }
     return (cmd);
 }

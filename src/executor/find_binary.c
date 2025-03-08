@@ -168,6 +168,26 @@ void	find_binary(t_cmd *cmd)
 {
 	int	status;
 
+	if (!cmd)
+	{
+		print_error("TEST: !cmd\n");
+		// cmd->binary = NULL;
+		return ;
+	}
+
+	if (!cmd->argv)
+	{
+		print_error("TEST: !cmd->argv\n");
+		cmd->binary = NULL;
+		return ;
+	}
+
+	if (!cmd->argv[0])
+	{
+		print_error("TEST: !cmd->argv[0]\n");
+		cmd->binary = NULL;
+		return ;
+	}
 	if (!is_builtin(cmd))
 	{
 		if (!cmd->argv[0])

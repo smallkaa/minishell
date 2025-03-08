@@ -129,6 +129,9 @@ static void	exec_cmd(t_cmd *cmd)
  */
 int	run_executor(t_cmd *cmd)
 {
+	// if (!cmd || !cmd->argv[0])
+	// 	return (EXIT_SUCCESS);
+
 	cmd->in_pipe = false;
 	if (is_builtin(cmd) && !cmd->next)
 	{
