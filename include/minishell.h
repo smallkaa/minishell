@@ -20,43 +20,70 @@
 # include "signals.h"
 # include "command.h"
 
-// Maximum number of arguments per command.
-# define MAX_ARGS 64
-
-// Maximum number of commands in a pipeline.
-# define MAX_CMDS 10
-
-// Delimiter used for tokenizing input.
-# define DELIM " "
+#define HASH_SIZE 128
 
 /**
- * @struct s_minishell
- * @brief Represents a general minishell structure.
+ * @struct	s_mshell_var
+ * @brief	Represents a single environment variable in minishell.
+ *
+ * - `key`:			The key of the environment variable (e.g., "PATH").
+ * - `value`:		The value associated with the variable (e.g., "/usr/bin:/bin").
+ * - `exported`:	Indicates if the variable is exported (1) or local (0).
+ * - `next`:		Pointer to the next variable in the linked list (for handling collisions in hash table).
+ */
+typedef struct s_mshell_var
+{
+	char				*key;
+	char				*value;
+	int					exported;
+	struct s_mshell_var	*next;
+}	t_mshell_var;
+
+/**
+ * @struct	s_hash_table
+ * @brief	Represents the hash table for environment variables.
+ *
+ * - `buckets`:	An array of linked lists (chained hashing) for
+ * 				storing environment variables.
+ *				The index in the array is determined by a hash function.
+ */
+typedef struct s_hash_table
+{
+	t_mshell_var	*buckets[HASH_SIZE];
+}	t_hash_table;
+
+/**
+ * @struct	s_mshell
+ * @brief	Represents a general minishell structure.
  *
  * - `last_exit_stats`:	Int, the last exit status of
  * 						cmd, builtin, or cmd in pipe
  */
-typedef struct s_minishell
+typedef struct s_mshell
 {
-	char	**env;
-	char	**local_var;
-	int		exit_stat;
-}	t_minishell;
+	char			**env;
+	t_hash_table	*hash_table;
+	int				exit_stat;
+}	t_mshell;
 
 
 // init minishell
-t_minishell	*init_minishell(char **envp);
+t_mshell	*init_mshell(char **envp);
+char		**setup_env(char **envp);
+t_hash_table	*setup_hash_table(t_mshell *minishell);
+
+
 void		find_executable(t_cmd *cmd);
 
 // parser
-t_cmd		*run_parser(t_minishell *shell, char *input);
+t_cmd		*run_parser(t_mshell *shell, char *input);
 
 // executor
-int			run_executor(t_cmd *cmd);
+void			run_executor(t_cmd *cmd);
 
 int			ft_arr_size(char **arr);
 
-// exit utils !!!!!!! 
+// exit utils !!!!!!!
 void		print_error_exit(char *cmd, int exit_status); // to be fixed
 void		print_error(char *cmd);
 void		update_last_exit_status(t_cmd *cmd, int status);
@@ -66,5 +93,7 @@ void		error_handler(t_cmd *cmd);
 
 bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);
+
+void	free_minishell(t_mshell *minishell);
 
 #endif /* MINISHELL_H */

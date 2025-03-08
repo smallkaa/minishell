@@ -1,46 +1,35 @@
 #include "minishell.h"
 
-void	print_export_env(t_cmd *cmd)
+
+void	print_export_from_ht(t_mshell *mshell)
 {
-	int		i;
-	char	*equal_sign;
-	char	**env;
+	t_hash_table	*ht;
+	t_mshell_var	*var;
+	int				i;
 
-	printf("[TEST]: Going to print env vars\n");
+	ht = mshell->hash_table;
+	// printf("[TEST]: Printing export variables from hash table\n");
 
-
-	env = cmd->minishell->env;
-	if (!env)
-		return ;
-	i = 0;
-	while (env[i])
+	for (i = 0; i < HASH_SIZE; i++)
 	{
-		equal_sign = ft_strchr(env[i], '=');
-		if (equal_sign)
-			printf("declare -x %.*s=\"%s\"\n", (int)(equal_sign - env[i]),
-			env[i], equal_sign + 1);
-		else
-			printf("declare -x %s\n", env[i]);
-		i++;
+		var = ht->buckets[i];
+		while (var)
+		{
+			// Only print if it's marked exported
+			if (var->exported)
+			{
+				if (var->value)
+					printf("declare -x %s=\"%s\"\n", var->key, var->value);
+				else
+					printf("declare -x %s\n", var->key);
+			}
+			var = var->next;
+		}
 	}
+	// printf("[TEST]: END Printing export variables from hash table\n");
+
 }
 
-void	print_local_var(t_cmd *cmd)
-{
-	int		i;
-	char	**local_var;
-	printf("[TEST]: Going to print local vars\n");
-
-	local_var = cmd->minishell->local_var;
-	if (!local_var)
-		return ;
-	i = 0;
-	while (local_var[i])
-	{
-		printf("declare -x %s\n", local_var[i]);
-		i++;
-	}
-}
 
 bool	is_valid_varname(const char *key_value_pair)
 {

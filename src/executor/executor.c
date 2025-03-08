@@ -119,30 +119,13 @@ static void	exec_cmd(t_cmd *cmd)
 	// cleanup_heredoc(cmd);
 }
 
-/**
- * Entry point for command execution.
- * - If a single built-in command is executed, it runs directly
- * in the current shell.
- * - Otherwise, it executes the full command pipeline using subshell.
- *
- * @param cmd The first command in the command list.
- */
-int	run_executor(t_cmd *cmd)
+void	run_executor(t_cmd *cmd)
 {
-	// if (!cmd || !cmd->argv[0])
-	// 	return (EXIT_SUCCESS);
-
 	cmd->in_pipe = false;
 	if (is_builtin(cmd) && !cmd->next)
 	{
 		exec_builtin(cmd);
-		printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
-
-		return (cmd->minishell->exit_stat);
+		return ;
 	}
 	exec_cmd(cmd);
-
-	printf("[DEBUG]: run_executor exit status (%d)\n", cmd->minishell->exit_stat);
-
-	return (cmd->minishell->exit_stat);
 }

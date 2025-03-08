@@ -169,7 +169,7 @@ void debug_print_parsed_commands(t_cmd *cmd)
 }
 
 
-t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
+t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
     t_cmd *head = NULL;
     t_cmd *current = NULL;
@@ -243,7 +243,7 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
     return head;
 }
 /*
-t_cmd	*run_parser(t_minishell *minishell, char	*input)
+t_cmd	*run_parser(t_mshell *minishell, char	*input)
 {
     debug_printf("\nTokenizing: %s\n\n", input);
     tokenizer_init(input);
@@ -276,7 +276,7 @@ t_cmd	*run_parser(t_minishell *minishell, char	*input)
 return NULL;
 }*/
 
-t_cmd *run_parser(t_minishell *minishell, char *input)
+t_cmd *run_parser(t_mshell *minishell, char *input)
 {
     char *expanded_input;
     t_TokenArray *tokens;

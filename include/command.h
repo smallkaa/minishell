@@ -1,9 +1,15 @@
 #ifndef COMMAND_H
 # define COMMAND_H
 
+// Maximum number of arguments per command.
+# define MAX_ARGS 64
+
+// Maximum number of commands in a pipeline.
+# define MAX_CMDS 10
+
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
-typedef struct s_minishell	t_minishell;
+typedef struct s_mshell	t_mshell;
 
 /**
  * @enum e_redir_type
@@ -62,7 +68,7 @@ typedef struct s_cmd
 	t_redir				*in_redir;
 	t_redir				*out_redir;
 	t_cmd				*next;
-	t_minishell			*minishell;
+	t_mshell			*minishell;
 	bool				in_pipe;
 }	t_cmd;
 

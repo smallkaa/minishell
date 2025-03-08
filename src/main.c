@@ -1,11 +1,8 @@
 #include "minishell.h"
 
-int	run_minishell(t_minishell *minishell)
+void	run_minishell(t_mshell *minishell)
 {
 	char	*input;
-	int		exit_status;
-
-	// uncoment for parser
 	t_cmd	*cmd;
 
 	while (1)
@@ -15,7 +12,7 @@ int	run_minishell(t_minishell *minishell)
 
 		// check for EOF / Ctrl+D
 		if (!input)
-			return (EXIT_SUCCESS);
+			return ;
 
 		// Step 2: add input to history
 		if (*input)
@@ -26,18 +23,16 @@ int	run_minishell(t_minishell *minishell)
 
 		// Step 3: process input
 		// use input from readline and return commands table for executor
-
 		cmd = run_parser(minishell, input);
 		if (!cmd)
-			continue;
+			continue ;
 
 		// Step 4: use command table and execute commands one by one, void func
-		exit_status = run_executor(cmd);
+		run_executor(cmd);
 
 		//	free_cmds(cmd);
 		free(input);
 	}
-	return (exit_status);
 }
 
 // Compile in src/ dir with
@@ -47,18 +42,19 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	t_minishell	*minishell;
-	int status;
+	t_mshell	*minishell;
+
 
 	setup_signal_handlers(); // Set up signal handlers
 
-	minishell = init_minishell(envp);
+	minishell = init_mshell(envp);
 	if (!minishell)
 	{
-		print_error("Error: init_minishell failed\n");
 		return (EXIT_FAILURE);
 	}
-	status = run_minishell(minishell);
-	printf("\n[DEBUG]: main() exit status (%d)\n", status);
-	return (status);
+	run_minishell(minishell);
+
+	free_minishell(minishell);
+
+	return (EXIT_SUCCESS);
 }

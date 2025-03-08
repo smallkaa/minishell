@@ -11,8 +11,10 @@
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
 typedef struct s_cmd	t_cmd;
+typedef struct s_mshell	t_mshell;
+typedef struct s_mshell_var	t_mshell_var;
+typedef struct s_hash_table	t_hash_table;
 
-/*------FUNCTIONS----------------------------------------------------*/
 
 // standart cmd exec functions
 void	execute(t_cmd *cmd, int in_fd);
@@ -26,9 +28,14 @@ void	handle_pwd(t_cmd *cmd);
 void	handle_cd(t_cmd *cmd);
 void	handle_env(t_cmd *cmd);
 void	handle_export(t_cmd *cmd);
+
+void	print_export_from_ht(t_mshell *mshell);
+
 void	print_export_env(t_cmd *cmd);
-void	print_local_var(t_cmd *cmd);
+void	print_all_variables(t_hash_table *table);
 bool	is_valid_varname(const char *key_value_pair);
+void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int exported);
+t_mshell_var	*split_key_value(char *key_value_pair);
 
 // redirections <, <<, >, >>
 void	handle_in_redirection(t_cmd *cmd);
