@@ -31,7 +31,7 @@ void	print_local_var(t_cmd *cmd);
 bool	is_valid_varname(const char *key_value_pair);
 int		arr_size(char **arr);
 
-void	find_binary(t_cmd *cmd);
+void	find_executable(t_cmd *cmd);
 
 // redirections <, <<
 void	handle_in_redirection(t_cmd *cmd);

@@ -164,7 +164,7 @@ static int	handle_path_search(t_cmd *cmd)
  *		 126 if permission is denied,
  *		 127 if command is not found.
  */
-void	find_binary(t_cmd *cmd)
+void	find_executable(t_cmd *cmd)
 {
 	int	status;
 

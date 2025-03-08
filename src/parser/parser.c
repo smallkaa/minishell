@@ -238,7 +238,7 @@ t_cmd *create_command_from_tokens(t_minishell *shell, t_TokenArray *tokens)
     }
 
 
-	find_binary(head);
+	find_executable(head);
 
     return head;
 }
