@@ -74,16 +74,14 @@ t_mshell		*init_mshell(char **envp);
 char			**setup_env(char **envp);
 t_hash_table	*setup_hash_table(t_mshell *minishell);
 char			**setup_builtin(void);
-
-
-void		find_executable(t_cmd *cmd);
+unsigned int	hash_function(const char *key);
+void			find_executable(t_cmd *cmd);
 
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
 
 // executor
 uint8_t	run_executor(t_cmd *cmd);
-
 
 int			ft_arr_size(char **arr);
 

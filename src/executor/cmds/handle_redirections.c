@@ -1,23 +1,12 @@
 #include "minishell.h"
 
-/**
- * Handles output redirection for a command.
- *
- * - Opens the specified output file with the correct mode
- * `O_TRUNC` or `O_APPEND`.
- * - Redirects `STDOUT_FILENO` to the opened file.
- * - Ensures the file is closed after redirection is set.
- *
- * @param cmd The command containing output redirection details.
- */
-void	handle_out_redirection(t_cmd *cmd)
+static void	handle_out_redirection(t_cmd *cmd)
 {
 	int	out;
 	int	mode;
 
 	if (!cmd->out_redir)
 		return ;
-
 	mode = O_WRONLY | O_CREAT;
 	if (cmd->out_redir->type == R_OUTPUT)
 		mode |= O_TRUNC;
@@ -38,19 +27,10 @@ void	handle_out_redirection(t_cmd *cmd)
 		print_error_exit("close", EXIT_FAILURE);
 }
 
-/**
- * Handles input redirection for a command.
- *
- * - Opens the specified input file in read-only mode.
- * - Redirects `STDIN_FILENO` to the opened file.
- * - Ensures the file is closed after redirection is set.
- *
- * @param cmd The command containing input redirection details.
- */
-void	handle_in_redirection(t_cmd *cmd)
+static void	handle_in_redirection(t_cmd *cmd)
 {
 	int	in;
-	
+
 	if (!cmd->in_redir)
 		return ;
 	in = open(cmd->in_redir->filename, O_RDONLY);
@@ -64,4 +44,24 @@ void	handle_in_redirection(t_cmd *cmd)
 	}
 	if (close(in) == -1)
 		print_error_exit("close", EXIT_FAILURE);
+}
+
+void	handle_redirections(t_cmd *cmd, int in_fd)
+{
+	int	status;
+
+	if (cmd->in_redir)
+		handle_in_redirection(cmd);
+	else
+	{
+		status = dup2(in_fd, STDIN_FILENO);
+		if (status == -1)
+		{
+			if (close(in_fd) == -1)
+				print_error_exit("close", EXIT_FAILURE);
+			print_error_exit("dup2", EXIT_FAILURE);
+		}
+	}
+	if (cmd->out_redir)
+		handle_out_redirection(cmd);
 }

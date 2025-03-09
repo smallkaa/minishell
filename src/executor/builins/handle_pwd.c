@@ -26,9 +26,7 @@ uint8_t	handle_pwd(t_cmd *cmd)
 		exit_status = 2;
 	}
 	else
-	{
 		exit_status = exec_pwd(cmd);
-	}
 	cmd->minishell->exit_status = exit_status;
 	if (cmd->in_pipe)
 		exit(exit_status);

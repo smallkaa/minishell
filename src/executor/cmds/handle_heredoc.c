@@ -1,17 +1,5 @@
 #include "minishell.h"
 
-/**
- * Reads user input for heredoc and writes it to a temporary file.
- *
- * - Reads input line by line using `readline()`.
- * - Stops reading when the delimiter is encountered.
- * - Writes the input to the temporary file.
- * - Handles Ctrl+D (EOF).
- * - Closes the file descriptor after writing.
- *
- * @param tmp_fd	The file descriptor of the temporary heredoc file.
- * @param cmd		The command containing heredoc metadata (e.g., delimiter).
- */
 static void	write_heredoc_input(int tmp_fd, t_cmd *cmd)
 {
 	char	*line;
@@ -39,15 +27,6 @@ static void	write_heredoc_input(int tmp_fd, t_cmd *cmd)
 		print_error_exit("close", EXIT_FAILURE);
 }
 
-/**
- * Handles heredoc input redirection by writing user input to a temporary file.
- *
- * - Creates a temporary file to store heredoc content.
- * - Calls `write_heredoc_input()` to capture user input.
- * - Ensures the file is properly created before writing.
- *
- * @param cmd The command containing heredoc information.
- */
 void	handle_heredoc(t_cmd *cmd)
 {
 	int	tmp_fd;

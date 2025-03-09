@@ -51,14 +51,10 @@ uint8_t	handle_exit(t_cmd *cmd)
 			exit_status = 255;
 		}
 		else
-		{
 			exit_status = ft_atoi(cmd->argv[1]) % 256;
-		}
 	}
 	else
-	{
 		exit_status = cmd->minishell->exit_status;
-	}
 	cmd->minishell->exit_status = exit_status;
 	free_minishell(cmd->minishell);
 	exit(exit_status);
