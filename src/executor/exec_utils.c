@@ -44,7 +44,7 @@ int	count_exported_vars(t_hash_table *hash_table)
 		current = hash_table->buckets[i];
 		while (current)
 		{
-			if (current->exported)
+			if (current->val_assigned)
 				count++;
 			current = current->next;
 		}

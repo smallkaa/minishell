@@ -29,14 +29,14 @@
  *
  * - `key`:			The key of the environment variable (e.g., "PATH").
  * - `value`:		The value associated with the variable (e.g., "/usr/bin:/bin").
- * - `exported`:	Indicates if the variable is exported (1) or local (0).
+ * - `val_assigned`:	Indicates if the variable has value (1) or not (0).
  * - `next`:		Pointer to the next variable in the linked list (for handling collisions in hash table).
  */
 typedef struct s_mshell_var
 {
 	char				*key;
 	char				*value;
-	int					exported;
+	int					val_assigned;
 	struct s_mshell_var	*next;
 }	t_mshell_var;
 

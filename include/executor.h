@@ -30,7 +30,7 @@ uint8_t			handle_pwd(t_cmd *cmd);
 uint8_t			handle_cd(t_cmd *cmd);
 uint8_t			handle_env(t_cmd *cmd);
 uint8_t			handle_export(t_cmd *cmd);
-void			set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int exported);
+void			set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int val_assigned);
 t_mshell_var	*split_key_value(char *key_value_pair);
 
 // redirections <, <<, >, >>

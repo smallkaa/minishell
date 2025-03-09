@@ -11,7 +11,7 @@ static uint8_t	print_env_variables(t_hash_table *hash_table)
 		var = hash_table->buckets[i];
 		while (var)
 		{
-			if (var->exported)
+			if (var->val_assigned)
 			{
 				if (var->value)
 					printf("%s=%s\n", var->key, var->value);

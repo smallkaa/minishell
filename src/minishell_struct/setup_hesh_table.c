@@ -1,63 +1,5 @@
 #include "minishell.h"
 
-// void	update_env(t_mshell *minishell)
-// {
-// 	int				count;
-// 	char			**new_env;
-// 	int				index;
-// 	int				i;
-// 	t_mshell_var	*current;
-// 	const char *val;
-
-// 	count = count_exported_vars(minishell->hash_table);
-// 	new_env = malloc((count + 1) * sizeof(char *));
-// 	if (!new_env)
-// 	{
-// 		print_error("minishell: update_environ, malloc failed\n");
-// 		return ;
-// 	}
-// 	i = 0;
-// 	index = 0;
-// 	while (i < HASH_SIZE)
-// 	{
-// 		current = minishell->hash_table->buckets[i];
-// 		while (current)
-// 		{
-// 			if (current->exported)
-// 			{
-// 				if (!current->value)
-// 					val = "";
-// 				else
-// 					val = current->value;
-// 				new_env[index] = malloc(ft_strlen(current->key) + ft_strlen(val) + 2);
-// 				if (!new_env[index])
-// 				{
-// 					print_error("minishell: update_environ, malloc failed\n");
-// 					while (--index >= 0)
-// 						free(new_env[index]);
-// 					free(new_env);
-// 					return ;
-// 				}
-// 				sprintf(new_env[index], "%s=%s", current->key, val);
-// 				index++;
-// 			}
-// 			current = current->next;
-// 		}
-// 		i++;
-// 	}
-// 	new_env[index] = NULL;
-// 	if (minishell->env)
-// 	{
-// 		i = 0;
-// 		while (minishell->env[i])
-// 		{
-// 			free(minishell->env[i]);
-// 			i++;
-// 		}
-// 		free(minishell->env);
-// 	}
-// 	minishell->env = new_env;
-// }
 void	free_old_env(char **env)
 {
 	int	i;
@@ -93,7 +35,7 @@ void	populate_env_array(t_mshell *minishell, char **new_env)
 		current = minishell->hash_table->buckets[i];
 		while (current)
 		{
-			if (current->exported)
+			if (current->val_assigned)
 			{
 				new_env[index] = create_env_entry(current);
 				if (!new_env[index])
@@ -139,59 +81,19 @@ unsigned int	hash_function(const char *key)
 	return (hash % HASH_SIZE);
 }
 
-// void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int exported)
-// {
-// 	unsigned int	index;
-// 	t_mshell_var	*current;
-// 	t_hash_table	*hash_table;
-// 	t_mshell_var	*new_var;
-
-// 	index = hash_function(mshell_var->key);
-// 	hash_table = minishell->hash_table;
-// 	current = hash_table->buckets[index];
-// 	while (current)
-// 	{
-// 		if (ft_strcmp(current->key, mshell_var->key) == 0)
-// 		{
-// 			if (mshell_var->value)
-// 			{
-// 				free(current->value);
-// 				current->value = ft_strdup(mshell_var->value);
-// 			}
-// 			current->exported = exported;
-// 			if (exported)
-// 				update_env(minishell);
-// 			return;
-// 		}
-// 		current = current->next;
-// 	}
-// 	new_var = malloc(sizeof(t_mshell_var));
-// 	if (!new_var)
-// 	{
-// 		print_error("Error (set_variable): new_var malloc failed\n");
-// 		return;
-// 	}
-// 	new_var->key = ft_strdup(mshell_var->key);
-// 	new_var->value = mshell_var->value ? ft_strdup(mshell_var->value) : NULL;
-// 	new_var->exported = exported;
-// 	new_var->next = hash_table->buckets[index];
-// 	hash_table->buckets[index] = new_var;
-// 	if (exported)
-// 		update_env(minishell);
-// }
-void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int exported, t_mshell *minishell)
+void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell *minishell)
 {
 	if (mshell_var->value)
 	{
 		free(current->value);
 		current->value = ft_strdup(mshell_var->value);
 	}
-	current->exported = exported;
-	if (exported)
+	current->val_assigned = val_assigned;
+	if (val_assigned)
 		update_env(minishell);
 }
 
-t_mshell_var	*create_new_variable(t_mshell_var *mshell_var, int exported)
+t_mshell_var	*create_new_variable(t_mshell_var *mshell_var, int val_assigned)
 {
 	t_mshell_var	*new_var;
 
@@ -206,12 +108,12 @@ t_mshell_var	*create_new_variable(t_mshell_var *mshell_var, int exported)
 		new_var->value = ft_strdup(mshell_var->value);
 	else
 	new_var->value = NULL;
-	new_var->exported = exported;
+	new_var->val_assigned = val_assigned;
 	new_var->next = NULL;
 	return (new_var);
 }
 
-void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int exported)
+void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int val_assigned)
 {
 	unsigned int	index;
 	t_mshell_var	*current;
@@ -225,17 +127,17 @@ void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int exported)
 	{
 		if (ft_strcmp(current->key, mshell_var->key) == 0)
 		{
-			update_existing_variable(current, mshell_var, exported, minishell);
+			update_existing_variable(current, mshell_var, val_assigned, minishell);
 			return;
 		}
 		current = current->next;
 	}
-	new_var = create_new_variable(mshell_var, exported);
+	new_var = create_new_variable(mshell_var, val_assigned);
 	if (!new_var)
 		return ;
 	new_var->next = hash_table->buckets[index];
 	hash_table->buckets[index] = new_var;
-	if (exported)
+	if (val_assigned)
 		update_env(minishell);
 }
 
@@ -264,7 +166,7 @@ static void	fillup_hash_table(t_mshell *minishell)
 		curr = minishell->hash_table->buckets[i];
 		while (curr)
 		{
-			curr->exported = 1;
+			curr->val_assigned = 1;
 			curr = curr->next;
 		}
 		i++;
