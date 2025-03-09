@@ -1,23 +1,5 @@
 #include "minishell.h"
 
-
-
-// void print_all_variables(t_hash_table *hash_table)
-// {
-// 	int i;
-// 	t_mshell_var *current;
-
-// 	for (i = 0; i < HASH_SIZE; i++)
-// 	{
-// 		current = hash_table->buckets[i];
-// 		while (current)
-// 		{
-// 			printf("  %s=%s\n", current->key, current->value ? current->value : "(NULL)");
-// 			current = current->next;
-// 		}
-// 	}
-// }
-
 void	handle_var(t_cmd *cmd, char *key_value_pair)
 {
 	t_mshell_var	*mshell_var;
@@ -29,24 +11,6 @@ void	handle_var(t_cmd *cmd, char *key_value_pair)
 		set_variable(cmd->minishell, mshell_var, 1);
 }
 
-static bool	is_valid_varname(const char *key_value_pair)
-{
-	int	i;
-
-	if (!key_value_pair)
-		return (false);
-	if (!(ft_isalpha(key_value_pair[0]) || key_value_pair[0] == '_'))
-		return (false);
-	i = 1;
-	while (key_value_pair[i] && key_value_pair[i] != '=')
-	{
-		if (!(ft_isalnum(key_value_pair[i]) || key_value_pair[i] == '_'))
-			return (false);
-		i++;
-	}
-	return (true);
-}
-
 static void	print_export_from_ht(t_mshell *mshell)
 {
 	t_hash_table	*ht;
@@ -55,7 +19,7 @@ static void	print_export_from_ht(t_mshell *mshell)
 
 	ht = mshell->hash_table;
 	i = 0;
-	while(i < HASH_SIZE)
+	while (i < HASH_SIZE)
 	{
 		var = ht->buckets[i];
 		while (var)
@@ -73,29 +37,18 @@ static void	print_export_from_ht(t_mshell *mshell)
 	}
 }
 
-uint8_t	handle_export(t_cmd *cmd)
+static uint8_t	process_export_arguments(t_cmd *cmd, char **key_value_pairs)
 {
 	int		i;
-	char	**key_value_pairs;
 	uint8_t	exit_status;
 
 	exit_status = EXIT_SUCCESS;
-	key_value_pairs = cmd->argv;
-	if (!key_value_pairs[1])
-	{
-		print_export_from_ht(cmd->minishell);
-		cmd->minishell->exit_status = exit_status;
-		if (cmd->in_pipe)
-			exit(exit_status);
-		return (exit_status);	}
-
 	i = 1;
 	while (key_value_pairs[i])
 	{
 		if (!is_valid_varname(key_value_pairs[i]))
 		{
-			error_handler(cmd);
-			// print_error("minishell: export: not a valid identifier\n");
+			print_error("minishell: not a valid identifier\n");
 			exit_status = EXIT_FAILURE;
 			i++;
 			continue ;
@@ -106,4 +59,22 @@ uint8_t	handle_export(t_cmd *cmd)
 		i++;
 	}
 	return (exit_status);
+}
+
+static uint8_t	print_exported_variables(t_cmd *cmd)
+{
+	print_export_from_ht(cmd->minishell);
+	cmd->minishell->exit_status = EXIT_SUCCESS;
+	if (cmd->in_pipe)
+		exit(EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
+}
+
+uint8_t	handle_export(t_cmd *cmd)
+{
+	if (!cmd->argv[1])
+	{
+		return (print_exported_variables(cmd));
+	}
+	return (process_export_arguments(cmd, cmd->argv));
 }

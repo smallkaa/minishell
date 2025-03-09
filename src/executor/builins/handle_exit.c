@@ -30,7 +30,7 @@ preceding the trap action.
 
 static bool	is_numeric(char *num)
 {
-	while(*num)
+	while (*num)
 	{
 		if (!ft_isdigit(*num))
 			return (false);

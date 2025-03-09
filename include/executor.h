@@ -43,4 +43,6 @@ void	handle_heredoc(t_cmd *cmd);
 
 // void	cleanup_heredoc(t_cmd *cmd);
 
+// utils
+bool	is_valid_varname(const char *key_value_pair);
 #endif /* EXECUTOR_H */

@@ -2,13 +2,12 @@
 
 uint8_t	handle_cd(t_cmd *cmd)
 {
-	uint8_t		exit_status;
+	uint8_t	exit_status;
 	char	*path;
 
 	// if (!cmd->argv[1])
 	// 	path = $HOME  // replace with func
 	// else
-
 	path = cmd->argv[1];
 	if (chdir(path) != 0)
 	{
