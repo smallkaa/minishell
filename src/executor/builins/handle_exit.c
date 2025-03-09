@@ -1,43 +1,65 @@
 #include "minishell.h"
+/*
+EXIT STATUS
 
-/**
- * Handles the `exit` command.
- * - If no arguments are provided, exits with `EXIT_SUCCESS (0)`.
- * - If more than one argument is provided, prints an error and
- *   exits with `EXIT_FAILURE (1)`.
- * - If a single numeric argument is provided, converts it to an
- *   integer using `ft_atoi()`
- *   and exits with that status.
- * - Updates the shell's last exit status before terminating the process.
- *
- * Error Handling:
- * - If too many arguments are given (`cmd->argv[2]` exists), prints an error
- *   and exits with `EXIT_FAILURE`.
- * - If `cmd->argv[1]` is not a valid integer, `ft_atoi()` should handle
- *   it properly.
- *
- * @param cmd   The command structure containing arguments.
- *              - cmd->argv[0] should be `"exit"`.
- *              - cmd->argv[1] (optional) is the exit status argument.
- *              - cmd->argv[2] (if exists) triggers an error.
- *
- * @return      Does not return (calls `exit(status)`) unless an error occurs.
- */
-void	handle_exit(t_cmd *cmd)
+https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#exit
+
+The exit utility shall cause the shell to exit from
+its current execution environment with the exit status
+specified by the unsigned decimal integer n.
+If the current execution environment is a subshell environment,
+the shell shall exit from the subshell environment with
+the specified exit status and continue in the environment from
+which that subshell environment was invoked; otherwise,
+the shell utility shall terminate with the specified exit status.
+If n is specified, but its value is not between 0 and 255 inclusively,
+the exit status is undefined.
+
+A trap on EXIT shall be executed before the shell terminates,
+except when the exit utility is invoked in that trap itself,
+in which case the shell shall exit immediately.
+
+The exit status shall be n, if specified, except that the behavior
+is unspecified if n is not an unsigned decimal integer or
+is greater than 255. Otherwise, the value shall be the exit value of
+the last command executed, or zero if no command was executed.
+When exit is executed in a trap action, the last command is
+considered to be the command that executed immediately
+preceding the trap action.
+*/
+
+static bool	is_numeric(char *num)
 {
-	int	status;
-
-	if (cmd->argv[1] && cmd->argv[2])
+	while(*num)
 	{
-		update_last_exit_status(cmd, EXIT_FAILURE);
-		// error_handler(cmd);
-		print_error("minishell: handle_exit too many args\n");
-		exit (EXIT_FAILURE);
+		if (!ft_isdigit(*num))
+			return (false);
+		num++;
 	}
-	if (!cmd->argv[1])
-		status = EXIT_SUCCESS;
+	return (true);
+}
+
+uint8_t	handle_exit(t_cmd *cmd)
+{
+	uint8_t	exit_status;
+
+	if (cmd->argv[1])
+	{
+		if (!is_numeric(cmd->argv[1]))
+		{
+			print_error("minishell: exit: numeric argument required");
+			exit_status = 255;
+		}
+		else
+		{
+			exit_status = ft_atoi(cmd->argv[1]) % 256;
+		}
+	}
 	else
-		status = ft_atoi(cmd->argv[1]);
-	update_last_exit_status(cmd, status);
-	exit (status);
+	{
+		exit_status = cmd->minishell->exit_status;
+	}
+	cmd->minishell->exit_status = exit_status;
+	free_minishell(cmd->minishell);
+	exit(exit_status);
 }

@@ -1,12 +1,5 @@
 #include "minishell.h"
 
-/**
- * ft_putstr_custom - Writes a string to STDOUT with error handling.
- * @cmd: The command structure containing arguments.
- * @str: The string to print.
- *
- * Return: EXIT_SUCCESS (0) on success, EXIT_FAILURE (1) on failure.
- */
 static int	ft_putstr_custom(t_cmd *cmd, char *str)
 {
 	ssize_t	written;
@@ -20,15 +13,7 @@ static int	ft_putstr_custom(t_cmd *cmd, char *str)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * print_content - Prints the arguments of the echo command.
- * @param cmd: The command structure containing arguments.
- * @param i: The starting index after processing flags.
- * @param newline_flag: A pointer to the newline flag (1 = print newline, 0 = no newline).
- *
- * Return: EXIT_SUCCESS (0) on success, EXIT_FAILURE (1) on failure.
- */
-static int	print_content(t_cmd *cmd, int i, int *newline_flag)
+static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 {
 	if (!cmd->argv[1])
 		return (ft_putstr_custom(cmd, "\n"));
@@ -50,13 +35,6 @@ static int	print_content(t_cmd *cmd, int i, int *newline_flag)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * handle_echo_flags - Parses and handles the -n flags for echo.
- * @param cmd: The command structure containing arguments.
- * @param newline_flag: Pointer to an integer flag (1 = print newline, 0 = no newline).
- *
- * Return: The index of the first non-flag argument.
- */
 static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 {
 	int	i;
@@ -76,20 +54,17 @@ static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 	return (i);
 }
 
-/**
- * handle_echo - Implements the 'echo' command.
- * @param cmd: The command structure containing arguments.
- */
-void	handle_echo(t_cmd *cmd)
+uint8_t	handle_echo(t_cmd *cmd)
 {
-	int	i;
-	int	status;
-	int	newline_flag;
-	
+	int		i;
+	uint8_t	exit_status;
+	int		newline_flag;
+
 	newline_flag = 1;
 	i = handle_echo_flags(cmd, &newline_flag);
-	status = print_content(cmd, i, &newline_flag);
-	update_last_exit_status(cmd, status);
+	exit_status = print_content(cmd, i, &newline_flag);
+	cmd->minishell->exit_status = exit_status;
 	if (cmd->in_pipe)
-		exit(status);
+		exit(exit_status);
+	return (exit_status);
 }

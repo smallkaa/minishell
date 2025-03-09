@@ -26,7 +26,7 @@ void	execute(t_cmd *cmd, int in_fd)
 {
 	if (cmd->binary == NULL)
 	{
-		printf("DEBUG: execute() cmd->binary == NULL status: %d\n", cmd->minishell->exit_stat);
+		printf("DEBUG: execute() cmd->binary == NULL status: %d\n", cmd->minishell->exit_status);
 		command_not_found_handle(cmd);
 	}
 	if (in_fd != 0)

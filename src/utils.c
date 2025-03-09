@@ -13,11 +13,11 @@ void	print_error_exit(char *cmd, int exit_status)
  *
  * - Uses the `write()` system call for direct output.
  * - Displays the command name inside single quotes.
- * - Exits with the shell's last exit status (`cmd->minishell->exit_stat`).
+ * - Exits with the shell's last exit status (`cmd->minishell->exit_status`).
  *
  * @param cmd  The command structure containing the attempted command.
  *			 - `cmd->argv[0]` holds the name of the missing command.
- *			 - `cmd->minishell->exit_stat` stores the exit status.
+ *			 - `cmd->minishell->exit_status` stores the exit status.
  *
  * @return	 This function does not return (calls `exit()`).
  */

@@ -11,5 +11,5 @@
 
 void	update_last_exit_status(t_cmd *cmd, int status)
 {
-	cmd->minishell->exit_stat = status;
+	cmd->minishell->exit_status = status;
 }

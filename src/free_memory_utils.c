@@ -17,8 +17,7 @@ void	free_env(char **env)
 
 void	free_hash_table(t_hash_table *hash_table)
 {
-	int				i;
-	t_mshell_var	*current;
+	int				i;	t_mshell_var	*current;
 	t_mshell_var	*temp;
 
 	if (!hash_table)
@@ -40,11 +39,27 @@ void	free_hash_table(t_hash_table *hash_table)
 	free(hash_table);
 }
 
+void	free_builtin(char **builtin)
+{
+	int	i;
+
+	if (!builtin)
+		return ;
+	i = 0;
+	while (builtin[i])
+	{
+		free(builtin[i]);
+		i++;
+	}
+	free(builtin);
+}
+
 void	free_minishell(t_mshell *minishell)
 {
 	if (!minishell)
 		return ;
 	free_env(minishell->env);
 	free_hash_table(minishell->hash_table);
+	free_builtin(minishell->builtin);
 	free(minishell);
 }

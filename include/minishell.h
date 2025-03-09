@@ -13,6 +13,7 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <errno.h>
+# include <stdint.h>
 
 # include "libft.h"
 # include "executor.h"
@@ -63,14 +64,16 @@ typedef struct s_mshell
 {
 	char			**env;
 	t_hash_table	*hash_table;
-	int				exit_stat;
+	char			**builtin;
+	uint8_t			exit_status;
 }	t_mshell;
 
 
 // init minishell
-t_mshell	*init_mshell(char **envp);
-char		**setup_env(char **envp);
+t_mshell		*init_mshell(char **envp);
+char			**setup_env(char **envp);
 t_hash_table	*setup_hash_table(t_mshell *minishell);
+char			**setup_builtin(void);
 
 
 void		find_executable(t_cmd *cmd);
@@ -79,7 +82,8 @@ void		find_executable(t_cmd *cmd);
 t_cmd		*run_parser(t_mshell *shell, char *input);
 
 // executor
-void			run_executor(t_cmd *cmd);
+uint8_t	run_executor(t_cmd *cmd);
+
 
 int			ft_arr_size(char **arr);
 

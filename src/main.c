@@ -3,6 +3,7 @@
 void	run_minishell(t_mshell *minishell)
 {
 	char	*input;
+	uint8_t	exit_status;
 	t_cmd	*cmd;
 
 	while (1)
@@ -16,7 +17,7 @@ void	run_minishell(t_mshell *minishell)
 
 		// Step 2: add input to history
 		if (*input)
-			add_history(input);  // need to be freed?
+			add_history(input);  // needs to be freed?
 
 
 		debug_printf("Return: %s\n", input); // test print statment
@@ -27,16 +28,13 @@ void	run_minishell(t_mshell *minishell)
 		if (!cmd)
 			continue ;
 
-		// Step 4: use command table and execute commands one by one, void func
-		run_executor(cmd);
-
-		//	free_cmds(cmd);
+		// Step 4: exec commands and return last exit status
+		exit_status = run_executor(cmd);
+		minishell->exit_status = exit_status;
 		free(input);
 	}
 }
 
-// Compile in src/ dir with
-// cc -I../include main.c -lreadline
 int	main(int argc, char **argv, char **envp)
 {
 

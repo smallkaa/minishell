@@ -21,19 +21,18 @@ void	execute(t_cmd *cmd, int in_fd);
 
 // builtin functions
 bool	is_builtin(t_cmd *cmd);
-void	exec_builtin(t_cmd *cmd);
-void	handle_exit(t_cmd *cmd);
-void	handle_echo(t_cmd *cmd);
-void	handle_pwd(t_cmd *cmd);
-void	handle_cd(t_cmd *cmd);
-void	handle_env(t_cmd *cmd);
-void	handle_export(t_cmd *cmd);
+uint8_t		exec_builtin(t_cmd *cmd);
+uint8_t		handle_exit(t_cmd *cmd);
+uint8_t		handle_echo(t_cmd *cmd);
+uint8_t		handle_pwd(t_cmd *cmd);
+uint8_t		handle_cd(t_cmd *cmd);
+uint8_t		handle_env(t_cmd *cmd);
+uint8_t		handle_export(t_cmd *cmd);
 
-void	print_export_from_ht(t_mshell *mshell);
+
 
 void	print_export_env(t_cmd *cmd);
 void	print_all_variables(t_hash_table *table);
-bool	is_valid_varname(const char *key_value_pair);
 void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int exported);
 t_mshell_var	*split_key_value(char *key_value_pair);
 
