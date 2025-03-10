@@ -148,27 +148,17 @@ void	exec_cmd(t_cmd *cmd)
 	int	in_fd;
 	int	new_in_fd;
 
-	in_fd = STDIN_FILENO;
+	in_fd = 0;
 	while (cmd)
 	{
-		/*
-		 * If there's a next command, we need a pipe.
-		 * Otherwise, we skip the pipe.
-		 */
 		if (cmd->next && pipe(fd) == -1)
 		{
 			cmd->minishell->exit_status = EXIT_FAILURE;
 			print_error_exit("pipe", EXIT_FAILURE);
 		}
-
-		/* Fork and execute. This returns fd[0] if there's a next cmd, or -1 if not. */
 		new_in_fd = fork_and_execute(cmd, in_fd, fd);
 
-		/*
-		 * We already dup2'd/used in_fd in the child, so now we can close it
-		 * in the parent, unless it's just STDIN_FILENO.
-		 */
-		if (in_fd != STDIN_FILENO)
+		if (in_fd != 0)
 			safe_close(in_fd, cmd, "close 9");
 
 		in_fd = new_in_fd;
