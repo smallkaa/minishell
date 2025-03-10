@@ -199,7 +199,10 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                     return NULL;
 
                 // Set binary name
-                new_cmd->binary = strdup(tokens->tokens[i].value);
+
+                // Ilia: I assign binary at the end of the function
+                // new_cmd->binary = strdup(tokens->tokens[i].value);
+
                 new_cmd->argv[0] = strdup(tokens->tokens[i].value);
 				new_cmd->minishell = shell;
                 arg_index = 1;
@@ -237,8 +240,9 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
         current->argv[arg_index] = NULL;
     }
 
-
-	find_executable(head);
+    //Ilia: here I looking for binary, if no found - NULL;
+    head->binary = NULL;
+    find_binary(head);
 
     return head;
 }

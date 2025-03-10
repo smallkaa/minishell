@@ -2,8 +2,10 @@
 
 void	print_error_exit(char *cmd, int exit_status)
 {
-	ft_putstr_fd(cmd, STDERR_FILENO);
-	perror(": ");
+	if (cmd && *cmd)
+		perror(cmd);
+	else
+		perror("Error");
 	exit(exit_status);
 }
 

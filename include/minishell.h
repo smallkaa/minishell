@@ -75,7 +75,7 @@ char			**setup_env(char **envp);
 t_hash_table	*setup_hash_table(t_mshell *minishell);
 char			**setup_builtin(void);
 unsigned int	hash_function(const char *key);
-void			find_executable(t_cmd *cmd);
+void			find_binary(t_cmd *cmd);
 
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
