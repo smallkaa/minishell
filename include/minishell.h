@@ -72,10 +72,21 @@ typedef struct s_mshell
 // init minishell
 t_mshell		*init_mshell(char **envp);
 char			**setup_env(char **envp);
-t_hash_table	*setup_hash_table(t_mshell *minishell);
 char			**setup_builtin(void);
-unsigned int	hash_function(const char *key);
 char			*find_binary(t_cmd *cmd);
+
+// setup hash table
+t_hash_table	*setup_hash_table(t_mshell *minishell);
+char	*create_env_entry(t_mshell_var *var);
+bool	add_env_entry(t_mshell_var *current, char **new_env, int *index);
+bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
+void	populate_env_array(t_mshell *minishell, char **new_env);
+void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int val_assigned);
+void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell *minishell);
+t_mshell_var	*create_new_variable(t_mshell_var *mshell_var, int val_assigned);
+unsigned int	hash_function(const char *key);
+void	free_old_env(char **env);
+void	update_env(t_mshell *minishell);
 
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
