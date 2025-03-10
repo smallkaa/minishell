@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	run_minishell(t_mshell *minishell)
+void	run_minishell(t_mshell	*mshell)
 {
 	char	*input;
 	uint8_t	exit_status;
@@ -24,13 +24,13 @@ void	run_minishell(t_mshell *minishell)
 
 		// Step 3: process input
 		// use input from readline and return commands table for executor
-		cmd = run_parser(minishell, input);
+		cmd = run_parser(mshell, input);
 		if (!cmd)
 			continue ;
 
 		// Step 4: exec commands and return last exit status
 		exit_status = run_executor(cmd);
-		minishell->exit_status = exit_status;
+		mshell->exit_status = exit_status;
 		free(input);
 	}
 }

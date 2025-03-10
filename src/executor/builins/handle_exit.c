@@ -1,3 +1,7 @@
+/**
+ * @file handle_exit.c
+ * @brief Implementation of the `exit` built-in command in Minishell.
+ */
 #include "minishell.h"
 /*
 EXIT STATUS
@@ -28,6 +32,16 @@ considered to be the command that executed immediately
 preceding the trap action.
 */
 
+/**
+ * @brief Checks if a string represents a numeric value.
+ *
+ * Iterates through the given string and verifies whether all characters
+ * are digits (`0-9`). If any non-numeric character is found, the function
+ * returns `false`.
+ *
+ * @param num The string to check.
+ * @return `true` if the string is numeric, `false` otherwise.
+ */
 static bool	is_numeric(char *num)
 {
 	while (*num)
@@ -39,6 +53,19 @@ static bool	is_numeric(char *num)
 	return (true);
 }
 
+/**
+ * @brief Handles the `exit` built-in command.
+ *
+ * - If an argument is provided:
+ *   - If it is numeric, the shell exits with the specified status (mod 256).
+ *   - If it is non-numeric, an error is printed, and the shell exits with status `255`.
+ * - If no argument is provided, the shell exits using the last command's exit status.
+ *
+ * Before terminating, this function frees all allocated memory using `free_minishell()`.
+ *
+ * @param cmd Pointer to the command structure.
+ * @note This function calls `exit()`, which terminates the shell process.
+ */
 uint8_t	handle_exit(t_cmd *cmd)
 {
 	uint8_t	exit_status;

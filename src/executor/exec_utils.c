@@ -1,3 +1,7 @@
+/**
+ * @file exec_utils.c
+ * @brief Utility functions for managing variables, pipeline limits, and exit statuses in Minishell.
+ */
 #include "minishell.h"
 
 // void	cleanup_heredoc(t_cmd *cmd)
@@ -13,6 +17,17 @@ void	update_last_exit_status(t_cmd *cmd, int status)
 {
 	cmd->minishell->exit_status = status;
 }
+
+/**
+ * @brief Validates whether a given string is a valid variable name.
+ *
+ * - A valid variable name starts with an alphabetic character or an underscore (`_`).
+ * - Subsequent characters can be alphanumeric or an underscore.
+ * - If an equal sign (`=`) is present, only the portion before it is checked.
+ *
+ * @param key_value_pair The string to validate.
+ * @return `true` if the string is a valid variable name, `false` otherwise.
+ */
 bool	is_valid_varname(const char *key_value_pair)
 {
 	int	i;
@@ -31,28 +46,15 @@ bool	is_valid_varname(const char *key_value_pair)
 	return (true);
 }
 
-int	count_exported_vars(t_hash_table *hash_table)
-{
-	int				i;
-	int				count;
-	t_mshell_var	*current;
-
-	i = 0;
-	count = 0;
-	while (i < HASH_SIZE)
-	{
-		current = hash_table->buckets[i];
-		while (current)
-		{
-			if (current->val_assigned)
-				count++;
-			current = current->next;
-		}
-		i++;
-	}
-	return (count);
-}
-
+/**
+ * @brief Splits a `KEY=VALUE` string into a `t_mshell_var` structure.
+ *
+ * - If an equal sign (`=`) is found, the string is split into a key and a value.
+ * - If no equal sign is present, the value is set to `NULL`.
+ *
+ * @param key_value_pair The string to split.
+ * @return A pointer to a newly allocated `t_mshell_var` structure, or NULL on failure.
+ */
 t_mshell_var	*split_key_value(char *key_value_pair)
 {
 	t_mshell_var	*mshell_var;

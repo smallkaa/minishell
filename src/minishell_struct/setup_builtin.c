@@ -1,5 +1,26 @@
+/**
+ * @file setup_builtin.c
+ * @brief Built-in command setup for Minishell.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Initializes the list of built-in shell commands.
+ *
+ * This function allocates memory for an array of built-in command names
+ * and populates it with supported shell commands. The last element is set to NULL.
+ *
+ * The built-in commands include:
+ * - `echo`
+ * - `cd`
+ * - `pwd`
+ * - `export`
+ * - `unset`
+ * - `env`
+ * - `exit`
+ *
+ * @return A dynamically allocated array of built-in command names, or NULL on failure.
+ */
 char	**setup_builtin(void)
 {
 	char	**builtin;

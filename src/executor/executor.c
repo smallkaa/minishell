@@ -1,3 +1,7 @@
+/**
+ * @file executor.c
+ * @brief Functions for executing built-in and external commands in Minishell.
+ */
 #include "minishell.h"
 
 bool	is_builtin(t_cmd *cmd)
@@ -12,32 +16,29 @@ bool	is_builtin(t_cmd *cmd)
 	return (builtin[i] != NULL);
 }
 
-uint8_t	run_executor(t_cmd *cmd)
+/**
+ * @brief Executes a command, either built-in or external.
+ *
+ * - If the command is built-in and there is no following command, executes it directly.
+ * - Otherwise, marks `cmd->in_pipe` as `true` and executes the command externally.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return The exit status of the command.
+ */
+uint8_t run_executor(t_cmd *cmd)
 {
 	t_mshell	*minishell;
-	char		**env;
-	t_hash_table	*hash_table;
 
 	minishell = cmd->minishell;
-	if (!minishell)
+	if (!minishell || !minishell->env || !minishell->hash_table)
 	{
-		print_error("minishell: run_executor, no minishell found\n");
-		return (EXIT_FAILURE);
-	}
-	env = cmd->minishell->env;
-	hash_table = cmd->minishell->hash_table;
-	if (!env || !hash_table)
-	{
-		print_error("minishell: run_executor no env/hash_table found\n");
+		print_error("Error (run_executor): missing components\n");
 		return (EXIT_FAILURE);
 	}
 	cmd->in_pipe = false;
 	if (is_builtin(cmd) && !cmd->next)
 		return (exec_builtin(cmd));
-	else
-	{
-		cmd->in_pipe = true;
-		exec_cmd(cmd);
-	}
+	cmd->in_pipe = true;
+	exec_cmd(cmd);
 	return (cmd->minishell->exit_status);
 }

@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char **setup_env(char **envp)
+char	**setup_env(char **envp)
 {
 	int	i;
 	int	envp_len;

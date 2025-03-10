@@ -1,57 +1,27 @@
+/**
+ * @file handle_export.c
+ * @brief Functions for handling the `export` built-in command in Minishell.
+ */
 #include "minishell.h"
 
-t_mshell_var	*find_variable(t_hash_table *hash_table, char *key)
+/**
+ * @brief Prints all exported variables in the shell.
+ *
+ * Iterates through the hash table and prints assigned variables in the format:
+ * - `declare -x KEY="VALUE"` if the variable has a value.
+ * - `declare -x KEY` if the variable has no value.
+ *
+ * @param mshell Pointer to the Minishell structure.
+ */
+void	print_export_from_ht(t_mshell *mshell)
 {
-	unsigned int	index;
-	t_mshell_var	*current;
-
-	if (!hash_table || !key)
-		return (NULL);
-	index = hash_function(key);
-	current = hash_table->buckets[index];
-	while (current)
-	{
-		if (ft_strcmp(current->key, key) == 0)
-			return (current);
-		current = current->next;
-	}
-	return (NULL);
-}
-
-void	handle_var(t_cmd *cmd, char *key_value_pair)
-{
-	t_mshell_var	*mshell_var;
-	t_mshell_var	*existing;
-	char			*equal_sign;
-
-	mshell_var = split_key_value(key_value_pair);
-	equal_sign = ft_strchr(key_value_pair, '=');
-	existing = find_variable(cmd->minishell->hash_table, mshell_var->key);
-	if (equal_sign)
-		set_variable(cmd->minishell, mshell_var, 1);
-	else
-	{
-		if (existing)
-			set_variable(cmd->minishell, mshell_var, 1);
-		else
-			set_variable(cmd->minishell, mshell_var, 0);
-	}
-	free(mshell_var->key);
-	free(mshell_var->value);
-	free(mshell_var);
-}
-
-static void	print_export_from_ht(t_mshell *mshell)
-{
-	t_hash_table	*ht;
 	t_mshell_var	*var;
 	int				i;
 
-	ht = mshell->hash_table;
 	i = 0;
 	while (i < HASH_SIZE)
 	{
-		var = ht->buckets[i];
+		var = mshell->hash_table->buckets[i];
 		while (var)
 		{
 			if (var->value)
@@ -64,33 +34,54 @@ static void	print_export_from_ht(t_mshell *mshell)
 	}
 }
 
-static uint8_t	process_export_arguments(t_cmd *cmd, char **key_value_pairs)
+/**
+ * @brief Processes a single argument for the `export` command.
+ *
+ * Checks if the argument is a valid variable name and, if so, adds or updates
+ * it in the shell’s environment. If an `=` is present, the variable is assigned a value.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param arg The argument containing a variable name (and optional value).
+ * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if the argument is invalid.
+ */
+static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
+{
+	char			*eq;
+	int				assigned;
+	t_mshell_var	*pair;
+
+	if (!is_valid_varname(arg))
+	{
+		print_error("Error: not a valid identifier\n");
+		return (EXIT_FAILURE);
+	}
+	pair = split_key_value(arg);
+	eq = ft_strchr(arg, '=');
+	assigned = 0;
+	if (eq)
+		assigned = 1;
+	set_variable(cmd->minishell, pair->key, pair->value, assigned);
+	free(pair->key);
+	free(pair->value);
+	free(pair);
+	return (EXIT_SUCCESS);
+}
+
+/**
+ * @brief Handles the `export` built-in command.
+ *
+ * - If called without arguments, prints the exported variables.
+ * - If called with arguments, it processes and updates the environment.
+ * - If executed in a pipeline, the process exits with the appropriate status.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return `EXIT_SUCCESS` if successful, or an appropriate error code.
+ */
+uint8_t	handle_export(t_cmd *cmd)
 {
 	int		i;
 	uint8_t	exit_status;
-
-	exit_status = EXIT_SUCCESS;
-	i = 1;
-	while (key_value_pairs[i])
-	{
-		if (!is_valid_varname(key_value_pairs[i]))
-		{
-			print_error("minishell: not a valid identifier\n");
-			exit_status = EXIT_FAILURE;
-			i++;
-			continue ;
-		}
-		handle_var(cmd, key_value_pairs[i]);
-		if (cmd->in_pipe)
-			exit(exit_status);
-		i++;
-	}
-	return (exit_status);
-}
-
-uint8_t	handle_export(t_cmd *cmd)
-{
-	uint8_t	exit_status;
+	uint8_t	ret;
 
 	if (!cmd->argv[1])
 	{
@@ -100,7 +91,16 @@ uint8_t	handle_export(t_cmd *cmd)
 			exit(EXIT_SUCCESS);
 		return (EXIT_SUCCESS);
 	}
-	exit_status = process_export_arguments(cmd, cmd->argv);
+	exit_status = (EXIT_SUCCESS);
+	i = 1;
+	while (cmd->argv[i])
+	{
+		ret = process_export_arg(cmd, cmd->argv[i]);
+		if (ret != EXIT_SUCCESS)
+			exit_status = ret;
+		i++;
+	}
+	update_env(cmd->minishell);
 	if (cmd->in_pipe)
 		exit(exit_status);
 	return (exit_status);

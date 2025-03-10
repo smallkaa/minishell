@@ -76,17 +76,13 @@ char			**setup_builtin(void);
 char			*find_binary(t_cmd *cmd);
 
 // setup hash table
-int	setup_hash_table(t_mshell *minishell);
-char	*create_env_entry(t_mshell_var *var);
+int		setup_hash_table(t_mshell	*mshell);
 bool	add_env_entry(t_mshell_var *current, char **new_env, int *index);
 bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
-void	populate_env_array(t_mshell *minishell, char **new_env);
-void	set_variable(t_mshell *minishell, t_mshell_var *mshell_var, int val_assigned);
-void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell *minishell);
-t_mshell_var	*create_new_variable(t_mshell_var *mshell_var, int val_assigned);
+void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
+void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
 unsigned int	hash_function(const char *key);
-void	free_old_env(char **env);
-void	update_env(t_mshell *minishell);
+void	update_env(t_mshell	*mshell);
 
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
@@ -107,6 +103,6 @@ void		cmd_error_handler(t_cmd *cmd);
 bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);
 
-void	free_minishell(t_mshell *minishell);
+void	free_minishell(t_mshell	*mshell);
 
 #endif /* MINISHELL_H */

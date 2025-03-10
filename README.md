@@ -8,3 +8,11 @@
 - [Git Commit Message Standard](https://github.com/iliamunaev/Shell-Rebuild/wiki/Git-Commit-Message-Standard): rules for clean commit messages
 
 - [Processes Analyzing Shell Commands](https://github.com/iliamunaev/Shell-Rebuild/wiki/Process-Management-Shell-Commands)
+
+### Error tests
+```bash
+valgrind --track-fds=yes
+```
+```bash
+ valgrind  --leak-check=full
+ ```
