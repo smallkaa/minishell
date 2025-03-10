@@ -7,7 +7,7 @@ static int	ft_putstr_custom(t_cmd *cmd, char *str)
 	written = write(STDOUT_FILENO, str, ft_strlen(str));
 	if (written == -1)
 	{
-		error_handler(cmd);
+		cmd_error_handler(cmd);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

@@ -77,3 +77,22 @@ t_mshell_var	*split_key_value(char *key_value_pair)
 	}
 	return (mshell_var);
 }
+
+/**
+ * @brief Checks if the number of piped commands exceeds the allowed limit.
+ *
+ * This function increments the command count and checks if it exceeds
+ * `MAX_CMDS`. If the limit is reached, an error message is printed.
+ *
+ * @param cmd_count Pointer to the command counter.
+ * @return `true` if the pipeline limit is exceeded, `false` otherwise.
+ */
+bool	is_pipeline_limit(int *cmd_count)
+{
+	if (++(*cmd_count) > MAX_CMDS)
+	{
+		print_error("Error: pipeline limit exceeded\n");
+		return (true);
+	}
+	return (false);
+}

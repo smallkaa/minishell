@@ -8,6 +8,10 @@
 # define PATH_MAX 4096
 # define NAME_MAX 255
 
+// errors declaretions
+
+// # define NONEXISTS
+// # define NO
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
 typedef struct s_cmd	t_cmd;
@@ -43,5 +47,6 @@ void			handle_heredoc(t_cmd *cmd);
 bool			is_valid_varname(const char *key_value_pair);
 int				count_exported_vars(t_hash_table *hash_table);
 t_mshell_var	*split_key_value(char *key_value_pair);
+bool	is_pipeline_limit(int *cmd_count);
 
 #endif /* EXECUTOR_H */

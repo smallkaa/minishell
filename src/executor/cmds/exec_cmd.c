@@ -1,171 +1,153 @@
 #include "minishell.h"
 
-static void	safe_close(int fd, t_cmd *cmd, char *msg)
-{
-	if (fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO && fd >= 0)
-	{
-		if (close(fd) == -1)
-		{
-			cmd->minishell->exit_status = EXIT_FAILURE;
-			print_error_exit(msg, EXIT_FAILURE);
-		}
-	}
-}
-
-static void	safe_dup2(int oldfd, int newfd, t_cmd *cmd, char *msg)
-{
-	if (dup2(oldfd, newfd) == -1)
-	{
-		/*
-		 * If dup2 fails, try closing oldfd. It might not help much,
-		 * but at least we avoid leaving it open. Then report the error.
-		 */
-		safe_close(oldfd, cmd, msg);
-		cmd->minishell->exit_status = EXIT_FAILURE;
-		print_error_exit(msg, EXIT_FAILURE);
-	}
-}
-
-static void	execute(t_cmd *cmd, int in_fd)
+/**
+ * @brief Executes a command, either a built-in or an external binary.
+ *
+ * If the command is a built-in, it calls `exec_builtin()`. Otherwise, it
+ * attempts to execute the binary using `execve()`. If execution fails,
+ * an appropriate error message is printed, and the process exits.
+ *
+ * @param cmd Pointer to the command structure.
+ */
+static void	execute_command(t_cmd *cmd)
 {
 	if (cmd->binary == NULL)
-    {
-        fprintf(stderr, "%s: command not found\n", cmd->argv[0]);
-        cmd->minishell->exit_status = 127;
-        return;
-    }
-	/*
-	 * Only dup2 if in_fd is not STDIN.
-	 */
+	{
+		if (is_builtin(cmd))
+			exec_builtin(cmd);
+		else
+		{
+			command_not_found_handle(cmd);
+			_exit(127);
+		}
+	}
+	execve(cmd->binary, cmd->argv, cmd->minishell->env);
+	perror("execve");
+	_exit(127);
+}
+
+/**
+ * @brief Handles the execution of a command in a child process.
+ *
+ * This function sets up input/output redirections and pipes as needed,
+ * then executes the command using `execute_command()`. The child process
+ * terminates on failure.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param in_fd File descriptor for input redirection
+ *              (e.g., from a previous pipe).
+ * @param fds Pipe file descriptors [read end, write end].
+ */
+static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
+{
 	if (in_fd != STDIN_FILENO)
 	{
-		safe_dup2(in_fd, STDIN_FILENO, cmd, "dup2 1");
-		safe_close(in_fd, cmd, "close 2");
+		if (dup2(in_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup");
+			_exit(1);
+		}
+		close(in_fd);
 	}
-
-	/* If it's a builtin, just execute the builtin. */
-	if (is_builtin(cmd))
-		exec_builtin(cmd);
-	else
-	{
-		/* Otherwise, run the external command. */
-		execve(cmd->binary, cmd->argv, cmd->minishell->env);
-		cmd->minishell->exit_status = EXIT_FAILURE;
-		print_error_exit(cmd->binary, EXIT_FAILURE);
-	}
-}
-
-/*
- * This runs in the child after a fork. It sets up output redirection if
- * there's a next command (i.e., we need to write to the pipe), then calls
- * handle_redirections, then execute().
- */
-static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2])
-{
-	/*
-	 * If there's a next command, dup2 our pipe's write-end to STDOUT,
-	 * then close both ends of the pipe.
-	 */
 	if (cmd->next)
 	{
-		safe_dup2(fd[1], STDOUT_FILENO, cmd, "dup2");
-		safe_close(fd[1], cmd, "close 4");
-		safe_close(fd[0], cmd, "close 5");
+		if (dup2(fds[1], STDOUT_FILENO) == -1)
+		{
+			perror("dup2");
+			_exit(1);
+		}
 	}
-
-	/*
-	 * If this command has redirections, let handle_redirections()
-	 * set them up (it may change in_fd or set new fds).
-	 */
+	if (fds[0] >= 0)
+		close(fds[0]);
+	if (fds[1] >= 0)
+		close(fds[1]);
 	if (cmd->in_redir || cmd->out_redir)
-		handle_redirections(cmd, in_fd);
-
-	execute(cmd, in_fd);
+		handle_redirections(cmd, STDIN_FILENO);
+	execute_command(cmd);
 }
 
-/*
- * fork_and_execute():
- *   - Forks off a child for the current command.
- *   - Waits for the child to finish, stores exit status.
- *   - Closes the write-end of the pipe if there is a next command.
- *   - Returns the read-end of the pipe (for use by the next command),
- *     or -1 if no next command.
+/**
+ * @brief Handles file descriptor cleanup and waits for the child process.
+ *
+ * The parent process manages pipes, closes unnecessary file descriptors,
+ * and waits for the child process to finish. It also updates the shell's
+ * exit status based on the child's termination status.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param in_fd File descriptor for input redirection.
+ * @param fds Pipe file descriptors [read end, write end].
+ * @param pid Process ID of the forked child process.
+ * @return New input file descriptor for the next command in the pipeline.
  */
-static int	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2])
+static int	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
 {
-	pid_t	pid;
-	int		status;
+	int	status;
+	int	new_in_fd;
 
-	pid = fork();
-	if (pid == -1)
-	{
-		cmd->minishell->exit_status = EXIT_FAILURE;
-		print_error_exit("fork", EXIT_FAILURE);
-	}
-	if (pid == 0)
-		exec_fork_child(cmd, in_fd, fd);
-
-	/* Parent code: close pipe write-end if there's a next command. */
+	new_in_fd = STDIN_FILENO;
 	if (cmd->next)
-		safe_close(fd[1], cmd, "close 6");
-
-	/* Wait for child to finish. */
+		close(fds[1]);
+	if (in_fd != 0)
+		close(in_fd);
+	if (cmd->next)
+		new_in_fd = fds[0];
+	else if (fds[0] >= 0)
+		close(fds[0]);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		cmd->minishell->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 		cmd->minishell->exit_status = 128 + WTERMSIG(status);
-
-	if (cmd->next)
-	{
-		/*
-		 * If there's a next command, this command's read-end
-		 * becomes the next command's in_fd.
-		 */
-		if (in_fd != STDIN_FILENO)
-			safe_close(in_fd, cmd, "close 8");
-		return (fd[0]);
-	}
-	else
-	{
-		/* If no next command, close the read-end if valid. */
-		if (fd[0] >= 0)
-			safe_close(fd[0], cmd, "close 7");
-		return (-1);
-	}
+	return (new_in_fd);
 }
 
-/*
- * exec_cmd():
- *   - Loops over the linked list of commands.
- *   - Creates a pipe for each command if there's a next command.
- *   - Calls fork_and_execute() to run the command.
- *   - Closes and updates in_fd accordingly.
+/**
+ * @brief Forks a new process and executes the command.
+ *
+ * This function creates a child process using `fork()`. If the fork is
+ * successful, the child process executes `child_process()`, while the parent
+ * process continues execution.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param in_fd File descriptor for input redirection.
+ * @param fds Pipe file descriptors [read end, write end].
+ * @return Process ID of the child process.
  */
+static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+		print_error_exit("fork", EXIT_FAILURE);
+	if (pid == 0)
+		child_process((t_cmd *)cmd, in_fd, fds);
+	return (pid);
+}
+
 void	exec_cmd(t_cmd *cmd)
 {
-	int	fd[2];
-	int	in_fd;
-	int	new_in_fd;
+	int		in_fd;
+	int		fds[2];
+	int		cmd_count;
+	pid_t	pid;
 
-	in_fd = 0;
+	in_fd = STDIN_FILENO;
+	fds[0] = -1;
+	fds[1] = -1;
+	cmd_count = 0;
 	while (cmd)
 	{
-		if (cmd->next && pipe(fd) == -1)
+		if (is_pipeline_limit(&cmd_count))
+			return ;
+		if (cmd->next)
 		{
-			cmd->minishell->exit_status = EXIT_FAILURE;
-			print_error_exit("pipe", EXIT_FAILURE);
+			if (pipe(fds) == -1)
+				print_error_exit("pipe", EXIT_FAILURE);
 		}
-		new_in_fd = fork_and_execute(cmd, in_fd, fd);
-
-		if (in_fd != 0)
-			safe_close(in_fd, cmd, "close 9");
-
-		in_fd = new_in_fd;
+		pid = fork_and_execute(cmd, in_fd, fds);
+		if (pid > 0)
+			in_fd = parent_process(cmd, in_fd, fds, pid);
 		cmd = cmd->next;
 	}
-
-	/* At the very end, if in_fd is still open, close it. */
-	if (in_fd >= 0 && in_fd != STDIN_FILENO)
-		safe_close(in_fd, cmd, "close 10");
 }

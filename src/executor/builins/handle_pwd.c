@@ -9,7 +9,7 @@ static uint8_t	exec_pwd(t_cmd *cmd)
 	working_dir = getcwd(buf, PATH_MAX);
 	if (!working_dir)
 	{
-		error_handler(cmd);
+		cmd_error_handler(cmd);
 		return (EXIT_FAILURE);
 	}
 	printf("%s\n", working_dir);
