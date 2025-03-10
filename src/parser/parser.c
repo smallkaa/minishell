@@ -175,6 +175,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
     t_cmd *current = NULL;
     int i = 0;
     int arg_index = 0;
+    char    *binary;
 
     // Ilia: with no commands passed - segfault
     // I add this guard
@@ -241,8 +242,8 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
     }
 
     //Ilia: here I looking for binary, if no found - NULL;
-    head->binary = NULL;
-    find_binary(head);
+    binary = find_binary(head);
+    head->binary = binary;
 
     return head;
 }

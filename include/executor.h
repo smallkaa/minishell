@@ -8,6 +8,10 @@
 # define PATH_MAX 4096
 # define NAME_MAX 255
 
+// errors declaretions
+
+// # define NONEXISTS
+// # define NO
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
 typedef struct s_cmd	t_cmd;

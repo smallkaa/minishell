@@ -31,7 +31,7 @@ void	command_not_found_handle(t_cmd *cmd)
 }
 
 /**
- * error_handler - Prints an error message for a failed command.
+ * cmd_error_handler - Prints an error message for a failed command.
  *
  * Behavior:
  * - Prints the format: `minishell: <command>: <arg> (if available): <error_message>`
@@ -40,7 +40,7 @@ void	command_not_found_handle(t_cmd *cmd)
  *
  * @param cmd Pointer to the `t_cmd` structure containing command arguments.
  */
-void	error_handler(t_cmd *cmd)
+void	cmd_error_handler(t_cmd *cmd)
 {
 	char	*error_msg;
 	int		err_num;

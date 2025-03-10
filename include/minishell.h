@@ -75,7 +75,7 @@ char			**setup_env(char **envp);
 t_hash_table	*setup_hash_table(t_mshell *minishell);
 char			**setup_builtin(void);
 unsigned int	hash_function(const char *key);
-void			find_binary(t_cmd *cmd);
+char			*find_binary(t_cmd *cmd);
 
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
@@ -90,7 +90,7 @@ void		print_error_exit(char *cmd, int exit_status); // to be fixed
 void		print_error(char *cmd);
 void		update_last_exit_status(t_cmd *cmd, int status);
 void		command_not_found_handle(t_cmd *cmd);
-void		error_handler(t_cmd *cmd);
+void		cmd_error_handler(t_cmd *cmd);
 
 
 bool		is_debug_mode(void);

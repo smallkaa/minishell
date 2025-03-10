@@ -11,7 +11,7 @@ uint8_t	handle_cd(t_cmd *cmd)
 	path = cmd->argv[1];
 	if (chdir(path) != 0)
 	{
-		error_handler(cmd);
+		cmd_error_handler(cmd);
 		exit_status = EXIT_FAILURE;
 	}
 	else

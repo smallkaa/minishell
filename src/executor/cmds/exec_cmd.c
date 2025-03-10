@@ -34,10 +34,7 @@ static void	execute(t_cmd *cmd, int in_fd)
         cmd->minishell->exit_status = 127;
         return;
     }
-	/*
-	 * Only dup2 if in_fd is not STDIN.
-	 */
-	if (in_fd != STDIN_FILENO)
+	if (in_fd != 0)
 	{
 		safe_dup2(in_fd, STDIN_FILENO, cmd, "dup2 1");
 		safe_close(in_fd, cmd, "close 2");
@@ -55,17 +52,10 @@ static void	execute(t_cmd *cmd, int in_fd)
 	}
 }
 
-/*
- * This runs in the child after a fork. It sets up output redirection if
- * there's a next command (i.e., we need to write to the pipe), then calls
- * handle_redirections, then execute().
- */
+
 static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2])
 {
-	/*
-	 * If there's a next command, dup2 our pipe's write-end to STDOUT,
-	 * then close both ends of the pipe.
-	 */
+
 	if (cmd->next)
 	{
 		safe_dup2(fd[1], STDOUT_FILENO, cmd, "dup2");
@@ -73,12 +63,8 @@ static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2])
 		safe_close(fd[0], cmd, "close 5");
 	}
 
-	/*
-	 * If this command has redirections, let handle_redirections()
-	 * set them up (it may change in_fd or set new fds).
-	 */
-	if (cmd->in_redir || cmd->out_redir)
-		handle_redirections(cmd, in_fd);
+	// if (cmd->in_redir || cmd->out_redir)
+	// 	handle_redirections(cmd, in_fd);
 
 	execute(cmd, in_fd);
 }
@@ -105,9 +91,12 @@ static int	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2])
 	if (pid == 0)
 		exec_fork_child(cmd, in_fd, fd);
 
-	/* Parent code: close pipe write-end if there's a next command. */
-	if (cmd->next)
-		safe_close(fd[1], cmd, "close 6");
+	// safe_close(fd[0], cmd, "close 7");
+
+
+	// /* Parent code: close pipe write-end if there's a next command. */
+	// if (cmd->next)
+	// 	safe_close(fd[1], cmd, "close 6");
 
 	/* Wait for child to finish. */
 	waitpid(pid, &status, 0);
@@ -116,32 +105,18 @@ static int	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2])
 	else if (WIFSIGNALED(status))
 		cmd->minishell->exit_status = 128 + WTERMSIG(status);
 
-	if (cmd->next)
-	{
-		/*
-		 * If there's a next command, this command's read-end
-		 * becomes the next command's in_fd.
-		 */
-		if (in_fd != STDIN_FILENO)
-			safe_close(in_fd, cmd, "close 8");
+	// if (cmd->next)
+	// {
+	// 	/*
+	// 	 * If there's a next command, this command's read-end
+	// 	 * becomes the next command's in_fd.
+	// 	 */
+	// 	if (in_fd != STDIN_FILENO)
+	// 		safe_close(in_fd, cmd, "close 8");
 		return (fd[0]);
-	}
-	else
-	{
-		/* If no next command, close the read-end if valid. */
-		if (fd[0] >= 0)
-			safe_close(fd[0], cmd, "close 7");
-		return (-1);
-	}
+	// }
 }
 
-/*
- * exec_cmd():
- *   - Loops over the linked list of commands.
- *   - Creates a pipe for each command if there's a next command.
- *   - Calls fork_and_execute() to run the command.
- *   - Closes and updates in_fd accordingly.
- */
 void	exec_cmd(t_cmd *cmd)
 {
 	int	fd[2];
@@ -151,11 +126,14 @@ void	exec_cmd(t_cmd *cmd)
 	in_fd = 0;
 	while (cmd)
 	{
-		if (cmd->next && pipe(fd) == -1)
-		{
-			cmd->minishell->exit_status = EXIT_FAILURE;
-			print_error_exit("pipe", EXIT_FAILURE);
-		}
+		// if (cmd->next)
+		// {
+		// 	if (pipe(fd) == -1)
+		// 	{
+		// 		cmd->minishell->exit_status = EXIT_FAILURE;
+		// 		print_error_exit("pipe", EXIT_FAILURE);
+		// 	}
+		// }
 		new_in_fd = fork_and_execute(cmd, in_fd, fd);
 
 		if (in_fd != 0)
@@ -167,5 +145,11 @@ void	exec_cmd(t_cmd *cmd)
 
 	/* At the very end, if in_fd is still open, close it. */
 	if (in_fd >= 0 && in_fd != STDIN_FILENO)
-		safe_close(in_fd, cmd, "close 10");
+	{
+		if (close(in_fd) == -1)
+		{
+			cmd->minishell->exit_status = EXIT_FAILURE;
+			print_error_exit("close 10", EXIT_FAILURE);
+		}
+	}
 }
