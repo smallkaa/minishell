@@ -1,155 +1,121 @@
 #include "minishell.h"
+#include "minishell.h"
 
-static void	safe_close(int fd, t_cmd *cmd, char *msg)
-{
-	if (fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO && fd >= 0)
-	{
-		if (close(fd) == -1)
-		{
-			cmd->minishell->exit_status = EXIT_FAILURE;
-			print_error_exit(msg, EXIT_FAILURE);
-		}
-	}
-}
-
-static void	safe_dup2(int oldfd, int newfd, t_cmd *cmd, char *msg)
-{
-	if (dup2(oldfd, newfd) == -1)
-	{
-		/*
-		 * If dup2 fails, try closing oldfd. It might not help much,
-		 * but at least we avoid leaving it open. Then report the error.
-		 */
-		safe_close(oldfd, cmd, msg);
-		cmd->minishell->exit_status = EXIT_FAILURE;
-		print_error_exit(msg, EXIT_FAILURE);
-	}
-}
-
-static void	execute(t_cmd *cmd, int in_fd)
-{
-	if (cmd->binary == NULL)
-    {
-        fprintf(stderr, "%s: command not found\n", cmd->argv[0]);
-        cmd->minishell->exit_status = 127;
-        return;
-    }
-	if (in_fd != 0)
-	{
-		safe_dup2(in_fd, STDIN_FILENO, cmd, "dup2 1");
-		safe_close(in_fd, cmd, "close 2");
-	}
-
-	/* If it's a builtin, just execute the builtin. */
-	if (is_builtin(cmd))
-		exec_builtin(cmd);
-	else
-	{
-		/* Otherwise, run the external command. */
-		execve(cmd->binary, cmd->argv, cmd->minishell->env);
-		cmd->minishell->exit_status = EXIT_FAILURE;
-		print_error_exit(cmd->binary, EXIT_FAILURE);
-	}
-}
-
-
-static void	exec_fork_child(t_cmd *cmd, int in_fd, int fd[2])
-{
-
-	if (cmd->next)
-	{
-		safe_dup2(fd[1], STDOUT_FILENO, cmd, "dup2");
-		safe_close(fd[1], cmd, "close 4");
-		safe_close(fd[0], cmd, "close 5");
-	}
-
-	// if (cmd->in_redir || cmd->out_redir)
-	// 	handle_redirections(cmd, in_fd);
-
-	execute(cmd, in_fd);
-}
-
-/*
- * fork_and_execute():
- *   - Forks off a child for the current command.
- *   - Waits for the child to finish, stores exit status.
- *   - Closes the write-end of the pipe if there is a next command.
- *   - Returns the read-end of the pipe (for use by the next command),
- *     or -1 if no next command.
+/**
+ * Executes a command in the child process.
  */
-static int	fork_and_execute(t_cmd *cmd, int in_fd, int fd[2])
+static void execute_command(t_cmd *cmd)
 {
-	pid_t	pid;
-	int		status;
+    if (cmd->binary == NULL)
+    {
+        if (is_builtin(cmd))
+            exec_builtin(cmd);
+        else
+        {
+            command_not_found_handle(cmd);
+            _exit(127);
+        }
+    }
+    execve(cmd->binary, cmd->argv, cmd->minishell->env);
+    perror("execve");
+	_exit(127);
+}
+static void child_process(t_cmd *cmd, int in_fd, int fds[2])
+{
+    if (in_fd != STDIN_FILENO)
+    {
+        if (dup2(in_fd, STDIN_FILENO) == -1)
+        {
+            perror("dup2 in_fd");
+            _exit(1);
+        }
+        close(in_fd);
+    }
 
-	pid = fork();
-	if (pid == -1)
-	{
-		cmd->minishell->exit_status = EXIT_FAILURE;
-		print_error_exit("fork", EXIT_FAILURE);
-	}
-	if (pid == 0)
-		exec_fork_child(cmd, in_fd, fd);
+    if (cmd->next)
+    {
+        if (dup2(fds[1], STDOUT_FILENO) == -1)
+        {
+            perror("dup2 fds[1]");
+            _exit(1);
+        }
+    }
 
-	// safe_close(fd[0], cmd, "close 7");
+    if (fds[0] >= 0) close(fds[0]);  // ✅ Only close valid FDs
+    if (fds[1] >= 0) close(fds[1]);
 
+    if (cmd->in_redir || cmd->out_redir)
+        handle_redirections(cmd, STDIN_FILENO);
 
-	// /* Parent code: close pipe write-end if there's a next command. */
-	// if (cmd->next)
-	// 	safe_close(fd[1], cmd, "close 6");
+    execute_command(cmd);
+}
+static int parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
+{
+    int status;
+    int new_in_fd = STDIN_FILENO;
 
-	/* Wait for child to finish. */
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		cmd->minishell->exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		cmd->minishell->exit_status = 128 + WTERMSIG(status);
+    if (cmd->next)
+        close(fds[1]); // ✅ Only close fds[1] if it was initialized
 
-	// if (cmd->next)
-	// {
-	// 	/*
-	// 	 * If there's a next command, this command's read-end
-	// 	 * becomes the next command's in_fd.
-	// 	 */
-	// 	if (in_fd != STDIN_FILENO)
-	// 		safe_close(in_fd, cmd, "close 8");
-		return (fd[0]);
-	// }
+    if (in_fd != 0)
+        close(in_fd);
+
+    if (cmd->next)
+        new_in_fd = fds[0]; // ✅ Keep fds[0] for next cmd
+    else if (fds[0] >= 0)
+        close(fds[0]);  // ✅ Close fds[0] only if initialized
+
+    waitpid(pid, &status, 0);
+
+    if (WIFEXITED(status))
+        update_last_exit_status(cmd, WEXITSTATUS(status));
+    else if (WIFSIGNALED(status))
+        update_last_exit_status(cmd, 128 + WTERMSIG(status));
+
+    return new_in_fd;
 }
 
-void	exec_cmd(t_cmd *cmd)
+void exec_cmd(t_cmd *cmd)
 {
-	int	fd[2];
-	int	in_fd;
-	int	new_in_fd;
+    int in_fd = STDIN_FILENO;
+    int fds[2] = {-1, -1};
+    pid_t pid;
+    int cmd_count = 0; // Track how many commands in the pipeline
 
-	in_fd = 0;
-	while (cmd)
-	{
-		// if (cmd->next)
-		// {
-		// 	if (pipe(fd) == -1)
-		// 	{
-		// 		cmd->minishell->exit_status = EXIT_FAILURE;
-		// 		print_error_exit("pipe", EXIT_FAILURE);
-		// 	}
-		// }
-		new_in_fd = fork_and_execute(cmd, in_fd, fd);
+    while (cmd)
+    {
+        if (++cmd_count > MAX_CMDS)
+        {
+            print_error("Too many commands in pipeline.");
+            return;
+        }
 
-		if (in_fd != 0)
-			safe_close(in_fd, cmd, "close 9");
+        if (cmd->next)
+        {
+            if (pipe(fds) == -1)
+            {
+                perror("pipe");
+                exit(1);
+            }
+        }
+        else
+        {
+            fds[0] = -1;
+            fds[1] = -1;
+        }
 
-		in_fd = new_in_fd;
-		cmd = cmd->next;
-	}
+        pid = fork();
+        if (pid == -1)
+        {
+            perror("fork");
+            exit(1);
+        }
 
-	/* At the very end, if in_fd is still open, close it. */
-	if (in_fd >= 0 && in_fd != STDIN_FILENO)
-	{
-		if (close(in_fd) == -1)
-		{
-			cmd->minishell->exit_status = EXIT_FAILURE;
-			print_error_exit("close 10", EXIT_FAILURE);
-		}
-	}
+        if (pid == 0)
+            child_process(cmd, in_fd, fds);
+        else
+            in_fd = parent_process(cmd, in_fd, fds, pid);
+
+        cmd = cmd->next;
+    }
 }

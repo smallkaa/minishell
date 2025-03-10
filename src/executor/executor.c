@@ -34,6 +34,10 @@ uint8_t	run_executor(t_cmd *cmd)
 	cmd->in_pipe = false;
 	if (is_builtin(cmd) && !cmd->next)
 		return (exec_builtin(cmd));
-	exec_cmd(cmd);
+	else
+	{
+		cmd->in_pipe = true;
+		exec_cmd(cmd);
+	}
 	return (cmd->minishell->exit_status);
 }

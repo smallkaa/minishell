@@ -53,18 +53,24 @@ static char	*handle_direct_path(t_cmd *cmd)
  * @return Pointer to the valid binary path, or
  *         NULL if not found or not executable.
  */
-static char	*assign_binary(char *path, t_cmd *cmd)
+char	*assign_binary(char *path, t_cmd *cmd)
 {
 	char	*binary;
 	char	*temp;
 
 	temp = ft_strjoin(path, "/");
 	if (!temp)
+	{
+		print_error("Error (assign_binary): ft_strjoin failed\n");
 		return (NULL);
+	}
 	binary = ft_strjoin(temp, cmd->argv[0]);
 	free(temp);
 	if (!binary)
+	{
+		cmd->minishell->exit_status = 127;
 		return (NULL);
+	}
 	if (access(binary, F_OK) != 0)
 	{
 		free(binary);
@@ -77,6 +83,8 @@ static char	*assign_binary(char *path, t_cmd *cmd)
 		cmd->minishell->exit_status = 126;
 		return (NULL);
 	}
+	if (cmd->binary)
+		free(cmd->binary);
 	cmd->minishell->exit_status = EXIT_SUCCESS;
 	return (binary);
 }
@@ -141,12 +149,11 @@ static char	*handle_path_search(t_cmd *cmd)
 	ft_free_arrstrs(paths);
 	return (binary);
 }
-
 /**
  * @brief Determines the executable path for a given command.
  *
  * This function checks whether the command is:
- *  - A built-in command (does not require a binary path).
+ *  - A built-in command (no binary path needed).
  *  - An absolute or relative path (`/bin/ls`, `./script.sh`).
  *  - Located in the system's PATH.
  * If found, the command's binary path is stored in `cmd->binary`.
@@ -169,6 +176,5 @@ char	*find_binary(t_cmd *cmd)
 		binary = handle_direct_path(cmd);
 	else
 		binary = handle_path_search(cmd);
-	cmd->binary = binary;
-	return (binary);
+	return binary;
 }
