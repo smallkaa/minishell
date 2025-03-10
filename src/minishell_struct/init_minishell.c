@@ -4,7 +4,6 @@ t_mshell	*init_mshell(char **envp)
 {
 	t_mshell		*minishell;
 	char			**env;
-	t_hash_table	*hash_table;
 	char			**builtin;
 
 	if (!envp)
@@ -25,13 +24,11 @@ t_mshell	*init_mshell(char **envp)
 		return (NULL);
 	}
 	minishell->env = env;
-	hash_table = setup_hash_table(minishell);
-	if (!hash_table)
+	if (setup_hash_table(minishell) == EXIT_FAILURE)
 	{
 		free_minishell(minishell);
 		return (NULL);
 	}
-	minishell->hash_table = hash_table;
 	builtin = setup_builtin();
 	if (!builtin)
 	{

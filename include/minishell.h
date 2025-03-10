@@ -76,7 +76,7 @@ char			**setup_builtin(void);
 char			*find_binary(t_cmd *cmd);
 
 // setup hash table
-t_hash_table	*setup_hash_table(t_mshell *minishell);
+int	setup_hash_table(t_mshell *minishell);
 char	*create_env_entry(t_mshell_var *var);
 bool	add_env_entry(t_mshell_var *current, char **new_env, int *index);
 bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);

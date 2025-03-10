@@ -97,11 +97,12 @@ static void	mark_all_variables_assigned(t_mshell *minishell)
  *
  * @param minishell The shell structure containing the environment variables.
  */
-static void	fillup_hash_table(t_mshell *minishell)
+static t_hash_table	*fillup_hash_table(t_mshell *minishell)
 {
 	store_env_variables(minishell);
 	mark_all_variables_assigned(minishell);
 	update_env(minishell);
+	return (minishell->hash_table);
 }
 
 /**
@@ -114,7 +115,7 @@ static void	fillup_hash_table(t_mshell *minishell)
  * @param minishell The shell structure to initialize the hash table for.
  * @return A pointer to the initialized hash table, or NULL on failure.
  */
-t_hash_table	*setup_hash_table(t_mshell *minishell)
+int	setup_hash_table(t_mshell *minishell)
 {
 	t_hash_table	*hash_table;
 	int				i;
@@ -123,7 +124,7 @@ t_hash_table	*setup_hash_table(t_mshell *minishell)
 	if (!hash_table)
 	{
 		print_error("Error (setup_hash_table): hash_table malloc failed\n");
-		return (NULL);
+		return (EXIT_FAILURE);
 	}
 	i = 0;
 	while (i < HASH_SIZE)
@@ -133,5 +134,5 @@ t_hash_table	*setup_hash_table(t_mshell *minishell)
 	}
 	minishell->hash_table = hash_table;
 	fillup_hash_table(minishell);
-	return (hash_table);
+	return (EXIT_SUCCESS);
 }
