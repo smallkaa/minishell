@@ -59,31 +59,90 @@ static char *process_variable(const char *input, size_t *i, char **envp, char *r
     return (result);
 }
 
-char *expand_env_variables(const char *input, char **envp)
-{
-    char *result;
-    char single_char[2];
-    size_t i;
 
-    if (!input)
-        return (NULL);
-    result = ft_strdup("");
-    if (!result)
-        return (NULL);
-    i = 0;
-    while (input[i])
-    {
-        if (input[i] == '$' && input[i + 1])
-            result = process_variable(input, &i, envp, result);
-        else
-        {
-            single_char[0] = input[i];
-            single_char[1] = '\0';
-            result = append_to_result(result, single_char);
-            i++;
-        }
-        if (!result)
-            return (NULL);
-    }
-    return (result);
+static int	handle_quotes(char c, int *single_q, int *double_q)
+{
+	if (c == '\'' && !(*double_q))
+	{
+		*single_q = !(*single_q);
+		return (1);
+	}
+	if (c == '\"' && !(*single_q))
+	{
+		*double_q = !(*double_q);
+		return (1);
+	}
+	return (0);
+}
+
+static char	*handle_escape(const char *input, size_t *i, int single_q)
+{
+	char	single_char[2];
+
+	(*i)++;
+	if (single_q) // No escape processing inside single quotes
+	{
+		single_char[0] = '\\';
+		single_char[1] = input[*i];
+		return (ft_strdup(single_char));
+	}
+	if (input[*i] == 'n')
+		return (ft_strdup("\n"));
+	if (input[*i] == 't')
+		return (ft_strdup("\t"));
+	if (input[*i] == '\\')
+		return (ft_strdup("\\"));
+	if (input[*i] == '\"')
+		return (ft_strdup("\""));
+	if (input[*i] == '\'')
+		return (ft_strdup("\'"));
+	single_char[0] = input[*i];
+	single_char[1] = '\0';
+	return (ft_strdup(single_char));
+}
+
+static char	*process_char(const char *input, size_t *i, int single_q)
+{
+	char	single_char[2];
+
+	single_char[0] = input[*i];
+	single_char[1] = '\0';
+	if (single_q && input[*i] == '$') // Treat `$` as a literal in single quotes
+		return (ft_strdup(single_char));
+	return (ft_strdup(single_char));
+}
+
+char	*expand_env_variables(const char *input, char **envp)
+{
+	char	*result;
+	size_t	i;
+	int		single_q;
+	int		double_q;
+	char	*append;
+
+	if (!input)
+		return (NULL);
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	i = 0;
+	single_q = 0;
+	double_q = 0;
+	while (input[i])
+	{
+		if (handle_quotes(input[i], &single_q, &double_q))
+			append = ft_strdup(""); // Ignore quotes in result
+		else if (input[i] == '\\' && input[i + 1])
+			append = handle_escape(input, &i, single_q);
+		else if (input[i] == '$' && input[i + 1] && !single_q)
+			append = process_variable(input, &i, envp, ft_strdup(""));
+		else
+			append = process_char(input, &i, single_q);
+		if (!append)
+			return (free(result), NULL);
+		result = append_to_result(result, append);
+		free(append);
+		i++;
+	}
+	return (result);
 }
