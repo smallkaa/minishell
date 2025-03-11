@@ -1,17 +1,14 @@
 #include "libft.h"
+#include "minishell.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-static char *get_exit_code(char **envp)
+static char *get_exit_code(t_mshell *minishell)
 {
-    int code;
-
-	(void)envp;
-	code = 0;
-    return (ft_itoa(code));
+    return (ft_itoa(minishell->exit_status));
 }
 
-static char *get_env_value(const char *var, char **envp)
+static char *get_env_value(const char *var, t_mshell *minishell)
 {
     int i;
     size_t var_len;
@@ -22,18 +19,18 @@ static char *get_env_value(const char *var, char **envp)
 		return (NULL);
 	}
 	if (ft_strcmp(((char *)var),"?")==0)
-		return get_exit_code(envp);
+		return get_exit_code(minishell);
     value = getenv(var);
     if (value)
         return (ft_strdup(value));
-    if (!envp)
+    if (!minishell->env)
         return (ft_strdup(""));
     var_len = ft_strlen(var);
     i = 0;
-    while (envp[i])
+    while (minishell->env[i])
     {
-        if (ft_strncmp(envp[i], var, var_len) == 0 && envp[i][var_len] == '=')
-            return (ft_strdup(envp[i] + var_len + 1));
+        if (ft_strncmp(minishell->env[i], var, var_len) == 0 && minishell->env[i][var_len] == '=')
+            return (ft_strdup(minishell->env[i] + var_len + 1));
         i++;
     }
     return (ft_strdup(""));
@@ -52,7 +49,7 @@ static char *append_to_result(char *result, char *append)
     return (temp);
 }
 
-static char *process_variable(const char *input, size_t *i, char **envp, char *result)
+static char *process_variable(const char *input, size_t *i,  t_mshell *minishell, char *result)
 {
     char *substr;
     char *var_value;
@@ -64,7 +61,7 @@ static char *process_variable(const char *input, size_t *i, char **envp, char *r
     substr = ft_substr(input, start, *i - start);
     if (!substr)
         return (free(result), NULL);
-    var_value = get_env_value(substr, envp);
+    var_value = get_env_value(substr, minishell);
     free(substr);
     if (!var_value)
         return (free(result), NULL);
@@ -126,7 +123,7 @@ static char	*process_char(const char *input, size_t *i, int single_q)
 	return (ft_strdup(single_char));
 }
 
-char	*expand_env_variables(const char *input, char **envp)
+char	*expand_env_variables(const char *input,  t_mshell *minishell)
 {
 	char	*result;
 	size_t	i;
@@ -149,7 +146,7 @@ char	*expand_env_variables(const char *input, char **envp)
 		else if (input[i] == '\\' && input[i + 1])
 			append = handle_escape(input, &i, single_q);
 		else if (input[i] == '$' && input[i + 1] && !single_q)
-			append = process_variable(input, &i, envp, ft_strdup(""));
+			append = process_variable(input, &i,  minishell, ft_strdup(""));
 		else
 			append = process_char(input, &i, single_q);
 		if (!append)

@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 12:17:27 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/06 13:37:37 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/11 19:35:07 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,6 @@ void	free_token(t_Token *token);
 
 // Free tokenizer resources
 void	tokenizer_cleanup(void);
-char *expand_env_variables(const char *input, char **envp);
+char *expand_env_variables(const char *input,  t_mshell *minishell);
 
 #endif

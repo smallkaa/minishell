@@ -292,7 +292,7 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
 
     debug_printf("\nExpanding: %s\n\n", input);
 
-    expanded_input = expand_env_variables(input, minishell->env);
+    expanded_input = expand_env_variables(input, minishell);
     if (!expanded_input)
         return (NULL);
 

@@ -11,6 +11,7 @@ ifeq ($(UNAME), Darwin)
     ifneq ($(READLINE_PATH),)
         LDFLAGS += -L$(READLINE_PATH)/lib
         CFLAGS  += -I$(READLINE_PATH)/include
+		CFLAGS	+= -Wno-strict-prototypes
     endif
 endif
 
