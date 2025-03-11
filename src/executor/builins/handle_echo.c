@@ -4,7 +4,6 @@
  */
 #include "minishell.h"
 
-
 /**
  * @brief Writes a string to the standard output.
  *

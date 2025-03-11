@@ -20,6 +20,7 @@ static char *get_env_value(const char *var, t_mshell *minishell)
 	}
 	if (ft_strcmp(((char *)var),"?")==0)
 		return get_exit_code(minishell);
+    // value = getenv(var);
     value = getenv(var);
     if (value)
         return (ft_strdup(value));
