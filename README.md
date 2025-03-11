@@ -16,3 +16,5 @@ valgrind --track-fds=yes
 ```bash
  valgrind  --leak-check=full
  ```
+### Testers to try with
+- https://github.com/LucasKuhn/minishell_tester
