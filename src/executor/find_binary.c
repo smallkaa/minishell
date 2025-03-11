@@ -132,8 +132,7 @@ static char	*handle_path_search(t_cmd *cmd)
 	char	**paths;
 	char	*binary;
 
-	// replace with ft_getenv(), look up in hash.
-	env = ft_getenv("PATH");
+	env = ms_getenv(cmd->minishell, "PATH");
 	if (!env || !*env)
 	{
 		cmd->minishell->exit_status = 127;
