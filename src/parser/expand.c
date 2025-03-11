@@ -1,5 +1,15 @@
 #include "libft.h"
 #include <stdlib.h>
+#include <stdio.h>
+
+static char *get_exit_code(char **envp)
+{
+    int code;
+
+	(void)envp;
+	code = 0;
+    return (ft_itoa(code));
+}
 
 static char *get_env_value(const char *var, char **envp)
 {
@@ -8,7 +18,11 @@ static char *get_env_value(const char *var, char **envp)
     char *value;
 
     if (!var)
-        return (NULL);
+    {
+		return (NULL);
+	}
+	if (ft_strcmp(((char *)var),"?")==0)
+		return get_exit_code(envp);
     value = getenv(var);
     if (value)
         return (ft_strdup(value));
@@ -45,7 +59,7 @@ static char *process_variable(const char *input, size_t *i, char **envp, char *r
 
     (*i)++;
     size_t start = *i;
-    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
+    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'  || input[*i] == '?')) //TODO SHould we process ? in other cases then $?
         (*i)++;
     substr = ft_substr(input, start, *i - start);
     if (!substr)
