@@ -25,9 +25,9 @@ void	print_error_exit(char *cmd, int exit_status)
  */
 void	command_not_found_handle(t_cmd *cmd)
 {
-	write(STDERR_FILENO, "Command '", 9);
+	// write(STDERR_FILENO, "Command '", 9);
 	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
-	write(STDERR_FILENO, "' not found.", 12);
+	write(STDERR_FILENO, ": command not found\n", 20);
 }
 
 /**
