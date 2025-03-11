@@ -137,6 +137,8 @@ void debug_print_redirection(t_redir *redir, char *type)
 
 void debug_print_parsed_commands(t_cmd *cmd)
 {
+	if(!is_debug_mode())
+		return;
     int cmd_count = 1;
 
     printf("\n==== Parsed Command Structure ====\n");
