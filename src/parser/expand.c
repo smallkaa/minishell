@@ -20,8 +20,11 @@ static char *get_env_value(const char *var, t_mshell *minishell)
 	}
 	if (ft_strcmp(((char *)var),"?")==0)
 		return get_exit_code(minishell);
+	// Iliaa: Bug found
+	// we need to retrive value from minishel **env not from system environ
+	// I create ms_getenv(), 
     // value = getenv(var);
-    value = getenv(var);
+	value = ms_getenv(minishell, (char *)var);
     if (value)
         return (ft_strdup(value));
     if (!minishell->env)

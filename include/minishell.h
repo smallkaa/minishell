@@ -99,7 +99,7 @@ void		update_last_exit_status(t_cmd *cmd, int status);
 void		command_not_found_handle(t_cmd *cmd);
 void		cmd_error_handler(t_cmd *cmd);
 
-
+char		*ms_getenv(t_mshell *mshell, char *key);
 bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);
 

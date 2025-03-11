@@ -19,7 +19,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 	uint8_t	exit_status;
 
 	exit_status = EXIT_FAILURE;
-	home_path = getenv("HOME");
+	home_path = ms_getenv(cmd->minishell, "HOME");
 	if (!home_path)
 	{
 		print_error("minishell: cd: HOME not set\n");
