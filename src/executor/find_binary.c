@@ -113,7 +113,6 @@ static char	*search_paths(char **paths, t_cmd *cmd)
 			return (binary);
 		i++;
 	}
-	cmd_error_handler(cmd);
 	return (NULL);
 }
 
