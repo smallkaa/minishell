@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	run_minishell(t_mshell	*mshell)
+uint8_t	run_minishell(t_mshell	*mshell)
 {
 	char	*input;
 	uint8_t	exit_status;
@@ -13,7 +13,7 @@ void	run_minishell(t_mshell	*mshell)
 
 		// check for EOF / Ctrl+D
 		if (!input)
-			return ;
+			return (EXIT_FAILURE);
 
 		// Step 2: add input to history
 		if (*input)
@@ -34,6 +34,7 @@ void	run_minishell(t_mshell	*mshell)
 
 		free(input);
 	}
+	return (exit_status);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -42,6 +43,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	t_mshell	*minishell;
+	uint8_t	exit_status;
+
 
 
 	setup_signal_handlers(); // Set up signal handlers
@@ -51,9 +54,9 @@ int	main(int argc, char **argv, char **envp)
 	{
 		return (EXIT_FAILURE);
 	}
-	run_minishell(minishell);
+	exit_status = run_minishell(minishell);
 
-	free_minishell(minishell);
+	(void)free_minishell(minishell);
 
-	return (EXIT_SUCCESS);
+	return (exit_status);
 }
