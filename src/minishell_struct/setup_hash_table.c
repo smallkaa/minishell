@@ -64,7 +64,7 @@ void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned)
 				curr->value = ft_strdup(value);
 			}
 			curr->val_assigned = assigned;
-			return;
+			return ;
 		}
 		curr = curr->next;
 	}
