@@ -38,7 +38,7 @@ LIBFT := $(LIBFT_DIR)/libft.a
 # Compile all
 $(NAME): $(OBJ_FILES) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(LDFLAGS) -lreadline
-
+	@echo "\033[32m\"$(NAME)\": successfully created!\033[0m"
 # Rule for compiling object files with correct paths
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)

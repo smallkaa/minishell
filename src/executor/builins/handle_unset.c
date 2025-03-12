@@ -21,7 +21,7 @@ static void	remove_var_from_ht(t_mshell *mshell, char *key)
 
 	prev = NULL;
 	if (!mshell || !key)
-		return;
+		return ;
 	index = hash_function(key);
 	current = mshell->hash_table->buckets[index];
 	while (current)
@@ -36,7 +36,7 @@ static void	remove_var_from_ht(t_mshell *mshell, char *key)
 			free(current->value);
 			free(current);
 			update_env(mshell);
-			return;
+			return ;
 		}
 		prev = current;
 		current = current->next;

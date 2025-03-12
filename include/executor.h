@@ -20,7 +20,7 @@ typedef struct s_hash_table	t_hash_table;
 /*------FUNCTIONS---------------------------------------------------*/
 
 // standart cmd exec functions
-void			exec_cmd(t_cmd *cmd);
+uint8_t			exec_cmd(t_cmd *cmd);
 
 // builtin functions
 bool			is_builtin(t_cmd *cmd);

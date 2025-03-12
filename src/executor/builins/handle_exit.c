@@ -69,6 +69,12 @@ static bool	is_numeric(char *num)
 uint8_t	handle_exit(t_cmd *cmd)
 {
 	uint8_t	exit_status;
+	if (!cmd)
+	{
+		print_error("Err: exit, no cmd\n");
+		////////
+	}
+
 
 	if (cmd->argv[1])
 	{

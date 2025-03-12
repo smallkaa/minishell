@@ -9,14 +9,11 @@
 // 	if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
 // 	{
 // 		if (unlink(HEREDOC_TFILE) == -1)
-// 			print_error_exit("unlink", EXIT_FAILURE);
+// 			fatal_error("unlink", EXIT_FAILURE);
 // 	}
 // }
 
-void	update_last_exit_status(t_cmd *cmd, int status)
-{
-	cmd->minishell->exit_status = status;
-}
+
 
 /**
  * @brief Validates whether a given string is a valid variable name.

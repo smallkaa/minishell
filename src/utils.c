@@ -1,14 +1,5 @@
 #include "minishell.h"
 
-void	print_error_exit(char *cmd, int exit_status)
-{
-	if (cmd && *cmd)
-		perror(cmd);
-	else
-		perror("Error");
-	exit(exit_status);
-}
-
 /**
  * Prints an error message to `stderr` when a command is not found
  * and exits with the last recorded exit status of the shell.

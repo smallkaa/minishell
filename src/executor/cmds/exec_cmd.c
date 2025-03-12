@@ -77,29 +77,29 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
  * @param in_fd File descriptor for input redirection.
  * @param fds Pipe file descriptors [read end, write end].
  * @param pid Process ID of the forked child process.
- * @return New input file descriptor for the next command in the pipeline.
+ * @return The exit status of the executed command.
  */
-static int	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
+static uint8_t	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
 {
-	int	status;
-	int	new_in_fd;
+	int		status;
+	uint8_t	exit_status;
 
-	new_in_fd = STDIN_FILENO;
 	if (cmd->next)
 		close(fds[1]);
-	if (in_fd != 0)
+	if (in_fd != STDIN_FILENO)
 		close(in_fd);
-	if (cmd->next)
-		new_in_fd = fds[0];
-	else if (fds[0] >= 0)
+	if (!cmd->next && fds[0] >= 0)
 		close(fds[0]);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
-		cmd->minishell->exit_status = WEXITSTATUS(status);
+		exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
-		cmd->minishell->exit_status = 128 + WTERMSIG(status);
-	return (new_in_fd);
+		exit_status = 128 + WTERMSIG(status);
+	else
+		exit_status = EXIT_FAILURE;
+	return (exit_status);
 }
+
 
 /**
  * @brief Forks a new process and executes the command.
@@ -119,35 +119,51 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 
 	pid = fork();
 	if (pid == -1)
-		print_error_exit("fork", EXIT_FAILURE);
+		fatal_error("minishell: fork", EXIT_FAILURE);
 	if (pid == 0)
 		child_process((t_cmd *)cmd, in_fd, fds);
 	return (pid);
 }
 
-void	exec_cmd(t_cmd *cmd)
+/**
+ * @brief Executes a command or a pipeline of commands.
+ *
+ * This function handles execution of built-in and external commands,
+ * including pipes and input/output redirections.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return The exit status of the last executed command.
+ */
+uint8_t	exec_cmd(t_cmd *cmd)
 {
+	uint8_t	exit_status;
 	int		in_fd;
 	int		fds[2];
 	int		cmd_count;
 	pid_t	pid;
 
+	exit_status = EXIT_FAILURE;
 	in_fd = STDIN_FILENO;
-	fds[0] = -1;
-	fds[1] = -1;
 	cmd_count = 0;
 	while (cmd)
 	{
 		if (is_pipeline_limit(&cmd_count))
-			return ;
-		if (cmd->next)
+			return (exit_status);
+		fds[0] = -1;
+		fds[1] = -1;
+		if (cmd->next && pipe(fds) == -1)
 		{
-			if (pipe(fds) == -1)
-				print_error_exit("pipe", EXIT_FAILURE);
+			perror("pipe");
+			return (exit_status);
 		}
 		pid = fork_and_execute(cmd, in_fd, fds);
 		if (pid > 0)
-			in_fd = parent_process(cmd, in_fd, fds, pid);
+			exit_status = parent_process(cmd, in_fd, fds, pid);
+		if (cmd->next)
+			in_fd = fds[0];
+		else
+			in_fd = STDIN_FILENO;
 		cmd = cmd->next;
 	}
+	return (exit_status);
 }

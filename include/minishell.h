@@ -82,8 +82,7 @@ bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
 void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
 void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
 unsigned int	hash_function(const char *key);
-void	update_env(t_mshell	*mshell);
-
+void	update_env(t_mshell *mshell);
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
 
@@ -92,10 +91,12 @@ uint8_t	run_executor(t_cmd *cmd);
 
 int			ft_arr_size(char **arr);
 
-// exit utils !!!!!!!
-void		print_error_exit(char *cmd, int exit_status); // to be fixed
+// exit utils fixed
+void		fatal_error(char *cmd, int exit_status);
+
+
+// some shit exit utils, to be cleaned !!!!!!!
 void		print_error(char *cmd);
-void		update_last_exit_status(t_cmd *cmd, int status);
 void		command_not_found_handle(t_cmd *cmd);
 void		cmd_error_handler(t_cmd *cmd);
 
