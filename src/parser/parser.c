@@ -248,39 +248,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 
     return head;
 }
-/*
-t_cmd	*run_parser(t_mshell *minishell, char	*input)
-{
-    debug_printf("\nTokenizing: %s\n\n", input);
-    tokenizer_init(input);
 
-    // First, parse all tokens and accumulate them
-    t_TokenArray *tokens = token_array_init();
-    t_Token token;
-    t_cmd *cmd;
-
-    do {
-        token = get_next_token();
-        if (token.type != TOKEN_EOF) {
-            token_array_add(tokens, token);
-        }
-    } while (token.type != TOKEN_EOF);
-    cmd = create_command_from_tokens(minishell, tokens);
-    tokenizer_cleanup();
-
-    // Now, print all collected tokens
-
-    debug_printf("Found %d token(s):\n", tokens->count);
-    for (int i = 0; i < tokens->count; i++) {
-        debug_printf("\nToken %d:\n", i);
-        print_token(tokens->tokens[i]);
-        explain_token(tokens->tokens[i]);
-    }
-    token_array_free(tokens);
-	debug_print_parsed_commands(cmd);
-    return cmd;
-return NULL;
-}*/
 
 t_cmd *run_parser(t_mshell *minishell, char *input)
 {

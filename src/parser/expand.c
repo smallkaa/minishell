@@ -60,7 +60,7 @@ static char *process_variable(const char *input, size_t *i,  t_mshell *minishell
 
     (*i)++;
     size_t start = *i;
-    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'  || input[*i] == '?')) //TODO SHould we process ? in other cases then $?
+    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'  || input[*i] == '?')) //TODO Should we process ? in other cases then $?
         (*i)++;
     substr = ft_substr(input, start, *i - start);
     if (!substr)
@@ -71,7 +71,8 @@ static char *process_variable(const char *input, size_t *i,  t_mshell *minishell
         return (free(result), NULL);
     result = append_to_result(result, var_value);
     free(var_value);
-    return (result);
+	(*i)--;
+	return (result);
 }
 
 
