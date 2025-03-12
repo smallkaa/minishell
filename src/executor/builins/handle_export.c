@@ -5,6 +5,33 @@
 #include "minishell.h"
 
 /**
+ * @brief Validates if a given string is a valid variable name for minishell.
+ *
+ * A valid variable name:
+ * - Starts with an alphabetic character or underscore ('_').
+ * - Contains only alphanumeric characters or underscores ('_').
+ * - Stops validation at the first '=' character or at the end of the string.
+ *
+ * @param key_value_pair The string to validate (e.g., "MYVAR=value").
+ * @return `true` if valid, `false` otherwise.
+ */
+bool	is_valid_varname(const char *key)
+{
+	int	i;
+
+	if (!key || !(ft_isalpha(key[0]) || key[0] == '_'))
+		return (false);
+	i = 1;
+	while (key[i] && key[i] != '=')
+	{
+		if (!(ft_isalnum(key[i]) || key[i] == '_'))
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+/**
  * @brief Prints all exported variables in the shell.
  *
  * Iterates through the hash table and prints assigned variables in the format:
@@ -53,12 +80,15 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 	int				assigned;
 	t_mshell_var	*pair;
 
-	if (!is_valid_varname(arg))
+	pair = split_key_value(arg);
+
+	if (!is_valid_varname(pair->key))
 	{
-		print_error("Error: not a valid identifier\n");
+		print_error("-minishell: export: '");
+		print_error(pair->key);
+		print_error("': not a valid identifier\n");
 		return (EXIT_FAILURE);
 	}
-	pair = split_key_value(arg);
 	eq = ft_strchr(arg, '=');
 	assigned = 0;
 	if (eq)

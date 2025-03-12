@@ -13,37 +13,6 @@
 // 	}
 // }
 
-
-
-/**
- * @brief Validates whether a given string is a valid variable name.
- *
- * - A valid variable name starts with an alphabetic character or an underscore (`_`).
- * - Subsequent characters can be alphanumeric or an underscore.
- * - If an equal sign (`=`) is present, only the portion before it is checked.
- *
- * @param key_value_pair The string to validate.
- * @return `true` if the string is a valid variable name, `false` otherwise.
- */
-bool	is_valid_varname(const char *key_value_pair)
-{
-	// int	i;
-
-	if (!key_value_pair)
-		return (false);
-	if (!(ft_isalpha(key_value_pair[0]) || key_value_pair[0] == '_'))
-		return (false);
-	// i = 1;
-	// while (key_value_pair[i] && key_value_pair[i] != '=')
-	// {
-	// 	// if (!(ft_isalnum(key_value_pair[i]) || key_value_pair[i] == '_'))
-	// 	if (!(ft_isalnum(key_value_pair[i])))
-	// 		return (false);
-	// 	i++;
-	// }
-	return (true);
-}
-
 /**
  * @brief Splits a `KEY=VALUE` string into a `t_mshell_var` structure.
  *

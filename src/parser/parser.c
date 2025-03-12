@@ -73,7 +73,7 @@ static int	count_new_tokens(t_TokenArray *tokens)
 			// Первый токен считаем отдельно
 			count++;
 			i++;
-			
+
 			// Проверяем наличие следующих токенов-слов
 			if (i < tokens->count && tokens->tokens[i].type == TOKEN_WORD)
 			{
@@ -106,13 +106,13 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 		{
 			// Добавляем первый токен как есть
 			new_tokens->tokens[j++] = old_tokens->tokens[i++];
-			
+
 			// Проверяем, есть ли следующие токены-слова для объединения
 			if (i < old_tokens->count && old_tokens->tokens[i].type == TOKEN_WORD)
 			{
 				// Инициализируем объединенную строку значением второго токена
 				grouped_str = ft_strdup(old_tokens->tokens[i++].value);
-				
+
 				// Добавляем все последующие токены к объединенной строке
 				while (i < old_tokens->count && old_tokens->tokens[i].type == TOKEN_WORD)
 				{
@@ -120,15 +120,15 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 					free(grouped_str);
 					if (!temp)
 						return; // Здесь нужна обработка ошибки
-					
+
 					grouped_str = ft_strjoin(temp, old_tokens->tokens[i].value);
 					free(temp);
 					if (!grouped_str)
 						return; // Здесь нужна обработка ошибки
-					
+
 					i++;
 				}
-				
+
 				// Создаем новый токен для объединенной строки
 				new_tokens->tokens[j].type = TOKEN_WORD;
 				new_tokens->tokens[j].value = grouped_str;
@@ -155,18 +155,18 @@ int	group_word_tokens(t_TokenArray *tokens)
 	new_tokens.tokens = malloc(sizeof(t_Token) * new_count);
 	if (!new_tokens.tokens)
 		return (-1);
-	
+
 	new_tokens.capacity = new_count;
 	fill_new_tokens(&new_tokens, tokens);
-	
+
 	// Освобождаем старые токены, кроме тех, которые мы скопировали в новый массив
 	free(tokens->tokens);
-	
+
 	// Устанавливаем новый массив
 	tokens->tokens = new_tokens.tokens;
 	tokens->count = new_tokens.count;
 	tokens->capacity = new_tokens.capacity;
-	
+
 	return (0);
 }
 
@@ -272,6 +272,8 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
         if (token.type != TOKEN_EOF)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
+
+	///ilia commit for test
     group_word_tokens(tokens);//TODO: error handling
     cmd = create_command_from_tokens(minishell, tokens);
     free(expanded_input);

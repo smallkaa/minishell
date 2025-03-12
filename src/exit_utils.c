@@ -34,32 +34,21 @@ void	fatal_error(char *cmd, int exit_status)
 	exit(exit_status);
 }
 
-/**
- * @brief Handles fatal system errors in a child process and exits immediately.
- *
- * This function is used exclusively in **child processes** when a critical
- * system error occurs (e.g., `fork()` failure, `execve()` failure, etc.).
- *
- * **Behavior:**
- * - Prints the error message prefixed with `"minishell sys error: "`.
- * - Uses `perror()` to display a system-generated error message.
- * - Calls `_exit(exit_status);` to terminate the child process immediately
- *   without flushing stdio buffers or calling atexit handlers.
- *
- * - `_exit()` prevents flushing of shared file streams, avoiding data
- *   corruption.
- * - It ensures **only the child process terminates**, without
- *   affecting the parent.
- *
- * @param cmd The name of the command or operation that failed (can be `NULL`).
- * @param exit_status The exit code to return (typically `EXIT_FAILURE` or `127`).
- */
-void	fatal_error_child(char *cmd, int exit_status)
+void fatal_error_child(t_cmd *cmd, int error_code)
 {
-	ft_putstr_fd("minishell, sys error, child: ", STDERR_FILENO);
-	if (cmd && *cmd)
-		perror(cmd);
+	if (!cmd || !cmd->binary)
+	{
+		ft_putstr_fd("minishell: Unknown command error\n", STDERR_FILENO);
+		_exit(126);
+	}
+
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	perror(cmd->binary);
+
+	if (error_code == EACCES)
+		_exit(126);
+	else if (error_code == ENOENT)
+		_exit(127);
 	else
-		perror("Error");
-	_exit(exit_status);
+		_exit(1);
 }

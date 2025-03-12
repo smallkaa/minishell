@@ -4,6 +4,12 @@
  */
 #include "minishell.h"
 
+static bool	is_valid_value(t_cmd *cmd)
+{
+	if(ft_strchr(cmd->argv[1], ' '))
+		return (false);
+	return (true);
+}
 /**
  * @brief Handles the case where `cd` is called without arguments.
  *
@@ -141,7 +147,9 @@ uint8_t	handle_cd(t_cmd *cmd)
 			exit(exit_status);
 		return (exit_status);
 	}
-	if (!cmd->argv[1])
+	if (cmd->argv[1] && !is_valid_value(cmd))
+		exit_status = cd_too_many_args();
+	else if (!cmd->argv[1])
 		exit_status = cd_no_args(cmd);
 	else if (cmd->argv[2])
 		exit_status = cd_too_many_args();

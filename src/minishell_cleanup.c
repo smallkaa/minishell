@@ -102,3 +102,26 @@ void	free_minishell(t_mshell	*mshell)
 	free_builtin(mshell->builtin);
 	free(mshell);
 }
+
+void	free_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	if (!cmd)
+		return;
+	if (cmd->argv)
+	{
+		i = 0;
+		while (cmd->argv[i])
+			free(cmd->argv[i++]);
+		free(cmd->argv);
+	}
+	if (cmd->binary)
+		free(cmd->binary);
+	if (cmd->in_redir)
+		free(cmd->in_redir);
+	if (cmd->out_redir)
+		free(cmd->out_redir);
+	if (cmd->next)
+		free_cmd(cmd->next);
+}
