@@ -34,6 +34,18 @@ void	fatal_error(char *cmd, int exit_status)
 	exit(exit_status);
 }
 
+/**
+ * @brief Handles execution failures in child processes and exits with the correct status.
+ *
+ * This function prints an error message based on the command that failed
+ * and exits with the appropriate exit status:
+ * - `126` if the command exists but is not executable (Permission denied).
+ * - `127` if the command does not exist (No such file or directory).
+ * - `1` for other execution failures.
+ *
+ * @param cmd The command structure containing execution details.
+ * @param error_code The errno value from a failed execve() call.
+ */
 void fatal_error_child(t_cmd *cmd, int error_code)
 {
 	if (!cmd || !cmd->binary)
