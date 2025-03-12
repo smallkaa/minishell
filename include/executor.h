@@ -45,4 +45,8 @@ bool			is_valid_varname(const char *key_value_pair);
 t_mshell_var	*split_key_value(char *key_value_pair);
 bool			is_pipeline_limit(int *cmd_count);
 
+// exit utils
+void			fatal_error_child(char *cmd, int exit_status);
+void			fatal_error(char *cmd, int exit_status);
+
 #endif /* EXECUTOR_H */

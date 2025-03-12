@@ -91,8 +91,7 @@ uint8_t	run_executor(t_cmd *cmd);
 
 int			ft_arr_size(char **arr);
 
-// exit utils fixed
-void		fatal_error(char *cmd, int exit_status);
+
 
 
 // some shit exit utils, to be cleaned !!!!!!!

@@ -22,8 +22,7 @@ static void	execute_command(t_cmd *cmd)
 		}
 	}
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	perror("execve");
-	_exit(127);
+	fatal_error_child("execve", 127);
 }
 
 /**
@@ -43,24 +42,21 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
-		{
-			perror("dup");
-			_exit(1);
-		}
-		close(in_fd);
+			fatal_error_child("dup", EXIT_FAILURE);
+		if (close(in_fd) == -1)
+			fatal_error_child("close #1", EXIT_FAILURE);
 	}
 	if (cmd->next)
 	{
 		if (dup2(fds[1], STDOUT_FILENO) == -1)
-		{
-			perror("dup2");
-			_exit(1);
-		}
+			fatal_error_child("dup", EXIT_FAILURE);
 	}
 	if (fds[0] >= 0)
-		close(fds[0]);
+		if (close(fds[0]) == -1)
+			fatal_error_child("close #2", EXIT_FAILURE);
 	if (fds[1] >= 0)
-		close(fds[1]);
+		if (close(fds[1]) == -1)
+			fatal_error_child("close #2", EXIT_FAILURE);
 	if (cmd->in_redir || cmd->out_redir)
 		handle_redirections(cmd, STDIN_FILENO);
 	execute_command(cmd);
@@ -119,7 +115,7 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 
 	pid = fork();
 	if (pid == -1)
-		fatal_error("minishell: fork", EXIT_FAILURE);
+		fatal_error("fork", EXIT_FAILURE);
 	if (pid == 0)
 		child_process((t_cmd *)cmd, in_fd, fds);
 	return (pid);

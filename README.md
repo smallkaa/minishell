@@ -11,10 +11,10 @@
 
 ### Error tests
 ```bash
-valgrind --track-fds=yes
+valgrind --track-fds=yes ./minishell
 ```
 ```bash
- valgrind  --leak-check=full
+valgrind  --leak-check=full ./minishell
  ```
 ### Testers to try with
 - https://github.com/LucasKuhn/minishell_tester
