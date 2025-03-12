@@ -42,10 +42,17 @@ static uint8_t	exec_pwd(t_cmd *cmd)
 uint8_t	handle_pwd(t_cmd *cmd)
 {
 	uint8_t	exit_status;
+	char	*inv_flag;
 
-	if (cmd->argv[1])
+	if (!cmd->argv[1])
+		exit_status = exec_pwd(cmd);
+	else if (cmd->argv[1][0] == '-')
 	{
-		print_error("minishell: pwd: incorrect usage\n");
+		inv_flag = cmd->argv[1];
+		write(STDERR_FILENO, "minishell: pwd: ", 16);
+		write(STDERR_FILENO, inv_flag, 2);
+		write(STDERR_FILENO, ": invalid option\n", 17);
+		print_error("pwd: usage: pwd\n");
 		exit_status = 2;
 	}
 	else
@@ -55,3 +62,4 @@ uint8_t	handle_pwd(t_cmd *cmd)
 		exit(exit_status);
 	return (exit_status);
 }
+

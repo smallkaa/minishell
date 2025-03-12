@@ -24,10 +24,13 @@ void	print_export_from_ht(t_mshell *mshell)
 		var = mshell->hash_table->buckets[i];
 		while (var)
 		{
-			if (var->value)
-				printf("declare -x %s=\"%s\"\n", var->key, var->value);
-			else
-				printf("declare -x %s\n", var->key);
+			if (var->key)
+			{
+				if (var->value)
+					printf("declare -x %s=\"%s\"\n", var->key, var->value);
+				else
+					printf("declare -x %s\n", var->key);
+			}
 			var = var->next;
 		}
 		i++;
@@ -83,6 +86,7 @@ uint8_t	handle_export(t_cmd *cmd)
 	uint8_t	exit_status;
 	uint8_t	ret;
 
+	exit_status = (EXIT_SUCCESS);
 	if (!cmd->argv[1])
 	{
 		print_export_from_ht(cmd->minishell);
@@ -101,6 +105,8 @@ uint8_t	handle_export(t_cmd *cmd)
 		i++;
 	}
 	update_env(cmd->minishell);
+
+	// printf("Exit status: %d\n",cmd->minishell->exit_status); //  test
 	if (cmd->in_pipe)
 		exit(exit_status);
 	return (exit_status);

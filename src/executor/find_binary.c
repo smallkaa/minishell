@@ -113,7 +113,6 @@ static char	*search_paths(char **paths, t_cmd *cmd)
 			return (binary);
 		i++;
 	}
-	cmd_error_handler(cmd);
 	return (NULL);
 }
 
@@ -133,7 +132,7 @@ static char	*handle_path_search(t_cmd *cmd)
 	char	**paths;
 	char	*binary;
 
-	env = getenv("PATH");
+	env = ms_getenv(cmd->minishell, "PATH");
 	if (!env || !*env)
 	{
 		cmd->minishell->exit_status = 127;
