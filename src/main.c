@@ -29,8 +29,8 @@ void	run_minishell(t_mshell	*mshell)
 			continue ;
 
 		exit_status = run_executor(cmd);
-		printf("run_minishell(): Exit status run_executor       : %d\n", exit_status);
-		printf("run_minishell(): Exit status mshell->exit_status: %d\n", mshell->exit_status);
+		// printf("run_minishell(): Exit status run_executor       : %d\n", exit_status);
+		// printf("run_minishell(): Exit status mshell->exit_status: %d\n", mshell->exit_status);
 
 		free(input);
 	}
