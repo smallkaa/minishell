@@ -30,19 +30,20 @@ void	update_last_exit_status(t_cmd *cmd, int status)
  */
 bool	is_valid_varname(const char *key_value_pair)
 {
-	int	i;
+	// int	i;
 
 	if (!key_value_pair)
 		return (false);
 	if (!(ft_isalpha(key_value_pair[0]) || key_value_pair[0] == '_'))
 		return (false);
-	i = 1;
-	while (key_value_pair[i] && key_value_pair[i] != '=')
-	{
-		if (!(ft_isalnum(key_value_pair[i]) || key_value_pair[i] == '_'))
-			return (false);
-		i++;
-	}
+	// i = 1;
+	// while (key_value_pair[i] && key_value_pair[i] != '=')
+	// {
+	// 	// if (!(ft_isalnum(key_value_pair[i]) || key_value_pair[i] == '_'))
+	// 	if (!(ft_isalnum(key_value_pair[i])))
+	// 		return (false);
+	// 	i++;
+	// }
 	return (true);
 }
 
