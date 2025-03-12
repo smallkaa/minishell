@@ -57,119 +57,118 @@ static void	token_array_free(t_TokenArray *array)
 	free(array->tokens);
 	free(array);
 }
+//--------------------------------------
 
-// Helper function to print token information
-static void	print_token(t_Token token)
+static int	count_new_tokens(t_TokenArray *tokens)
 {
-	const char	*type_names[] = {
-		"WORD", "PIPE", "REDIRECT_IN", "REDIRECT_OUT",
-		"APPEND_OUT", "BACKGROUND", "EOF"
-	};
+	int		i;
+	int		count;
 
-	debug_printf("Token: { type: %s", type_names[token.type]);
-	if (token.type == TOKEN_WORD)
-	{
-		debug_printf(", value: \"%s\"", token.value);
-	}
-	debug_printf(" }\n");
-}
-
-// Function to demonstrate how the tokenizer handles quotes
-static void	explain_token(t_Token token)
-{
-	const char	*str;
-	int			in_single_quote;
-	int			in_double_quote;
-	size_t		i;
-
-	str = token.value;
-	in_single_quote = 0;
-	in_double_quote = 0;
-	if (token.type != TOKEN_WORD || !token.value)
-		return ;
-	debug_printf("  Analysis:\n");
-	debug_printf("    ");
 	i = 0;
-	while (i < strlen(str))
+	count = 0;
+	while (i < tokens->count)
 	{
-		if (str[i] == '\'' && !in_double_quote)
+		if (tokens->tokens[i].type == TOKEN_WORD)
 		{
-			in_single_quote = !in_single_quote;
-			debug_printf("%s'%s", in_single_quote ? "\033[33m" : "\033[0m", in_single_quote ? "\033[33m" : "\033[0m");
-		}
-		else if (str[i] == '"' && !in_single_quote)
-		{
-			in_double_quote = !in_double_quote;
-			debug_printf("%s\"%s", in_double_quote ? "\033[36m" : "\033[0m", in_double_quote ? "\033[36m" : "\033[0m");
-		}
-		else if (str[i] == '$' && (in_double_quote || !in_single_quote))
-		{
-			debug_printf("\033[32m$\033[0m");
+			// Первый токен считаем отдельно
+			count++;
+			i++;
+			
+			// Проверяем наличие следующих токенов-слов
+			if (i < tokens->count && tokens->tokens[i].type == TOKEN_WORD)
+			{
+				// Остальные считаем как один объединенный токен
+				count++;
+				while (i < tokens->count && tokens->tokens[i].type == TOKEN_WORD)
+					i++;
+			}
 		}
 		else
 		{
-			char color_code[10] = "\033[0m";
-			if (in_single_quote) ft_strcpy(color_code, "\033[33m");
-			else if (in_double_quote) ft_strcpy(color_code, "\033[36m");
-			debug_printf("%s%c\033[0m", color_code, str[i]);
+			count++;
+			i++;
 		}
-		i++;
 	}
-	debug_printf("\n");
-	debug_printf("\033[0m");
+	return (count);
 }
 
-void debug_print_redirection(t_redir *redir, char *type)
+static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 {
-    if (!redir)
-        return;
-    printf("  %s Redirection: ", type);
-    if (redir->type == R_INPUT)
-        printf("< ");
-    else if (redir->type == R_OUTPUT)
-        printf("> ");
-    else if (redir->type == R_APPEND)
-        printf(">> ");
-    else if (redir->type == R_HEREDOC)
-        printf("<< ");
-    printf("\"%s\"\n", redir->filename);
+	int		i;
+	int		j;
+	char	*grouped_str;
+
+	i = 0;
+	j = 0;
+	while (i < old_tokens->count)
+	{
+		if (old_tokens->tokens[i].type == TOKEN_WORD)
+		{
+			// Добавляем первый токен как есть
+			new_tokens->tokens[j++] = old_tokens->tokens[i++];
+			
+			// Проверяем, есть ли следующие токены-слова для объединения
+			if (i < old_tokens->count && old_tokens->tokens[i].type == TOKEN_WORD)
+			{
+				// Инициализируем объединенную строку значением второго токена
+				grouped_str = ft_strdup(old_tokens->tokens[i++].value);
+				
+				// Добавляем все последующие токены к объединенной строке
+				while (i < old_tokens->count && old_tokens->tokens[i].type == TOKEN_WORD)
+				{
+					char *temp = ft_strjoin(grouped_str, " ");
+					free(grouped_str);
+					if (!temp)
+						return; // Здесь нужна обработка ошибки
+					
+					grouped_str = ft_strjoin(temp, old_tokens->tokens[i].value);
+					free(temp);
+					if (!grouped_str)
+						return; // Здесь нужна обработка ошибки
+					
+					i++;
+				}
+				
+				// Создаем новый токен для объединенной строки
+				new_tokens->tokens[j].type = TOKEN_WORD;
+				new_tokens->tokens[j].value = grouped_str;
+				j++;
+			}
+		}
+		else
+		{
+			new_tokens->tokens[j++] = old_tokens->tokens[i++];
+		}
+	}
+	new_tokens->count = j; // Обновляем реальное количество токенов
 }
 
-void debug_print_parsed_commands(t_cmd *cmd)
+int	group_word_tokens(t_TokenArray *tokens)
 {
-	if(!is_debug_mode())
-		return;
-    int cmd_count = 1;
+	t_TokenArray	new_tokens;
+	int				new_count;
 
-    printf("\n==== Parsed Command Structure ====\n");
-    while (cmd)
-    {
-        printf("Command %d:\n", cmd_count);
-        printf("  Executable: %s\n", cmd->binary ? cmd->binary : "(NULL)");
+	if (!tokens || tokens->count <= 1)
+		return (0);
 
-        // Print arguments
-        if (cmd->argv)
-        {
-            printf("  Arguments: ");
-            for (int i = 0; cmd->argv[i]; i++)
-                printf("\"%s\" ", cmd->argv[i]);
-            printf("\n");
-        }
-
-        // Print input and output redirections
-        debug_print_redirection(cmd->in_redir, "Input");
-        debug_print_redirection(cmd->out_redir, "Output");
-
-        // Check if there's a next command in a pipeline
-        if (cmd->next)
-            printf("  Piped to next command ->\n");
-
-        cmd = cmd->next;
-        cmd_count++;
-    }
-    printf("==================================\n\n");
+	new_count = count_new_tokens(tokens);
+	new_tokens.tokens = malloc(sizeof(t_Token) * new_count);
+	if (!new_tokens.tokens)
+		return (-1);
+	
+	new_tokens.capacity = new_count;
+	fill_new_tokens(&new_tokens, tokens);
+	
+	// Освобождаем старые токены, кроме тех, которые мы скопировали в новый массив
+	free(tokens->tokens);
+	
+	// Устанавливаем новый массив
+	tokens->tokens = new_tokens.tokens;
+	tokens->count = new_tokens.count;
+	tokens->capacity = new_tokens.capacity;
+	
+	return (0);
 }
-
 
 t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
@@ -248,39 +247,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 
     return head;
 }
-/*
-t_cmd	*run_parser(t_mshell *minishell, char	*input)
-{
-    debug_printf("\nTokenizing: %s\n\n", input);
-    tokenizer_init(input);
 
-    // First, parse all tokens and accumulate them
-    t_TokenArray *tokens = token_array_init();
-    t_Token token;
-    t_cmd *cmd;
-
-    do {
-        token = get_next_token();
-        if (token.type != TOKEN_EOF) {
-            token_array_add(tokens, token);
-        }
-    } while (token.type != TOKEN_EOF);
-    cmd = create_command_from_tokens(minishell, tokens);
-    tokenizer_cleanup();
-
-    // Now, print all collected tokens
-
-    debug_printf("Found %d token(s):\n", tokens->count);
-    for (int i = 0; i < tokens->count; i++) {
-        debug_printf("\nToken %d:\n", i);
-        print_token(tokens->tokens[i]);
-        explain_token(tokens->tokens[i]);
-    }
-    token_array_free(tokens);
-	debug_print_parsed_commands(cmd);
-    return cmd;
-return NULL;
-}*/
 
 t_cmd *run_parser(t_mshell *minishell, char *input)
 {
@@ -305,7 +272,7 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
         if (token.type != TOKEN_EOF)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
-
+    group_word_tokens(tokens);//TODO: error handling
     cmd = create_command_from_tokens(minishell, tokens);
     free(expanded_input);
 

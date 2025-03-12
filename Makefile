@@ -7,12 +7,12 @@ CFLAGS  := -g -Wall -Wextra -Werror
 
 # macOS-specific flags for Readline (2DO: fix extern void rl_replace_line(const char *, int) in signals.c)
 ifeq ($(UNAME), Darwin)
-    READLINE_PATH := $(shell brew --prefix readline 2>/dev/null)
-    ifneq ($(READLINE_PATH),)
-        LDFLAGS += -L$(READLINE_PATH)/lib
-        CFLAGS  += -I$(READLINE_PATH)/include
+	READLINE_PATH := $(shell brew --prefix readline 2>/dev/null)
+	ifneq ($(READLINE_PATH),)
+		LDFLAGS += -L$(READLINE_PATH)/lib
+		CFLAGS  += -I$(READLINE_PATH)/include
 		CFLAGS	+= -Wno-strict-prototypes
-    endif
+	endif
 endif
 
 NAME := minishell
