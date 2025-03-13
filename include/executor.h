@@ -51,6 +51,6 @@ void	fatal_error_child(t_cmd *cmd, int exit_status);
 void			fatal_error(char *cmd, int exit_status);
 void			env_error_handler(t_cmd *cmd);
 void			cmd_error_handler(t_cmd *cmd);
-
+void			exit_numeric_error(char *arg);
 
 #endif /* EXECUTOR_H */

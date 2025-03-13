@@ -274,7 +274,7 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
     } while (token.type != TOKEN_EOF);
 
 	///ilia commit for test
-    group_word_tokens(tokens);//TODO: error handling
+  // group_word_tokens(tokens);//TODO: error handling
     cmd = create_command_from_tokens(minishell, tokens);
     free(expanded_input);
 

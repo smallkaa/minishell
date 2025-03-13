@@ -141,3 +141,13 @@ uint8_t	handle_export(t_cmd *cmd)
 		exit(exit_status);
 	return (exit_status);
 }
+/*
+// Case #1: export VAR="value1 value2"
+char *argv[] = {"export", "VAR=data1 data2", NULL};
+
+// Case #2: export VAR='value1 value2'
+char *argv[] = {"export", "VAR=data1 data2", NULL};
+
+// Case #3: export VAR=value1 value2
+char *argv[] = {"export", "VAR=data1", "data2", NULL};
+*/

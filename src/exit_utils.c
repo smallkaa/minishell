@@ -64,3 +64,66 @@ void fatal_error_child(t_cmd *cmd, int error_code)
 	else
 		_exit(1);
 }
+
+/**
+ * exit_numeric_error - Prints an error message for an invalid numeric
+ *                      argument in `exit`.
+ *
+ * Format:
+ *   minishell: exit: <arg>: numeric argument required
+ *
+ * Behavior:
+ * - Prints a formatted error message to `STDERR_FILENO`.
+ * - Used when the `exit` command receives an invalid numeric argument.
+ * - Ensures clear and consistent error messaging for non-numeric exit codes.
+ *
+ * @param arg The invalid argument that caused the error.
+ */
+void	exit_numeric_error(char *arg)
+{
+	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+	ft_putstr_fd(arg, STDERR_FILENO);
+	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+}
+
+/**
+ * cmd_error_handler - Prints an error message for a failed command execution.
+ *
+ * Format:
+ *   minishell: <command>: <arg> (if available): <error_message>
+ *
+ * Behavior:
+ * - Extracts the error message from `strerror(errno)`.
+ * - Handles cases where `cmd` or `cmd->argv[0]` is NULL.
+ * - Uses a buffer (`ERROR_BUF_SIZE 256`) to construct the message safely.
+ * - Ensures no buffer overflows using `ft_strlcpy()` and `ft_strlcat()`.
+ * - Writes the formatted error message to `STDERR_FILENO` in a single
+ *   `write()` call.
+ * - If `write()` fails, prints a fallback error message.
+ *
+ * @param cmd Pointer to the `t_cmd` structure containing command arguments.
+ */
+void	cmd_error_handler(t_cmd *cmd)
+{
+	char	error_buf[ERROR_BUF_SIZE];
+	int		err_num;
+
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+	{
+		write(STDERR_FILENO, "minishell: invalid command structure\n", 37);
+		return ;
+	}
+	err_num = errno;
+	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
+	if (cmd->argv[1])
+	{
+		ft_strlcat(error_buf, ": ", ERROR_BUF_SIZE);
+		ft_strlcat(error_buf, cmd->argv[1], ERROR_BUF_SIZE);
+	}
+	ft_strlcat(error_buf, ": ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, strerror(err_num), ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
+	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+}
