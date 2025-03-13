@@ -1,0 +1,60 @@
+exit Built-in Command Tests
+
+real bush tests with:
+bash -c "exit 42"; echo $?
+
+Standard Behavior
+exit 0 → Exits with status 0. Expected status: 0. ✅ Passed
+exit 42 → Exits with status 42. Expected status: 42. ✅ Passed
+exit +42 → Exits with status 42. Expected status: 42. ✅ Passed
+exit -42 → Exits with status 42. Expected status: 42. ✅ Passed
+exit 255 → Exits with status 1. Expected status: 1. ✅ Passed
+exit -255 → Exits with status 1 (mod 256). Expected status: 1. ✅ Passed
+exit -1 → Exits with status 255 (mod 256). Expected status: 255. ✅ Passed
+
+Numeric Argument Edge Cases
+exit --42 → Error: exit: --42: numeric argument required. Expected status: 2. ✅ Passed
+exit -+42 → Error: exit: -+42: numeric argument required. Expected status: 2. ✅ Passed
+exit + → Error: exit: +: numeric argument required. Expected status: 2. ✅ Passed
+exit - → Error: exit: -: numeric argument required. Expected status: 2. ✅ Passed
+exit - + → Error: exit: - : numeric argument required. Expected status: 2. ✅ Passed
+exit 0000000000000000042 → Exits normally with status 42. Expected status: 42. ✅ Passed
+exit -0000000000000000042 → Exits normally with status 214. Expected status: 214. ✅ Passed
+
+Large Numeric Arguments
+exit 256 → Exits with status 0 (256 % 256 = 0). Expected status: 0. ✅ Passed
+exit 9223372036854775807 → Exits with status 255. Expected status: 255. ✅ Passed
+exit -9223372036854775808 → Exits with status 0. Expected status: 0. ✅ Passed
+exit 9999999999999999999 → Error: exit: 9999999999999999999: numeric argument required. Expected status: 2. ✅ Passed
+
+Invalid Numeric Formats
+exit 1.0 → Error: exit: 1.0: numeric argument required. Expected status: 2. ✅ Passed
+exit 42abc → Error: exit: 42abc: numeric argument required. Expected status: 2. ✅ Passed
+exit abc42 → Error: exit: abc42: numeric argument required. Expected status: 2. ✅ Passed
+
+Argument Parsing
+exit 1 2 → Error: exit: too many arguments (does not exit). Expected status: 1. ✅ Passed
+exit 1 a → Error: exit: too many arguments (does not exit). Expected status: 1. ✅ Passed
+exit a 1 → Error: exit: a: numeric argument required. Expected status: 2. ✅ Passed
+exit "1 2" → Error: exit: 1 2: numeric argument required. Expected status: 2. ✅ Passed
+exit '123 ' → Exits with status 123. Expected status: 123. ✅ Passed
+
+Special Symbols as Arguments
+exit --- → Error: exit: ---: numeric argument required. Expected status: 2. ✅ Passed
+exit /// → Error: exit: ///: numeric argument required. Expected status: 2. ✅ Passed
+exit -+-+42 → Error: exit: -+-+42: numeric argument required. Expected status: 2. ✅ Passed
+exit "++42" → Error: exit: ++42: numeric argument required. Expected status: 2. ✅ Passed
+
+Edge Tests with Quoting
+exit "42abc" → Error: exit: 42abc: numeric argument required. Expected status: 2. ✅ Passed
+exit " 42" → Exits with status 42. Expected status: 42. ✅ Passed
+exit "" → Expected status: 0. ❌ Failed
+exit "1 2" → Error: exit: : numeric argument required. Expected status: 2. ❌ Failed
+exit '1 2' → Error: exit: : numeric argument required. Expected status: 2. ❌ Failed
+exit 1 2 → Error: exit: too many arguments. Expected status: 1. ✅ Passed
+exit " " → Error: exit: : numeric argument required. Expected status: 2. ❌ Failed
+
+Check Behavior Consistency
+exit $(echo 42) → Expected to exit with status 42. ❌ Failed
+exit $VAR → Expected to exit with status VAR value if numeric. Expected status: VAR value. ✅ Passed
+exit $HOME → Error: exit: /home/iliam: numeric argument required. Expected status: 2. ✅ Passed

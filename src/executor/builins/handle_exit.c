@@ -32,63 +32,103 @@ considered to be the command that executed immediately
 preceding the trap action.
 */
 
-/**
- * @brief Checks if a string represents a numeric value.
- *
- * Iterates through the given string and verifies whether all characters
- * are digits (`0-9`). If any non-numeric character is found, the function
- * returns `false`.
- *
- * @param num The string to check.
- * @return `true` if the string is numeric, `false` otherwise.
- */
-static bool	is_numeric(char *num)
+#include "minishell.h"
+
+static bool	is_numeric_arg(const char *arg)
 {
-	while (*num)
+	int	i = 0;
+
+	if (arg[i] == '-' || arg[i] == '+')
+		i++;
+	if (!arg[i])
+		return (false);
+	while (arg[i])
 	{
-		if (!ft_isdigit(*num))
+		if (!ft_isdigit(arg[i]))
 			return (false);
-		num++;
+		i++;
 	}
 	return (true);
 }
 
-/**
- * @brief Handles the `exit` built-in command.
- *
- * - If an argument is provided:
- *   - If it is numeric, the shell exits with the specified status (mod 256).
- *   - If it is non-numeric, an error is printed, and the shell exits with status `255`.
- * - If no argument is provided, the shell exits using the last command's exit status.
- *
- * Before terminating, this function frees all allocated memory using `free_minishell()`.
- *
- * @param cmd Pointer to the command structure.
- * @note This function calls `exit()`, which terminates the shell process.
- */
+static long long	ft_atoll_exit(const char *str, bool *overflow)
+{
+	int			sign;
+	long long	res;
+	int			digit;
+
+	sign = 1;
+	res = 0;
+	*overflow = false;
+	while (ft_isspace(*str))
+		str++;
+	if (*str == '-' || *str == '+')
+	{
+		if (*str == '-')
+			sign = -1;
+		str++;
+	}
+	if (!ft_isdigit(*str))
+	{
+		*overflow = true;
+		return (0);
+	}
+	while (ft_isdigit(*str))
+	{
+		digit = *str - '0';
+		if (sign == 1 && res > (LLONG_MAX - digit) / 10)
+		{
+			*overflow = true;
+			return (LLONG_MAX);
+		}
+		if (sign == -1 && res > -(LLONG_MIN + digit) / 10)
+		{
+			*overflow = true;
+			return (LLONG_MIN);
+		}
+		res = res * 10 + digit;
+		str++;
+	}
+	return (res * sign);
+}
+
+
 uint8_t	handle_exit(t_cmd *cmd)
 {
-	uint8_t	exit_status;
+	long long	exit_status;
+	bool		overflow;
+
 	if (!cmd)
 	{
-		print_error("Err: exit, no cmd\n");
-		////////
+		print_error("minishell: exit: no *cmd instance\n");
+		return (EXIT_FAILURE);
 	}
-
-
-	if (cmd->argv[1])
+	printf("exit\n");
+	if (!cmd->argv[1])
+		exit(cmd->minishell->exit_status);
+	if (!is_numeric_arg(cmd->argv[1]))
 	{
-		if (!is_numeric(cmd->argv[1]))
+		exit_numeric_error(cmd->argv[1]);
+		exit(2);
+	}
+	if (cmd->argv[2])
+	{
+		if (!is_numeric_arg(cmd->argv[1]))
 		{
-			print_error("minishell: exit: numeric argument required");
-			exit_status = 255;
+			exit_numeric_error(cmd->argv[1]);
+			exit(2);
 		}
 		else
-			exit_status = ft_atoi(cmd->argv[1]) % 256;
+		{
+			ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+			return (EXIT_FAILURE);
+		}
 	}
-	else
-		exit_status = cmd->minishell->exit_status;
-	cmd->minishell->exit_status = exit_status;
-	free_minishell(cmd->minishell);
-	exit(exit_status);
+	exit_status = ft_atoll_exit(cmd->argv[1], &overflow);
+	if (overflow)
+	{
+		exit_numeric_error(cmd->argv[1]);
+		exit(2);
+	}
+	exit((uint8_t)(exit_status & 0xFF));
 }

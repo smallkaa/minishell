@@ -14,6 +14,7 @@
 # include <sys/types.h>
 # include <errno.h>
 # include <stdint.h>
+# include <limits.h>
 
 # include "libft.h"
 # include "executor.h"
@@ -97,12 +98,12 @@ int			ft_arr_size(char **arr);
 // some shit exit utils, to be cleaned !!!!!!!
 void		print_error(char *cmd);
 void		command_not_found_handle(t_cmd *cmd);
-void		cmd_error_handler(t_cmd *cmd);
 
 char		*ms_getenv(t_mshell *mshell, char *key);
 bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);
 
-void	free_minishell(t_mshell	*mshell);
+void		free_minishell(t_mshell	*mshell);
+void		free_cmd(t_cmd *cmd);
 
 #endif /* MINISHELL_H */

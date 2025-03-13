@@ -17,6 +17,5 @@ uint8_t	exec_builtin(t_cmd *cmd)
 	else if (ft_strcmp(cmd->argv[0], "unset") == 0)
 		return (handle_unset(cmd));
 	else
-		return (EXIT_FAILURE);
-	return (EXIT_FAILURE);
+		return (EXIT_SUCCESS);
 }
