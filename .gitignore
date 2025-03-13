@@ -60,3 +60,5 @@ dkms.conf
 .vscode/
 
 minishell_tester/
+sources_dump.txt
+minishell
