@@ -1,5 +1,7 @@
 exit Built-in Command Tests
 
+real bush tests with:
+bash -c "exit 42"; echo $?
 
 Standard Behavior
 exit 0 → Exits with status 0. Expected status: 0. ✅ Passed

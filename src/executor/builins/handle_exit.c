@@ -132,11 +132,3 @@ uint8_t	handle_exit(t_cmd *cmd)
 	}
 	exit((uint8_t)(exit_status & 0xFF));
 }
-
-
-// test
-/*
-
-bash -c "exit 42"; echo $?
-
-*/
