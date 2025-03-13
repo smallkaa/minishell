@@ -39,15 +39,14 @@ uint8_t run_executor(t_cmd *cmd)
 		minishell->exit_status = EXIT_FAILURE;
 		return (minishell->exit_status);
 	}
-
 	// test
-	int i = 0;
-	while(cmd->argv[i])
-	{
-		printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
-		i++;
-	}
-	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// int i = 0;
+	// while(cmd->argv[i])
+	// {
+	// 	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// 	i++;
+	// }
+	// printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
 	// end test
 
 	if (is_builtin(cmd) && !cmd->next)

@@ -272,7 +272,8 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
         if (token.type != TOKEN_EOF)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
-    group_word_tokens(tokens);//TODO: error handling
+	// Ilia: close for tests
+    //group_word_tokens(tokens);//TODO: error handling
     strip_words(tokens);
 
     cmd = create_command_from_tokens(minishell, tokens);

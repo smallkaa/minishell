@@ -84,6 +84,7 @@ void	exit_numeric_error(char *arg)
 	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+	exit (2);
 }
 
 /**
