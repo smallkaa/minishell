@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 12:17:27 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/12 12:37:19 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/03/13 11:27:11 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,6 @@ char *expand_env_variables(const char *input,  t_mshell *minishell);
 void	print_token(t_Token token);
 void	explain_token(t_Token token);
 void debug_print_parsed_commands(t_cmd *cmd);
+int	strip_words(t_TokenArray *tokens);
 
 #endif

@@ -175,4 +175,112 @@ t_Token get_next_token() {
     return token;
 }
 
+/**
+ * @brief Checks if a string is enclosed in matching quotes.
+ *
+ * This function verifies if a string starts and ends with the same type of quote.
+ *
+ * @param str The string to check.
+ * @return true if the string is enclosed in matching quotes, false otherwise.
+ */
+static bool	is_enclosed_in_quotes(char *str)
+{
+	size_t	len;
+
+	if (!str || !*str)
+		return (false);
+	
+	len = ft_strlen(str);
+	if (len < 2)
+		return (false);
+	
+	return ((str[0] == '\'' && str[len - 1] == '\'') ||
+			(str[0] == '"' && str[len - 1] == '"'));
+}
+
+/**
+ * @brief Removes enclosing quotes from a string.
+ *
+ * Creates a new string without the first and last characters if they are quotes.
+ * The original string is freed.
+ *
+ * @param str Pointer to the string to be modified.
+ * @return The new string without quotes, or NULL if allocation fails.
+ */
+static char	*remove_enclosing_quotes(char *str)
+{
+	char	*new_str;
+	size_t	len;
+
+	len = ft_strlen(str);
+	new_str = ft_substr(str, 1, len - 2);
+	free(str);
+	return (new_str);
+}
+
+/**
+ * @brief Processes TOKEN_WORD tokens to strip enclosing quotes.
+ *
+ * Goes through all tokens of type TOKEN_WORD and if a token value is
+ * enclosed in matching quotes (either single or double), removes those quotes.
+ *
+ * @param tokens Array of tokens to process.
+ * @return 0 on success, -1 on error.
+ */
+int strip_words(t_TokenArray *tokens)
+{
+    int i;
+    size_t j;
+    size_t k;
+    char *new_value;
+    char *str;
+    size_t len;
+
+    if (!tokens || !tokens->tokens)
+        return (-1);
+    
+    i = 0;
+    while (i < tokens->count)
+    {
+        if (tokens->tokens[i].type == TOKEN_WORD && tokens->tokens[i].value)
+        {
+            str = tokens->tokens[i].value;
+            len = ft_strlen(str);
+            
+            // First check if it's fully enclosed in quotes for efficiency
+            if (is_enclosed_in_quotes(str))
+            {
+                tokens->tokens[i].value = remove_enclosing_quotes(str);
+                if (!tokens->tokens[i].value)
+                    return (-1);
+            }
+            // Handle embedded quotes
+            else if (ft_strchr(str, '\'') || ft_strchr(str, '"'))
+            {
+                new_value = malloc(len + 1);
+                if (!new_value)
+                    return (-1);
+                
+                j = 0; // input index
+                k = 0; // output index
+                
+                while (j < len)
+                {
+                    // Skip quotes
+                    if (str[j] == '\'' || str[j] == '"')
+                        j++;
+                    else
+                        new_value[k++] = str[j++];
+                }
+                new_value[k] = '\0';
+                
+                free(tokens->tokens[i].value);
+                tokens->tokens[i].value = new_value;
+            }
+        }
+        i++;
+    }
+    return (0);
+}
+
 

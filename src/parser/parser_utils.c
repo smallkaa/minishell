@@ -10,7 +10,7 @@ void	print_token(t_Token token)
 	debug_printf("Token: { type: %s", type_names[token.type]);
 	if (token.type == TOKEN_WORD)
 	{
-		debug_printf(", value: \"%s\"", token.value);
+		debug_printf(", value: %s", token.value);
 	}
 	debug_printf(" }\n");
 }

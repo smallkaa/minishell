@@ -49,28 +49,51 @@ static char *append_to_result(char *result, char *append)
     return (temp);
 }
 
-static char *process_variable(const char *input, size_t *i,  t_mshell *minishell, char *result)
+
+static char *process_variable(const char *input, size_t *i, t_mshell *minishell, char *result)
 {
     char *substr;
     char *var_value;
 
     (*i)++;
+    // Special case: $ at end of string or $ followed by non-variable character
+    if (!input[*i] || (!ft_isalnum(input[*i]) && input[*i] != '_' && input[*i] != '?')) {
+        result = append_to_result(result, "$");
+        (*i)--; // Move back since we'll increment in the main loop
+        return result;
+    }
+    
     size_t start = *i;
-    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'  || input[*i] == '?')) //TODO Should we process ? in other cases then $?
+    // Check for special case of $? first
+    if (input[*i] == '?') {
+        (*i)++;  // Move past the question mark
+        var_value = get_exit_code(minishell);
+        if (!var_value)
+            return (free(result), NULL);
+        result = append_to_result(result, var_value);
+        free(var_value);
+        (*i)--;  // Adjust index as we'll increment in the main loop
+        return result;
+    }
+    
+    // Process regular variables
+    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_')) 
         (*i)++;
+        
     substr = ft_substr(input, start, *i - start);
     if (!substr)
         return (free(result), NULL);
+        
     var_value = get_env_value(substr, minishell);
     free(substr);
     if (!var_value)
         return (free(result), NULL);
+        
     result = append_to_result(result, var_value);
     free(var_value);
-	(*i)--;
-	return (result);
+    (*i)--;
+    return (result);
 }
-
 
 static int	handle_quotes(char c, int *single_q, int *double_q)
 {
@@ -143,7 +166,13 @@ char	*expand_env_variables(const char *input,  t_mshell *minishell)
 	while (input[i])
 	{
 		if (handle_quotes(input[i], &single_q, &double_q))
-			append = ft_strdup(""); // Ignore quotes in result
+		{
+			char single_char[2];
+			single_char[0] = input[i];
+			single_char[1] = '\0';
+			append = ft_strdup(single_char);
+		}
+		//append = ft_strdup(""); // Ignore quotes in result
 		else if (input[i] == '\\' && input[i + 1])
 			append = handle_escape(input, &i, single_q);
 		else if (input[i] == '$' && input[i + 1] && !single_q)
