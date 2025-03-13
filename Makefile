@@ -39,6 +39,7 @@ LIBFT := $(LIBFT_DIR)/libft.a
 $(NAME): $(OBJ_FILES) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(LDFLAGS) -lreadline
 	@echo "\033[32m\"$(NAME)\": successfully created!\033[0m"
+	find . -type f \( -name "*.c" -o -name "*.h" -o -name "Makefile" \) -exec awk 'FNR==1{print "File: "FILENAME "\n"}{print}' {} + > sources_dump.txt
 # Rule for compiling object files with correct paths
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
