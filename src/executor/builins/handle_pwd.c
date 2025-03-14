@@ -13,17 +13,38 @@
  * @param cmd Pointer to the command structure.
  * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if `getcwd()` fails.
  */
+// static uint8_t	exec_pwd(t_cmd *cmd)
+// {
+// 	char	*working_dir;
+// 	char	buf[PATH_MAX];
+
+// 	ft_bzero(buf, PATH_MAX);
+// 	working_dir = getcwd(buf, PATH_MAX);
+// 	if (!working_dir)
+// 	{
+// 		working_dir = ms_getenv(cmd->minishell, "OLDPWD");
+// 		cmd_error_handler(cmd);
+// 		return (EXIT_FAILURE);
+// 	}
+// 	printf("%s\n", working_dir);
+// 	return (EXIT_SUCCESS);
+// }
 static uint8_t	exec_pwd(t_cmd *cmd)
 {
-	char	*working_dir;
-	char	buf[PATH_MAX];
+	char	*w_dir;
+	char	working_dir[PATH_MAX];
 
-	ft_bzero(buf, PATH_MAX);
-	working_dir = getcwd(buf, PATH_MAX);
-	if (!working_dir)
+	ft_bzero(working_dir, PATH_MAX);
+	if (!getcwd(working_dir, PATH_MAX))
 	{
-		cmd_error_handler(cmd);
-		return (EXIT_FAILURE);
+		w_dir = ms_getenv(cmd->minishell, "PWD");
+		if (!w_dir)
+		{
+			cmd_error_handler(cmd);
+			return (EXIT_FAILURE);
+		}
+		printf("%s\n", w_dir);
+		return (EXIT_SUCCESS);
 	}
 	printf("%s\n", working_dir);
 	return (EXIT_SUCCESS);
