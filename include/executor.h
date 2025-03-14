@@ -7,7 +7,7 @@
 # define ERROR_BUF_SIZE 256
 
 //limits for file name and full path
-# define PATH_MAX 4096
+# define MS_PATHMAX 4096
 # define NAME_MAX 255
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/

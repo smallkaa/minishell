@@ -25,7 +25,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 {
 	char	*home_path;
 	char	*new_home;
-	char	buf[PATH_MAX];
+	char	buf[MS_PATHMAX];
 	uint8_t	exit_status;
 
 	exit_status = EXIT_FAILURE;
@@ -40,7 +40,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 		cmd_error_handler(cmd);
 		return (exit_status);
 	}
-	new_home = getcwd(buf, PATH_MAX);
+	new_home = getcwd(buf, MS_PATHMAX);
 	if (!new_home)
 	{
 		print_error("minishell: cd: failed to retrieve current directory\n");
@@ -77,7 +77,7 @@ static uint8_t	cd_too_many_args(void)
  */
 static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
-	char	buf[PATH_MAX];
+	char	buf[MS_PATHMAX];
 	char	*new_pwd;
 
 	if (chdir(cmd->argv[1]) != 0)
@@ -85,7 +85,7 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 		cmd_error_handler(cmd);
 		return (EXIT_FAILURE);
 	}
-	new_pwd = getcwd(buf, PATH_MAX);
+	new_pwd = getcwd(buf, MS_PATHMAX);
 	if (!new_pwd)
 	{
 		print_error("minishell: cd: failed to retrieve current directory\n");

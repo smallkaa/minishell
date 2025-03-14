@@ -16,10 +16,10 @@
 static uint8_t	exec_pwd(t_cmd *cmd)
 {
 	char	*working_dir;
-	char	buf[PATH_MAX];
+	char	buf[MS_PATHMAX];
 
-	ft_bzero(buf, PATH_MAX);
-	working_dir = getcwd(buf, PATH_MAX);
+	ft_bzero(buf, MS_PATHMAX);
+	working_dir = getcwd(buf, MS_PATHMAX);
 	if (!working_dir)
 	{
 		cmd_error_handler(cmd);
