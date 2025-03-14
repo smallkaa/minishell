@@ -17,12 +17,11 @@
  */
 static uint8_t	exec_pwd(t_cmd *cmd)
 {
-	char	*working_dir;
-	char	buf[MS_PATHMAX];
+	char	*w_dir;
+	char	working_dir[PATH_MAX];
 
-	ft_bzero(buf, MS_PATHMAX);
-	working_dir = getcwd(buf, MS_PATHMAX);
-	if (!working_dir)
+	ft_bzero(working_dir, PATH_MAX);
+	if (!getcwd(working_dir, PATH_MAX))
 	{
 		w_dir = ms_getenv(cmd->minishell, "PWD");
 		if (!w_dir)
