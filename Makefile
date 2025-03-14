@@ -38,6 +38,7 @@ SRC_DIRS := src \
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft
 
+
 # Collect all source files
 SRC_FILES := $(wildcard $(addsuffix /*.c, $(SRC_DIRS)))
 
@@ -48,6 +49,12 @@ INCLUDES := -Iinclude -I$(LIBFT_DIR)
 
 # Libft
 LIBFT := $(LIBFT_DIR)/libft.a
+
+# Define the documentation output directory
+DOCS_DIR = docs
+
+# Default Doxygen configuration file
+DOXYFILE = Doxyfile
 
 # Compile all
 $(NAME): $(OBJ_FILES) $(LIBFT)
@@ -77,6 +84,12 @@ norm:
 		echo "\033[31mno norminette\033[0m"; \
 	fi
 
+# Rule to generate Doxygen documentation
+docs:
+	@echo "Generating documentation..."
+	@doxygen $(DOXYFILE)
+	@echo "\033[32mDocumentation generated in $(DOCS_DIR)/html/index.html\033[0m"
+
 # Clean
 clean:
 	$(RM) $(OBJ_DIR)
@@ -89,4 +102,10 @@ fclean: clean
 
 re: fclean $(NAME)
 
-.PHONY: all clean fclean re
+# Rule to clean up old documentation
+dclean:
+	@echo "Cleaning documentation files..."
+	@rm -rf $(DOCS_DIR)
+	@echo "\033[32mDocumentation cleaned.\033[0m"
+
+.PHONY: all clean fclean re docs dclean
