@@ -26,7 +26,14 @@ SRC_DIRS := src \
 			src/minishell_struct \
 			src/executor/cmds \
 			src/executor/builins \
-			src/executor/builins/cd
+			src/executor/builins/cd \
+			src/executor/builins/echo \
+			src/executor/builins/env \
+			src/executor/builins/exit \
+			src/executor/builins/export \
+			src/executor/builins/pwd \
+			src/executor/builins/unset
+
 
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft
