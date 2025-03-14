@@ -25,6 +25,7 @@ uint8_t			exec_cmd(t_cmd *cmd);
 // builtin functions
 bool			is_builtin(t_cmd *cmd);
 uint8_t			exec_builtin(t_cmd *cmd);
+
 uint8_t			handle_exit(t_cmd *cmd);
 uint8_t			handle_echo(t_cmd *cmd);
 uint8_t			handle_pwd(t_cmd *cmd);
@@ -53,10 +54,11 @@ bool			is_pipeline_limit(int *cmd_count);
 
 // exit utils
 // void			fatal_error_child(char *cmd, int exit_status);
-void	fatal_error_child(t_cmd *cmd, int exit_status);
+void			fatal_error_child(t_cmd *cmd, int exit_status);
 void			fatal_error(char *cmd, int exit_status);
 void			env_error_handler(t_cmd *cmd);
 int				cmd_error_handler(t_cmd *cmd, int exit_status);
 void			exit_numeric_error(char *arg);
+uint8_t			invalid_opt_exit(const char *cmd_name, const char *option);
 
 #endif /* EXECUTOR_H */

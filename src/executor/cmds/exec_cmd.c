@@ -14,18 +14,16 @@ static void	execute_command(t_cmd *cmd)
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
-			exec_builtin(cmd);
-			// exit(exec_builtin(cmd));
+			// exec_builtin(cmd);
+			exit(exec_builtin(cmd));
 		else
 		{
 			command_not_found_handle(cmd);
-			// _exit(cmd_error_handler(cmd, 127));
 			_exit(127);
 		}
 	}
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	fatal_error_child(cmd, errno);
-	// perror(cmd->binary);
 }
 
 /**

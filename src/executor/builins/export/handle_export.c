@@ -68,11 +68,13 @@ void	print_export_from_ht(t_mshell *mshell)
  * @brief Processes a single argument for the `export` command.
  *
  * Checks if the argument is a valid variable name and, if so, adds or updates
- * it in the shell’s environment. If an `=` is present, the variable is assigned a value.
+ * it in the shell’s environment. If an `=` is present, the variable is
+ * assigned a value.
  *
  * @param cmd Pointer to the command structure.
  * @param arg The argument containing a variable name (and optional value).
- * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if the argument is invalid.
+ * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if the argument is
+ *          invalid.
  */
 static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 {
@@ -81,7 +83,6 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 	t_mshell_var	*pair;
 
 	pair = split_key_value(arg);
-
 	if (!is_valid_varname(pair->key))
 	{
 		print_error("-minishell: export: '");
@@ -114,40 +115,19 @@ uint8_t	handle_export(t_cmd *cmd)
 {
 	int		i;
 	uint8_t	exit_status;
-	uint8_t	ret;
 
-	exit_status = (EXIT_SUCCESS);
 	if (!cmd->argv[1])
 	{
 		print_export_from_ht(cmd->minishell);
-		cmd->minishell->exit_status = EXIT_SUCCESS;
-		if (cmd->in_pipe)
-			exit(EXIT_SUCCESS);
-		return (EXIT_SUCCESS);
+		exit_status = EXIT_SUCCESS;
+		return (exit_status);
 	}
-	exit_status = (EXIT_SUCCESS);
 	i = 1;
 	while (cmd->argv[i])
 	{
-		ret = process_export_arg(cmd, cmd->argv[i]);
-		if (ret != EXIT_SUCCESS)
-			exit_status = ret;
+		exit_status = process_export_arg(cmd, cmd->argv[i]);
 		i++;
 	}
 	update_env(cmd->minishell);
-
-	// printf("Exit status: %d\n",cmd->minishell->exit_status); //  test
-	if (cmd->in_pipe)
-		exit(exit_status);
 	return (exit_status);
 }
-/*
-// Case #1: export VAR="value1 value2"
-char *argv[] = {"export", "VAR=data1 data2", NULL};
-
-// Case #2: export VAR='value1 value2'
-char *argv[] = {"export", "VAR=data1 data2", NULL};
-
-// Case #3: export VAR=value1 value2
-char *argv[] = {"export", "VAR=data1", "data2", NULL};
-*/

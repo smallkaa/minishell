@@ -109,7 +109,7 @@ int	cmd_error_handler(t_cmd *cmd, int exit_status)
 	char	error_buf[ERROR_BUF_SIZE];
 	int		err_num;
 
-	if (!cmd || !cmd->argv || !cmd->argv[0])
+	if (!cmd || !cmd->argv)
 	{
 		write(STDERR_FILENO, "minishell: invalid command structure\n", 37);
 		return (EXIT_FAILURE);
@@ -149,3 +149,35 @@ void	command_not_found_handle(t_cmd *cmd)
 	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
 	write(STDERR_FILENO, ": command not found\n", 20);
 }
+
+/**
+ * @brief Prints an error message for invalid options in built-in commands.
+ *
+ * This function constructs an error message when a built-in command receives
+ * an invalid option (e.g., `pwd -abc`). Only the first two characters of the
+ * invalid option are displayed to match the behavior of standard shells.
+ *
+ * @param cmd_name The name of the command that received the invalid option.
+ * @param option The invalid option provided by the user.
+ * @return Returns an exit status of `2`, following standard shell behavior.
+ */
+uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
+{
+	char	error_buf[ERROR_BUF_SIZE];
+	char	opt_buf[3];
+
+	ft_strlcpy(opt_buf, option, 3);
+	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd_name, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, ": ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, opt_buf, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, ": invalid option\n", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd_name, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, ": usage: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd_name, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
+	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+	return (2);
+}
+

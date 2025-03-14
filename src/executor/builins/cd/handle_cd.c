@@ -32,11 +32,12 @@ static void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
 {
 	char	new_cwd[MS_PATHMAX];
 
+	ft_bzero(new_cwd, MS_PATHMAX);
 	if (!get_directory(new_cwd, cmd))
 		ft_strlcpy(new_cwd, "", MS_PATHMAX);
 	(void)set_variable(cmd->minishell, "OLDPWD", old_cwd, 1);
 	(void)set_variable(cmd->minishell, "PWD", new_cwd, 1);
-	(void)update_env(cmd->minishell);
+	update_env(cmd->minishell);
 }
 
 /**
@@ -57,6 +58,8 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 
 	if (!cmd || !cmd->minishell)
 		return (EXIT_FAILURE);
+
+	ft_bzero(old_cwd, MS_PATHMAX);
 	home_path = ms_getenv(cmd->minishell, "HOME");
 	if (!home_path)
 	{
@@ -66,7 +69,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(home_path) != 0)
 		return (cmd_error_handler(cmd, EXIT_FAILURE));
-	(void)update_pwd_variables(cmd, old_cwd);
+	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }
 
@@ -86,10 +89,12 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 
 	if (!cmd || !cmd->argv[1] || !cmd->minishell)
 		return (EXIT_FAILURE);
+
+	ft_bzero(old_cwd, MS_PATHMAX);
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(cmd->argv[1]) != 0)
 		return (cmd_error_handler(cmd, EXIT_FAILURE));
-	(void)update_pwd_variables(cmd, old_cwd);
+	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }
 

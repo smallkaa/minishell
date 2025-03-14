@@ -88,7 +88,6 @@ static void	load_env_into_ht(t_mshell *mshell)
 	t_mshell_var	*tmp;
 	int				i;
 	char			*home;
-	// char			buf[MS_PATHMAX];
 
 	i = 0;
 	while (mshell->env[i])
@@ -153,7 +152,7 @@ int	setup_hash_table(t_mshell *mshell)
 	mshell->hash_table = init_hash_table();
 	if (!mshell->hash_table)
 		return (EXIT_FAILURE);
-	(void)load_env_into_ht(mshell);
-	(void)update_env(mshell);
+	load_env_into_ht(mshell);
+	update_env(mshell);
 	return (EXIT_SUCCESS);
 }
