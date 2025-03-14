@@ -3,7 +3,6 @@
  * @brief Implementation of the `pwd` built-in command in Minishell.
  */
 #include "minishell.h"
-
 /**
  * @brief Executes the `pwd` command to print the current working directory.
  *
