@@ -101,6 +101,7 @@ static void	load_env_into_ht(t_mshell *mshell)
 		}
 		i++;
 	}
+	set_variable(mshell, "OLDPWD", NULL, 0);
 }
 
 /**
