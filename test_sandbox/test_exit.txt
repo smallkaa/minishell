@@ -48,7 +48,7 @@ exit "++42" → Error: exit: ++42: numeric argument required. Expected status: 2
 Edge Tests with Quoting
 exit "42abc" → Error: exit: 42abc: numeric argument required. Expected status: 2. ✅ Passed
 exit " 42" → Exits with status 42. Expected status: 42. ✅ Passed
-exit "" → Expected status: 0. ❌ Failed
+exit "" → Expected status: 0. ✅ Passed
 exit "1 2" →  Expected status: 1. ❌ Failed
 exit '1 2' → Error: exit: : numeric argument required. Expected status: 2. ✅ Passed
 exit 1 2 → Error: exit: too many arguments. Expected status: 1. ✅ Passed
