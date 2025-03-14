@@ -24,15 +24,15 @@ static char	*handle_direct_path(t_cmd *cmd)
 	if (access(binary, F_OK) != 0)
 	{
 		free(binary);
-		cmd_error_handler(cmd);
 		cmd->minishell->exit_status = 127;
+		(void)cmd_error_handler(cmd, 0);
 		return (NULL);
 	}
 	if (access(binary, X_OK) != 0)
 	{
 		free(binary);
-		cmd_error_handler(cmd);
 		cmd->minishell->exit_status = 126;
+		(void)cmd_error_handler(cmd, 0);
 		return (NULL);
 	}
 	return (binary);

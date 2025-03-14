@@ -7,11 +7,14 @@
 /**
  * @brief Executes the `pwd` command to print the current working directory.
  *
- * Retrieves the current working directory using `getcwd()` and prints it.
- * If `getcwd()` fails, an error handler is invoked.
+ * Attempts to retrieve the current working directory using `getcwd()`.
+ * If `getcwd()` fails (e.g., due to a deleted working directory), it falls 
+ * back to the value of the `PWD` environment variable. If `PWD` is also unavailable, 
+ * an error handler is invoked.
  *
  * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if `getcwd()` fails.
+ * @return `EXIT_SUCCESS` if the directory is printed successfully, 
+ *         `EXIT_FAILURE` if both `getcwd()` and `PWD` retrieval fail.
  */
 static uint8_t	exec_pwd(t_cmd *cmd)
 {
@@ -22,8 +25,11 @@ static uint8_t	exec_pwd(t_cmd *cmd)
 	working_dir = getcwd(buf, MS_PATHMAX);
 	if (!working_dir)
 	{
-		cmd_error_handler(cmd);
-		return (EXIT_FAILURE);
+		w_dir = ms_getenv(cmd->minishell, "PWD");
+		if (!w_dir)
+			return(cmd_error_handler(cmd, EXIT_FAILURE));
+		printf("%s\n", w_dir);
+		return (EXIT_SUCCESS);
 	}
 	printf("%s\n", working_dir);
 	return (EXIT_SUCCESS);

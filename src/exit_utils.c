@@ -104,7 +104,7 @@ void	exit_numeric_error(char *arg)
  *
  * @param cmd Pointer to the `t_cmd` structure containing command arguments.
  */
-void	cmd_error_handler(t_cmd *cmd)
+int	cmd_error_handler(t_cmd *cmd, int exit_status)
 {
 	char	error_buf[ERROR_BUF_SIZE];
 	int		err_num;
@@ -112,7 +112,7 @@ void	cmd_error_handler(t_cmd *cmd)
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
 		write(STDERR_FILENO, "minishell: invalid command structure\n", 37);
-		return ;
+		return (EXIT_FAILURE);
 	}
 	err_num = errno;
 	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
@@ -127,4 +127,5 @@ void	cmd_error_handler(t_cmd *cmd)
 	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+	return (exit_status);
 }

@@ -28,11 +28,17 @@ uint8_t			exec_builtin(t_cmd *cmd);
 uint8_t			handle_exit(t_cmd *cmd);
 uint8_t			handle_echo(t_cmd *cmd);
 uint8_t			handle_pwd(t_cmd *cmd);
-uint8_t			handle_cd(t_cmd *cmd);
 uint8_t			handle_env(t_cmd *cmd);
 uint8_t			handle_export(t_cmd *cmd);
 uint8_t			handle_unset(t_cmd *cmd);
 t_mshell_var	*create_new_variable( char *key,  char *value, int assigned);
+
+// cd
+uint8_t			handle_cd(t_cmd *cmd);
+bool			is_valid_value(t_cmd *cmd);
+bool 			get_directory(char *cwd, t_cmd *cmd);
+
+
 
 // redirections <, <<, >, >>
 void			handle_redirections(t_cmd *cmd, int in_fd);
@@ -50,7 +56,7 @@ bool			is_pipeline_limit(int *cmd_count);
 void	fatal_error_child(t_cmd *cmd, int exit_status);
 void			fatal_error(char *cmd, int exit_status);
 void			env_error_handler(t_cmd *cmd);
-void			cmd_error_handler(t_cmd *cmd);
+int				cmd_error_handler(t_cmd *cmd, int exit_status);
 void			exit_numeric_error(char *arg);
 
 #endif /* EXECUTOR_H */

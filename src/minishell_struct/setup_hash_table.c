@@ -87,6 +87,8 @@ static void	load_env_into_ht(t_mshell *mshell)
 {
 	t_mshell_var	*tmp;
 	int				i;
+	char			*home;
+	// char			buf[PATH_MAX];
 
 	i = 0;
 	while (mshell->env[i])
@@ -94,13 +96,20 @@ static void	load_env_into_ht(t_mshell *mshell)
 		tmp = split_key_value(mshell->env[i]);
 		if (tmp)
 		{
-			set_variable(mshell, tmp->key, tmp->value, 1);
+			(void)set_variable(mshell, tmp->key, tmp->value, 1);
 			free(tmp->key);
 			free(tmp->value);
 			free(tmp);
 		}
 		i++;
 	}
+	home = ms_getenv(mshell, "HOME");
+	if (!home)
+	{
+		(void)print_error("minishell: load_env_into_ht: failed to retrieve home directory\n");
+		return ;
+	}
+	(void)set_variable(mshell, "OLDPWD", home, 1);
 }
 
 /**
@@ -118,7 +127,7 @@ static t_hash_table	*init_hash_table(void)
 	ht = malloc(sizeof(t_hash_table));
 	if (!ht)
 	{
-		print_error("hash_table malloc failed\n");
+		(void)print_error("hash_table malloc failed\n");
 		return (NULL);
 	}
 	i = 0;
@@ -144,7 +153,7 @@ int	setup_hash_table(t_mshell *mshell)
 	mshell->hash_table = init_hash_table();
 	if (!mshell->hash_table)
 		return (EXIT_FAILURE);
-	load_env_into_ht(mshell);
-	update_env(mshell);
+	(void)load_env_into_ht(mshell);
+	(void)update_env(mshell);
 	return (EXIT_SUCCESS);
 }

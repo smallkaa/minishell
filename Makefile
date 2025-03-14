@@ -20,7 +20,14 @@ NAME := minishell
 CC      := cc
 RM      := rm -rf
 
-SRC_DIRS := src src/executor src/parser src/executor/builins src/minishell_struct src/executor/cmds
+SRC_DIRS := src \
+			src/parser \
+			src/executor \
+			src/minishell_struct \
+			src/executor/cmds \
+			src/executor/builins \
+			src/executor/builins/cd
+
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft
 
