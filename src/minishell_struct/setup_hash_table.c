@@ -88,7 +88,7 @@ static void	load_env_into_ht(t_mshell *mshell)
 	t_mshell_var	*tmp;
 	int				i;
 	char			*home;
-	// char			buf[PATH_MAX];
+	// char			buf[MS_PATHMAX];
 
 	i = 0;
 	while (mshell->env[i])

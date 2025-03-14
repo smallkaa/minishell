@@ -25,15 +25,15 @@ static uint8_t	cd_too_many_args(void)
  * environment variables to reflect the new and old working directories.
  *
  * @param cmd Pointer to the command structure containing shell information.
- * @param old_cwd The previous working directory before the `cd` 
+ * @param old_cwd The previous working directory before the `cd`
  *                command was executed.
  */
 static void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
 {
-	char	new_cwd[PATH_MAX];
+	char	new_cwd[MS_PATHMAX];
 
 	if (!get_directory(new_cwd, cmd))
-		ft_strlcpy(new_cwd, "", PATH_MAX);
+		ft_strlcpy(new_cwd, "", MS_PATHMAX);
 	(void)set_variable(cmd->minishell, "OLDPWD", old_cwd, 1);
 	(void)set_variable(cmd->minishell, "PWD", new_cwd, 1);
 	(void)update_env(cmd->minishell);
@@ -52,7 +52,7 @@ static void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
  */
 static uint8_t	cd_no_args(t_cmd *cmd)
 {
-	char	old_cwd[PATH_MAX];
+	char	old_cwd[MS_PATHMAX];
 	char	*home_path;
 
 	if (!cmd || !cmd->minishell)
@@ -82,7 +82,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
  */
 static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
-	char	old_cwd[PATH_MAX];
+	char	old_cwd[MS_PATHMAX];
 
 	if (!cmd || !cmd->argv[1] || !cmd->minishell)
 		return (EXIT_FAILURE);
@@ -100,7 +100,7 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
  * cases such as changing to `HOME`, handling errors for invalid arguments,
  * and updating environment variables accordingly.
  *
- * @param cmd Pointer to the command structure containing 
+ * @param cmd Pointer to the command structure containing
  *            arguments and shell state.
  * @return `EXIT_SUCCESS` if the command executes successfully,
  *         `EXIT_FAILURE` otherwise.
@@ -145,8 +145,8 @@ uint8_t	handle_cd(t_cmd *cmd)
 
 // static uint8_t cd_no_args(t_cmd *cmd)
 // {
-// 	char	old_cwd[PATH_MAX];
-// 	char	new_cwd[PATH_MAX];
+// 	char	old_cwd[MS_PATHMAX];
+// 	char	new_cwd[MS_PATHMAX];
 // 	char	*home_path;
 // 	char	*temp_pwd;
 
@@ -158,21 +158,21 @@ uint8_t	handle_cd(t_cmd *cmd)
 // 		print_error("minishell: cd: HOME not set\n");
 // 		return (EXIT_FAILURE);
 // 	}
-// 	if (!getcwd(old_cwd, PATH_MAX))
+// 	if (!getcwd(old_cwd, MS_PATHMAX))
 // 	{
 // 		temp_pwd = ms_getenv(cmd->minishell, "PWD");
 // 		if (temp_pwd)
 // 		{
-// 			ft_strlcpy(old_cwd, temp_pwd, PATH_MAX);
+// 			ft_strlcpy(old_cwd, temp_pwd, MS_PATHMAX);
 // 			temp_pwd = NULL;
 // 		}
 // 		else
-// 			ft_strlcpy(old_cwd, "", PATH_MAX);
+// 			ft_strlcpy(old_cwd, "", MS_PATHMAX);
 // 	}
 // 	if (chdir(home_path) != 0)
 // 		return(cmd_error_handler(cmd, EXIT_FAILURE));
-// 	if (!getcwd(new_cwd, PATH_MAX))
-// 		ft_strlcpy(new_cwd, home_path, PATH_MAX);
+// 	if (!getcwd(new_cwd, MS_PATHMAX))
+// 		ft_strlcpy(new_cwd, home_path, MS_PATHMAX);
 // 	set_variable(cmd->minishell, "OLDPWD", old_cwd, 1);
 // 	set_variable(cmd->minishell, "PWD", new_cwd, 1);
 // 	update_env(cmd->minishell);
@@ -181,35 +181,35 @@ uint8_t	handle_cd(t_cmd *cmd)
 
 // static uint8_t	change_and_update_pwd(t_cmd *cmd)
 // {
-// 	char	old_cwd[PATH_MAX];
-// 	char	new_cwd[PATH_MAX];
-// 	char	*temp_pwd;	
+// 	char	old_cwd[MS_PATHMAX];
+// 	char	new_cwd[MS_PATHMAX];
+// 	char	*temp_pwd;
 
 // 	if (!cmd || !cmd->argv[1] || !cmd->minishell)
 // 		return (EXIT_FAILURE);
-// 	if (!getcwd(old_cwd, PATH_MAX))
+// 	if (!getcwd(old_cwd, MS_PATHMAX))
 // 	{
 // 		temp_pwd = ms_getenv(cmd->minishell, "PWD");
 // 		if (temp_pwd)
 // 		{
-// 			ft_strlcpy(old_cwd, temp_pwd, PATH_MAX);
+// 			ft_strlcpy(old_cwd, temp_pwd, MS_PATHMAX);
 // 			temp_pwd = NULL;
 // 		}
 // 		else
-// 			ft_strlcpy(old_cwd, "", PATH_MAX);
+// 			ft_strlcpy(old_cwd, "", MS_PATHMAX);
 // 	}
 // 	if (chdir(cmd->argv[1]) != 0)
 // 		return(cmd_error_handler(cmd, EXIT_FAILURE));
-// 	if (!getcwd(new_cwd, PATH_MAX))
+// 	if (!getcwd(new_cwd, MS_PATHMAX))
 // 	{
 // 		temp_pwd = ms_getenv(cmd->minishell, "PWD");
 // 		if (temp_pwd)
 // 		{
-// 			ft_strlcpy(new_cwd, temp_pwd, PATH_MAX);
+// 			ft_strlcpy(new_cwd, temp_pwd, MS_PATHMAX);
 // 			temp_pwd = NULL;
 // 		}
 // 		else
-// 			ft_strlcpy(new_cwd, "", PATH_MAX);
+// 			ft_strlcpy(new_cwd, "", MS_PATHMAX);
 // 	}
 // 	set_variable(cmd->minishell, "OLDPWD", old_cwd, 1);
 // 	set_variable(cmd->minishell, "PWD", new_cwd, 1);

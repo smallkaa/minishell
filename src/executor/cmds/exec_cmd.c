@@ -19,6 +19,7 @@ static void	execute_command(t_cmd *cmd)
 		else
 		{
 			command_not_found_handle(cmd);
+			// _exit(cmd_error_handler(cmd, 127));
 			_exit(127);
 		}
 	}

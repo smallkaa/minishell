@@ -32,18 +32,18 @@ bool	is_valid_value(t_cmd *cmd)
  * @param cmd Pointer to the command structure used to access environment variables.
  * @return `true` if `getcwd()` succeeds, `false` if it fails and `$PWD` is used instead.
  *
- * @note Ensure `cwd` has enough space (`PATH_MAX`). The function does not allocate memory.
+ * @note Ensure `cwd` has enough space (`MS_PATHMAX`). The function does not allocate memory.
  */
 bool get_directory(char *cwd, t_cmd *cmd)
 {
 	char *temp_pwd;
 
-	if (getcwd(cwd, PATH_MAX))
+	if (getcwd(cwd, MS_PATHMAX))
 		return (true);
 	temp_pwd = ms_getenv(cmd->minishell, "PWD");
 	if (temp_pwd)
-		ft_strlcpy(cwd, temp_pwd, PATH_MAX);
+		ft_strlcpy(cwd, temp_pwd, MS_PATHMAX);
 	else
-		ft_strlcpy(cwd, "", PATH_MAX);
+		ft_strlcpy(cwd, "", MS_PATHMAX);
 	return (false);
 }
