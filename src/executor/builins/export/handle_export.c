@@ -32,39 +32,6 @@ bool	is_valid_varname(const char *key)
 }
 
 /**
- * @brief Prints all exported variables in the shell.
- *
- * Iterates through the hash table and prints assigned variables in the format:
- * - `declare -x KEY="VALUE"` if the variable has a value.
- * - `declare -x KEY` if the variable has no value.
- *
- * @param mshell Pointer to the Minishell structure.
- */
-void	print_export_from_ht(t_mshell *mshell)
-{
-	t_mshell_var	*var;
-	int				i;
-
-	i = 0;
-	while (i < HASH_SIZE)
-	{
-		var = mshell->hash_table->buckets[i];
-		while (var)
-		{
-			if (var->key)
-			{
-				if (var->value)
-					printf("declare -x %s=\"%s\"\n", var->key, var->value);
-				else
-					printf("declare -x %s\n", var->key);
-			}
-			var = var->next;
-		}
-		i++;
-	}
-}
-
-/**
  * @brief Processes a single argument for the `export` command.
  *
  * Checks if the argument is a valid variable name and, if so, adds or updates
@@ -118,7 +85,7 @@ uint8_t	handle_export(t_cmd *cmd)
 
 	if (!cmd->argv[1])
 	{
-		print_export_from_ht(cmd->minishell);
+		handle_sorted_env(cmd->minishell);
 		exit_status = EXIT_SUCCESS;
 		return (exit_status);
 	}

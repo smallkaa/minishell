@@ -95,7 +95,7 @@ static void	load_env_into_ht(t_mshell *mshell)
 		tmp = split_key_value(mshell->env[i]);
 		if (tmp)
 		{
-			(void)set_variable(mshell, tmp->key, tmp->value, 1);
+			set_variable(mshell, tmp->key, tmp->value, 1);
 			free(tmp->key);
 			free(tmp->value);
 			free(tmp);
@@ -105,10 +105,10 @@ static void	load_env_into_ht(t_mshell *mshell)
 	home = ms_getenv(mshell, "HOME");
 	if (!home)
 	{
-		(void)print_error("minishell: load_env_into_ht: failed to retrieve home directory\n");
+		print_error("minishell: load_env_into_ht: failed to retrieve home directory\n");
 		return ;
 	}
-	(void)set_variable(mshell, "OLDPWD", home, 1);
+	set_variable(mshell, "OLDPWD", home, 1);
 }
 
 /**
