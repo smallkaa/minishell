@@ -27,12 +27,14 @@ static int	ft_putstr_custom(t_cmd *cmd, char *str)
 /**
  * @brief Prints the arguments provided to the `echo` command.
  *
- * Iterates over the arguments of `echo`, printing each word followed by a space,
- * unless it is the last word. If the `-n` flag is not set, a newline is printed at the end.
+ * Iterates over the arguments of `echo`, printing each word followed by
+ * a space, unless it is the last word. If the `-n` flag is not set, a
+ * newline is printed at the end.
  *
  * @param cmd Pointer to the command structure.
  * @param i Starting index of arguments to print.
- * @param newline_flag Pointer to an integer indicating if a newline should be printed.
+ * @param newline_flag Pointer to an integer indicating if a newline
+ *                     should be printed.
  * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on failure.
  */
 static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
@@ -60,11 +62,13 @@ static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 /**
  * @brief Handles `-n` flags in the `echo` command.
  *
- * Parses arguments that start with `-n` and ensures they contain only `n` characters.
+ * Parses arguments that start with `-n` and ensures they contain only `n`
+ * characters.
  * If valid, it disables the newline at the end of the output.
  *
  * @param cmd Pointer to the command structure.
- * @param newline_flag Pointer to an integer that determines if a newline should be printed.
+ * @param newline_flag Pointer to an integer that determines if a newline
+ *                     should be printed.
  * @return The index from where to start printing arguments.
  */
 static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
@@ -104,11 +108,5 @@ uint8_t	handle_echo(t_cmd *cmd)
 	newline_flag = 1;
 	i = handle_echo_flags(cmd, &newline_flag);
 	exit_status = print_content(cmd, i, &newline_flag);
-	cmd->minishell->exit_status = exit_status;
-
-	// printf("Exit status: %d\n",cmd->minishell->exit_status); //  test
-
-	if (cmd->in_pipe)
-		exit(exit_status);
 	return (exit_status);
 }
