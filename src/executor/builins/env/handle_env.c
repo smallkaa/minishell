@@ -31,39 +31,31 @@ static void	print_env_bucket(t_mshell_var *var)
 /**
  * @brief Handles the `env` built-in command to display environment variables
  *        or attempt to execute a command.
- *
- * If `env` is run without arguments, it prints all assigned environment variables.
- * If an argument is provided, it tries to execute the given command in the current environment.
+ * It prints all assigned environment variables.
  *
  * @param cmd Pointer to the command structure containing execution context.
- * @return `EXIT_SUCCESS` if successful, `127` if the command does not exist.
+ * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if arguments of options
+ *         provided.
  */
 uint8_t	handle_env(t_cmd *cmd)
 {
 	t_hash_table	*ht;
 	int				i;
 	uint8_t			exit_status;
-	t_cmd			*cmd_to_execute;
 
-	// Case: No arguments -> Print environment variables
-	if (!cmd->argv[1])
+	if (cmd->argv[1])
 	{
-		ht = cmd->minishell->hash_table;
-		i = 0;
-		while (i < HASH_SIZE)
-		{
-			print_env_bucket(ht->buckets[i]);
-			i++;
-		}
-		exit_status = EXIT_SUCCESS;
+		print_error("Usage: ./minishell: env\n");
+		exit_status = EXIT_FAILURE;
+		return (exit_status);
 	}
-	else
+	ht = cmd->minishell->hash_table;
+	i = 0;
+	while (i < HASH_SIZE)
 	{
-		cmd_to_execute = run_parser(cmd->minishell, cmd->argv[1]);
-		exit_status = run_executor(cmd_to_execute);
+		print_env_bucket(ht->buckets[i]);
+		i++;
 	}
-	cmd->minishell->exit_status = exit_status;
-	if (cmd->in_pipe)
-		exit(exit_status);
+	exit_status = EXIT_SUCCESS;
 	return (exit_status);
 }
