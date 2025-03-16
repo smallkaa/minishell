@@ -15,7 +15,7 @@ static void	execute_command(t_cmd *cmd)
 	{
 		if (is_builtin(cmd))
 			// exec_builtin(cmd);
-			exit(exec_builtin(cmd));
+			_exit(exec_builtin(cmd));
 		else
 		{
 			command_not_found_handle(cmd);

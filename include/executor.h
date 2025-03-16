@@ -62,8 +62,8 @@ bool			is_pipeline_limit(int *cmd_count);
 void			fatal_error_child(t_cmd *cmd, int exit_status);
 void			fatal_error(char *cmd, int exit_status);
 void			env_error_handler(t_cmd *cmd);
-int				cmd_error_handler(t_cmd *cmd, int exit_status);
-void			exit_numeric_error(char *arg);
+uint8_t			cmd_error_handler(t_cmd *cmd, uint8_t exit_status);
+uint8_t			exit_numeric_error(char *arg);
 uint8_t			invalid_opt_exit(const char *cmd_name, const char *option);
 
 #endif /* EXECUTOR_H */

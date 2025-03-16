@@ -28,16 +28,13 @@ bool	is_builtin(t_cmd *cmd)
 uint8_t run_executor(t_cmd *cmd)
 {
 	t_mshell	*minishell;
-
-	// if (!cmd)
-	// 	return (EXIT_FAILURE);
+	uint8_t		exit_status;
 
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
 	{
 		print_error("Error (run_executor): missing components\n");
-		minishell->exit_status = EXIT_FAILURE;
-		return (minishell->exit_status);
+		return (EXIT_FAILURE);
 	}
 	// test
 	// int i = 0;
@@ -51,12 +48,18 @@ uint8_t run_executor(t_cmd *cmd)
 
 	if (is_builtin(cmd) && !cmd->next)
 	{
-		cmd->in_pipe = false;
 		minishell->exit_status = exec_builtin(cmd);
+		if (ft_strcmp(cmd->argv[0], "exit") == 0)
+		{
+			exit_status = minishell->exit_status;
+			free_cmd(cmd);
+			free_minishell(cmd->minishell);
+			printf ("here\n");
+			exit(exit_status);
+		}
 		free_cmd(cmd);
 		return (minishell->exit_status);
 	}
-	cmd->in_pipe = true;
 	minishell->exit_status = exec_cmd(cmd);
 	free_cmd(cmd);
 	return (minishell->exit_status);

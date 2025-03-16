@@ -79,12 +79,12 @@ void fatal_error_child(t_cmd *cmd, int error_code)
  *
  * @param arg The invalid argument that caused the error.
  */
-void	exit_numeric_error(char *arg)
+uint8_t	exit_numeric_error(char *arg)
 {
 	ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
-	exit (2);
+	return (2);
 }
 
 /**
@@ -104,7 +104,7 @@ void	exit_numeric_error(char *arg)
  *
  * @param cmd Pointer to the `t_cmd` structure containing command arguments.
  */
-int	cmd_error_handler(t_cmd *cmd, int exit_status)
+uint8_t	cmd_error_handler(t_cmd *cmd, uint8_t exit_status)
 {
 	char	error_buf[ERROR_BUF_SIZE];
 	int		err_num;
@@ -163,6 +163,7 @@ void	command_not_found_handle(t_cmd *cmd)
  */
 uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
 {
+	uint8_t	exit_status;
 	char	error_buf[ERROR_BUF_SIZE];
 	char	opt_buf[3];
 
@@ -178,6 +179,7 @@ uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
 	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-	return (2);
+	exit_status = 2;
+	return (exit_status);
 }
 

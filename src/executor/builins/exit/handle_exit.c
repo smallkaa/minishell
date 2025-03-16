@@ -147,10 +147,10 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 /**
  * @brief Handles cases where too many arguments are passed to `exit`.
  */
-static void	handle_too_many_args(void)
+static uint8_t	handle_too_many_args(void)
 {
 	ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
-	exit(1);
+	return(1);
 }
 
 /**
@@ -166,7 +166,7 @@ static uint8_t	get_exit_status(char *arg)
 
 	exit_status = ft_atoll_exit(arg, &overflow);
 	if (overflow)
-		exit_numeric_error(arg);
+		return (exit_numeric_error(arg));
 	return ((uint8_t)(exit_status & 0xFF));
 }
 
@@ -186,93 +186,10 @@ uint8_t	handle_exit(t_cmd *cmd)
 	}
 	printf("exit\n");
 	if (!cmd->argv[1] || cmd->argv[1][0] == '\0')
-		exit(cmd->minishell->exit_status);
+		return(cmd->minishell->exit_status);
 	if (!is_valid_numeric_exit_arg(cmd->argv[1]))
-		exit_numeric_error(cmd->argv[1]);
+		return (exit_numeric_error(cmd->argv[1]));
 	if (cmd->argv[2])
-		handle_too_many_args();
-	exit(get_exit_status(cmd->argv[1]));
+		return(handle_too_many_args());
+	return(get_exit_status(cmd->argv[1]));
 }
-
-// static long long	ft_atoll_exit(const char *str, bool *overflow)
-// {
-// 	int			sign;
-// 	long long	res;
-// 	int			digit;
-
-// 	sign = 1;
-// 	res = 0;
-// 	*overflow = false;
-// 	while (ft_isspace(*str))
-// 		str++;
-// 	if (*str == '-' || *str == '+')
-// 	{
-// 		if (*str == '-')
-// 			sign = -1;
-// 		str++;
-// 	}
-// 	if (!ft_isdigit(*str))
-// 	{
-// 		*overflow = true;
-// 		return (0);
-// 	}
-// 	while (ft_isdigit(*str))
-// 	{
-// 		digit = *str - '0';
-// 		if (sign == 1 && res > (LLONG_MAX - digit) / 10)
-// 		{
-// 			*overflow = true;
-// 			return (LLONG_MAX);
-// 		}
-// 		if (sign == -1 && res > -(LLONG_MIN + digit) / 10)
-// 		{
-// 			*overflow = true;
-// 			return (LLONG_MIN);
-// 		}
-// 		res = res * 10 + digit;
-// 		str++;
-// 	}
-// 	return (res * sign);
-// }
-
-// uint8_t	handle_exit(t_cmd *cmd)
-// {
-// 	long long	exit_status;
-// 	bool		overflow;
-
-// 	if (!cmd)
-// 	{
-// 		print_error("minishell: exit: no *cmd instance\n");
-// 		return (EXIT_FAILURE);
-// 	}
-// 	printf("exit\n");
-// 	if (!cmd->argv[1] || cmd->argv[1][0] == '\0')
-// 		exit(cmd->minishell->exit_status);
-// 	if (!cmd->argv[1])
-// 		exit(cmd->minishell->exit_status);
-// 	if (!is_numeric_arg(cmd->argv[1]))
-// 	{
-// 		exit_numeric_error(cmd->argv[1]);
-// 		exit(2);
-// 	}
-// 	if (cmd->argv[2])
-// 	{
-// 		if (!is_numeric_arg(cmd->argv[1]))
-// 		{
-// 			exit_numeric_error(cmd->argv[1]);
-// 			exit(2);
-// 		}
-// 		else
-// 		{
-// 			ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
-// 			exit(1);
-// 		}
-// 	}
-// 	exit_status = ft_atoll_exit(cmd->argv[1], &overflow);
-// 	if (overflow)
-// 	{
-// 		exit_numeric_error(cmd->argv[1]);
-// 		exit(2);
-// 	}
-// 	exit((uint8_t)(exit_status & 0xFF));
-// }
