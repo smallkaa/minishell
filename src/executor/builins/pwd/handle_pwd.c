@@ -54,6 +54,5 @@ uint8_t	handle_pwd(t_cmd *cmd)
 		exit_status = invalid_opt_exit("pwd", cmd->argv[1]);
 	else
 		exit_status = exec_pwd(cmd);
-	cmd->minishell->exit_status = exit_status;
 	return (exit_status);
 }

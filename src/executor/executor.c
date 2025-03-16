@@ -54,7 +54,7 @@ uint8_t run_executor(t_cmd *cmd)
 			exit_status = minishell->exit_status;
 			free_cmd(cmd);
 			free_minishell(cmd->minishell);
-			printf ("here\n");
+			rl_clear_history();
 			exit(exit_status);
 		}
 		free_cmd(cmd);

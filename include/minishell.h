@@ -104,6 +104,7 @@ bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);
 
 void		free_minishell(t_mshell	*mshell);
+void		free_mshell_var(t_mshell_var *var);
 void		free_cmd(t_cmd *cmd);
 
 #endif /* MINISHELL_H */

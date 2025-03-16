@@ -32,9 +32,7 @@ static void	remove_var_from_ht(t_mshell *mshell, char *key)
 				mshell->hash_table->buckets[index] = current->next;
 			else
 				prev->next = current->next;
-			free(current->key);
-			free(current->value);
-			free(current);
+			free_mshell_var(current);
 			update_env(mshell);
 			return ;
 		}
@@ -51,18 +49,15 @@ static void	remove_var_from_ht(t_mshell *mshell, char *key)
  */
 static uint8_t	do_unset_loop(t_cmd *cmd)
 {
-	uint8_t	status;
 	int		i;
 
-	status = EXIT_SUCCESS;
 	i = 1;
 	while (cmd->argv[i])
 	{
 		remove_var_from_ht(cmd->minishell, cmd->argv[i]);
 		i++;
 	}
-	cmd->minishell->exit_status = status;
-	return (status);
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -81,24 +76,12 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
  */
 uint8_t	handle_unset(t_cmd *cmd)
 {
-	uint8_t	status;
-
-	status = EXIT_SUCCESS;
 	if (!cmd || !cmd->minishell)
 	{
-		status = EXIT_FAILURE;
-		if (cmd && cmd->in_pipe)
-			exit(status);
-		return (status);
+		print_error("minishell: unset: no cmd or minishell instanse\n");
+		return (EXIT_FAILURE);
 	}
 	if (!cmd->argv[1])
-	{
-		if (cmd->in_pipe)
-			exit(status);
-		return (status);
-	}
-	status = do_unset_loop(cmd);
-	if (cmd->in_pipe)
-		exit(status);
-	return (status);
+		return (EXIT_SUCCESS);
+	return (do_unset_loop(cmd));
 }

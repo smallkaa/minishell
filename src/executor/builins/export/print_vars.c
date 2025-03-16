@@ -1,13 +1,13 @@
 /**
  * @file print_vars.c
  * @brief Functions to collect, sort, and print environment variables
- *        in alphabetical order.
+ *		in alphabetical order.
  */
 #include "minishell.h"
 
 /**
  * @brief Counts the total number of environment variable keys in the
- *        hash table.
+ *		hash table.
  *
  * Iterates through all buckets of the hash table and counts the number of
  * stored keys.
@@ -22,6 +22,7 @@ static int	count_total_keys(t_hash_table *ht)
 	t_mshell_var	*var;
 
 	i = 0;
+	total_keys = 0;
 	while (i < HASH_SIZE)
 	{
 		var = ht->buckets[i];
@@ -37,7 +38,7 @@ static int	count_total_keys(t_hash_table *ht)
 
 /**
  * @brief Collects all environment variable keys from the hash table into
- *        an array.
+ *		an array.
  *
  * Allocates memory for an array of strings, each holding a key from
  * the environment.
@@ -45,36 +46,37 @@ static int	count_total_keys(t_hash_table *ht)
  *
  * @param ht Pointer to the hash table storing environment variables.
  * @param keys Pointer to a dynamically allocated array to store environment
- *             variable keys.
+ *			 variable keys.
  * @param count Pointer to an integer that will store the number of collected
- *              keys.
+ *			  keys.
  */
-static void	collect_keys(t_hash_table *ht, char ***keys, int *count)
+static void collect_keys(t_hash_table *ht, char ***keys, int *count)
 {
-	int				i;
 	int				total_keys;
 	t_mshell_var	*var;
+	int				i;
+	int				key_index;
 
-	i = 0;
-	total_keys = 0;
-	total_keys = count_total_keys(ht);
-	*keys = malloc(total_keys * sizeof(char *));
-	if (!(*keys))
+	if (!ht || !keys || !count)
 		return ;
-	total_keys = 0;
+	total_keys = count_total_keys(ht);
+	*count = total_keys;
+	*keys = malloc(sizeof(char *) * total_keys);
+	if (!(*keys))
+		return;
+	key_index = 0;
 	i = 0;
 	while (i < HASH_SIZE)
 	{
 		var = ht->buckets[i];
 		while (var)
 		{
-			(*keys)[total_keys] = ft_strdup(var->key);
-			total_keys++;
+			(*keys)[key_index] = ft_strdup(var->key);
+			key_index++;
 			var = var->next;
 		}
 		i++;
 	}
-	*count = total_keys;
 }
 
 /**
@@ -141,7 +143,7 @@ static void	print_sorted_env(t_mshell *mshell, char **keys, int count)
 
 /**
  * @brief Handles sorting and printing of environment variables in
- *        alphabetical order.
+ *		alphabetical order.
  *
  * - Collects environment variable keys.
  * - Sorts them using bubble sort.

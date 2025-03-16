@@ -42,7 +42,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 		// Step 2: add input to history
 		if (*input)
-			add_history(input);  // needs to be freed?
+			add_history(input);
 
 		debug_printf("Return: %s\n", input); // test print statment
 
@@ -63,7 +63,6 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 int	main(int argc, char **argv, char **envp)
 {
-
 	t_mshell	*minishell;
 	uint8_t		exit_status;
 
@@ -81,5 +80,6 @@ int	main(int argc, char **argv, char **envp)
 	else
 		exit_status = run_script_mode(minishell, argv[1]);
 	free_minishell(minishell);
+	rl_clear_history();
 	return (exit_status);
 }

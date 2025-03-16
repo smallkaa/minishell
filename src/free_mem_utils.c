@@ -1,5 +1,5 @@
 /**
- * @file minishell_cleanup.c
+ * @file free_mem_utils.c
  * @brief Functions to free allocated memory in Minishell.
  */
 #include "minishell.h"
@@ -27,6 +27,13 @@ void	free_env(char **env)
 	free(env);
 }
 
+void free_mshell_var(t_mshell_var *var)
+{
+	free(var->key);
+	free(var->value);
+	free(var);
+}
+
 /**
  * @brief Frees the hash table storing environment variables.
  *
@@ -50,9 +57,7 @@ void	free_hash_table(t_hash_table *hash_table)
 		{
 			temp = current;
 			current = current->next;
-			free(temp->key);
-			free(temp->value);
-			free(temp);
+			free_mshell_var(temp);
 		}
 		i++;
 	}
