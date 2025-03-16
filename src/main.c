@@ -1,6 +1,32 @@
 #include "minishell.h"
 
-uint8_t	run_minishell(t_mshell	*mshell)
+uint8_t	run_script_mode(t_mshell *mshell, const char *file)
+{
+	char	*input;
+	uint8_t	exit_status;
+	t_cmd	*cmd;
+	int		in_fd;
+
+	in_fd = open(file, O_RDONLY);
+    if (in_fd < 0)
+    {
+        print_error("minishell: cannot open script file\n");
+        return (EXIT_FAILURE);
+    }
+	input = NULL;
+    while ((input = get_next_line(in_fd)) != NULL)
+    {
+		cmd = run_parser(mshell, input);
+		if (!cmd)
+			continue ;
+		exit_status = run_executor(cmd);
+		free(input);
+    }
+    close(in_fd);
+	return (exit_status);
+}
+
+uint8_t	run_interactive_mode(t_mshell *mshell)
 {
 	char	*input;
 	uint8_t	exit_status;
@@ -8,7 +34,6 @@ uint8_t	run_minishell(t_mshell	*mshell)
 
 	while (1)
 	{
-		// Step 1: read input from terminal, return a line for parser
 		input = readline("minishell: ");
 
 		// check for EOF / Ctrl+D
@@ -18,7 +43,6 @@ uint8_t	run_minishell(t_mshell	*mshell)
 		// Step 2: add input to history
 		if (*input)
 			add_history(input);  // needs to be freed?
-
 
 		debug_printf("Return: %s\n", input); // test print statment
 
@@ -40,23 +64,22 @@ uint8_t	run_minishell(t_mshell	*mshell)
 int	main(int argc, char **argv, char **envp)
 {
 
-	(void)argc;
-	(void)argv;
 	t_mshell	*minishell;
-	uint8_t	exit_status;
+	uint8_t		exit_status;
 
-
-
-	setup_signal_handlers(); // Set up signal handlers
-
-	minishell = init_mshell(envp);
-	if (!minishell)
+	if (argc > 2)
 	{
+		print_error("Usage: ./minishell: [scriptfile] or no args.\n");
 		return (EXIT_FAILURE);
 	}
-	exit_status = run_minishell(minishell);
-
-	(void)free_minishell(minishell);
-
+	setup_signal_handlers(); // Set up signal handlers
+	minishell = init_mshell(envp);
+	if (!minishell)
+		return (EXIT_FAILURE);
+	if (argc == 1)
+		exit_status = run_interactive_mode(minishell);
+	else
+		exit_status = run_script_mode(minishell, argv[1]);
+	free_minishell(minishell);
 	return (exit_status);
 }

@@ -31,7 +31,7 @@ pwd  # Expected: back to initial directory
 
 ---
 
-### 📌 Missing Arguments
+### Missing Arguments
 
 **4\. `cd` without arguments (should go to `$HOME`)**
 ```bash
@@ -47,7 +47,7 @@ cd  # Expected error: HOME not set
 
 ---
 
-### 📌 Non-directory Targets
+###  Non-directory Targets
 
 **6\. Attempt to `cd` into a file**
 ```bash
@@ -62,7 +62,7 @@ cd nonexistent  # Expected error: No such file or directory
 
 ---
 
-### 📌 Permission-related Cases
+### Permission-related Cases
 
 **8\. Directory without execute permissions**
 ```bash
@@ -80,7 +80,7 @@ cd noexec_dir  # Expected error: Permission denied
 
 ---
 
-### 📌 Special Paths
+###  Special Paths
 
 **10\. Current directory (.)**
 ```bash
@@ -98,7 +98,7 @@ pwd  # Expected: Parent directory
 
 ---
 
-### 📌 Absolute Path Handling
+### Absolute Path Handling
 
 **12\. Absolute path to `/tmp`**
 ```bash
