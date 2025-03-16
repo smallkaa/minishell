@@ -36,7 +36,7 @@ bool	is_valid_value(t_cmd *cmd)
  */
 bool get_directory(char *cwd, t_cmd *cmd)
 {
-	char *temp_pwd;
+	char	*temp_pwd;
 
 	if (getcwd(cwd, MS_PATHMAX))
 		return (true);
