@@ -11,9 +11,11 @@
  * contains spaces. If spaces are found, the argument is considered invalid.
  *
  * @param cmd Pointer to the command structure containing arguments.
- * @return `true` if the argument is valid (no spaces), `false` if it contains spaces.
+ * @return `true` if the argument is valid (no spaces), `false` if it
+ *         contains spaces.
  *
- * @note Assumes `cmd->argv[1]` is not NULL. Ensure `cmd` is validated before calling.
+ * @note Assumes `cmd->argv[1]` is not NULL. Ensure `cmd` is validated
+ *       before calling.
  */
 bool	is_valid_value(t_cmd *cmd)
 {
@@ -26,15 +28,19 @@ bool	is_valid_value(t_cmd *cmd)
  * @brief Retrieves the current working directory.
  *
  * This function attempts to get the current working directory using `getcwd()`.
- * If `getcwd()` fails, it falls back to retrieving the `$PWD` environment variable.
+ * If `getcwd()` fails, it falls back to retrieving the `$PWD` environment
+ * variable.
  *
  * @param cwd Buffer where the current directory path will be stored.
- * @param cmd Pointer to the command structure used to access environment variables.
- * @return `true` if `getcwd()` succeeds, `false` if it fails and `$PWD` is used instead.
+ * @param cmd Pointer to the command structure used to access environment
+ *            variables.
+ * @return `true` if `getcwd()` succeeds, `false` if it fails and `$PWD`
+ *          is used instead.
  *
- * @note Ensure `cwd` has enough space (`MS_PATHMAX`). The function does not allocate memory.
+ * @note Ensure `cwd` has enough space (`MS_PATHMAX`). The function does not
+ *       allocate memory.
  */
-bool get_directory(char *cwd, t_cmd *cmd)
+bool	get_directory(char *cwd, t_cmd *cmd)
 {
 	char	*temp_pwd;
 

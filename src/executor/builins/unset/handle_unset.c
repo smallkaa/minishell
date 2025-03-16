@@ -5,13 +5,17 @@
 #include "minishell.h"
 
 /**
- * @brief Removes a variable from the hash table completely.
+ * @brief Removes a variable from the Minishell environment's hash table.
  *
- * Unlinks the node matching `key` from the hash table's bucket list and
- * frees its memory. Calls `update_env(mshell)` to resync the environment array.
+ * This function searches for a variable with the given `key` in the hash
+ * table.
+ * If found, it removes the variable by unlinking it from the corresponding
+ * bucket list and frees its allocated memory. After deletion,
+ * `update_env(mshell)` is called to synchronize the shell's environment
+ * array.
  *
- * @param mshell Pointer to the Minishell structure.
- * @param key The variable name to unset.
+ * @param mshell Pointer to the Minishell structure containing the hash table.
+ * @param key The name of the variable to be removed.
  */
 static void	remove_var_from_ht(t_mshell *mshell, char *key)
 {
@@ -42,10 +46,15 @@ static void	remove_var_from_ht(t_mshell *mshell, char *key)
 }
 
 /**
- * @brief Loops over all `unset` arguments and removes each variable.
+ * @brief Iterates through all arguments of `unset` and removes each variable.
  *
- * @param cmd Pointer to the command structure.
- * @return The final exit status after removing all requested variables.
+ * This function loops over `cmd->argv`, starting from the first argument
+ * (`argv[1]`),
+ * and removes each specified variable from the Minishell environment using
+ * `remove_var_from_ht()`.
+ *
+ * @param cmd Pointer to the command structure containing command arguments.
+ * @return Always returns `EXIT_SUCCESS`.
  */
 static uint8_t	do_unset_loop(t_cmd *cmd)
 {
@@ -61,18 +70,30 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the `unset` built-in command.
+ * @brief Handles the `unset` built-in command in Minishell.
  *
- * This function checks basic validity, then iterates through all arguments in
- * `cmd->argv`, removing each specified variable from the Minishell environment.
- * If called within a pipeline, the function exits the process after performing
- * the unset operations.
+ * The `unset` command removes one or more environment variables from the
+ * shell.
+ * - If no arguments are provided, the function returns `EXIT_SUCCESS`.
+ * - If the command structure (`cmd`) or Minishell instance is missing, it
+ * prints an error.
+ * - Otherwise, it loops through the arguments and removes each specified
+ * variable.
  *
- * Usage: `unset VAR1 [VAR2 VAR3 ...]`
+ * If `unset` is executed in a subshell (e.g., inside a pipeline), the
+ * process may exit
+ * after execution, depending on the shell's implementation.
  *
- * @param cmd Pointer to the command structure (contains argv, minishell, etc.).
- * @return `EXIT_SUCCESS` if all unsets succeed (or if no arguments),
- *         otherwise `EXIT_FAILURE`.
+ * **Usage Example:**
+ * ```
+ * unset VAR1 VAR2 VAR3
+ * ```
+ *
+ * @param cmd Pointer to the command structure (contains argv, minishell
+ *            instance, etc.).
+ * @return `EXIT_SUCCESS` if all requested variables were removed or no
+ *         arguments were provided.
+ *         `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
  */
 uint8_t	handle_unset(t_cmd *cmd)
 {

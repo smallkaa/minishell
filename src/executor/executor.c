@@ -2,8 +2,17 @@
  * @file executor.c
  * @brief Functions for executing built-in and external commands in Minishell.
  */
-#include "minishell.h"
+ #include "minishell.h"
 
+ /**
+  * @brief Checks if the given command is a built-in command.
+  *
+  * Iterates through the list of built-in commands stored in the Minishell
+  * structure and compares the given command (`cmd->argv[0]`) against the list.
+  *
+  * @param cmd Pointer to the command structure containing the command details.
+  * @return `true` if the command is a built-in, `false` otherwise.
+  */
 bool	is_builtin(t_cmd *cmd)
 {
 	char	**builtin;
@@ -17,13 +26,15 @@ bool	is_builtin(t_cmd *cmd)
 }
 
 /**
- * @brief Executes a command, either built-in or external.
+ * @brief Executes a command in Minishell.
  *
- * - If the command is built-in and there is no following command, executes it directly.
- * - Otherwise, marks `cmd->in_pipe` as `true` and executes the command externally.
+ * This function determines whether the command is a built-in or an external command:
+ * - If the command is a built-in and has no following command (`cmd->next` is NULL),
+ *   it is executed directly. If the built-in command is `exit`, the shell terminates.
+ * - Otherwise, the command is executed as an external command.
  *
- * @param cmd Pointer to the command structure.
- * @return The exit status of the command.
+ * @param cmd Pointer to the command structure containing command details.
+ * @return The exit status of the executed command.
  */
 uint8_t run_executor(t_cmd *cmd)
 {

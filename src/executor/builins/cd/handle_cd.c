@@ -1,16 +1,16 @@
 /**
  * @file handle_cd.c
- * @brief Implementation of the `cd` built-in command in Minishell.
+ * @brief Functions for handling the `cd` built-in command in Minishell.
  */
 #include "minishell.h"
 
 /**
  * @brief Prints an error message when too many arguments are provided to `cd`.
  *
- * This function is called when the `cd` command receives more than one argument,
- * which is not allowed in Minishell.
+ * The `cd` command in Minishell only accepts zero or one argument.
+ * If more than one argument is provided, this function prints an error message.
  *
- * @return `EXIT_FAILURE` always, since having too many arguments is an error.
+ * @return `EXIT_FAILURE` (1) since having too many arguments is an error.
  */
 static uint8_t	cd_too_many_args(void)
 {
@@ -19,14 +19,15 @@ static uint8_t	cd_too_many_args(void)
 }
 
 /**
- * @brief Updates the `PWD` and `OLDPWD` environment variables.
+ * @brief Updates the `PWD` and `OLDPWD` environment variables after `cd`.
  *
- * After a successful `cd` operation, this function updates the shell's
- * environment variables to reflect the new and old working directories.
+ * After a successful `cd` operation, this function updates:
+ * - `OLDPWD` to store the previous working directory.
+ * - `PWD` to store the new working directory.
+ * - Calls `update_env()` to reflect changes in the environment.
  *
  * @param cmd Pointer to the command structure containing shell information.
- * @param old_cwd The previous working directory before the `cd`
- *                command was executed.
+ * @param old_cwd The previous working directory before executing `cd`.
  */
 static void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
 {
@@ -43,13 +44,14 @@ static void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
 /**
  * @brief Handles the `cd` command when no arguments are provided.
  *
- * If no arguments are passed to `cd`, the function attempts to change the
- * directory to the `HOME` environment variable. If `HOME` is not set, an
- * error is printed.
+ * - If `cd` is called with no arguments, it attempts to change to the `HOME`
+ * directory.
+ * - If `HOME` is not set, an error message is printed.
+ * - On success, `PWD` and `OLDPWD` are updated.
  *
  * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` if the directory is changed successfully,
- *         `EXIT_FAILURE` otherwise.
+ * @return `EXIT_SUCCESS` (0) if the directory changes successfully.
+ *         `EXIT_FAILURE` (1) if `HOME` is not set or an error occurs.
  */
 static uint8_t	cd_no_args(t_cmd *cmd)
 {
@@ -73,14 +75,16 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the `cd` command when a directory argument is provided.
+ * @brief Changes the working directory and updates `PWD` and `OLDPWD`.
  *
- * This function attempts to change the working directory to the specified
- * path and updates `PWD` and `OLDPWD` in the environment.
+ * This function:
+ * - Changes the directory to the specified path.
+ * - Updates the shell environment with the new directory.
+ * - If the path is invalid, it returns an error.
  *
  * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` if the directory is changed successfully,
- *         `EXIT_FAILURE` if an error occurs.
+ * @return `EXIT_SUCCESS` (0) if the directory changes successfully.
+ *         `EXIT_FAILURE` (1) if an error occurs.
  */
 static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
@@ -99,14 +103,18 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 /**
  * @brief Handles the execution of the `cd` command.
  *
- * This function processes the `cd` command in Minishell, handling different
- * cases such as changing to `HOME`, handling errors for invalid arguments,
- * and updating environment variables accordingly.
+ * Implements different behaviors based on input:
+ * - `cd` with no arguments → Moves to the `HOME` directory.
+ * - `cd ~` → Also moves to the `HOME` directory.
+ * - `cd <path>` → Moves to the specified directory.
+ * - `cd ..` → Moves up one directory.
+ * - `cd -` → Moves to the previous working directory (`OLDPWD`).
+ * - If multiple arguments are provided, an error message is displayed.
  *
- * @param cmd Pointer to the command structure containing
- *            arguments and shell state.
- * @return `EXIT_SUCCESS` if the command executes successfully,
- *         `EXIT_FAILURE` otherwise.
+ * @param cmd Pointer to the command structure containing arguments and
+ *            shell state.
+ * @return `EXIT_SUCCESS` (0) if the command executes successfully.
+ *         `EXIT_FAILURE` (1) if an error occurs.
  */
 uint8_t	handle_cd(t_cmd *cmd)
 {

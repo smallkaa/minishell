@@ -26,7 +26,10 @@ uint8_t			exec_cmd(t_cmd *cmd);
 bool			is_builtin(t_cmd *cmd);
 uint8_t			exec_builtin(t_cmd *cmd);
 
+// exit
 uint8_t			handle_exit(t_cmd *cmd);
+long long	ft_atoll_exit(const char *str, bool *overflow);
+
 uint8_t			handle_echo(t_cmd *cmd);
 uint8_t			handle_pwd(t_cmd *cmd);
 uint8_t			handle_env(t_cmd *cmd);

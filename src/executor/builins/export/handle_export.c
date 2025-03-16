@@ -3,17 +3,45 @@
  * @brief Functions for handling the `export` built-in command in Minishell.
  */
 #include "minishell.h"
+/**
+ * @brief Frees the dynamically allocated memory for sorted environment
+ *        variable keys.
+ *
+ * This function iterates through an array of dynamically allocated
+ * environment variable keys, freeing each key and then freeing the array itself.
+ *
+ * @param keys Array of allocated strings containing environment variable keys.
+ * @param num_keys Number of keys in the array.
+ */
+void	free_keys(char **keys, int num_kyes)
+{
+	int	i;
+
+	if (!keys)
+		return ;
+	i = 0;
+	while (i < num_kyes)
+	{
+		free(keys[i]);
+		i++;
+	}
+	free(keys);
+}
 
 /**
- * @brief Validates if a given string is a valid variable name for minishell.
+ * @brief Validates if a given string is a valid variable name for Minishell.
  *
- * A valid variable name:
- * - Starts with an alphabetic character or underscore ('_').
- * - Contains only alphanumeric characters or underscores ('_').
- * - Stops validation at the first '=' character or at the end of the string.
+ * A valid variable name must:
+ * - Start with an alphabetic character (`A-Z`, `a-z`) or an underscore (`_`).
+ * - Contain only alphanumeric characters (`A-Z`, `a-z`, `0-9`) or
+ * underscores (`_`).
+ * - Stop validation at the first `=` character or at the end of the string.
  *
- * @param key_value_pair The string to validate (e.g., "MYVAR=value").
- * @return `true` if valid, `false` otherwise.
+ * This function ensures that variables added to the environment conform to
+ * valid naming conventions.
+ *
+ * @param key The string representing the variable name (e.g., `"MYVAR=value"`).
+ * @return `true` if the name is valid, `false` otherwise.
  */
 bool	is_valid_varname(const char *key)
 {
@@ -34,15 +62,20 @@ bool	is_valid_varname(const char *key)
 /**
  * @brief Processes a single argument for the `export` command.
  *
- * Checks if the argument is a valid variable name and, if so, adds or updates
- * it in the shell’s environment. If an `=` is present, the variable is
- * assigned a value.
+ * This function:
+ * - Validates whether the argument represents a valid variable name.
+ * - If valid, updates or adds the variable in the shell’s environment.
+ * - If an `=` is present, assigns the variable a value.
  *
- * @param cmd Pointer to the command structure.
- * @param arg The argument containing a variable name (and optional value).
- * @return `EXIT_SUCCESS` if successful, `EXIT_FAILURE` if the argument is
- *          invalid.
- */
+ * If the variable name is invalid, an error message is printed.
+ *
+ * @param cmd Pointer to the command structure containing environment context.
+ * @param arg The argument string containing a variable name (and optional
+ *            value).
+ * @return `EXIT_SUCCESS` (0) if the variable was successfully processed.
+ *         `EXIT_FAILURE` (1) if the argument is invalid.
+ *
+ * */
 static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 {
 	char			*eq;
@@ -69,14 +102,18 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 }
 
 /**
- * @brief Handles the `export` built-in command.
+ * @brief Handles the `export` built-in command in Minishell.
  *
- * - If called without arguments, prints the exported variables.
- * - If called with arguments, it processes and updates the environment.
+ * Behavior:
+ * - If `export` is called **without arguments**, it prints the current exported
+ *   variables.
+ * - If called with arguments, it processes and updates the environment
+ *   variables accordingly.
  * - If executed in a pipeline, the process exits with the appropriate status.
  *
  * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` if successful, or an appropriate error code.
+ * @return `EXIT_SUCCESS` (0) if all operations were successful.
+ *         `EXIT_FAILURE` (1) if an invalid argument was provided.
  */
 uint8_t	handle_export(t_cmd *cmd)
 {
