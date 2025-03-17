@@ -78,27 +78,31 @@ t_Token get_next_token() {
     
     // Handle special characters (but not \ or ;)
     if (ft_is_special_char(*current_input)) {
-        switch (*current_input) {
-            case '|':
-                token.type = TOKEN_PIPE;
-                current_input++;
-                break;
-            case '<':
-                token.type = TOKEN_REDIRECT_IN;
-                current_input++;
-                break;
-            case '>':
-                token.type = TOKEN_REDIRECT_OUT;
-                current_input++;
-                if (*current_input == '>') {
-                    token.type = TOKEN_APPEND_OUT;
-                    current_input++;
-                }
-                break;
-            case '&':
-                token.type = TOKEN_BACKGROUND;
-                current_input++;
-                break;
+		switch (*current_input){
+			case '|':
+				token.type = TOKEN_PIPE;
+				current_input++;
+				break;
+			case '<':
+				token.type = TOKEN_REDIRECT_IN;
+				current_input++;
+				if (*current_input == '<') {
+					token.type = TOKEN_HEREDOC;
+					current_input++;
+				}
+				break; 
+			case '>':
+				token.type = TOKEN_REDIRECT_OUT;
+				current_input++;
+				if (*current_input == '>') {
+					token.type = TOKEN_APPEND_OUT;
+					current_input++;
+				}
+				break;
+			case '&':
+				token.type = TOKEN_BACKGROUND;
+				current_input++;
+				break;
         }
         return token;
     }

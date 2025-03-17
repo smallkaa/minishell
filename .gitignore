@@ -62,3 +62,4 @@ dkms.conf
 minishell_tester/
 sources_dump.txt
 minishell
+heredoc_tmp.txt

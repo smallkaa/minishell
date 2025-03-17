@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tokenizer.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/28 12:17:27 by pvershin          #+#    #+#             */
-/*   Updated: 2025/03/13 11:27:11 by pvershin         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef TOKENIZER_H
 # define TOKENIZER_H
 
@@ -23,6 +11,7 @@ typedef enum e_possible_tokens
 	TOKEN_REDIRECT_OUT,
 	TOKEN_APPEND_OUT,
 	TOKEN_BACKGROUND,
+	TOKEN_HEREDOC,
 	TOKEN_EOF
 }	t_TokenType;
 

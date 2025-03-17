@@ -11,6 +11,10 @@
  */
 static void	execute_command(t_cmd *cmd)
 {
+	if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
+	{
+		handle_heredoc(cmd);  // This will set up the heredoc
+	}
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
@@ -40,6 +44,9 @@ static void	execute_command(t_cmd *cmd)
  */
 static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 {
+    if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC) {
+        handle_heredoc(cmd);
+    }
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)

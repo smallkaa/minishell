@@ -232,6 +232,33 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Start new command for next pipe segment
             current = NULL;
         }
+        else 
+        // In parser.c, update the part handling HEREDOC
+		if (tokens->tokens[i].type == TOKEN_HEREDOC) {
+			// Create a new redirection structure
+			t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
+			if (!redir)
+				return NULL;
+			
+			redir->type = R_HEREDOC;
+			
+			// The next token should be the delimiter
+			if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+				redir->filename = ft_strdup(tokens->tokens[i+1].value);
+				// Add this redirection to the command
+				if (current) {
+					current->in_redir = redir;
+				}
+				
+				// Skip the delimiter token
+				i++;
+			} else {
+				free(redir);
+				// Error: HEREDOC without delimiter
+			}
+		}
+
+        
         i++;
     }
 
