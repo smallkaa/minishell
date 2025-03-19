@@ -24,7 +24,6 @@ typedef struct s_redir
 	struct s_redir  *next;
 }	t_redir;
 
-# simplified version
 typedef struct s_cmd
 {
 	char			**argv;
