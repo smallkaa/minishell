@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 23:12:34 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/03/13 12:03:07 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/03/20 12:49:23 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <unistd.h>
 # include <limits.h>
 # include <stdbool.h>
+# include <string.h>
 # include "ft_printf/ft_printf.h"
 # include "get_next_line/get_next_line.h"
 
@@ -40,6 +41,7 @@ void		ft_putchar_fd(char c, int fd);
 void		ft_putendl_fd(char *s, int fd);
 void		ft_putnbr_fd(int n, int fd);
 void		ft_putstr_fd(char *s, int fd);
+void		*ft_realloc(void *ptr, size_t old_size, size_t new_size);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
 char		**ft_split(char const *s, char c);
 void		ft_striteri(char *s, void (*f)(unsigned int, char*));

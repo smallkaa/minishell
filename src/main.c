@@ -40,6 +40,8 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (!input)
 			return (EXIT_FAILURE);
 
+		printf("Input: [%s]\n", input); // test
+
 		// Step 2: add input to history
 		if (*input)
 			add_history(input);
