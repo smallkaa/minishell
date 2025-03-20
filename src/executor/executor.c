@@ -48,13 +48,20 @@ uint8_t run_executor(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// test
-	// int i = 0;
-	// while(cmd->argv[i])
-	// {
-	// 	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
-	// 	i++;
-	// }
-	// printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
+	int i = 0;
+	while(cmd->argv[i])
+	{
+		printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
+		i++;
+	}
+	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
+	if (cmd->in_redir)
+	{
+		printf("In_file: %s\n", cmd->in_redir->filename);
+		printf("Expand: [%d]\n", cmd->in_redir->expand);
+	}
+	if (cmd->out_redir)
+		printf("In_file: %s\n", cmd->out_redir->filename);
 	// end test
 
 	if (is_builtin(cmd) && !cmd->next)
