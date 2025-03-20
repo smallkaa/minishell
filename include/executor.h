@@ -50,8 +50,9 @@ bool 			get_directory(char *cwd, t_cmd *cmd);
 
 
 // redirections <, <<, >, >>
+uint8_t			process_redirections(t_cmd *cmd);
 void			handle_redirections(t_cmd *cmd, int in_fd);
-void			handle_heredoc(t_cmd *cmd);
+uint8_t			handle_heredoc(t_cmd *cmd);
 
 // void	cleanup_heredoc(t_cmd *cmd);
 

@@ -32,7 +32,8 @@ SRC_DIRS := src \
 			src/executor/builins/exit \
 			src/executor/builins/export \
 			src/executor/builins/pwd \
-			src/executor/builins/unset
+			src/executor/builins/unset \
+			src/executor/redirections
 
 
 OBJ_DIR  := obj

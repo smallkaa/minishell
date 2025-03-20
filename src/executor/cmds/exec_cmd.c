@@ -44,9 +44,7 @@ static void	execute_command(t_cmd *cmd)
  */
 static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 {
-    if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC) {
-        handle_heredoc(cmd);
-    }
+
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
@@ -65,8 +63,6 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 	if (fds[1] >= 0)
 		if (close(fds[1]) == -1)
 			fatal_error_child(cmd, EXIT_FAILURE);
-	if (cmd->in_redir || cmd->out_redir)
-		handle_redirections(cmd, STDIN_FILENO);
 	execute_command(cmd);
 }
 
