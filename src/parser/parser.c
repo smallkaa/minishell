@@ -206,6 +206,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                 new_cmd->binary = NULL;
                 new_cmd->argv[0] = strdup(tokens->tokens[i].value);
 				new_cmd->minishell = shell;
+
                 arg_index = 1;
 
                 // Link new command in pipeline
@@ -232,16 +233,16 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Start new command for next pipe segment
             current = NULL;
         }
-        else 
+        else
         // In parser.c, update the part handling HEREDOC
 		if (tokens->tokens[i].type == TOKEN_HEREDOC) {
 			// Create a new redirection structure
 			t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
 			if (!redir)
 				return NULL;
-			
+
 			redir->type = R_HEREDOC;
-			
+
 			// The next token should be the delimiter
 			if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
 				redir->filename = ft_strdup(tokens->tokens[i+1].value);
@@ -249,7 +250,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 				if (current) {
 					current->in_redir = redir;
 				}
-				
+
 				// Skip the delimiter token
 				i++;
 			} else {
@@ -258,7 +259,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 			}
 		}
 
-        
+
         i++;
     }
 

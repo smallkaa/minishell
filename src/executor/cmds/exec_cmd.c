@@ -125,17 +125,11 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 	return (pid);
 }
 
-/**
- * @brief Executes a command or a pipeline of commands.
- *
- * This function handles execution of built-in and external commands,
- * including pipes and input/output redirections.
- *
- * @param cmd Pointer to the command structure.
- * @return The exit status of the last executed command.
- */
-uint8_t	exec_cmd(t_cmd *cmd)
+
+uint8_t	exec_in_child_process(t_cmd *cmd)
 {
+	// printf("---In exec_in_child_process\n");
+
 	uint8_t	exit_status;
 	int		in_fd;
 	int		fds[2];
@@ -143,7 +137,7 @@ uint8_t	exec_cmd(t_cmd *cmd)
 	pid_t	pid;
 
 	exit_status = EXIT_FAILURE;
-	in_fd = STDIN_FILENO;
+	in_fd = 0;
 	cmd_count = 0;
 	while (cmd)
 	{
@@ -168,8 +162,3 @@ uint8_t	exec_cmd(t_cmd *cmd)
 	return (exit_status);
 }
 
-uint8_t exec_in_child_process(t_cmd *cmd)
-{
-	(void)cmd;
-	return EXIT_SUCCESS;
-}

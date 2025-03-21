@@ -40,8 +40,6 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (!input)
 			return (EXIT_FAILURE);
 
-		printf("Input: [%s]\n", input); // test
-
 		// Step 2: add input to history
 		if (*input)
 			add_history(input);
@@ -58,7 +56,6 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		exit_status = run_executor(cmd);
 		// printf("run_minishell(): Exit status run_executor       : %d\n", exit_status);
 		// printf("run_minishell(): Exit status mshell->exit_status: %d\n", mshell->exit_status);
-		printf ("here\n");
 
 		free(input);
 	}

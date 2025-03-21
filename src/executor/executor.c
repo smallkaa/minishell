@@ -47,28 +47,15 @@ uint8_t run_executor(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// test
-	int i = 0;
-	while(cmd->argv[i])
-	{
-		printf("argv[%d]: {%s}\n", i, cmd->argv[i]);
-		i++;
-	}
-	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
-	// // end test
-
-	// if (cmd->in_redir || cmd->out_redir)
+	// int i = 0;
+	// while(cmd->argv[i])
 	// {
-	// 	minishell->exit_status = process_redirections(cmd);
-	// 	if (ft_strcmp(cmd->argv[0], "exit") == 0)
-	// 	{
-	// 		free_minishell(cmd->minishell);
-	// 		free_cmd(cmd);
-	// 		rl_clear_history();
-	// 		exit(minishell->exit_status);
-	// 	}
-	// 	free_cmd(cmd);
-	// 	return(minishell->exit_status);
+	// 	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// 	i++;
 	// }
+	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	 // end test
+
 
 	if (cmd->minishell->pipe == true)
 	{
