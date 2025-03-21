@@ -66,7 +66,9 @@ uint8_t run_executor(t_cmd *cmd)
 	}
 	else if (cmd->minishell->pipe == false && !is_builtin(cmd))
 	{
+		cmd->minishell->pipe = true;
 		minishell->exit_status = exec_in_child_process(cmd);
+
 		if (cmd)
 			free_cmd(cmd);
 		return (minishell->exit_status);

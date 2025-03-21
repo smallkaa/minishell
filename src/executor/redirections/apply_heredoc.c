@@ -53,24 +53,22 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 			free_cmd(temp_cmd);
 		}
 		// Write the line (and a newline) to the write end of the pipe.
-		if (cmd->minishell->pipe == true)
+
+		if (write(pipefd[1], line, ft_strlen(line)) == -1)
 		{
-			if (write(pipefd[1], line, ft_strlen(line)) == -1)
-			{
-				perror("write");
-				free(line);
-				close(pipefd[1]);
-				close(pipefd[0]);
-				return (EXIT_FAILURE);
-			}
-			if (write(pipefd[1], "\n", 1) == -1)
-			{
-				perror("write");
-				free(line);
-				close(pipefd[1]);
-				close(pipefd[0]);
-				return EXIT_FAILURE;
-			}
+			perror("write");
+			free(line);
+			close(pipefd[1]);
+			close(pipefd[0]);
+			return (EXIT_FAILURE);
+		}
+		if (write(pipefd[1], "\n", 1) == -1)
+		{
+			perror("write");
+			free(line);
+			close(pipefd[1]);
+			close(pipefd[0]);
+
 		}
 		free(line);
 	}

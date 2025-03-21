@@ -44,7 +44,6 @@ static void	execute_command(t_cmd *cmd)
  */
 static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 {
-
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
@@ -63,6 +62,10 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 	if (fds[1] >= 0)
 		if (close(fds[1]) == -1)
 			fatal_error_child(cmd, EXIT_FAILURE);
+
+	if (apply_redirections(cmd) == EXIT_FAILURE)
+		fatal_error_child(cmd, EXIT_FAILURE);
+		
 	execute_command(cmd);
 }
 
@@ -143,6 +146,7 @@ uint8_t	exec_in_child_process(t_cmd *cmd)
 	{
 		if (is_pipeline_limit(&cmd_count))
 			return (exit_status);
+
 		fds[0] = -1;
 		fds[1] = -1;
 		if (cmd->next && pipe(fds) == -1)
