@@ -1,7 +1,6 @@
 #include "minishell.h"
 
-
-uint8_t	process_redirections(t_cmd *cmd)
+uint8_t	apply_redirections(t_cmd *cmd)
 {
 	// if (!cmd || !cmd->in_redir || !cmd->out_redir)
 	// {
@@ -9,7 +8,7 @@ uint8_t	process_redirections(t_cmd *cmd)
 	// 	return (EXIT_FAILURE);
 	// }
 	if (cmd->in_redir->type == R_HEREDOC)
-		return (handle_heredoc(cmd));
+		return (apply_heredoc(cmd));
 	// else if (cmd->in_redir->type == R_INPUT)
 	// 	return (handle_input_redirectiion(cmd));
 	// else if (cmd->out_redir->type == R_APPEND)

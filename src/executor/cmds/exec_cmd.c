@@ -11,10 +11,10 @@
  */
 static void	execute_command(t_cmd *cmd)
 {
-	if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
-	{
-		handle_heredoc(cmd);  // This will set up the heredoc
-	}
+	// if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
+	// {
+	// 	handle_heredoc(cmd);  // This will set up the heredoc
+	// }
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
@@ -166,4 +166,10 @@ uint8_t	exec_cmd(t_cmd *cmd)
 		cmd = cmd->next;
 	}
 	return (exit_status);
+}
+
+uint8_t exec_in_child_process(t_cmd *cmd)
+{
+	(void)cmd;
+	return EXIT_SUCCESS;
 }

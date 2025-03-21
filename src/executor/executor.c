@@ -47,33 +47,46 @@ uint8_t run_executor(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// test
-	// int i = 0;
-	// while(cmd->argv[i])
-	// {
-	// 	printf("rgv[%d]: {%s}\n", i, cmd->argv[i]);
-	// 	i++;
-	// }
-	// printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
+	int i = 0;
+	while(cmd->argv[i])
+	{
+		printf("argv[%d]: {%s}\n", i, cmd->argv[i]);
+		i++;
+	}
+	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
 	// // end test
 
+	// if (cmd->in_redir || cmd->out_redir)
+	// {
+	// 	minishell->exit_status = process_redirections(cmd);
+	// 	if (ft_strcmp(cmd->argv[0], "exit") == 0)
+	// 	{
+	// 		free_minishell(cmd->minishell);
+	// 		free_cmd(cmd);
+	// 		rl_clear_history();
+	// 		exit(minishell->exit_status);
+	// 	}
+	// 	free_cmd(cmd);
+	// 	return(minishell->exit_status);
+	// }
 
-	if (cmd->in_redir || cmd->out_redir)
+	if (cmd->minishell->pipe == true)
 	{
-		minishell->exit_status = process_redirections(cmd);
-		if (ft_strcmp(cmd->argv[0], "exit") == 0)
-		{
-			free_minishell(cmd->minishell);
+		minishell->exit_status = exec_in_child_process(cmd);
+		if (cmd)
 			free_cmd(cmd);
-			rl_clear_history();
-			exit(minishell->exit_status);
-		}
-		free_cmd(cmd);
-		return(minishell->exit_status);
+		return (minishell->exit_status);
 	}
-
-	else if (is_builtin(cmd) && !cmd->next)
+	else if (cmd->minishell->pipe == false && !is_builtin(cmd))
 	{
-		minishell->exit_status = exec_builtin(cmd);
+		minishell->exit_status = exec_in_child_process(cmd);
+		if (cmd)
+			free_cmd(cmd);
+		return (minishell->exit_status);
+	}
+	else
+	{
+		minishell->exit_status = exec_in_parent_process(cmd);
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
 		{
 			free_minishell(cmd->minishell);
@@ -84,10 +97,5 @@ uint8_t run_executor(t_cmd *cmd)
 		free_cmd(cmd);
 		return (minishell->exit_status);
 	}
-	else
-		minishell->exit_status = exec_cmd(cmd);
-	if (cmd)
-		free_cmd(cmd);
-	return (minishell->exit_status);
 }
 

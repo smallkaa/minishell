@@ -66,6 +66,7 @@ typedef struct s_mshell
 	char			**env;
 	t_hash_table	*hash_table;
 	char			**builtin;
+	bool			pipe;
 	uint8_t			exit_status;
 }	t_mshell;
 
