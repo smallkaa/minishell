@@ -54,6 +54,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (!cmd)
 			continue ;
 
+		set_pipe_flag(cmd);
 		exit_status = run_executor(cmd);
 		// printf("run_minishell(): Exit status run_executor       : %d\n", exit_status);
 		// printf("run_minishell(): Exit status mshell->exit_status: %d\n", mshell->exit_status);

@@ -39,7 +39,6 @@ bool	is_builtin(t_cmd *cmd)
 uint8_t run_executor(t_cmd *cmd)
 {
 	t_mshell	*minishell;
-	uint8_t		exit_status;
 
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
@@ -48,38 +47,44 @@ uint8_t run_executor(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// test
-	int i = 0;
-	while(cmd->argv[i])
-	{
-		printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
-		i++;
-	}
-	printf("Debug: argv[%d]: {%s}\n", i, cmd->argv[i]);
-	if (cmd->in_redir)
-	{
-		printf("In_file: %s\n", cmd->in_redir->filename);
-		printf("Expand: [%d]\n", cmd->in_redir->expand);
-	}
-	if (cmd->out_redir)
-		printf("In_file: %s\n", cmd->out_redir->filename);
-	// end test
+	// int i = 0;
+	// while(cmd->argv[i])
+	// {
+	// 	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// 	i++;
+	// }
+	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	 // end test
 
-	if (is_builtin(cmd) && !cmd->next)
+
+	if (cmd->minishell->pipe == true)
 	{
-		minishell->exit_status = exec_builtin(cmd);
+		minishell->exit_status = exec_in_child_process(cmd);
+		if (cmd)
+			free_cmd(cmd);
+		return (minishell->exit_status);
+	}
+	else if (cmd->minishell->pipe == false && !is_builtin(cmd))
+	{
+		cmd->minishell->pipe = true;
+		minishell->exit_status = exec_in_child_process(cmd);
+
+		if (cmd)
+			free_cmd(cmd);
+		return (minishell->exit_status);
+	}
+	else
+	{
+		minishell->exit_status = exec_in_parent_process(cmd);
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
 		{
-			exit_status = minishell->exit_status;
-			free_cmd(cmd);
 			free_minishell(cmd->minishell);
+			free_cmd(cmd);
 			rl_clear_history();
-			exit(exit_status);
+			exit(minishell->exit_status);
 		}
 		free_cmd(cmd);
 		return (minishell->exit_status);
 	}
-	minishell->exit_status = exec_cmd(cmd);
-	free_cmd(cmd);
-	return (minishell->exit_status);
 }
 

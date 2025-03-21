@@ -20,6 +20,8 @@ typedef struct s_hash_table	t_hash_table;
 /*------FUNCTIONS---------------------------------------------------*/
 
 // standart cmd exec functions
+uint8_t			exec_in_parent_process(t_cmd *cmd);
+uint8_t exec_in_child_process(t_cmd *cmd);
 uint8_t			exec_cmd(t_cmd *cmd);
 
 // builtin functions
@@ -50,8 +52,9 @@ bool 			get_directory(char *cwd, t_cmd *cmd);
 
 
 // redirections <, <<, >, >>
+uint8_t			apply_redirections(t_cmd *cmd);
 void			handle_redirections(t_cmd *cmd, int in_fd);
-void			handle_heredoc(t_cmd *cmd);
+uint8_t			apply_heredoc(t_cmd *cmd);
 
 // void	cleanup_heredoc(t_cmd *cmd);
 
@@ -59,7 +62,7 @@ void			handle_heredoc(t_cmd *cmd);
 bool			is_valid_varname(const char *key_value_pair);
 t_mshell_var	*split_key_value(char *key_value_pair);
 bool			is_pipeline_limit(int *cmd_count);
-
+void	set_pipe_flag(t_cmd *cmd);
 // exit utils
 // void			fatal_error_child(char *cmd, int exit_status);
 void			fatal_error_child(t_cmd *cmd, int exit_status);

@@ -11,10 +11,10 @@
  */
 static void	execute_command(t_cmd *cmd)
 {
-	if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
-	{
-		handle_heredoc(cmd);  // This will set up the heredoc
-	}
+	// if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
+	// {
+	// 	handle_heredoc(cmd);  // This will set up the heredoc
+	// }
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
@@ -44,9 +44,6 @@ static void	execute_command(t_cmd *cmd)
  */
 static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 {
-    if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC) {
-        handle_heredoc(cmd);
-    }
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
@@ -65,8 +62,10 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 	if (fds[1] >= 0)
 		if (close(fds[1]) == -1)
 			fatal_error_child(cmd, EXIT_FAILURE);
-	if (cmd->in_redir || cmd->out_redir)
-		handle_redirections(cmd, STDIN_FILENO);
+
+	if (apply_redirections(cmd) == EXIT_FAILURE)
+		fatal_error_child(cmd, EXIT_FAILURE);
+		
 	execute_command(cmd);
 }
 
@@ -129,17 +128,11 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 	return (pid);
 }
 
-/**
- * @brief Executes a command or a pipeline of commands.
- *
- * This function handles execution of built-in and external commands,
- * including pipes and input/output redirections.
- *
- * @param cmd Pointer to the command structure.
- * @return The exit status of the last executed command.
- */
-uint8_t	exec_cmd(t_cmd *cmd)
+
+uint8_t	exec_in_child_process(t_cmd *cmd)
 {
+	// printf("---In exec_in_child_process\n");
+
 	uint8_t	exit_status;
 	int		in_fd;
 	int		fds[2];
@@ -147,12 +140,13 @@ uint8_t	exec_cmd(t_cmd *cmd)
 	pid_t	pid;
 
 	exit_status = EXIT_FAILURE;
-	in_fd = STDIN_FILENO;
+	in_fd = 0;
 	cmd_count = 0;
 	while (cmd)
 	{
 		if (is_pipeline_limit(&cmd_count))
 			return (exit_status);
+
 		fds[0] = -1;
 		fds[1] = -1;
 		if (cmd->next && pipe(fds) == -1)
@@ -171,3 +165,4 @@ uint8_t	exec_cmd(t_cmd *cmd)
 	}
 	return (exit_status);
 }
+
