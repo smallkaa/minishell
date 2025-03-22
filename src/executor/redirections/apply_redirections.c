@@ -17,7 +17,7 @@ uint8_t	apply_redirections(t_cmd *cmd)
 	else if (cmd->in_redir && cmd->in_redir->type == R_INPUT)
 	{
 		printf ("---PAVEL is GOOD! You handled '<'");
-		// return (EXIT_SUCCESS);
+		return (EXIT_SUCCESS);
 		// return (handle_input_redirectiion(cmd));
 	}
 
