@@ -56,19 +56,9 @@ uint8_t run_executor(t_cmd *cmd)
 	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
 	 // end test
 
-
-	if (cmd->minishell->pipe == true)
+	if (!is_builtin(cmd))
 	{
 		minishell->exit_status = exec_in_child_process(cmd);
-		if (cmd)
-			free_cmd(cmd);
-		return (minishell->exit_status);
-	}
-	else if (cmd->minishell->pipe == false && !is_builtin(cmd))
-	{
-		cmd->minishell->pipe = true;
-		minishell->exit_status = exec_in_child_process(cmd);
-
 		if (cmd)
 			free_cmd(cmd);
 		return (minishell->exit_status);
@@ -87,4 +77,3 @@ uint8_t run_executor(t_cmd *cmd)
 		return (minishell->exit_status);
 	}
 }
-

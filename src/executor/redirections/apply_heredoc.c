@@ -5,16 +5,14 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 
 	int		pipefd[2];
 	char	*line;
-	char	*temp;
-	t_cmd *temp_cmd;
+	// char	*temp;
+	// t_cmd *temp_cmd;
 
 	if (!cmd->in_redir || !cmd->in_redir->filename)
     {
         print_error("Error: Heredoc redirection not properly initialized.\n");
         return (EXIT_FAILURE);
     }
-
-
 	// Create a pipe to hold the heredoc content.
 	if (pipe(pipefd) == -1)
 	{
@@ -32,6 +30,7 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 			free(line);
 			break ;
 		}
+		/*
 		if (cmd->in_redir->expand == true)
 		{
 			temp_cmd = malloc (sizeof(t_cmd));
@@ -52,6 +51,7 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 			line = temp_cmd->argv[1];
 			free_cmd(temp_cmd);
 		}
+		*/
 		// Write the line (and a newline) to the write end of the pipe.
 
 		if (write(pipefd[1], line, ft_strlen(line)) == -1)
