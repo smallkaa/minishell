@@ -63,14 +63,14 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 		if (close(fds[1]) == -1)
 			fatal_error_child(cmd, EXIT_FAILURE);
 
-	printf("---BEFORE: In child befor applying redirection\n");
+	// printf("---BEFORE: In child befor applying redirection\n");
 
 	if (apply_redirections(cmd) == EXIT_FAILURE)
 	{
 		printf("---child_process: applying redirection failed\n");
 		fatal_error_child(cmd, EXIT_FAILURE);
 	}
-	printf("---AFTER: In child after applying redirection\n");
+	// printf("---AFTER: In child after applying redirection\n");
 
 	execute_command(cmd);
 }

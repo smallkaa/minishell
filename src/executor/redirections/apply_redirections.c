@@ -34,6 +34,6 @@ uint8_t	apply_redirections(t_cmd *cmd)
 		return (EXIT_SUCCESS);
 		// return (handle_out_redirection(cmd));
 	}
-	printf("---No redirectons found\n"); // test
+	// printf("---No redirectons found\n"); // test
 	return (EXIT_SUCCESS);
 }
