@@ -70,7 +70,6 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 		printf("---child_process: applying redirection failed\n");
 		fatal_error_child(cmd, EXIT_FAILURE);
 	}
-
 	printf("---AFTER: In child after applying redirection\n");
 
 	execute_command(cmd);

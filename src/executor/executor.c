@@ -56,7 +56,7 @@ uint8_t run_executor(t_cmd *cmd)
 	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
 	 // end test
 
-	if (!is_builtin(cmd))
+	if (!is_builtin(cmd) && !cmd->next)
 	{
 		minishell->exit_status = exec_in_child_process(cmd);
 		if (cmd)
