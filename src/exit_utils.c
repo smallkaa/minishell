@@ -34,38 +34,38 @@
 // 	exit(exit_status);
 // }
 
-void	exit_child(t_cmd *cmd, char *msg, int error_code)
-{
-	char	err_buf[ERROR_BUF_SIZE];
-	int		exit_code;
-	char 	*errmsg;
+// void	exit_child(t_cmd *cmd, char *msg, int error_code)
+// {
+// 	char	err_buf[ERROR_BUF_SIZE];
+// 	int		exit_code;
+// 	char 	*errmsg;
 
-	ft_bzero(err_buf, ERROR_BUF_SIZE);
-	ft_strlcpy(err_buf, "minishell: ", ERROR_BUF_SIZE);
-	if (cmd->binary != NULL)
-		ft_strlcat(err_buf, cmd->binary, ERROR_BUF_SIZE);
-	else
-		ft_strlcat(err_buf, "unknown", ERROR_BUF_SIZE);
-	ft_strlcat(err_buf, " - ", ERROR_BUF_SIZE);
-	if (msg != NULL)
-		ft_strlcat(err_buf, msg, ERROR_BUF_SIZE);
-	else
-		ft_strlcat(err_buf, "error", ERROR_BUF_SIZE);
-	ft_strlcat(err_buf, ": ", ERROR_BUF_SIZE);
-	errmsg = strerror(error_code);
-	ft_strlcat(err_buf, errmsg, ERROR_BUF_SIZE);
-	ft_strlcat(err_buf, "\n", ERROR_BUF_SIZE);
+// 	ft_bzero(err_buf, ERROR_BUF_SIZE);
+// 	ft_strlcpy(err_buf, "minishell: ", ERROR_BUF_SIZE);
+// 	if (cmd->binary != NULL)
+// 		ft_strlcat(err_buf, cmd->binary, ERROR_BUF_SIZE);
+// 	else
+// 		ft_strlcat(err_buf, "unknown", ERROR_BUF_SIZE);
+// 	ft_strlcat(err_buf, " - ", ERROR_BUF_SIZE);
+// 	if (msg != NULL)
+// 		ft_strlcat(err_buf, msg, ERROR_BUF_SIZE);
+// 	else
+// 		ft_strlcat(err_buf, "error", ERROR_BUF_SIZE);
+// 	ft_strlcat(err_buf, ": ", ERROR_BUF_SIZE);
+// 	errmsg = strerror(error_code);
+// 	ft_strlcat(err_buf, errmsg, ERROR_BUF_SIZE);
+// 	ft_strlcat(err_buf, "\n", ERROR_BUF_SIZE);
 
-	if (write(STDERR_FILENO, err_buf, ft_strlen(err_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-	if (error_code == ENOENT)
-		exit_code = 127;
-	else if (error_code == EACCES)
-		exit_code = 126;
-	else
-		exit_code = 1;
-	_exit(exit_code);
-}
+// 	if (write(STDERR_FILENO, err_buf, ft_strlen(err_buf)) < 0)
+// 		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+// 	if (error_code == ENOENT)
+// 		exit_code = 127;
+// 	else if (error_code == EACCES)
+// 		exit_code = 126;
+// 	else
+// 		exit_code = 1;
+// 	_exit(exit_code);
+// }
 
 /**
  * exit_numeric_error - Prints an error message for an invalid numeric

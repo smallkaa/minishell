@@ -32,6 +32,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 	uint8_t	exit_status;
 	t_cmd	*cmd;
 
+
 	while (1)
 	{
 		input = readline("minishell: ");

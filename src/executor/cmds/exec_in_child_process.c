@@ -23,7 +23,7 @@ static void	execute_command(t_cmd *cmd)
 		}
 	}
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	child_execve_error();
+	// child_execve_error();
 }
 
 

@@ -13,12 +13,12 @@ uint8_t exec_in_parent_process(t_cmd *cmd)
 	if (saved_stdout == -1)
 		perror_return("dup #2: exec_in_parent_process", EXIT_FAILURE);
 	exit_status = apply_redirections(cmd);
-	if (exit_status == EXIT_FAILURE)
-	{
-		if (close(saved_stdout) == -1)
-			perror_return("close #1: exec_in_parent_process", EXIT_FAILURE);
-		return (EXIT_FAILURE);
-	}
+	// if (exit_status == EXIT_FAILURE)
+	// {
+	// 	if (close(saved_stdout) == -1)
+	// 		perror_return("close #1: exec_in_parent_process", EXIT_FAILURE);
+	// 	return (EXIT_FAILURE);
+	// }
 	exit_status = exec_builtin(cmd);
 
 	// Restore STDOUT
