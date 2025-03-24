@@ -169,7 +169,6 @@ int	group_word_tokens(t_TokenArray *tokens)
 
 	return (0);
 }
-
 t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
     t_cmd *head = NULL;
@@ -177,8 +176,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
     int i = 0;
     int arg_index = 0;
 
-    // Ilia: with no commands passed - segfault
-    // I add this guard
+    // Guard against empty input
     if (!tokens || tokens->count == 0)
         return NULL;
 
@@ -199,22 +197,18 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                 if (!new_cmd->argv)
                     return NULL;
 
-                // Set binary name
-
-                // Ilia: I assign binary at the end of the function
-                // new_cmd->binary = strdup(tokens->tokens[i].value);
+                // Set binary name (will be assigned at the end of the function)
                 new_cmd->binary = NULL;
                 new_cmd->argv[0] = strdup(tokens->tokens[i].value);
-				new_cmd->minishell = shell;
+                new_cmd->minishell = shell;
 
                 arg_index = 1;
 
                 // Link new command in pipeline
-                if (current)
-                    current->next = new_cmd;
-                else
+                if (!head)
                     head = new_cmd;
-
+                else if (current)
+                    current->next = new_cmd;
                 current = new_cmd;
             }
             else
@@ -233,49 +227,99 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Start new command for next pipe segment
             current = NULL;
         }
-        else
-        // In parser.c, update the part handling HEREDOC
-		if (tokens->tokens[i].type == TOKEN_HEREDOC) {
-			// Create a new redirection structure
-			t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
-			if (!redir)
-				return NULL;
+        else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN || 
+                 tokens->tokens[i].type == TOKEN_HEREDOC)
+        {
+            // Create a new redirection structure
+            t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
+            if (!redir)
+                return NULL;
 
-			redir->type = R_HEREDOC;
+            // Set the redirection type based on token type
+            if (tokens->tokens[i].type == TOKEN_REDIRECT_IN)
+                redir->type = R_INPUT;
+            else // TOKEN_HEREDOC
+                redir->type = R_HEREDOC;
 
-			// The next token should be the delimiter
-			if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
-				redir->filename = ft_strdup(tokens->tokens[i+1].value);
-				// Add this redirection to the command
-				if (current) {
-					current->in_redir = redir;
-				}
+            redir->expand = true; // Default value
 
-				// Skip the delimiter token
-				i++;
-			} else {
-				free(redir);
-				// Error: HEREDOC without delimiter
-			}
-		}
+            // The next token should be the file/delimiter
+            if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+                redir->filename = ft_strdup(tokens->tokens[i+1].value);
+                
+                // Add this redirection to the command
+                if (current) {
+                    // Free existing input redirection if any
+                    if (current->in_redir) {
+                        free(current->in_redir->filename);
+                        free(current->in_redir);
+                    }
+                    current->in_redir = redir;
+                } else {
+                    free(redir->filename);
+                    free(redir);
+                }
+                
+                // Skip the filename token
+                i++;
+            } else {
+                free(redir);
+            }
+        }
+        else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT || 
+                 tokens->tokens[i].type == TOKEN_APPEND_OUT)
+        {
+            // Create a new redirection structure
+            t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
+            if (!redir)
+                return NULL;
 
+            // Set the redirection type based on token type
+            if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT)
+                redir->type = R_OUTPUT;
+            else // TOKEN_APPEND_OUT
+                redir->type = R_APPEND;
 
+            redir->expand = true; // Default value
+
+            // The next token should be the filename
+            if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+                redir->filename = ft_strdup(tokens->tokens[i+1].value);
+                
+                // Add this redirection to the command
+                if (current) {
+                    // Free existing output redirection if any
+                    if (current->out_redir) {
+                        free(current->out_redir->filename);
+                        free(current->out_redir);
+                    }
+                    current->out_redir = redir;
+                } else {
+                    free(redir->filename);
+                    free(redir);
+                }
+                
+                // Skip the filename token
+                i++;
+            } else {
+                free(redir);
+            }
+        }
+        
         i++;
     }
 
     // Ensure last command argv is NULL-terminated
-    if (current && current->argv)
-    {
+    if (current && current->argv) {
         current->argv[arg_index] = NULL;
     }
 
-    //Ilia: here I looking for binary, if no found - NULL;
-
-    head->binary = find_binary(head);
+    // Find and set binary path for the first command
+    if (head)
+        head->binary = find_binary(head);
 
     return head;
 }
-
 
 t_cmd *run_parser(t_mshell *minishell, char *input)
 {
