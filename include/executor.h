@@ -54,9 +54,10 @@ bool 			get_directory(char *cwd, t_cmd *cmd);
 
 // redirections <, <<, >, >>
 
-uint8_t		apply_redirections(t_cmd *cmd);
-uint8_t			apply_in_redirection(t_cmd *cmd);
+uint8_t			apply_redirections(t_cmd *cmd);
 uint8_t			apply_heredoc(t_cmd *cmd);
+uint8_t			apply_in_redirection(t_cmd *cmd);
+uint8_t			apply_out_redirection(t_cmd *cmd); 
 
 
 
