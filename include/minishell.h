@@ -15,6 +15,7 @@
 # include <errno.h>
 # include <stdint.h>
 # include <limits.h>
+#include <sys/stat.h>
 
 # include "libft.h"
 # include "executor.h"

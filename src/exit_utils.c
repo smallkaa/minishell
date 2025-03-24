@@ -89,17 +89,41 @@ uint8_t	exit_numeric_error(char *arg)
 	return (2);
 }
 
-void child_execve_error(void)
+
+void	child_execve_error(t_cmd *cmd)
 {
-	perror("execve");
+	struct stat	st;
+
+	if (stat(cmd->binary, &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		// Match Bash: "Is a directory"
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->binary, STDERR_FILENO);
+		ft_putstr_fd(": Is a directory\n", STDERR_FILENO);
+		_exit(126);
+	}
 
 	if (errno == ENOENT)
+	{
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->binary, STDERR_FILENO);
+		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
 		_exit(127);
+	}
 	else if (errno == EACCES)
+	{
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->binary, STDERR_FILENO);
+		ft_putstr_fd(": Permission denied\n", STDERR_FILENO);
 		_exit(126);
+	}
 	else
+	{
+		perror("execve");
 		_exit(1);
+	}
 }
+
 
 /**
  * cmd_error_handler - Prints an error message for a failed command execution.

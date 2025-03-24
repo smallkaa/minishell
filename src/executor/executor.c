@@ -56,6 +56,8 @@ uint8_t run_executor(t_cmd *cmd)
 	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
 	// if (cmd->out_redir)
 	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
+	// if (cmd->in_redir)
+	// 	printf("---in_redir[%s]:\n", cmd->in_redir->filename);
 	 // end test
 
 	if (!is_builtin(cmd) || cmd->next)

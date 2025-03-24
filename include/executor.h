@@ -57,7 +57,7 @@ bool 			get_directory(char *cwd, t_cmd *cmd);
 uint8_t			apply_redirections(t_cmd *cmd);
 uint8_t			apply_heredoc(t_cmd *cmd);
 uint8_t			apply_in_redirection(t_cmd *cmd);
-uint8_t			apply_out_redirection(t_cmd *cmd); 
+uint8_t			apply_out_redirection(t_cmd *cmd);
 
 
 
@@ -72,7 +72,7 @@ void	set_pipe_flag(t_cmd *cmd);
 
 // exit utils
 void	exit_child(t_cmd *cmd, char *msg, int error_code);
-void	child_execve_error(void);
+void	child_execve_error(t_cmd *cmd);
 uint8_t	perror_return(char *msg, u_int8_t exit_status);
 
 

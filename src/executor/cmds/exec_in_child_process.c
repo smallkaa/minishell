@@ -22,8 +22,12 @@ static void	execute_command(t_cmd *cmd)
 			_exit(127);
 		}
 	}
+
+	// printf("---cmd->binary: %s\n", cmd->binary);
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	// child_execve_error();
+	// fprintf(stderr, "errno = %d (%s)\n", errno, strerror(errno)); // test
+
+	child_execve_error(cmd);
 }
 
 
