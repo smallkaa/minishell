@@ -13,7 +13,7 @@ uint8_t	apply_out_redirection(t_cmd *cmd)
 	else if (cmd->out_redir->type == R_APPEND)
 		mode |= O_APPEND;
 	else
-		perror_return("out redirection mode:", EXIT_FAILURE);
+		perror_return("unknown redirection mode:", EXIT_FAILURE);
 
 	out_fd = open(cmd->out_redir->filename, mode, 0644);
 	if (out_fd < 0)
