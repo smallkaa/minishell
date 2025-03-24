@@ -27,24 +27,7 @@
 // 		fatal_error_child(cmd, EXIT_FAILURE);
 // }
 
-// static void	handle_in_redirection(t_cmd *cmd)
-// {
-// 	int	in;
 
-// 	if (!cmd->in_redir)
-// 		fatal_error_child(cmd, EXIT_FAILURE);
-// 	in = open(cmd->in_redir->filename, O_RDONLY);
-// 	if (in < 0)
-// 		fatal_error_child(cmd, EXIT_FAILURE);
-// 	if (dup2(in, STDIN_FILENO) == -1)
-// 	{
-// 		if (close(in) == -1)
-// 			fatal_error_child(cmd, EXIT_FAILURE);
-// 		fatal_error_child(cmd, EXIT_FAILURE);
-// 	}
-// 	if (close(in) == -1)
-// 		fatal_error_child(cmd, EXIT_FAILURE);
-// }
 
 // void	handle_redirections(t_cmd *cmd, int in_fd)
 // {

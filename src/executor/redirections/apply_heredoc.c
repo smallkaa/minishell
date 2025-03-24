@@ -8,17 +8,17 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 	// char	*temp;
 	// t_cmd *temp_cmd;
 
-	if (!cmd->in_redir || !cmd->in_redir->filename)
-    {
-        print_error("Error: Heredoc redirection not properly initialized.\n");
-        return (EXIT_FAILURE);
-    }
-	// Create a pipe to hold the heredoc content.
+	// if (!cmd->in_redir || !cmd->in_redir->filename)
+    // {
+    //     print_error("Error: Heredoc redirection not properly initialized.\n");
+    //     return (EXIT_FAILURE);
+    // }
+
+	if (pre_exec_validation(cmd, R_HEREDOC) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+
 	if (pipe(pipefd) == -1)
-	{
-		perror("pipe");
-		return EXIT_FAILURE;
-	}
+		perror_return("pipe: apply_heredoc", EXIT_FAILURE);
 	line = NULL;
 	while (1)
 	{
@@ -56,33 +56,41 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 
 		if (write(pipefd[1], line, ft_strlen(line)) == -1)
 		{
-			perror("write");
+			perror("write: apply_heredoc");
 			free(line);
-			close(pipefd[1]);
-			close(pipefd[0]);
-			return (EXIT_FAILURE);
+			if (close(pipefd[1]) == -1)
+				perror_return("close pipefd[1]: apply_heredoc", EXIT_FAILURE);
+			if (close(pipefd[0]) == -1)
+				perror_return("close pipefd[0]: apply_heredoc", EXIT_FAILURE);
 		}
 		if (write(pipefd[1], "\n", 1) == -1)
 		{
-			perror("write");
+			perror("write: apply_heredoc");
 			free(line);
-			close(pipefd[1]);
-			close(pipefd[0]);
+			if (close(pipefd[1]) == -1)
+				perror_return("close pipefd[1]: apply_heredoc", EXIT_FAILURE);
+			if (close(pipefd[0]) == -1)
+				perror_return("close pipefd[0]: apply_heredoc", EXIT_FAILURE);
 
 		}
 		free(line);
 	}
 	// Close the write end so that the reading process sees an EOF.
-	close(pipefd[1]);
+	if (close(pipefd[1]) == -1)
+		perror_return("close pipefd[1]: apply_heredoc", EXIT_FAILURE);
+
 
 	// Redirect the read end of the pipe to standard input (FD 0).
 	if (dup2(pipefd[0], STDIN_FILENO) == -1)
 	{
 		perror("dup2");
-		close(pipefd[0]);
-		return EXIT_FAILURE;
+		if (close(pipefd[0]) == -1)
+			perror_return("close pipefd[0]: apply_heredoc", EXIT_FAILURE);
+		perror_return("dup2: apply_heredoc", EXIT_FAILURE);		
 	}
-	close(pipefd[0]);
+	if (close(pipefd[0]) == -1)
+		perror_return("close pipefd[0]: apply_heredoc", EXIT_FAILURE);
+
 	// printf("---R_HERDOC applied\n"); // test
 
 	return (EXIT_SUCCESS);

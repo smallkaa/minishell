@@ -10,16 +10,10 @@ uint8_t	apply_redirections(t_cmd *cmd)
 	}
 
 	if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
-	{
 		return (apply_heredoc(cmd));
-	}
 
 	else if (cmd->in_redir && cmd->in_redir->type == R_INPUT)
-	{
-		printf ("---PAVEL is GOOD! You handled '<'");
-		return (EXIT_SUCCESS);
-		// return (handle_input_redirectiion(cmd));
-	}
+		return (apply_in_redirection(cmd));
 
 	else if (cmd->out_redir && cmd->out_redir->type == R_APPEND)
 	{
