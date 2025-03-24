@@ -11,14 +11,10 @@
  */
 static void	execute_command(t_cmd *cmd)
 {
-	// if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
-	// {
-	// 	handle_heredoc(cmd);  // This will set up the heredoc
-	// }
+
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
-			// exec_builtin(cmd);
 			_exit(exec_builtin(cmd));
 		else
 		{
@@ -27,53 +23,60 @@ static void	execute_command(t_cmd *cmd)
 		}
 	}
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	fatal_error_child(cmd, errno);
+	child_execve_error();
 }
 
-/**
- * @brief Handles the execution of a command in a child process.
- *
- * This function sets up input/output redirections and pipes as needed,
- * then executes the command using `execute_command()`. The child process
- * terminates on failure.
- *
- * @param cmd Pointer to the command structure.
- * @param in_fd File descriptor for input redirection
- *              (e.g., from a previous pipe).
- * @param fds Pipe file descriptors [read end, write end].
- */
+
 static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 {
-	if (in_fd != STDIN_FILENO)
+	if (in_fd != STDIN_FILENO && in_fd >= 0)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
-			fatal_error_child(cmd, EXIT_FAILURE);
+		{
+			perror("dup2 in_fd->STDIN");
+			_exit(EXIT_FAILURE);
+		}
 		if (close(in_fd) == -1)
-			fatal_error_child(cmd, EXIT_FAILURE);
+		{
+			perror("close in_fd");
+			_exit(EXIT_FAILURE);
+		}
 	}
+
+	// If there's a next command, redirect current cmd's output to pipe write-end
 	if (cmd->next)
 	{
 		if (dup2(fds[1], STDOUT_FILENO) == -1)
-			fatal_error_child(cmd, EXIT_FAILURE);
+		{
+			perror("dup2 fds[1]->STDOUT");
+			_exit(EXIT_FAILURE);
+		}
 	}
+
+	// Close any pipe ends we don't need
 	if (fds[0] >= 0)
-		if (close(fds[0]) == -1)
-			fatal_error_child(cmd, EXIT_FAILURE);
-	if (fds[1] >= 0)
-		if (close(fds[1]) == -1)
-			fatal_error_child(cmd, EXIT_FAILURE);
-
-	// printf("---BEFORE: In child befor applying redirection\n");
-
-	if (apply_redirections(cmd) == EXIT_FAILURE)
 	{
-		printf("---child_process: applying redirection failed\n");
-		fatal_error_child(cmd, EXIT_FAILURE);
+		if (close(fds[0]) == -1)
+		{
+			perror("close fds[0]");
+			_exit(EXIT_FAILURE);
+		}
 	}
-	// printf("---AFTER: In child after applying redirection\n");
+	if (fds[1] >= 0)
+	{
+		if (close(fds[1]) == -1)
+		{
+			perror("close fds[1]");
+			_exit(EXIT_FAILURE);
+		}
+	}
+
+	if (apply_redirections(cmd) != EXIT_SUCCESS)
+		_exit(EXIT_FAILURE);
 
 	execute_command(cmd);
 }
+
 
 /**
  * @brief Handles file descriptor cleanup and waits for the child process.
@@ -128,7 +131,7 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 
 	pid = fork();
 	if (pid == -1)
-		fatal_error("fork", EXIT_FAILURE);
+		perror_return("fork", EXIT_FAILURE);
 	if (pid == 0)
 		child_process((t_cmd *)cmd, in_fd, fds);
 	return (pid);

@@ -24,45 +24,47 @@
  * @param cmd The name of the command or operation that failed (can be `NULL`).
  * @param exit_status The exit code to return upon termination.
  */
-void	fatal_error(char *cmd, int exit_status)
+// void	fatal_error(char *cmd, int exit_status)
+// {
+// 	ft_putstr_fd("minishell, sys error, parent: ", STDERR_FILENO);
+// 	if (cmd && *cmd)
+// 		perror(cmd);
+// 	else
+// 		perror("Error");
+// 	exit(exit_status);
+// }
+
+void	exit_child(t_cmd *cmd, char *msg, int error_code)
 {
-	ft_putstr_fd("minishell, sys error, parent: ", STDERR_FILENO);
-	if (cmd && *cmd)
-		perror(cmd);
+	char	err_buf[ERROR_BUF_SIZE];
+	int		exit_code;
+	char 	*errmsg;
+
+	ft_bzero(err_buf, ERROR_BUF_SIZE);
+	ft_strlcpy(err_buf, "minishell: ", ERROR_BUF_SIZE);
+	if (cmd->binary != NULL)
+		ft_strlcat(err_buf, cmd->binary, ERROR_BUF_SIZE);
 	else
-		perror("Error");
-	exit(exit_status);
-}
-
-/**
- * @brief Handles execution failures in child processes and exits with the correct status.
- *
- * This function prints an error message based on the command that failed
- * and exits with the appropriate exit status:
- * - `126` if the command exists but is not executable (Permission denied).
- * - `127` if the command does not exist (No such file or directory).
- * - `1` for other execution failures.
- *
- * @param cmd The command structure containing execution details.
- * @param error_code The errno value from a failed execve() call.
- */
-void fatal_error_child(t_cmd *cmd, int error_code)
-{
-	if (!cmd || !cmd->binary)
-	{
-		ft_putstr_fd("minishell: Unknown command error\n", STDERR_FILENO);
-		_exit(126);
-	}
-
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	perror(cmd->binary);
-
-	if (error_code == EACCES)
-		_exit(126);
-	else if (error_code == ENOENT)
-		_exit(127);
+		ft_strlcat(err_buf, "unknown", ERROR_BUF_SIZE);
+	ft_strlcat(err_buf, " - ", ERROR_BUF_SIZE);
+	if (msg != NULL)
+		ft_strlcat(err_buf, msg, ERROR_BUF_SIZE);
 	else
-		_exit(1);
+		ft_strlcat(err_buf, "error", ERROR_BUF_SIZE);
+	ft_strlcat(err_buf, ": ", ERROR_BUF_SIZE);
+	errmsg = strerror(error_code);
+	ft_strlcat(err_buf, errmsg, ERROR_BUF_SIZE);
+	ft_strlcat(err_buf, "\n", ERROR_BUF_SIZE);
+
+	if (write(STDERR_FILENO, err_buf, ft_strlen(err_buf)) < 0)
+		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+	if (error_code == ENOENT)
+		exit_code = 127;
+	else if (error_code == EACCES)
+		exit_code = 126;
+	else
+		exit_code = 1;
+	_exit(exit_code);
 }
 
 /**
@@ -85,6 +87,18 @@ uint8_t	exit_numeric_error(char *arg)
 	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
 	return (2);
+}
+
+void child_execve_error(void)
+{
+	perror("execve");
+
+	if (errno == ENOENT)
+		_exit(127);
+	else if (errno == EACCES)
+		_exit(126);
+	else
+		_exit(1);
 }
 
 /**
@@ -114,6 +128,7 @@ uint8_t	cmd_error_handler(t_cmd *cmd, uint8_t exit_status)
 		write(STDERR_FILENO, "minishell: invalid command structure\n", 37);
 		return (EXIT_FAILURE);
 	}
+	ft_bzero(error_buf, ERROR_BUF_SIZE);
 	err_num = errno;
 	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
 	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
@@ -183,3 +198,10 @@ uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
 	return (exit_status);
 }
 
+uint8_t	perror_return(char *msg, u_int8_t exit_status)
+{
+	if (msg)
+		ft_putstr_fd(msg, STDERR_FILENO);
+	return (exit_status);
+
+}

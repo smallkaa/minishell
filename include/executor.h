@@ -16,6 +16,7 @@ typedef struct s_cmd	t_cmd;
 typedef struct s_mshell	t_mshell;
 typedef struct s_mshell_var	t_mshell_var;
 typedef struct s_hash_table	t_hash_table;
+typedef enum e_redir_type t_redir_type;
 
 /*------FUNCTIONS---------------------------------------------------*/
 
@@ -52,21 +53,29 @@ bool 			get_directory(char *cwd, t_cmd *cmd);
 
 
 // redirections <, <<, >, >>
-uint8_t			apply_redirections(t_cmd *cmd);
-void			handle_redirections(t_cmd *cmd, int in_fd);
+
+uint8_t		apply_redirections(t_cmd *cmd);
+uint8_t			apply_in_redirection(t_cmd *cmd);
 uint8_t			apply_heredoc(t_cmd *cmd);
+
+
 
 // void	cleanup_heredoc(t_cmd *cmd);
 
 // utils
+uint8_t			pre_exec_validation(t_cmd *cmd, t_redir_type type);
 bool			is_valid_varname(const char *key_value_pair);
 t_mshell_var	*split_key_value(char *key_value_pair);
 bool			is_pipeline_limit(int *cmd_count);
 void	set_pipe_flag(t_cmd *cmd);
+
 // exit utils
-// void			fatal_error_child(char *cmd, int exit_status);
-void			fatal_error_child(t_cmd *cmd, int exit_status);
-void			fatal_error(char *cmd, int exit_status);
+void	exit_child(t_cmd *cmd, char *msg, int error_code);
+void	child_execve_error(void);
+uint8_t	perror_return(char *msg, u_int8_t exit_status);
+
+
+// void			fatal_error(char *cmd, int exit_status);
 void			env_error_handler(t_cmd *cmd);
 uint8_t			cmd_error_handler(t_cmd *cmd, uint8_t exit_status);
 uint8_t			exit_numeric_error(char *arg);
