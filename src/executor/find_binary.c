@@ -20,19 +20,17 @@ static char	*handle_direct_path(t_cmd *cmd)
 
 	binary = ft_strdup(cmd->argv[0]);
 	if (!binary)
-		return (NULL);
+	return (NULL);
 	if (access(binary, F_OK) != 0)
 	{
 		free(binary);
 		cmd->minishell->exit_status = 127;
-		(void)cmd_error_handler(cmd, 0);
 		return (NULL);
 	}
 	if (access(binary, X_OK) != 0)
 	{
 		free(binary);
 		cmd->minishell->exit_status = 126;
-		(void)cmd_error_handler(cmd, 0);
 		return (NULL);
 	}
 	return (binary);

@@ -149,12 +149,12 @@ uint8_t	cmd_error_handler(t_cmd *cmd, uint8_t exit_status)
 
 	if (!cmd || !cmd->argv)
 	{
-		write(STDERR_FILENO, "minishell: invalid command structure\n", 37);
+		write(STDERR_FILENO, "-minishell: invalid command structure\n", 37);
 		return (EXIT_FAILURE);
 	}
 	ft_bzero(error_buf, ERROR_BUF_SIZE);
 	err_num = errno;
-	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcpy(error_buf, "-minishell: ", ERROR_BUF_SIZE);
 	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
 	if (cmd->argv[1])
 	{
@@ -165,8 +165,8 @@ uint8_t	cmd_error_handler(t_cmd *cmd, uint8_t exit_status)
 	ft_strlcat(error_buf, strerror(err_num), ERROR_BUF_SIZE);
 	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-	return (exit_status);
+		write(STDERR_FILENO, "-minishell: error: failed to print error\n", 40);
+	_exit(exit_status);
 }
 
 /**
@@ -185,6 +185,9 @@ uint8_t	cmd_error_handler(t_cmd *cmd, uint8_t exit_status)
  */
 void	command_not_found_handle(t_cmd *cmd)
 {
+	// if (cmd->minishell->exit_status == 127)
+	// 	return ;
+
 	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
 	write(STDERR_FILENO, ": command not found\n", 20);
 }

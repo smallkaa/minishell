@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+static uint8_t	validate_dot(t_cmd *cmd)
+{
+	if (ft_strcmp(cmd->argv[0], ".") == 0)
+	{
+		if (!cmd->argv[1])
+		{
+			ft_putstr_fd("-minishell: .: filename argument required\n", STDERR_FILENO);
+			ft_putstr_fd(".: usage: . filename [arguments]\n", STDERR_FILENO);
+			cmd->minishell->exit_status = 2;
+			return (2);
+		}
+	}
+	return (EXIT_SUCCESS);
+}
 /**
  * @brief Executes a command, either a built-in or an external binary.
  *
@@ -11,28 +25,29 @@
  */
 static void	execute_command(t_cmd *cmd)
 {
-
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
-			_exit(exec_builtin(cmd));
+		_exit(exec_builtin(cmd));
 		else
 		{
-			command_not_found_handle(cmd);
-			_exit(127);
+			printf("---In child, no binary\n");
+			if (cmd->minishell->exit_status == 127)
+				cmd_error_handler(cmd, 127);
 		}
 	}
-
-	// printf("---cmd->binary: %s\n", cmd->binary);
+	if (validate_dot(cmd) == 2)
+		_exit(2);
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	// fprintf(stderr, "errno = %d (%s)\n", errno, strerror(errno)); // test
-
 	child_execve_error(cmd);
 }
 
 
 static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
 {
+
+
 	if (in_fd != STDIN_FILENO && in_fd >= 0)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
