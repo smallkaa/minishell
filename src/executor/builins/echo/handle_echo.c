@@ -15,13 +15,16 @@
  * @param str The string to be printed.
  * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on failure.
  */
-static int	ft_putstr_custom(t_cmd *cmd, char *str)
+static int	ft_putstr_custom(char *str)
 {
 	ssize_t	written;
 
 	written = write(STDOUT_FILENO, str, ft_strlen(str));
 	if (written == -1)
-		return (cmd_error_handler(cmd, EXIT_FAILURE));
+	{
+		perror("-minishell: write");
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
@@ -41,7 +44,7 @@ static int	ft_putstr_custom(t_cmd *cmd, char *str)
 static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 {
 	if (!cmd->argv[1])
-		return (ft_putstr_custom(cmd, "\n"));
+		return (ft_putstr_custom("\n"));
 	while (cmd->argv[i])
 	{
 		if (!cmd->argv[i])
@@ -49,13 +52,13 @@ static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 			print_error("Error: print_content, string == NULL\n");
 			return (EXIT_FAILURE);
 		}
-		if (ft_putstr_custom(cmd, cmd->argv[i]) == EXIT_FAILURE)
+		if (ft_putstr_custom(cmd->argv[i]) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
-		if (cmd->argv[i + 1] && ft_putstr_custom(cmd, " ") == EXIT_FAILURE)
+		if (cmd->argv[i + 1] && ft_putstr_custom(" ") == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 		i++;
 	}
-	if (*newline_flag && ft_putstr_custom(cmd, "\n") == EXIT_FAILURE)
+	if (*newline_flag && ft_putstr_custom("\n") == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

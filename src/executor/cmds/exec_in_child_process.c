@@ -31,7 +31,6 @@ static void	execute_command(t_cmd *cmd)
 		_exit(exec_builtin(cmd));
 		else
 		{
-			printf("---In child, no binary\n");
 			if (cmd->minishell->exit_status == 127)
 				cmd_error_handler(cmd, 127);
 		}
