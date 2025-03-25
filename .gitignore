@@ -59,7 +59,9 @@ dkms.conf
 
 .vscode/
 
+# tests
 minishell_tester/
 sources_dump.txt
 minishell
 heredoc_tmp.txt
+m_tester/
