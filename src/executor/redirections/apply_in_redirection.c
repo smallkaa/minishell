@@ -8,14 +8,27 @@ uint8_t	apply_in_redirection(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	in_fd = open(cmd->in_redir->filename, O_RDONLY);
 	if (in_fd < 0)
-		perror_return("open in_redir", EXIT_FAILURE);
+	{
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
+		perror(cmd->in_redir->filename);
+		return(EXIT_FAILURE);
+	}
 	if (dup2(in_fd, STDIN_FILENO) == -1)
 	{
+		perror("-minishell: dup2");
 		if (close(in_fd) == -1)
-			perror_return("close in_redir after dup2", EXIT_FAILURE);
-		perror_return("in_redir", EXIT_FAILURE);
+		{
+			perror("-minishell: close");
+			return(EXIT_FAILURE);
+		}
+		return(EXIT_FAILURE);
 	}
 	if (close(in_fd) == -1)
-			perror_return("close in_redir", EXIT_FAILURE);
+	{
+		perror("-minishell: close");
+		return(EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
+// to check errno test
+// fprintf(stderr, "close errno: %d (%s)\n", errno, strerror(errno));
