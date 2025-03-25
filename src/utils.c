@@ -3,37 +3,6 @@
 
 
 
-
-void	env_error_handler(t_cmd *cmd)
-{
-	char	error_buf[ERROR_BUF_SIZE];
-	int		err_num;
-
-	if (!cmd || !cmd->argv || !cmd->argv[0])
-	{
-		write(STDERR_FILENO, "minishell: invalid command structure\n", 37);
-		return ;
-	}
-	err_num = ENOENT;
-	ft_strlcpy(error_buf, "", ERROR_BUF_SIZE);
-	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
-	if (cmd->argv[1])
-	{
-		ft_strlcat(error_buf, ": ", ERROR_BUF_SIZE);
-		ft_strlcat(error_buf, cmd->argv[1], ERROR_BUF_SIZE);
-	}
-	ft_strlcat(error_buf, ": ", ERROR_BUF_SIZE);
-	ft_strlcat(error_buf, strerror(err_num), ERROR_BUF_SIZE);
-	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
-	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-}
-
-void	print_error(char *cmd)
-{
-	ft_putstr_fd(cmd, STDERR_FILENO);
-}
-
 bool is_debug_mode()
 {
 	return (getenv("MINISHELL_DEBUG") != NULL);

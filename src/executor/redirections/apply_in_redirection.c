@@ -9,8 +9,10 @@ uint8_t	apply_in_redirection(t_cmd *cmd)
 	in_fd = open(cmd->in_redir->filename, O_RDONLY);
 	if (in_fd < 0)
 	{
-		ft_putstr_fd("-minishell: ", STDERR_FILENO);
-		perror_return(cmd->in_redir->filename, EXIT_FAILURE);
+		print_error("-minishell: ");
+		print_error(cmd->in_redir->filename);
+		print_error("\n");
+		return (EXIT_FAILURE);
 	}
 	if (dup2(in_fd, STDIN_FILENO) == -1)
 	{

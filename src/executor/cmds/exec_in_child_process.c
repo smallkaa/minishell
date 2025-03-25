@@ -6,8 +6,8 @@ static uint8_t	validate_dot(t_cmd *cmd)
 	{
 		if (!cmd->argv[1])
 		{
-			ft_putstr_fd("-minishell: .: filename argument required\n", STDERR_FILENO);
-			ft_putstr_fd(".: usage: . filename [arguments]\n", STDERR_FILENO);
+			print_error("-minishell: .: filename argument required\n");
+			print_error(".: usage: . filename [arguments]\n");
 			cmd->minishell->exit_status = 2;
 			return (2);
 		}
@@ -30,13 +30,11 @@ static void	execute_command(t_cmd *cmd)
 		if (is_builtin(cmd))
 		_exit(exec_builtin(cmd));
 		else
-		{
-			if (cmd->minishell->exit_status == 127)
-				cmd_error_handler(cmd, 127);
-		}
+			cmd_missing_command_error(cmd);
 	}
 	if (validate_dot(cmd) == 2)
 		_exit(2);
+
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	// fprintf(stderr, "errno = %d (%s)\n", errno, strerror(errno)); // test
 	child_execve_error(cmd);

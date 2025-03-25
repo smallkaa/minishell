@@ -9,7 +9,7 @@ static uint8_t	apply_mode(t_cmd *cmd, int *mode)
 		*mode |= O_APPEND;
 	else
 	{
-		ft_putstr_fd("Error: unknown redirection mode\n", STDERR_FILENO);
+		print_error("Error: unknown redirection mode\n");
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
@@ -27,8 +27,11 @@ uint8_t	apply_out_redirection(t_cmd *cmd)
 	out_fd = open(cmd->out_redir->filename, mode, 0644);
 	if (out_fd < 0)
 	{
-		ft_putstr_fd("-minishell: ", STDERR_FILENO);
-		perror_return(cmd->out_redir->filename, EXIT_FAILURE);
+		print_error("-minishell: ");
+		print_error(cmd->out_redir->filename);
+		print_error("\n");
+		return (EXIT_FAILURE);
+
 	}
 	if (dup2(out_fd, STDOUT_FILENO) == -1)
 	{

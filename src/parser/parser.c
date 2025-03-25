@@ -227,7 +227,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Start new command for next pipe segment
             current = NULL;
         }
-        else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN || 
+        else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
                  tokens->tokens[i].type == TOKEN_HEREDOC)
         {
             // Create a new redirection structure
@@ -246,7 +246,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // The next token should be the file/delimiter
             if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
                 redir->filename = ft_strdup(tokens->tokens[i+1].value);
-                
+
                 // Add this redirection to the command
                 if (current) {
                     // Free existing input redirection if any
@@ -259,14 +259,14 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                     free(redir->filename);
                     free(redir);
                 }
-                
+
                 // Skip the filename token
                 i++;
             } else {
                 free(redir);
             }
         }
-        else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT || 
+        else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
                  tokens->tokens[i].type == TOKEN_APPEND_OUT)
         {
             // Create a new redirection structure
@@ -285,7 +285,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // The next token should be the filename
             if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
                 redir->filename = ft_strdup(tokens->tokens[i+1].value);
-                
+
                 // Add this redirection to the command
                 if (current) {
                     // Free existing output redirection if any
@@ -298,14 +298,14 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                     free(redir->filename);
                     free(redir);
                 }
-                
+
                 // Skip the filename token
                 i++;
             } else {
                 free(redir);
             }
         }
-        
+
         i++;
     }
 

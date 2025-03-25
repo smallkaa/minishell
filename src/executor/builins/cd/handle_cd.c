@@ -69,7 +69,12 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 	}
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(home_path) != 0)
-		return (cmd_error_handler(cmd, EXIT_FAILURE));
+	{
+		print_error("-minishell: ");
+		perror(cmd->argv[0]);
+		return (EXIT_FAILURE);
+	}
+		// return (cmd_error_handler(cmd, EXIT_FAILURE));
 	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }
@@ -95,7 +100,12 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 	ft_bzero(old_cwd, MS_PATHMAX);
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(cmd->argv[1]) != 0)
-		return (cmd_error_handler(cmd, EXIT_FAILURE));
+	{
+		print_error("-minishell: ");
+		perror(cmd->argv[1]);
+		return (EXIT_FAILURE);
+	}
+		// return (cmd_error_handler(cmd, EXIT_FAILURE));
 	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }

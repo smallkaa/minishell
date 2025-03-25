@@ -173,5 +173,5 @@ char	*find_binary(t_cmd *cmd)
 		binary = handle_direct_path(cmd);
 	else
 		binary = handle_path_search(cmd);
-	return binary;
+	return (binary);
 }

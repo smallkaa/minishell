@@ -5,6 +5,28 @@
 #include "minishell.h"
 
 /**
+ * exit_numeric_error - Prints an error message for an invalid numeric
+ *                      argument in `exit`.
+ *
+ * Format:
+ *   minishell: exit: <arg>: numeric argument required
+ *
+ * Behavior:
+ * - Prints a formatted error message to `STDERR_FILENO`.
+ * - Used when the `exit` command receives an invalid numeric argument.
+ * - Ensures clear and consistent error messaging for non-numeric exit codes.
+ *
+ * @param arg The invalid argument that caused the error.
+ */
+static uint8_t	exit_numeric_error(char *arg)
+{
+	print_error("minishell: exit: ");
+	print_error(arg);
+	print_error(": numeric argument required");
+	return (2);
+}
+
+/**
  * @brief Checks if an exit argument is numeric.
  *
  * The function ensures that the argument consists only of digits,

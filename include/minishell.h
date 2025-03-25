@@ -95,15 +95,18 @@ uint8_t	run_executor(t_cmd *cmd);
 int			ft_arr_size(char **arr);
 
 
+char		*ms_getenv(t_mshell *mshell, char *key);
 
 
 // some shit exit utils, to be cleaned !!!!!!!
-void		print_error(char *cmd);
-void		command_not_found_handle(t_cmd *cmd);
 
-char		*ms_getenv(t_mshell *mshell, char *key);
 bool		is_debug_mode(void);
 void		debug_printf(const char *format, ...);
+
+void		print_error(char *msg);
+
+// void		command_not_found_handle(t_cmd *cmd);
+
 
 void		free_minishell(t_mshell	*mshell);
 void		free_mshell_var(t_mshell_var *var);

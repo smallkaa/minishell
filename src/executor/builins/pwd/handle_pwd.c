@@ -5,6 +5,39 @@
 #include "minishell.h"
 
 /**
+ * @brief Prints an error message for invalid options in built-in commands.
+ *
+ * This function constructs an error message when a built-in command receives
+ * an invalid option (e.g., `pwd -abc`). Only the first two characters of the
+ * invalid option are displayed to match the behavior of standard shells.
+ *
+ * @param cmd_name The name of the command that received the invalid option.
+ * @param option The invalid option provided by the user.
+ * @return Returns an exit status of `2`, following standard shell behavior.
+ */
+static uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
+{
+	uint8_t	exit_status;
+	char	error_buf[ERROR_BUF_SIZE];
+	char	opt_buf[3];
+
+	ft_strlcpy(opt_buf, option, 3);
+	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd_name, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, ": ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, opt_buf, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, ": invalid option\n", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd_name, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, ": usage: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd_name, ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
+	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+	exit_status = 2;
+	return (exit_status);
+}
+
+/**
  * @brief Executes the `pwd` command to print the current working directory.
  *
  * This function retrieves and prints the current working directory using
@@ -28,7 +61,11 @@ static uint8_t	exec_pwd(t_cmd *cmd)
 	{
 		w_dir = ms_getenv(cmd->minishell, "PWD");
 		if (!w_dir)
-			return (cmd_error_handler(cmd, EXIT_FAILURE));
+		{
+			perror(cmd->binary);
+			return (EXIT_FAILURE);
+		}
+			// return (cmd_error_handler(cmd, EXIT_FAILURE));
 		printf("%s\n", w_dir);
 		return (EXIT_SUCCESS);
 	}
