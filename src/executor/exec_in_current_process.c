@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-uint8_t exec_in_parent_process(t_cmd *cmd)
+uint8_t exec_in_current_process(t_cmd *cmd)
 {
 	int		saved_stdout;
 	int		saved_stdin;;
@@ -16,7 +16,7 @@ uint8_t exec_in_parent_process(t_cmd *cmd)
 	// if (exit_status == EXIT_FAILURE)
 	// {
 	// 	if (close(saved_stdout) == -1)
-	// 		perror_return("close #1: exec_in_parent_process", EXIT_FAILURE);
+	// 		perror_return("close #1: exec_in_current_process", EXIT_FAILURE);
 	// 	return (EXIT_FAILURE);
 	// }
 	exit_status = exec_builtin(cmd);

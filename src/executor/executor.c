@@ -69,7 +69,7 @@ uint8_t run_executor(t_cmd *cmd)
 	}
 	else
 	{
-		minishell->exit_status = exec_in_parent_process(cmd);
+		minishell->exit_status = exec_in_current_process(cmd);
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
 		{
 			free_minishell(cmd->minishell);

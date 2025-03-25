@@ -21,7 +21,7 @@ typedef enum e_redir_type t_redir_type;
 /*------FUNCTIONS---------------------------------------------------*/
 
 // standart cmd exec functions
-uint8_t			exec_in_parent_process(t_cmd *cmd);
+uint8_t			exec_in_current_process(t_cmd *cmd);
 uint8_t exec_in_child_process(t_cmd *cmd);
 uint8_t			exec_cmd(t_cmd *cmd);
 
