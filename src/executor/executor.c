@@ -46,7 +46,7 @@ uint8_t run_executor(t_cmd *cmd)
 		print_error("Error (run_executor): missing components\n");
 		return (EXIT_FAILURE);
 	}
-	// test
+	// test -------------------------------------------------//
 	int i = 0;
 	while(cmd->argv[i])
 	{
@@ -58,7 +58,7 @@ uint8_t run_executor(t_cmd *cmd)
 		printf("---out_file[%s]:\n", cmd->out_redir->filename);
 	if (cmd->in_redir)
 		printf("---in_redir[%s]:\n", cmd->in_redir->filename);
-	 // end test
+	 // end test -----------------------------------------------//
 
 	if (!is_builtin(cmd) || cmd->next)
 	{

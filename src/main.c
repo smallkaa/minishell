@@ -1,4 +1,17 @@
 #include "minishell.h"
+uint8_t	run_command_mode(t_mshell *mshell, char *input)
+{
+	t_cmd	*cmd;
+	uint8_t	exit_status;
+
+	cmd = run_parser(mshell, input);
+	if (!cmd)
+		return (EXIT_FAILURE);
+
+	exit_status = run_executor(cmd);
+	return (exit_status);
+}
+
 
 uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 {
@@ -70,19 +83,28 @@ int	main(int argc, char **argv, char **envp)
 	t_mshell	*minishell;
 	uint8_t		exit_status;
 
-	if (argc > 2)
-	{
-		print_error("Usage: ./minishell: [scriptfile] or no args.\n");
-		return (EXIT_FAILURE);
-	}
 	setup_signal_handlers(); // Set up signal handlers
 	minishell = init_mshell(envp);
 	if (!minishell)
 		return (EXIT_FAILURE);
-	if (argc == 1)
-		exit_status = run_interactive_mode(minishell);
-	else
+
+	// Handle -c option
+	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
+	{
+		exit_status = run_command_mode(minishell, argv[2]);
+		free_minishell(minishell);
+		rl_clear_history();
+		exit(exit_status);
+	}
+
+	// Handle script mode
+	if (argc == 2)
 		exit_status = run_script_mode(minishell, argv[1]);
+
+	// Handle interactive mode
+	else
+		exit_status = run_interactive_mode(minishell);
+
 	free_minishell(minishell);
 	rl_clear_history();
 	return (exit_status);
