@@ -225,7 +225,7 @@ uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
 uint8_t	perror_return(char *msg, u_int8_t exit_status)
 {
 	if (msg)
-		ft_putstr_fd(msg, STDERR_FILENO);
+		perror(msg);
 	return (exit_status);
 
 }

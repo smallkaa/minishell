@@ -135,7 +135,7 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 
 	pid = fork();
 	if (pid == -1)
-		perror_return("fork", EXIT_FAILURE);
+		perror_return("-minishell: fork", EXIT_FAILURE);
 	if (pid == 0)
 		child_process((t_cmd *)cmd, in_fd, fds);
 	return (pid);
