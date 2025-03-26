@@ -54,6 +54,10 @@ uint8_t run_executor(t_cmd *cmd)
 	// 	i++;
 	// }
 	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// if (cmd->binary)
+	// 	printf("---binary (%p)\n", cmd->binary);
+	// else
+	// 	printf("---cmd->binary: NOT found\n");
 	// if (cmd->out_redir)
 	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
 	// if (cmd->in_redir)

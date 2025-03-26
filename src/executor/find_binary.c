@@ -16,23 +16,25 @@
  */
 static char	*handle_direct_path(t_cmd *cmd)
 {
+
 	char	*binary;
 
 	binary = ft_strdup(cmd->argv[0]);
 	if (!binary)
-	return (NULL);
-	if (access(binary, F_OK) != 0)
-	{
-		free(binary);
-		cmd->minishell->exit_status = 127;
 		return (NULL);
-	}
-	if (access(binary, X_OK) != 0)
-	{
-		free(binary);
-		cmd->minishell->exit_status = 126;
-		return (NULL);
-	}
+	// if (access(binary, F_OK) != 0)
+	// {
+	// 	free(binary);
+	// 	cmd->minishell->exit_status = 127;
+	// 	return (NULL);
+	// }
+	// if (access(binary, X_OK) != 0)
+	// {
+	// 	printf("here2\n");
+	// 	free(binary);
+	// 	cmd->minishell->exit_status = 126;
+	// 	return (NULL);
+	// }
 	return (binary);
 }
 
