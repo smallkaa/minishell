@@ -107,8 +107,8 @@ void		print_error(char *msg);
 
 // void		command_not_found_handle(t_cmd *cmd);
 
-
-void		free_minishell(t_mshell	*mshell);
+// free memory utils
+void		free_minishell(t_mshell *minishell);
 void		free_mshell_var(t_mshell_var *var);
 void		free_cmd(t_cmd *cmd);
 

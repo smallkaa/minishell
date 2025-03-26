@@ -25,6 +25,7 @@ void	free_env(char **env)
 		i++;
 	}
 	free(env);
+	env = NULL;
 }
 
 void free_mshell_var(t_mshell_var *var)
@@ -32,6 +33,7 @@ void free_mshell_var(t_mshell_var *var)
 	free(var->key);
 	free(var->value);
 	free(var);
+	var = NULL;
 }
 
 /**
@@ -62,6 +64,7 @@ void	free_hash_table(t_hash_table *hash_table)
 		i++;
 	}
 	free(hash_table);
+	hash_table = NULL;
 }
 
 /**
@@ -85,28 +88,9 @@ void	free_builtin(char **builtin)
 		i++;
 	}
 	free(builtin);
+	builtin = NULL;
 }
 
-/**
- * @brief Frees all allocated memory for the Minishell instance.
- *
- * This function deallocates:
- * - The environment variables array.
- * - The hash table storing variables.
- * - The built-in command list.
- * - The `t_mshell` structure itself.
- *
- * @param mshell Pointer to the Minishell structure to free.
- */
-void	free_minishell(t_mshell	*mshell)
-{
-	if (!mshell)
-		return ;
-	free_env(mshell->env);
-	free_hash_table(mshell->hash_table);
-	free_builtin(mshell->builtin);
-	free(mshell);
-}
 
 void	free_cmd(t_cmd *cmd)
 {
@@ -118,7 +102,7 @@ void	free_cmd(t_cmd *cmd)
 	{
 		i = 0;
 		while (cmd->argv[i])
-			free(cmd->argv[i++]);
+		free(cmd->argv[i++]);
 		free(cmd->argv);
 	}
 	if (cmd->binary)
@@ -129,4 +113,16 @@ void	free_cmd(t_cmd *cmd)
 		free(cmd->out_redir);
 	if (cmd->next)
 		free_cmd(cmd->next);
+	cmd->minishell = NULL;
+	free(cmd);
+	cmd = NULL;
+}
+void	free_minishell(t_mshell *minishell)
+{
+	if (!minishell)
+		return ;
+	free_env(minishell->env);
+	free_hash_table(minishell->hash_table);
+	free_builtin(minishell->builtin);
+	minishell = NULL;
 }

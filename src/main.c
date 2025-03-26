@@ -63,15 +63,11 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		debug_printf("Return: %s\n", input); // test print statment
 
 		// Step 3: process input
-		// use input from readline and return commands table for executor
 		cmd = run_parser(mshell, input);
 		if (!cmd)
 			continue ;
 
-		set_pipe_flag(cmd);
 		exit_status = run_executor(cmd);
-		// printf("run_minishell(): Exit status run_executor       : %d\n", exit_status);
-		// printf("run_minishell(): Exit status mshell->exit_status: %d\n", mshell->exit_status);
 
 		free(input);
 	}
@@ -90,15 +86,10 @@ int	main(int argc, char **argv, char **envp)
 
 	// Handle -c option
 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
-	{
 		exit_status = run_command_mode(minishell, argv[2]);
-		free_minishell(minishell);
-		rl_clear_history();
-		exit(exit_status);
-	}
 
 	// Handle script mode
-	if (argc == 2)
+	else if (argc == 2)
 		exit_status = run_script_mode(minishell, argv[1]);
 
 	// Handle interactive mode

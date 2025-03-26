@@ -65,9 +65,3 @@ bool	is_pipeline_limit(int *cmd_count)
 	}
 	return (false);
 }
-
-void	set_pipe_flag(t_cmd *cmd)
-{
-	if (cmd->next)
-		cmd->minishell->pipe = true;
-}

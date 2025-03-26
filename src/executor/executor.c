@@ -39,6 +39,7 @@ bool	is_builtin(t_cmd *cmd)
 uint8_t run_executor(t_cmd *cmd)
 {
 	t_mshell	*minishell;
+	u_int8_t	exit_status;
 
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
@@ -76,10 +77,11 @@ uint8_t run_executor(t_cmd *cmd)
 		minishell->exit_status = exec_in_current_process(cmd);
 		if (ft_strcmp(cmd->argv[0], "exit") == 0)
 		{
-			free_minishell(cmd->minishell);
+			exit_status = minishell->exit_status;
 			free_cmd(cmd);
+			free_minishell(minishell);
 			rl_clear_history();
-			exit(minishell->exit_status);
+			exit(exit_status);
 		}
 		free_cmd(cmd);
 		return (minishell->exit_status);

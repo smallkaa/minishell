@@ -23,11 +23,11 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 	t_mshell_var	*prev;
 	t_mshell_var	*current;
 
-	if (!mshell || mshell->hash_table || !key)
-	{
-		print_error("minishell: unset: no minishell, hash_table or key instanse\n");
-		return (EXIT_FAILURE);
-	}
+	// if (!mshell || mshell->hash_table || !key)
+	// {
+	// 	print_error("minishell: unset: no minishell, hash_table or key instanse\n");
+	// 	return (EXIT_FAILURE);
+	// }
 	prev = NULL;
 	index = hash_function(key);
 	current = mshell->hash_table->buckets[index];
