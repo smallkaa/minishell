@@ -41,57 +41,57 @@ static void	execute_command(t_cmd *cmd)
 }
 
 
-static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
-{
+// static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
+// {
 
 
-	if (in_fd != STDIN_FILENO && in_fd >= 0)
-	{
-		if (dup2(in_fd, STDIN_FILENO) == -1)
-		{
-			perror("dup2 in_fd->STDIN");
-			_exit(EXIT_FAILURE);
-		}
-		if (close(in_fd) == -1)
-		{
-			perror("close in_fd");
-			_exit(EXIT_FAILURE);
-		}
-	}
+// 	if (in_fd != STDIN_FILENO && in_fd >= 0)
+// 	{
+// 		if (dup2(in_fd, STDIN_FILENO) == -1)
+// 		{
+// 			perror("dup2 in_fd->STDIN");
+// 			_exit(EXIT_FAILURE);
+// 		}
+// 		if (close(in_fd) == -1)
+// 		{
+// 			perror("close in_fd");
+// 			_exit(EXIT_FAILURE);
+// 		}
+// 	}
 
-	// If there's a next command, redirect current cmd's output to pipe write-end
-	if (cmd->next)
-	{
-		if (dup2(fds[1], STDOUT_FILENO) == -1)
-		{
-			perror("dup2 fds[1]->STDOUT");
-			_exit(EXIT_FAILURE);
-		}
-	}
+// 	// If there's a next command, redirect current cmd's output to pipe write-end
+// 	if (cmd->next)
+// 	{
+// 		if (dup2(fds[1], STDOUT_FILENO) == -1)
+// 		{
+// 			perror("dup2 fds[1]->STDOUT");
+// 			_exit(EXIT_FAILURE);
+// 		}
+// 	}
 
-	// Close any pipe ends we don't need
-	if (fds[0] >= 0)
-	{
-		if (close(fds[0]) == -1)
-		{
-			perror("close fds[0]");
-			_exit(EXIT_FAILURE);
-		}
-	}
-	if (fds[1] >= 0)
-	{
-		if (close(fds[1]) == -1)
-		{
-			perror("close fds[1]");
-			_exit(EXIT_FAILURE);
-		}
-	}
+// 	// Close any pipe ends we don't need
+// 	if (fds[0] >= 0)
+// 	{
+// 		if (close(fds[0]) == -1)
+// 		{
+// 			perror("close fds[0]");
+// 			_exit(EXIT_FAILURE);
+// 		}
+// 	}
+// 	if (fds[1] >= 0)
+// 	{
+// 		if (close(fds[1]) == -1)
+// 		{
+// 			perror("close fds[1]");
+// 			_exit(EXIT_FAILURE);
+// 		}
+// 	}
 
-	if (apply_redirections(cmd) != EXIT_SUCCESS)
-		_exit(EXIT_FAILURE);
+// 	if (apply_redirections(cmd) != EXIT_SUCCESS)
+// 		_exit(EXIT_FAILURE);
 
-	execute_command(cmd);
-}
+// 	execute_command(cmd);
+// }
 
 
 /**
@@ -107,26 +107,26 @@ static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
  * @param pid Process ID of the forked child process.
  * @return The exit status of the executed command.
  */
-static uint8_t	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
-{
-	int		status;
-	uint8_t	exit_status;
+// static uint8_t	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
+// {
+// 	int		status;
+// 	uint8_t	exit_status;
 
-	if (cmd->next)
-		close(fds[1]);
-	if (in_fd != STDIN_FILENO)
-		close(in_fd);
-	if (!cmd->next && fds[0] >= 0)
-		close(fds[0]);
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		exit_status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		exit_status = 128 + WTERMSIG(status);
-	else
-		exit_status = EXIT_FAILURE;
-	return (exit_status);
-}
+// 	if (cmd->next)
+// 		close(fds[1]);
+// 	if (in_fd != STDIN_FILENO)
+// 		close(in_fd);
+// 	if (!cmd->next && fds[0] >= 0)
+// 		close(fds[0]);
+// 	waitpid(pid, &status, 0);
+// 	if (WIFEXITED(status))
+// 		exit_status = WEXITSTATUS(status);
+// 	else if (WIFSIGNALED(status))
+// 		exit_status = 128 + WTERMSIG(status);
+// 	else
+// 		exit_status = EXIT_FAILURE;
+// 	return (exit_status);
+// }
 
 
 /**
@@ -141,51 +141,141 @@ static uint8_t	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
  * @param fds Pipe file descriptors [read end, write end].
  * @return Process ID of the child process.
  */
-static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
-{
-	pid_t	pid;
+// static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
+// {
+// 	pid_t	pid;
 
-	pid = fork();
-	if (pid == -1)
-		perror_return("-minishell: fork", EXIT_FAILURE);
-	if (pid == 0)
-		child_process((t_cmd *)cmd, in_fd, fds);
-	return (pid);
-}
+// 	pid = fork();
+// 	if (pid == -1)
+// 		perror_return("-minishell: fork", EXIT_FAILURE);
+// 	if (pid == 0)
+// 		child_process((t_cmd *)cmd, in_fd, fds);
+// 	return (pid);
+// }
+
+
+// uint8_t	exec_in_child_process(t_cmd *cmd)
+// {
+// 	uint8_t	exit_status;
+// 	int		in_fd;
+// 	int		fds[2];
+// 	int		cmd_count;
+// 	pid_t	pid;
+
+// 	exit_status = EXIT_FAILURE;
+// 	in_fd = 0;
+// 	cmd_count = 0;
+// 	while (cmd)
+// 	{
+// 		if (is_pipeline_limit(&cmd_count))
+// 			return (exit_status);
+
+// 		fds[0] = -1;
+// 		fds[1] = -1;
+// 		if (cmd->next && pipe(fds) == -1)
+// 		{
+// 			perror("pipe");
+// 			return (exit_status);
+// 		}
+// 		pid = fork_and_execute(cmd, in_fd, fds);
+// 		if (pid > 0)
+// 			exit_status = parent_process(cmd, in_fd, fds, pid);
+// 		if (cmd->next)
+// 			in_fd = fds[0];
+// 		else
+// 			in_fd = STDIN_FILENO;
+// 		cmd = cmd->next;
+// 	}
+// 	return (exit_status);
+// }
 
 
 uint8_t	exec_in_child_process(t_cmd *cmd)
 {
-	uint8_t	exit_status;
-	int		in_fd;
-	int		fds[2];
-	int		cmd_count;
-	pid_t	pid;
+	uint8_t		exit_status = EXIT_FAILURE;
+	int			in_fd = STDIN_FILENO;
+	int			fds[2];
+	int			cmd_count = 0;
+	pid_t		pids[MAX_CMDS];
+	t_cmd		*current = cmd;
 
-	exit_status = EXIT_FAILURE;
-	in_fd = 0;
-	cmd_count = 0;
-	while (cmd)
+	while (current)
 	{
-		if (is_pipeline_limit(&cmd_count))
-			return (exit_status);
+		if (cmd_count >= MAX_CMDS)
+		{
+			print_error("Too many commands in pipeline\n");
+			return (EXIT_FAILURE);
+		}
 
 		fds[0] = -1;
 		fds[1] = -1;
-		if (cmd->next && pipe(fds) == -1)
+
+		if (current->next && pipe(fds) == -1)
 		{
 			perror("pipe");
-			return (exit_status);
+			return (EXIT_FAILURE);
 		}
-		pid = fork_and_execute(cmd, in_fd, fds);
-		if (pid > 0)
-			exit_status = parent_process(cmd, in_fd, fds, pid);
-		if (cmd->next)
-			in_fd = fds[0];
-		else
-			in_fd = STDIN_FILENO;
-		cmd = cmd->next;
+
+		pids[cmd_count] = fork();
+		if (pids[cmd_count] == -1)
+		{
+			perror("fork");
+			return (EXIT_FAILURE);
+		}
+		else if (pids[cmd_count] == 0)
+		{
+			// In child
+			if (in_fd != STDIN_FILENO)
+			{
+				if (dup2(in_fd, STDIN_FILENO) == -1)
+					_exit(EXIT_FAILURE);
+				close(in_fd);
+			}
+			if (current->next && dup2(fds[1], STDOUT_FILENO) == -1)
+				_exit(EXIT_FAILURE);
+
+			// Always close unused pipe ends
+			if (fds[0] != -1)
+				close(fds[0]);
+			if (fds[1] != -1)
+				close(fds[1]);
+
+			if (apply_redirections(current) != EXIT_SUCCESS)
+				_exit(EXIT_FAILURE);
+
+			execute_command(current);
+		}
+
+		// In parent
+		if (in_fd != STDIN_FILENO)
+			close(in_fd);
+		if (fds[1] != -1)
+			close(fds[1]);
+		in_fd = fds[0];  // Read end becomes input for next command
+
+		current = current->next;
+		cmd_count++;
 	}
+
+	// Wait for all children
+	for (int i = 0; i < cmd_count; ++i)
+	{
+		int status;
+		if (waitpid(pids[i], &status, 0) == -1)
+		{
+			perror("waitpid");
+			continue;
+		}
+		if (i == cmd_count - 1)
+		{
+			if (WIFEXITED(status))
+				exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				exit_status = 128 + WTERMSIG(status);
+			else
+				exit_status = EXIT_FAILURE;
+		}
+	}
+
 	return (exit_status);
 }
-
