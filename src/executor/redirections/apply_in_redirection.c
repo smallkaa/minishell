@@ -12,7 +12,6 @@ uint8_t	apply_in_redirection(t_cmd *cmd)
 	{
 		print_error("-minishell: ");
 		perror(cmd->in_redir->filename);
-		print_error("\n");
 		return (EXIT_FAILURE);
 	}
 	if (dup2(in_fd, STDIN_FILENO) == -1)

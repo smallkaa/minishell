@@ -1,30 +1,25 @@
 #include "minishell.h"
 
-static uint8_t	validate_dot(t_cmd *cmd)
+static uint8_t	validate_dots(t_cmd *cmd)
 {
-	if (ft_strcmp(cmd->argv[0], ".") == 0)
+	if (ft_strcmp(cmd->argv[0], ".") == 0 && !cmd->argv[1])
 	{
-		if (!cmd->argv[1])
-		{
-			print_error("-minishell: .: filename argument required\n");
-			print_error(".: usage: . filename [arguments]\n");
-			cmd->minishell->exit_status = 2;
-			return (2);
-		}
+		print_error("-minishell: .: filename argument required\n");
+		print_error(".: usage: . filename [arguments]\n");
+		return (2);
+	}
+	else if (ft_strcmp(cmd->argv[0], "..") == 0	&& !cmd->argv[1])
+	{
+		print_error("..: command not found\n");
+		return (127);
 	}
 	return (EXIT_SUCCESS);
 }
-/**
- * @brief Executes a command, either a built-in or an external binary.
- *
- * If the command is a built-in, it calls `exec_builtin()`. Otherwise, it
- * attempts to execute the binary using `execve()`. If execution fails,
- * an appropriate error message is printed, and the process exits.
- *
- * @param cmd Pointer to the command structure.
- */
+
 static void	execute_command(t_cmd *cmd)
 {
+	uint8_t	exit_status;
+
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
@@ -32,8 +27,9 @@ static void	execute_command(t_cmd *cmd)
 		else
 			cmd_missing_command_error(cmd);
 	}
-	if (validate_dot(cmd) == 2)
-		_exit(2);
+	exit_status = validate_dots(cmd);
+	if (exit_status != EXIT_SUCCESS )
+		_exit(exit_status);
 
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	// fprintf(stderr, "errno = %d (%s)\n", errno, strerror(errno)); // test

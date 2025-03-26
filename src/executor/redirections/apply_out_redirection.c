@@ -28,8 +28,7 @@ uint8_t	apply_out_redirection(t_cmd *cmd)
 	if (out_fd < 0)
 	{
 		print_error("-minishell: ");
-		print_error(cmd->out_redir->filename);
-		print_error("\n");
+		perror(cmd->out_redir->filename);
 		return (EXIT_FAILURE);
 
 	}
