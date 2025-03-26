@@ -39,156 +39,97 @@ static void	execute_command(t_cmd *cmd)
 	// fprintf(stderr, "errno = %d (%s)\n", errno, strerror(errno)); // test
 	child_execve_error(cmd);
 }
+static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
+{
+	if (in_fd != STDIN_FILENO)
+	{
+		if (dup2(in_fd, STDIN_FILENO) == -1)
+			return (-1);
+		close(in_fd);
+	}
+	if (cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
+		return (-1);
+	if (fds[0] != -1)
+		close(fds[0]);
+	if (fds[1] != -1)
+		close(fds[1]);
+	if (apply_redirections(cmd) != EXIT_SUCCESS)
+		return (-1);
+	return (EXIT_SUCCESS);
+}
 
+static int	handle_child(t_cmd *cmd, int in_fd, int *fds)
+{
+	if (handle_dup_and_close(in_fd, fds, cmd) == -1)
+		_exit(EXIT_FAILURE);
+	execute_command(cmd);
+	return (EXIT_SUCCESS);
+}
 
-// static void	child_process(t_cmd *cmd, int in_fd, int fds[2])
-// {
+static int	wait_for_children(pid_t *pids, int count, uint8_t *exit_status)
+{
+	int i = 0;
+	while (i < count)
+	{
+		int status;
+		if (waitpid(pids[i], &status, 0) != -1 && i == count - 1)
+		{
+			if (WIFEXITED(status))
+				*exit_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				*exit_status = 128 + WTERMSIG(status);
+			else
+				*exit_status = EXIT_FAILURE;
+		}
+		i++;
+	}
+	return (EXIT_SUCCESS);
+}
+static int	create_pipe_if_needed(t_cmd *cmd, int *fds)
+{
+	fds[0] = -1;
+	fds[1] = -1;
+	if (cmd->next && pipe(fds) == -1)
+	{
+		perror("-minishell: pipe");
+		return (-1);
+	}
+	return (0);
+}
 
+static pid_t	fork_command(t_cmd *cmd, int in_fd, int *fds)
+{
+	pid_t pid = fork();
+	if (pid == -1)
+	{
+		perror("-minishell: fork");
+		return (-1);
+	}
+	else if (pid == 0)
+	{
+		handle_child(cmd, in_fd, fds);
+	}
+	return (pid);
+}
 
-// 	if (in_fd != STDIN_FILENO && in_fd >= 0)
-// 	{
-// 		if (dup2(in_fd, STDIN_FILENO) == -1)
-// 		{
-// 			perror("dup2 in_fd->STDIN");
-// 			_exit(EXIT_FAILURE);
-// 		}
-// 		if (close(in_fd) == -1)
-// 		{
-// 			perror("close in_fd");
-// 			_exit(EXIT_FAILURE);
-// 		}
-// 	}
+static void	cleanup_parent_fds(int *in_fd, int *fds)
+{
+	if (*in_fd != STDIN_FILENO)
+		close(*in_fd);
+	if (fds[1] != -1)
+		close(fds[1]);
+	*in_fd = fds[0];
+}
 
-// 	// If there's a next command, redirect current cmd's output to pipe write-end
-// 	if (cmd->next)
-// 	{
-// 		if (dup2(fds[1], STDOUT_FILENO) == -1)
-// 		{
-// 			perror("dup2 fds[1]->STDOUT");
-// 			_exit(EXIT_FAILURE);
-// 		}
-// 	}
-
-// 	// Close any pipe ends we don't need
-// 	if (fds[0] >= 0)
-// 	{
-// 		if (close(fds[0]) == -1)
-// 		{
-// 			perror("close fds[0]");
-// 			_exit(EXIT_FAILURE);
-// 		}
-// 	}
-// 	if (fds[1] >= 0)
-// 	{
-// 		if (close(fds[1]) == -1)
-// 		{
-// 			perror("close fds[1]");
-// 			_exit(EXIT_FAILURE);
-// 		}
-// 	}
-
-// 	if (apply_redirections(cmd) != EXIT_SUCCESS)
-// 		_exit(EXIT_FAILURE);
-
-// 	execute_command(cmd);
-// }
-
-
-/**
- * @brief Handles file descriptor cleanup and waits for the child process.
- *
- * The parent process manages pipes, closes unnecessary file descriptors,
- * and waits for the child process to finish. It also updates the shell's
- * exit status based on the child's termination status.
- *
- * @param cmd Pointer to the command structure.
- * @param in_fd File descriptor for input redirection.
- * @param fds Pipe file descriptors [read end, write end].
- * @param pid Process ID of the forked child process.
- * @return The exit status of the executed command.
- */
-// static uint8_t	parent_process(t_cmd *cmd, int in_fd, int fds[2], pid_t pid)
-// {
-// 	int		status;
-// 	uint8_t	exit_status;
-
-// 	if (cmd->next)
-// 		close(fds[1]);
-// 	if (in_fd != STDIN_FILENO)
-// 		close(in_fd);
-// 	if (!cmd->next && fds[0] >= 0)
-// 		close(fds[0]);
-// 	waitpid(pid, &status, 0);
-// 	if (WIFEXITED(status))
-// 		exit_status = WEXITSTATUS(status);
-// 	else if (WIFSIGNALED(status))
-// 		exit_status = 128 + WTERMSIG(status);
-// 	else
-// 		exit_status = EXIT_FAILURE;
-// 	return (exit_status);
-// }
-
-
-/**
- * @brief Forks a new process and executes the command.
- *
- * This function creates a child process using `fork()`. If the fork is
- * successful, the child process executes `child_process()`, while the parent
- * process continues execution.
- *
- * @param cmd Pointer to the command structure.
- * @param in_fd File descriptor for input redirection.
- * @param fds Pipe file descriptors [read end, write end].
- * @return Process ID of the child process.
- */
-// static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
-// {
-// 	pid_t	pid;
-
-// 	pid = fork();
-// 	if (pid == -1)
-// 		perror_return("-minishell: fork", EXIT_FAILURE);
-// 	if (pid == 0)
-// 		child_process((t_cmd *)cmd, in_fd, fds);
-// 	return (pid);
-// }
-
-
-// uint8_t	exec_in_child_process(t_cmd *cmd)
-// {
-// 	uint8_t	exit_status;
-// 	int		in_fd;
-// 	int		fds[2];
-// 	int		cmd_count;
-// 	pid_t	pid;
-
-// 	exit_status = EXIT_FAILURE;
-// 	in_fd = 0;
-// 	cmd_count = 0;
-// 	while (cmd)
-// 	{
-// 		if (is_pipeline_limit(&cmd_count))
-// 			return (exit_status);
-
-// 		fds[0] = -1;
-// 		fds[1] = -1;
-// 		if (cmd->next && pipe(fds) == -1)
-// 		{
-// 			perror("pipe");
-// 			return (exit_status);
-// 		}
-// 		pid = fork_and_execute(cmd, in_fd, fds);
-// 		if (pid > 0)
-// 			exit_status = parent_process(cmd, in_fd, fds, pid);
-// 		if (cmd->next)
-// 			in_fd = fds[0];
-// 		else
-// 			in_fd = STDIN_FILENO;
-// 		cmd = cmd->next;
-// 	}
-// 	return (exit_status);
-// }
-
+static bool	check_pipeline_limit(int cmd_count)
+{
+	if (cmd_count >= MAX_CMDS)
+	{
+		print_error("-minishell: too many commands in pipeline\n");
+		return (true);
+	}
+	return (false);
+}
 
 uint8_t	exec_in_child_process(t_cmd *cmd)
 {
@@ -197,85 +138,24 @@ uint8_t	exec_in_child_process(t_cmd *cmd)
 	int			fds[2];
 	int			cmd_count = 0;
 	pid_t		pids[MAX_CMDS];
-	t_cmd		*current = cmd;
 
-	while (current)
+	while (cmd)
 	{
-		if (cmd_count >= MAX_CMDS)
-		{
-			print_error("Too many commands in pipeline\n");
+		if (check_pipeline_limit(cmd_count))
 			return (EXIT_FAILURE);
-		}
 
-		fds[0] = -1;
-		fds[1] = -1;
-
-		if (current->next && pipe(fds) == -1)
-		{
-			perror("pipe");
+		if (create_pipe_if_needed(cmd, fds) == -1)
 			return (EXIT_FAILURE);
-		}
 
-		pids[cmd_count] = fork();
+		pids[cmd_count] = fork_command(cmd, in_fd, fds);
 		if (pids[cmd_count] == -1)
-		{
-			perror("fork");
 			return (EXIT_FAILURE);
-		}
-		else if (pids[cmd_count] == 0)
-		{
-			// In child
-			if (in_fd != STDIN_FILENO)
-			{
-				if (dup2(in_fd, STDIN_FILENO) == -1)
-					_exit(EXIT_FAILURE);
-				close(in_fd);
-			}
-			if (current->next && dup2(fds[1], STDOUT_FILENO) == -1)
-				_exit(EXIT_FAILURE);
 
-			// Always close unused pipe ends
-			if (fds[0] != -1)
-				close(fds[0]);
-			if (fds[1] != -1)
-				close(fds[1]);
+		cleanup_parent_fds(&in_fd, fds);
 
-			if (apply_redirections(current) != EXIT_SUCCESS)
-				_exit(EXIT_FAILURE);
-
-			execute_command(current);
-		}
-
-		// In parent
-		if (in_fd != STDIN_FILENO)
-			close(in_fd);
-		if (fds[1] != -1)
-			close(fds[1]);
-		in_fd = fds[0];  // Read end becomes input for next command
-
-		current = current->next;
+		cmd = cmd->next;
 		cmd_count++;
 	}
-
-	// Wait for all children
-	for (int i = 0; i < cmd_count; ++i)
-	{
-		int status;
-		if (waitpid(pids[i], &status, 0) == -1)
-		{
-			perror("waitpid");
-			continue;
-		}
-		if (i == cmd_count - 1)
-		{
-			if (WIFEXITED(status))
-				exit_status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				exit_status = 128 + WTERMSIG(status);
-			else
-				exit_status = EXIT_FAILURE;
-		}
-	}
-
+	wait_for_children(pids, cmd_count, &exit_status);
 	return (exit_status);
 }
