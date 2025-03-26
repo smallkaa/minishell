@@ -7,10 +7,11 @@ uint8_t	apply_in_redirection(t_cmd *cmd)
 	if (pre_exec_validation(cmd, R_INPUT) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	in_fd = open(cmd->in_redir->filename, O_RDONLY);
+
 	if (in_fd < 0)
 	{
 		print_error("-minishell: ");
-		print_error(cmd->in_redir->filename);
+		perror(cmd->in_redir->filename);
 		print_error("\n");
 		return (EXIT_FAILURE);
 	}
