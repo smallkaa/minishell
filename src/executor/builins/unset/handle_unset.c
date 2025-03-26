@@ -17,15 +17,18 @@
  * @param mshell Pointer to the Minishell structure containing the hash table.
  * @param key The name of the variable to be removed.
  */
-static void	remove_var_from_ht(t_mshell *mshell, char *key)
+static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 {
 	unsigned long	index;
 	t_mshell_var	*prev;
 	t_mshell_var	*current;
 
+	if (!mshell || mshell->hash_table || !key)
+	{
+		print_error("minishell: unset: no minishell, hash_table or key instanse\n");
+		return (EXIT_FAILURE);
+	}
 	prev = NULL;
-	if (!mshell || !key)
-		return ;
 	index = hash_function(key);
 	current = mshell->hash_table->buckets[index];
 	while (current)
@@ -38,11 +41,12 @@ static void	remove_var_from_ht(t_mshell *mshell, char *key)
 				prev->next = current->next;
 			free_mshell_var(current);
 			update_env(mshell);
-			return ;
+			return  (EXIT_SUCCESS);
 		}
 		prev = current;
 		current = current->next;
 	}
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -60,6 +64,18 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
 {
 	int		i;
 
+	if (!cmd || !cmd->minishell || !cmd->argv)
+	{
+		print_error("minishell: unset: no cmd or args instanse\n");
+		return (EXIT_FAILURE);
+	}
+	if (!is_valid_varname(cmd->argv[1]))
+	{
+		print_error("-minishell: unset: '");
+		write(STDERR_FILENO, cmd->argv[1], 2);
+		print_error("': not a valid identifier\n");
+		return (2);
+	}
 	i = 1;
 	while (cmd->argv[i])
 	{
@@ -97,7 +113,7 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
  */
 uint8_t	handle_unset(t_cmd *cmd)
 {
-	if (!cmd || !cmd->minishell)
+	if (!cmd || !cmd->argv)
 	{
 		print_error("minishell: unset: no cmd or minishell instanse\n");
 		return (EXIT_FAILURE);
