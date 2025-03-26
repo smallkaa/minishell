@@ -169,6 +169,8 @@ int	group_word_tokens(t_TokenArray *tokens)
 
 	return (0);
 }
+
+
 t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
     t_cmd *head = NULL;
@@ -200,19 +202,19 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                     return NULL;
                 }
 
-                // Set binary name (will be assigned at the end of the function)
+                // Initialize command structure
                 new_cmd->binary = NULL;
                 new_cmd->argv[0] = strdup(tokens->tokens[i].value);
                 new_cmd->minishell = shell;
                 new_cmd->next = NULL;
+                new_cmd->in_redir = NULL;
+                new_cmd->out_redir = NULL;
 
                 arg_index = 1;
 
                 // Link new command in pipeline
                 if (!head)
                     head = new_cmd;
-                else if (current) // This should never happen now due to PIPE handling
-                    current->next = new_cmd;
                 else
                 {
                     // Find last command in chain to append to
@@ -231,11 +233,6 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                     current->argv[arg_index] = strdup(tokens->tokens[i].value);
                     arg_index++;
                 }
-                else
-                {
-                    // Handle arguments overflow - might want to add error handling
-                    break;
-                }
             }
         }
         else if (tokens->tokens[i].type == TOKEN_PIPE)
@@ -246,28 +243,84 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             
             // Reset current to NULL to create a new command in the next iteration
             current = NULL;
-            
-            // If this is the last token and it's a pipe, handle the error case
-            if (i == tokens->count - 1)
-            {
-                // Handle trailing pipe error
-                debug_printf("Error: trailing pipe found\n");
-                // You might want to free resources and return an error here
+        }
+        else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
+                 tokens->tokens[i].type == TOKEN_HEREDOC)
+        {
+            // Create a new redirection structure
+            t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
+            if (!redir)
+                return NULL;
+
+            // Set the redirection type based on token type
+            if (tokens->tokens[i].type == TOKEN_REDIRECT_IN)
+                redir->type = R_INPUT;
+            else // TOKEN_HEREDOC
+                redir->type = R_HEREDOC;
+
+            redir->expand = true; // Default value
+
+            // The next token should be the file/delimiter
+            if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+                redir->filename = ft_strdup(tokens->tokens[i+1].value);
+
+                // Add this redirection to the command
+                if (current) {
+                    // Free existing input redirection if any
+                    if (current->in_redir) {
+                        free(current->in_redir->filename);
+                        free(current->in_redir);
+                    }
+                    current->in_redir = redir;
+                } else {
+                    free(redir->filename);
+                    free(redir);
+                }
+
+                // Skip the filename token
+                i++;
+            } else {
+                free(redir);
             }
         }
-        else if ((tokens->tokens[i].type == TOKEN_REDIRECT_IN || 
-                 tokens->tokens[i].type == TOKEN_HEREDOC) && current)
+        else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
+                 tokens->tokens[i].type == TOKEN_APPEND_OUT)
         {
-            // Handle input redirection
-            // Your existing code for input redirection...
-            // ...
-        }
-        else if ((tokens->tokens[i].type == TOKEN_REDIRECT_OUT || 
-                 tokens->tokens[i].type == TOKEN_APPEND_OUT) && current)
-        {
-            // Handle output redirection  
-            // Your existing code for output redirection...
-            // ...
+            // Create a new redirection structure
+            t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
+            if (!redir)
+                return NULL;
+
+            // Set the redirection type based on token type
+            if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT)
+                redir->type = R_OUTPUT;
+            else // TOKEN_APPEND_OUT
+                redir->type = R_APPEND;
+
+            redir->expand = true; // Default value
+
+            // The next token should be the filename
+            if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+                redir->filename = ft_strdup(tokens->tokens[i+1].value);
+
+                // Add this redirection to the command
+                if (current) {
+                    // Free existing output redirection if any
+                    if (current->out_redir) {
+                        free(current->out_redir->filename);
+                        free(current->out_redir);
+                    }
+                    current->out_redir = redir;
+                } else {
+                    free(redir->filename);
+                    free(redir);
+                }
+
+                // Skip the filename token
+                i++;
+            } else {
+                free(redir);
+            }
         }
 
         i++;
@@ -289,6 +342,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 
     return head;
 }
+
 
 
 t_cmd *run_parser(t_mshell *minishell, char *input)
