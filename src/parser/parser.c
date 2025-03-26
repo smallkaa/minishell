@@ -169,6 +169,8 @@ int	group_word_tokens(t_TokenArray *tokens)
 
 	return (0);
 }
+
+
 t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
     t_cmd *head = NULL;
@@ -193,29 +195,44 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                 memset(new_cmd, 0, sizeof(t_cmd));
 
                 // Allocate space for arguments
-                new_cmd->argv = (char **)malloc(sizeof(char *) * (tokens->count + 1));
+                new_cmd->argv = (char **)malloc(sizeof(char *) * (MAX_ARGS + 1));
                 if (!new_cmd->argv)
+                {
+                    free(new_cmd);
                     return NULL;
+                }
 
-                // Set binary name (will be assigned at the end of the function)
+                // Initialize command structure
                 new_cmd->binary = NULL;
                 new_cmd->argv[0] = strdup(tokens->tokens[i].value);
                 new_cmd->minishell = shell;
+                new_cmd->next = NULL;
+                new_cmd->in_redir = NULL;
+                new_cmd->out_redir = NULL;
 
                 arg_index = 1;
 
                 // Link new command in pipeline
                 if (!head)
                     head = new_cmd;
-                else if (current)
-                    current->next = new_cmd;
+                else
+                {
+                    // Find last command in chain to append to
+                    t_cmd *last = head;
+                    while (last->next)
+                        last = last->next;
+                    last->next = new_cmd;
+                }
                 current = new_cmd;
             }
             else
             {
                 // Attach as argument to the current command
-                current->argv[arg_index] = strdup(tokens->tokens[i].value);
-                arg_index++;
+                if (arg_index < MAX_ARGS)
+                {
+                    current->argv[arg_index] = strdup(tokens->tokens[i].value);
+                    arg_index++;
+                }
             }
         }
         else if (tokens->tokens[i].type == TOKEN_PIPE)
@@ -223,8 +240,8 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Close the current argument list
             if (current && current->argv)
                 current->argv[arg_index] = NULL;
-
-            // Start new command for next pipe segment
+            
+            // Reset current to NULL to create a new command in the next iteration
             current = NULL;
         }
         else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
@@ -310,16 +327,23 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
     }
 
     // Ensure last command argv is NULL-terminated
-    if (current && current->argv) {
+    if (current && current->argv)
+    {
         current->argv[arg_index] = NULL;
     }
 
-    // Find and set binary path for the first command
-    if (head)
-        head->binary = find_binary(head);
+    // Set binary paths for all commands in the pipeline
+    t_cmd *cmd_ptr = head;
+    while (cmd_ptr)
+    {
+        cmd_ptr->binary = find_binary(cmd_ptr);
+        cmd_ptr = cmd_ptr->next;
+    }
 
     return head;
 }
+
+
 
 t_cmd *run_parser(t_mshell *minishell, char *input)
 {
