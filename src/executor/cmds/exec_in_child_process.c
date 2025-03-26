@@ -156,8 +156,6 @@ static pid_t	fork_and_execute(const t_cmd *cmd, int in_fd, int fds[2])
 
 uint8_t	exec_in_child_process(t_cmd *cmd)
 {
-	// printf("---In exec_in_child_process\n");
-
 	uint8_t	exit_status;
 	int		in_fd;
 	int		fds[2];

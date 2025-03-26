@@ -68,8 +68,19 @@ uint8_t run_executor(t_cmd *cmd)
 	if (!is_builtin(cmd) || cmd->next)
 	{
 		minishell->exit_status = exec_in_child_process(cmd);
-		if (cmd)
+
+		// need to clean?
+		int i = 0;
+		while(cmd->argv[i])
+			i++;
+		if (ft_strcmp(cmd->argv[i - 1], "exit") == 0)
+		{
+			exit_status = minishell->exit_status;
 			free_cmd(cmd);
+			free_minishell(minishell);
+			rl_clear_history();
+			exit(exit_status);
+		}
 		return (minishell->exit_status);
 	}
 	else
@@ -83,7 +94,6 @@ uint8_t run_executor(t_cmd *cmd)
 			rl_clear_history();
 			exit(exit_status);
 		}
-		free_cmd(cmd);
 		return (minishell->exit_status);
 	}
 }

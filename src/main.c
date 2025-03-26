@@ -9,6 +9,8 @@ uint8_t	run_command_mode(t_mshell *mshell, char *input)
 		return (EXIT_FAILURE);
 
 	exit_status = run_executor(cmd);
+	free_cmd(cmd);
+	cmd = NULL;
 	return (exit_status);
 }
 
@@ -33,7 +35,11 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 		if (!cmd)
 			continue ;
 		exit_status = run_executor(cmd);
+		free_cmd(cmd);
+		cmd = NULL;
+
 		free(input);
+		input = NULL;
     }
     close(in_fd);
 	return (exit_status);
@@ -68,8 +74,10 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			continue ;
 
 		exit_status = run_executor(cmd);
-
+		free_cmd(cmd);
+		cmd = NULL;
 		free(input);
+		input = NULL;
 	}
 	return (exit_status);
 }

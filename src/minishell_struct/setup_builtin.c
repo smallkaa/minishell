@@ -28,7 +28,7 @@ char	**setup_builtin(void)
 	builtin = malloc(8 * sizeof(char *));
 	if (!builtin)
 	{
-		print_error("Error (is_builtin): builtin malloc failed\n");
+		print_error("-minishell: setup_builtin: builtin malloc failed\n");
 		return (NULL);
 	}
 	builtin[0] = ft_strdup("echo");

@@ -1,0 +1,30 @@
+# Suppress “still reachable” leaks caused by readline’s internal allocations.
+
+{
+   readline_keymap_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_make_bare_keymap
+   fun:rl_generic_bind
+   fun:rl_bind_keyseq_if_unbound_in_map
+   obj:/usr/lib/x86_64-linux-gnu/libreadline.so.*
+   fun:readline
+   fun:run_interactive_mode
+   fun:main
+}
+
+{
+   readline_history_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:alloc_history_entry
+   fun:add_history
+   obj:/usr/lib/x86_64-linux-gnu/libreadline.so.*
+   fun:readline
+   fun:run_interactive_mode
+   fun:main
+}
