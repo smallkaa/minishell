@@ -66,6 +66,7 @@ uint8_t			apply_out_redirection(t_cmd *cmd);
 // utils
 uint8_t			pre_exec_validation(t_cmd *cmd, t_redir_type type);
 bool			is_valid_varname(const char *key_value_pair);
+bool			is_valid_identifier(const char *s);
 t_mshell_var	*split_key_value(char *key_value_pair);
 bool			is_pipeline_limit(int *cmd_count);
 

@@ -4,6 +4,27 @@
  */
 #include "minishell.h"
 
+static bool	is_invalid_option(const char *name)
+{
+	return (name && name[0] == '-' && name[1]);
+}
+
+bool is_valid_identifier(const char *name)
+{
+	int i;
+
+	if (!name || (!ft_isalpha(name[0]) && name[0] != '_'))
+		return false;
+	i = 1;
+	while (name[i])
+	{
+		if (!ft_isalnum(name[i]) && name[i] != '_')
+			return false;
+		i++;
+	}
+	return true;
+}
+
 /**
  * @brief Removes a variable from the Minishell environment's hash table.
  *
@@ -60,26 +81,49 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
  * @param cmd Pointer to the command structure containing command arguments.
  * @return Always returns `EXIT_SUCCESS`.
  */
+// static uint8_t	do_unset_loop(t_cmd *cmd)
+// {
+// 	int		i;
+
+// 	if (!cmd || !cmd->minishell || !cmd->argv)
+// 	{
+// 		print_error("minishell: unset: no cmd or args instanse\n");
+// 		return (EXIT_FAILURE);
+// 	}
+// 	if (!is_valid_identifier(cmd->argv[1]))
+// 		return (EXIT_SUCCESS);
+// 	// {
+// 	// 	print_error("-minishell: unset: '");
+// 	// 	write(STDERR_FILENO, cmd->argv[1], 2);
+// 	// 	print_error("': not a valid identifier\n");
+// 	// 	return (2);
+// 	// }
+// 	i = 1;
+// 	while (cmd->argv[i])
+// 	{
+// 		remove_var_from_ht(cmd->minishell, cmd->argv[i]);
+// 		i++;
+// 	}
+// 	return (EXIT_SUCCESS);
+// }
+
 static uint8_t	do_unset_loop(t_cmd *cmd)
 {
-	int		i;
+	int		i = 1;
 
-	if (!cmd || !cmd->minishell || !cmd->argv)
-	{
-		print_error("minishell: unset: no cmd or args instanse\n");
-		return (EXIT_FAILURE);
-	}
-	if (!is_valid_varname(cmd->argv[1]))
-	{
-		print_error("-minishell: unset: '");
-		write(STDERR_FILENO, cmd->argv[1], 2);
-		print_error("': not a valid identifier\n");
-		return (2);
-	}
-	i = 1;
 	while (cmd->argv[i])
 	{
-		remove_var_from_ht(cmd->minishell, cmd->argv[i]);
+		if (is_invalid_option(cmd->argv[i]))
+		{
+			print_error("minishell: unset: ");
+			write(STDERR_FILENO, cmd->argv[i], 2);
+			print_error(": invalid option\n");
+			print_error("unset: usage: unset [name ...]\n");
+			cmd->minishell->exit_status = 2;
+			return (EXIT_FAILURE);
+		}
+		if (is_valid_identifier(cmd->argv[i]))
+			remove_var_from_ht(cmd->minishell, cmd->argv[i]);
 		i++;
 	}
 	return (EXIT_SUCCESS);
@@ -106,10 +150,10 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
  * ```
  *
  * @param cmd Pointer to the command structure (contains argv, minishell
- *            instance, etc.).
+ *			instance, etc.).
  * @return `EXIT_SUCCESS` if all requested variables were removed or no
- *         arguments were provided.
- *         `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
+ *		 arguments were provided.
+ *		 `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
  */
 uint8_t	handle_unset(t_cmd *cmd)
 {
