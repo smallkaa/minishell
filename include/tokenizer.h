@@ -15,10 +15,13 @@ typedef enum e_possible_tokens
 	TOKEN_EOF
 }	t_TokenType;
 
-typedef struct s_tkn
+
+typedef struct s_token
 {
+	char	*value;
 	t_TokenType	type;
-	char		*value;
+	int	in_single_quotes;
+	int	in_double_quotes;
 }	t_Token;
 
 // Token array for storing all tokens
@@ -45,5 +48,8 @@ void	print_token(t_Token token);
 void	explain_token(t_Token token);
 void debug_print_parsed_commands(t_cmd *cmd);
 int	strip_words(t_TokenArray *tokens);
+bool	is_in_single_quotes(char *str);
+bool	is_in_double_quotes(char *str);
+void	expand_tokens(t_TokenArray *tokens, t_mshell *ms);
 
 #endif

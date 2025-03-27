@@ -4,11 +4,28 @@
  */
 #include "minishell.h"
 
+static int	is_wrapped_in_quotes(char *s)
+{
+	size_t	len;
+
+	if (!s)
+		return (0);
+	len = ft_strlen(s);
+	if (len < 2)
+		return (0);
+	return ((s[0] == '\'' && s[len - 1] == '\'')
+		|| (s[0] == '"' && s[len - 1] == '"'));
+}
+
+
 static int	is_echo_flag(char *arg)
 {
 	int	i;
 
 	if (!arg || arg[0] != '-' || arg[1] != 'n')
+		return (0);
+	// Не считать аргумент флагом, если в нём есть кавычки
+	if (ft_strchr(arg, '\'') || ft_strchr(arg, '"'))
 		return (0);
 	i = 1;
 	while (arg[++i])
@@ -18,6 +35,7 @@ static int	is_echo_flag(char *arg)
 	}
 	return (1);
 }
+
 
 
 /**
@@ -95,7 +113,9 @@ static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 	int	i;
 
 	i = 1;
-	while (cmd->argv[i] && is_echo_flag(cmd->argv[i]))
+	while (cmd->argv[i]
+		&& is_echo_flag(cmd->argv[i])
+		&& !is_wrapped_in_quotes(cmd->argv[i]))
 	{
 		*newline_flag = 0;
 		i++;

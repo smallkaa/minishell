@@ -232,6 +232,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                 {
                     current->argv[arg_index] = strdup(tokens->tokens[i].value);
                     arg_index++;
+
                 }
             }
         }
@@ -343,24 +344,22 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
     return head;
 }
 
-
-
 t_cmd *run_parser(t_mshell *minishell, char *input)
 {
-    char *expanded_input;
+    //char *expanded_input;
     t_TokenArray *tokens;
     t_Token token;
     t_cmd *cmd;
     int i;
 
-    debug_printf("\nExpanding: %s\n\n", input);
+//    debug_printf("\nExpanding: %s\n\n", input);
 
-    expanded_input = expand_env_variables(input, minishell);
-    if (!expanded_input)
-        return (NULL);
+//    expanded_input = expand_env_variables(input, minishell);
+//    if (!expanded_input)
+//        return (NULL);
 
-    debug_printf("\nTokenizing: %s\n\n", expanded_input);
-    tokenizer_init(expanded_input);
+    debug_printf("\nTokenizing: %s\n\n", input);
+    tokenizer_init(input);
 
     tokens = token_array_init();
     do {
@@ -370,10 +369,12 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
     } while (token.type != TOKEN_EOF);
 	// Ilia: close for tests
     //group_word_tokens(tokens);//TODO: error handling
+
     strip_words(tokens);
+	expand_tokens(tokens, minishell);
 
     cmd = create_command_from_tokens(minishell, tokens);
-    free(expanded_input);
+    //free(expanded_input);
 
     tokenizer_cleanup();
     debug_printf("Found %d token(s):\n", tokens->count);

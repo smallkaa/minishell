@@ -49,7 +49,8 @@ static void skip_whitespace() {
 }
 
 // Add a character to the token buffer, expanding if necessary
-static void append_char_to_buffer(char c, size_t *buffer_index) {
+static void append_char_to_buffer(char c, size_t *buffer_index) 
+{
     // Check buffer capacity
     if (*buffer_index >= token_buffer_size - 1) {
         token_buffer_size *= 2;
@@ -64,120 +65,73 @@ static void append_char_to_buffer(char c, size_t *buffer_index) {
 }
 
 // Public API function - Get the next token from the input
+t_Token	get_next_token(void)
+{
+	t_Token	token;
+	size_t	buf_i;
+	char	c;
+	char	quote_char;
 
-t_Token get_next_token() {
-    t_Token token = {TOKEN_EOF, NULL};
-    
-    skip_whitespace();
-    
-    // Check for end of input
-    if (*current_input == '\0') {
-        token.type = TOKEN_EOF;
-        return token;
-    }
-    
-    // Handle special characters (but not \ or ;)
-    if (ft_is_special_char(*current_input)) {
-		switch (*current_input){
-			case '|':
-				token.type = TOKEN_PIPE;
-				current_input++;
-				break;
-			case '<':
-				token.type = TOKEN_REDIRECT_IN;
-				current_input++;
-				if (*current_input == '<') {
-					token.type = TOKEN_HEREDOC;
-					current_input++;
-				}
-				break; 
-			case '>':
-				token.type = TOKEN_REDIRECT_OUT;
-				current_input++;
-				if (*current_input == '>') {
-					token.type = TOKEN_APPEND_OUT;
-					current_input++;
-				}
-				break;
-			case '&':
-				token.type = TOKEN_BACKGROUND;
-				current_input++;
-				break;
-        }
-        return token;
-    }
-    
-    // Handle words (including quoted strings)
-    size_t buffer_index = 0;
-    
-    while (*current_input) {
-        // If not in quotes, whitespace or special chars end the token
-        if (ft_isspace((unsigned char)*current_input) || ft_is_special_char(*current_input)) {
-            break;
-        }
-        
-        // Handle single quotes - ignore all special characters
-        if (*current_input == '\'') {
-            // Add the opening quote to the token
-            append_char_to_buffer(*current_input, &buffer_index);
-            current_input++;
-            
-            // Process everything inside quotes literally
-            while (*current_input && *current_input != '\'') {
-                append_char_to_buffer(*current_input, &buffer_index);
-                current_input++;
-            }
-            
-            // Add closing quote if present
-            if (*current_input == '\'') {
-                append_char_to_buffer(*current_input, &buffer_index);
-                current_input++;
-            }
-            // Note: If no closing quote, just continue processing
-            continue;
-        }
-        
-        // Handle double quotes - ignore all special characters except $
-        if (*current_input == '"') {
-            // Add the opening quote to the token
-            append_char_to_buffer(*current_input, &buffer_index);
-            current_input++;
-            
-            while (*current_input && *current_input != '"') {
-                // If $ found inside double quotes, preserve its special meaning
-                append_char_to_buffer(*current_input, &buffer_index);
-                current_input++;
-            }
-            
-            // Add closing quote if present
-            if (*current_input == '"') {
-                append_char_to_buffer(*current_input, &buffer_index);
-                current_input++;
-            }
-            // Note: If no closing quote, just continue processing
-            continue;
-        }
-        
-        // Regular character
-        append_char_to_buffer(*current_input, &buffer_index);
-        current_input++;
-    }
-    
-    // Null-terminate the buffer
-    token_buffer[buffer_index] = '\0';
-    
-    // Only create a WORD token if we have content
-    if (buffer_index > 0) {
-        token.type = TOKEN_WORD;
-        token.value = strdup(token_buffer);
-        if (!token.value) {
-            print_error("Failed to allocate token value\n");
-            exit(1);
-        }
-    }
-    
-    return token;
+	token.value = NULL;
+	token.type = TOKEN_WORD;
+	token.in_single_quotes = 0;
+	token.in_double_quotes = 0;
+
+	if (!token_buffer || token_buffer_size == 0)
+	{
+		write(2, "token_buffer not initialized\n", 30);
+		exit(1);
+	}
+
+	buf_i = 0;
+	token_buffer[0] = '\0';
+	quote_char = 0;
+	skip_whitespace();
+
+	while (*current_input && (quote_char || (!ft_isspace(*current_input) && !ft_is_special_char(*current_input))))
+	{
+		c = *current_input;
+		if ((c == '"' || c == '\'') && quote_char == 0)
+		{
+			quote_char = c;
+			if (c == '"')
+				token.in_double_quotes = 1;
+			else if (c == '\'')
+				token.in_single_quotes = 1;
+			current_input++;
+		}
+		else if (c == quote_char)
+		{
+			quote_char = 0;
+			current_input++;
+		}
+		else
+		{
+			append_char_to_buffer(*current_input++, &buf_i);
+		}
+	}
+
+	if (buf_i > 0)
+	{
+		token_buffer[buf_i] = '\0';
+		token.value = ft_strdup(token_buffer);
+		return (token);
+	}
+
+	if (*current_input && !ft_isspace(*current_input))
+	{
+		token_buffer[0] = *current_input++;
+		token_buffer[1] = '\0';
+		token.value = ft_strdup(token_buffer);
+		token.type = TOKEN_WORD;
+		return (token);
+	}
+
+	token.type = TOKEN_EOF;
+	return (token);
 }
+
+
 
 /**
  * @brief Checks if a string is enclosed in matching quotes.
@@ -200,6 +154,35 @@ static bool	is_enclosed_in_quotes(char *str)
 	
 	return ((str[0] == '\'' && str[len - 1] == '\'') ||
 			(str[0] == '"' && str[len - 1] == '"'));
+}
+
+bool	is_in_single_quotes(char *str)
+{
+	size_t	len;
+
+	if (!str || !*str)
+		return (false);
+
+	len = ft_strlen(str);
+	if (len < 2)
+		return (false);
+
+	return (str[0] == '\'' && str[len - 1] == '\'');
+}
+
+
+bool	is_in_double_quotes(char *str)
+{
+	size_t	len;
+
+	if (!str || !*str)
+		return (false);
+
+	len = ft_strlen(str);
+	if (len < 2)
+		return (false);
+
+	return (str[0] == '"' && str[len - 1] == '"');
 }
 
 /**
@@ -231,60 +214,32 @@ static char	*remove_enclosing_quotes(char *str)
  * @param tokens Array of tokens to process.
  * @return 0 on success, -1 on error.
  */
-int strip_words(t_TokenArray *tokens)
+int	strip_words(t_TokenArray *tokens)
 {
-    int i;
-    size_t j;
-    size_t k;
-    char *new_value;
-    char *str;
-    size_t len;
+	int		i;
+	char	*str;
+	size_t	len;
 
-    if (!tokens || !tokens->tokens)
-        return (-1);
-    
-    i = 0;
-    while (i < tokens->count)
-    {
-        if (tokens->tokens[i].type == TOKEN_WORD && tokens->tokens[i].value)
-        {
-            str = tokens->tokens[i].value;
-            len = ft_strlen(str);
-            
-            // First check if it's fully enclosed in quotes for efficiency
-            if (is_enclosed_in_quotes(str))
-            {
-                tokens->tokens[i].value = remove_enclosing_quotes(str);
-                if (!tokens->tokens[i].value)
-                    return (-1);
-            }
-            // Handle embedded quotes
-            else if (ft_strchr(str, '\'') || ft_strchr(str, '"'))
-            {
-                new_value = malloc(len + 1);
-                if (!new_value)
-                    return (-1);
-                
-                j = 0; // input index
-                k = 0; // output index
-                
-                while (j < len)
-                {
-                    // Skip quotes
-                    if (str[j] == '\'' || str[j] == '"')
-                        j++;
-                    else
-                        new_value[k++] = str[j++];
-                }
-                new_value[k] = '\0';
-                
-                free(tokens->tokens[i].value);
-                tokens->tokens[i].value = new_value;
-            }
-        }
-        i++;
-    }
-    return (0);
+	if (!tokens || !tokens->tokens)
+		return (-1);
+	i = 0;
+	while (i < tokens->count)
+	{
+		if (tokens->tokens[i].type == TOKEN_WORD
+			&& tokens->tokens[i].value)
+		{
+			str = tokens->tokens[i].value;
+			len = ft_strlen(str);
+			if (len >= 2 && is_enclosed_in_quotes(str))
+			{
+				tokens->tokens[i].value = remove_enclosing_quotes(str);
+				if (!tokens->tokens[i].value)
+					return (-1);
+			}
+		}
+		i++;
+	}
+	return (0);
 }
 
 

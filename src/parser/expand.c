@@ -198,7 +198,10 @@ char	*expand_env_variables(const char *input,  t_mshell *minishell)
 	char	*append;
 
 	if (!input)
+	{
+		debug_printf("expand_env_variables: input is NULL\n");
 		return (NULL);
+	}
 	result = ft_strdup("");
 	if (!result)
 		return (NULL);
@@ -218,6 +221,8 @@ char	*expand_env_variables(const char *input,  t_mshell *minishell)
 			single_char[0] = input[i];
 			single_char[1] = '\0';
 			append = ft_strdup(single_char);
+			i++;
+			continue;
 		}
 		//append = ft_strdup(""); // Ignore quotes in result
 		else if (input[i] == '\\' && input[i + 1])
