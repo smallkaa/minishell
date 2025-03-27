@@ -370,8 +370,8 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
 	// Ilia: close for tests
     //group_word_tokens(tokens);//TODO: error handling
 
-    strip_words(tokens);
-	expand_tokens(tokens, minishell);
+ 	expand_tokens(tokens, minishell);
+	strip_words(tokens);
 
     cmd = create_command_from_tokens(minishell, tokens);
     //free(expanded_input);

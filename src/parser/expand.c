@@ -36,18 +36,19 @@ static char *get_env_value(const char *var, t_mshell *minishell)
     return (ft_strdup(""));
 }
 
-static char *append_to_result(char *result, char *append)
+static char *append_to_result(char *result, const char *append)
 {
-    char *temp;
-
-    if (!append)
-        return (result);
-    temp = ft_strjoin(result, append);
-    free(result);
-    if (!temp)
+    char *new_result;
+    
+    if (!result || !append)
         return (NULL);
-    return (temp);
+        
+    new_result = ft_strjoin(result, append);
+    free(result);
+    
+    return (new_result);
 }
+
 
 
 static char *process_variable(const char *input, size_t *i, t_mshell *minishell, char *result)
@@ -99,20 +100,30 @@ static char *process_variable(const char *input, size_t *i, t_mshell *minishell,
 }
 
 
+
+
 static int handle_quotes(char c, int *single_q, int *double_q)
 {
-    if (c == '\'' && !(*double_q))
+    if (c == '\'')
     {
-        *single_q = !(*single_q);
-        return (1);
+        if (!*double_q) // Игнорируем одинарные кавычки внутри двойных
+        {
+            *single_q = !*single_q;
+            return (1);
+        }
     }
-    if (c == '"' && !(*single_q))
+    else if (c == '"')
     {
-        *double_q = !(*double_q);
-        return (1);
+        if (!*single_q) // Игнорируем двойные кавычки внутри одинарных
+        {
+            *double_q = !*double_q;
+            return (1);
+        }
     }
+    
     return (0);
 }
+
 
 
 static char	*handle_escape(const char *input, size_t *i, int single_q)
@@ -155,52 +166,44 @@ static char	*process_char(const char *input, size_t *i, int single_q)
 static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q, int double_q)
 {
     char *home;
-    char *expanded;
-    size_t len = 1; // Start with just the ~
+    
+    // Не расширяем тильду внутри кавычек
     if (single_q || double_q)
         return (ft_strdup("~"));
-    // Only expand if:
-    // 1. ~ is at start of input, OR
-    // 2. ~ is after whitespace, OR
-    // 3. ~ is after = (for assignments)
-    if (!(*i == 0 || ft_isspace(input[*i - 1]) || input[*i - 1] == '='))
+    
+    // Проверяем, находится ли тильда в начале слова или после пробела/таба
+    if (*i > 0 && input[*i - 1] != ' ' && input[*i - 1] != '\t')
+    {
+        // Тильда не в начале слова - не расширяем
         return (ft_strdup("~"));
-
-    // Check what follows the ~
-    if (input[*i + 1] == '\0' || ft_isspace(input[*i + 1]))
-    {
-        // Case: just ~
-        home = ms_getenv(mshell, "HOME");
-        return (home ? ft_strdup(home) : ft_strdup("~"));
     }
-    else if (input[*i + 1] == '/')
+    
+    // Проверяем, находится ли после тильды пробел, слеш или конец строки
+    // Только в этих случаях расширяем тильду
+    if (input[*i + 1] != '\0' && input[*i + 1] != ' ' && 
+        input[*i + 1] != '\t' && input[*i + 1] != '/')
     {
-        // Case: ~/path
-        home = ms_getenv(mshell, "HOME");
-        if (!home)
-            return (ft_strdup("~"));
-        
-        // Calculate the length of the path part (after ~/)
-        while (input[*i + 1 + len] && !ft_isspace(input[*i + 1 + len]))
-            len++;
-        
-        // Join HOME with the path part (excluding the ~)
-        expanded = ft_strjoin(home, input + *i + 1);
-        *i += len; // Advance past the path part
-        return (expanded);
+        // После тильды идут другие символы - не расширяем
+        return (ft_strdup("~"));
     }
-
-    // All other cases (like ~username) remain literal
-    return (ft_strdup("~"));
+    
+    // Получаем значение домашнего каталога
+    home = ms_getenv(mshell, "HOME");
+    if (!home || !*home)
+        return (ft_strdup("~"));
+    
+    return (ft_strdup(home));
 }
+
+
 
 
 char *expand_env_variables(const char *input, t_mshell *minishell)
 {
     char *result;
     size_t i;
-    int single_q;
-    int double_q;
+    int single_q = 0;
+    int double_q = 0;
     char *append;
 
     if (!input)
@@ -208,49 +211,79 @@ char *expand_env_variables(const char *input, t_mshell *minishell)
         debug_printf("expand_env_variables: input is NULL\n");
         return (NULL);
     }
+    
     result = ft_strdup("");
     if (!result)
         return (NULL);
+        
     i = 0;
-    single_q = 0;
-    double_q = 0;
-
     while (input[i])
     {
-        if (input[i] == '~' && !single_q && !double_q)
+        // 1. Тильда - обрабатываем особо из-за кейса с кавычками
+        if (input[i] == '~')
         {
-            append = expand_tilde(input, &i, minishell, single_q, double_q);
+            if (single_q || double_q)
+            {
+                // Тильда в кавычках - НЕ расширяем
+                result = append_to_result(result, "~");
+            }
+            else
+            {
+                // Тильда не в кавычках - расширяем
+                append = expand_tilde(input, &i, minishell, single_q, double_q);
+                if (!append)
+                    return (free(result), NULL);
+                
+                result = append_to_result(result, append);
+                free(append);
+            }
         }
+        // 2. Кавычки - отслеживаем для определения контекста
         else if (handle_quotes(input[i], &single_q, &double_q))
         {
-            // Сохраняем кавычки в результате
-            char single_char[2];
-            single_char[0] = input[i];
-            single_char[1] = '\0';
-            append = ft_strdup(single_char);
+            char quote[2] = {input[i], '\0'};
+            result = append_to_result(result, quote);
         }
-        else if (input[i] == '\\' && input[i + 1])
+        // 3. Экранирование
+        else if (input[i] == '\\' && !single_q)
         {
             append = handle_escape(input, &i, single_q);
+            if (!append)
+                return (free(result), NULL);
+            
+            result = append_to_result(result, append);
+            free(append);
         }
-        else if (input[i] == '$' && input[i + 1] && !single_q)
+        // 4. Переменные окружения
+        else if (input[i] == '$' && !single_q)
         {
             append = process_variable(input, &i, minishell, ft_strdup(""));
+            if (!append)
+                return (free(result), NULL);
+            
+            result = append_to_result(result, append);
+            free(append);
         }
+        // 5. Обычные символы
         else
         {
             append = process_char(input, &i, single_q);
+            if (!append)
+                return (free(result), NULL);
+            
+            result = append_to_result(result, append);
+            free(append);
         }
         
-        if (!append)
-            return (free(result), NULL);
-            
-        result = append_to_result(result, append);
-        free(append);
         i++;
     }
+    
     return (result);
 }
+
+
+
+
 
 
 

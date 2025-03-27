@@ -204,43 +204,40 @@ static char *strip_quotes(const char *str)
     size_t len = ft_strlen(str);
     size_t result_len = 0;
     int i;
-    int in_quotes = 0;
-    char quote_type = 0;
+    int in_single_quotes = 0;
+    int in_double_quotes = 0;
     int escaped = 0;
     
     result = malloc(len + 1);
     if (!result)
         return NULL;
     
-    result_len = 0;
     for (i = 0; str[i]; i++)
     {
-        // Обрабатываем экранирование
-        if (str[i] == '\\' && !escaped && (!in_quotes || quote_type == '"'))
+        // Обработка экранирования
+        if (str[i] == '\\' && !escaped && (!in_single_quotes))
         {
             escaped = 1;
             result[result_len++] = str[i]; // Сохраняем символ экранирования
             continue;
         }
         
-        // Обрабатываем кавычки
+        // Обработка кавычек
         if ((str[i] == '"' || str[i] == '\'') && !escaped)
         {
-            if (!in_quotes)
+            if (str[i] == '"' && !in_single_quotes)
             {
-                in_quotes = 1;
-                quote_type = str[i];
+                in_double_quotes = !in_double_quotes;
                 // Не добавляем кавычку в результат
             }
-            else if (str[i] == quote_type)
+            else if (str[i] == '\'' && !in_double_quotes)
             {
-                in_quotes = 0;
-                quote_type = 0;
+                in_single_quotes = !in_single_quotes;
                 // Не добавляем кавычку в результат
             }
             else
             {
-                // Другой тип кавычек внутри кавычек - добавляем как символ
+                // Кавычка внутри кавычек другого типа - добавляем как символ
                 result[result_len++] = str[i];
             }
         }
@@ -250,12 +247,13 @@ static char *strip_quotes(const char *str)
             result[result_len++] = str[i];
         }
         
-        escaped = 0; // Сбрасываем флаг экранирования после обработки символа
+        escaped = 0; // Сбрасываем флаг экранирования
     }
     
     result[result_len] = '\0';
     return result;
 }
+
 
 
 /**
@@ -275,6 +273,7 @@ int strip_words(t_TokenArray *tokens)
 
     if (!tokens || !tokens->tokens)
         return (-1);
+        
     i = 0;
     while (i < tokens->count)
     {
@@ -295,6 +294,7 @@ int strip_words(t_TokenArray *tokens)
     }
     return (0);
 }
+
 
 
 
