@@ -56,27 +56,30 @@ static char *process_variable(const char *input, size_t *i, t_mshell *minishell,
     char *var_value;
 
     (*i)++;
-    // Special case: $ at end of string or $ followed by non-variable character
-    if (!input[*i] || (!ft_isalnum(input[*i]) && input[*i] != '_' && input[*i] != '?')) {
+    
+    // Проверка на конец строки или неалфавитный символ после $
+    if (!input[*i] || (!ft_isalnum(input[*i]) && input[*i] != '_' && input[*i] != '?')) 
+    {
         result = append_to_result(result, "$");
-        (*i)--; // Move back since we'll increment in the main loop
+        (*i)--; // Откатываемся, т.к. инкремент произойдет в основном цикле
         return result;
     }
     
     size_t start = *i;
-    // Check for special case of $? first
-    if (input[*i] == '?') {
-        (*i)++;  // Move past the question mark
+    // Специальный случай для $?
+    if (input[*i] == '?') 
+    {
+        (*i)++;
         var_value = get_exit_code(minishell);
         if (!var_value)
             return (free(result), NULL);
         result = append_to_result(result, var_value);
         free(var_value);
-        (*i)--;  // Adjust index as we'll increment in the main loop
+        (*i)--; // Корректировка индекса для следующей итерации
         return result;
     }
     
-    // Process regular variables
+    // Обработка обычных переменных
     while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_')) 
         (*i)++;
         
@@ -95,20 +98,22 @@ static char *process_variable(const char *input, size_t *i, t_mshell *minishell,
     return (result);
 }
 
-static int	handle_quotes(char c, int *single_q, int *double_q)
+
+static int handle_quotes(char c, int *single_q, int *double_q)
 {
-	if (c == '\'' && !(*double_q))
-	{
-		*single_q = !(*single_q);
-		return (1);
-	}
-	if (c == '\"' && !(*single_q))
-	{
-		*double_q = !(*double_q);
-		return (1);
-	}
-	return (0);
+    if (c == '\'' && !(*double_q))
+    {
+        *single_q = !(*single_q);
+        return (1);
+    }
+    if (c == '"' && !(*single_q))
+    {
+        *double_q = !(*double_q);
+        return (1);
+    }
+    return (0);
 }
+
 
 static char	*handle_escape(const char *input, size_t *i, int single_q)
 {
@@ -147,12 +152,13 @@ static char	*process_char(const char *input, size_t *i, int single_q)
 	return (ft_strdup(single_char));
 }
 
-static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell)
+static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q, int double_q)
 {
     char *home;
     char *expanded;
     size_t len = 1; // Start with just the ~
-
+    if (single_q || double_q)
+        return (ft_strdup("~"));
     // Only expand if:
     // 1. ~ is at start of input, OR
     // 2. ~ is after whitespace, OR
@@ -189,54 +195,63 @@ static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell)
 }
 
 
-char	*expand_env_variables(const char *input,  t_mshell *minishell)
+char *expand_env_variables(const char *input, t_mshell *minishell)
 {
-	char	*result;
-	size_t	i;
-	int		single_q;
-	int		double_q;
-	char	*append;
+    char *result;
+    size_t i;
+    int single_q;
+    int double_q;
+    char *append;
 
-	if (!input)
-	{
-		debug_printf("expand_env_variables: input is NULL\n");
-		return (NULL);
-	}
-	result = ft_strdup("");
-	if (!result)
-		return (NULL);
-	i = 0;
-	single_q = 0;
-	double_q = 0;
-	while (input[i])
-	{
-        if (input[i] == '~' && !single_q)
+    if (!input)
+    {
+        debug_printf("expand_env_variables: input is NULL\n");
+        return (NULL);
+    }
+    result = ft_strdup("");
+    if (!result)
+        return (NULL);
+    i = 0;
+    single_q = 0;
+    double_q = 0;
+
+    while (input[i])
+    {
+        if (input[i] == '~' && !single_q && !double_q)
         {
-            append = expand_tilde(input, &i, minishell);
+            append = expand_tilde(input, &i, minishell, single_q, double_q);
         }
-        else 
-		if (handle_quotes(input[i], &single_q, &double_q))
-		{
-			char single_char[2];
-			single_char[0] = input[i];
-			single_char[1] = '\0';
-			append = ft_strdup(single_char);
-			i++;
-			continue;
-		}
-		//append = ft_strdup(""); // Ignore quotes in result
-		else if (input[i] == '\\' && input[i + 1])
-			append = handle_escape(input, &i, single_q);
-		else if (input[i] == '$' && input[i + 1] && !single_q)
-			append = process_variable(input, &i,  minishell, ft_strdup(""));
-		else
-			append = process_char(input, &i, single_q);
-		if (!append)
-			return (free(result), NULL);
-		result = append_to_result(result, append);
-		free(append);
-		i++;
-	}
-	return (result);
+        else if (handle_quotes(input[i], &single_q, &double_q))
+        {
+            // Сохраняем кавычки в результате
+            char single_char[2];
+            single_char[0] = input[i];
+            single_char[1] = '\0';
+            append = ft_strdup(single_char);
+        }
+        else if (input[i] == '\\' && input[i + 1])
+        {
+            append = handle_escape(input, &i, single_q);
+        }
+        else if (input[i] == '$' && input[i + 1] && !single_q)
+        {
+            append = process_variable(input, &i, minishell, ft_strdup(""));
+        }
+        else
+        {
+            append = process_char(input, &i, single_q);
+        }
+        
+        if (!append)
+            return (free(result), NULL);
+            
+        result = append_to_result(result, append);
+        free(append);
+        i++;
+    }
+    return (result);
 }
+
+
+
 

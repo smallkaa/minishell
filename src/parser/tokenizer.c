@@ -65,96 +65,107 @@ static void append_char_to_buffer(char c, size_t *buffer_index)
 }
 
 // Public API function - Get the next token from the input
-t_Token	get_next_token(void)
+
+
+t_Token get_next_token(void)
 {
-	t_Token	token;
-	size_t	buf_i;
-	char	c;
-	char	quote_char;
+    t_Token token;
+    size_t buf_i;
+    char c;
+    char quote_char;
+    int escaped = 0;
 
-	token.value = NULL;
-	token.type = TOKEN_WORD;
-	token.in_single_quotes = 0;
-	token.in_double_quotes = 0;
+    token.value = NULL;
+    token.type = TOKEN_WORD;
+    token.in_single_quotes = 0;
+    token.in_double_quotes = 0;
 
-	if (!token_buffer || token_buffer_size == 0)
-	{
-		write(2, "token_buffer not initialized\n", 30);
-		exit(1);
-	}
+    if (!token_buffer || token_buffer_size == 0)
+    {
+        write(2, "token_buffer not initialized\n", 30);
+        exit(1);
+    }
 
-	buf_i = 0;
-	token_buffer[0] = '\0';
-	quote_char = 0;
-	skip_whitespace();
+    buf_i = 0;
+    token_buffer[0] = '\0';
+    quote_char = 0;
+    skip_whitespace();
 
-	while (*current_input && (quote_char || (!ft_isspace(*current_input) && !ft_is_special_char(*current_input))))
-	{
-		c = *current_input;
-		if ((c == '"' || c == '\'') && quote_char == 0)
-		{
-			quote_char = c;
-			if (c == '"')
-				token.in_double_quotes = 1;
-			else if (c == '\'')
-				token.in_single_quotes = 1;
-			current_input++;
-		}
-		else if (c == quote_char)
-		{
-			quote_char = 0;
-			current_input++;
-		}
-		else
-		{
-			append_char_to_buffer(*current_input++, &buf_i);
-		}
-	}
+    while (*current_input)
+    {
+        c = *current_input;
+        
+        // Если находимся внутри кавычек или символ не пробел и не спец. символ
+        if (quote_char || (!ft_isspace(c) && !ft_is_special_char(c)))
+        {
+            if (c == '\\' && !escaped && (!quote_char || quote_char == '"'))
+            {
+                // Экранирование следующего символа
+                escaped = 1;
+                current_input++;
+                continue;
+            }
+            
+            if ((c == '"' || c == '\'') && !escaped)
+            {
+                if (quote_char == 0)
+                {
+                    // Начало кавычек
+                    quote_char = c;
+                    if (c == '"')
+                        token.in_double_quotes = 1;
+                    else if (c == '\'')
+                        token.in_single_quotes = 1;
+                }
+                else if (c == quote_char)
+                {
+                    // Конец кавычек того же типа
+                    quote_char = 0;
+                }
+                // В любом случае добавляем кавычку в буфер
+                append_char_to_buffer(c, &buf_i);
+            }
+            else
+            {
+                // Обычный символ или экранированный символ
+                append_char_to_buffer(c, &buf_i);
+            }
+            
+            current_input++;
+            escaped = 0; // Сбрасываем флаг экранирования после обработки символа
+        }
+        else
+        {
+            // Выходим из цикла, если достигли пробела или спец. символа и не внутри кавычек
+            break;
+        }
+    }
 
-	if (buf_i > 0)
-	{
-		token_buffer[buf_i] = '\0';
-		token.value = ft_strdup(token_buffer);
-		return (token);
-	}
+    if (buf_i > 0)
+    {
+        token_buffer[buf_i] = '\0';
+        token.value = ft_strdup(token_buffer);
+        return (token);
+    }
 
-	if (*current_input && !ft_isspace(*current_input))
-	{
-		token_buffer[0] = *current_input++;
-		token_buffer[1] = '\0';
-		token.value = ft_strdup(token_buffer);
-		token.type = TOKEN_WORD;
-		return (token);
-	}
+    if (*current_input && !ft_isspace(*current_input))
+    {
+        token_buffer[0] = *current_input++;
+        token_buffer[1] = '\0';
+        token.value = ft_strdup(token_buffer);
+        token.type = TOKEN_WORD;
+        return (token);
+    }
 
-	token.type = TOKEN_EOF;
-	return (token);
+    token.type = TOKEN_EOF;
+    return (token);
 }
 
 
 
-/**
- * @brief Checks if a string is enclosed in matching quotes.
- *
- * This function verifies if a string starts and ends with the same type of quote.
- *
- * @param str The string to check.
- * @return true if the string is enclosed in matching quotes, false otherwise.
- */
-static bool	is_enclosed_in_quotes(char *str)
-{
-	size_t	len;
 
-	if (!str || !*str)
-		return (false);
-	
-	len = ft_strlen(str);
-	if (len < 2)
-		return (false);
-	
-	return ((str[0] == '\'' && str[len - 1] == '\'') ||
-			(str[0] == '"' && str[len - 1] == '"'));
-}
+
+
 
 bool	is_in_single_quotes(char *str)
 {
@@ -185,25 +196,67 @@ bool	is_in_double_quotes(char *str)
 	return (str[0] == '"' && str[len - 1] == '"');
 }
 
-/**
- * @brief Removes enclosing quotes from a string.
- *
- * Creates a new string without the first and last characters if they are quotes.
- * The original string is freed.
- *
- * @param str Pointer to the string to be modified.
- * @return The new string without quotes, or NULL if allocation fails.
- */
-static char	*remove_enclosing_quotes(char *str)
-{
-	char	*new_str;
-	size_t	len;
 
-	len = ft_strlen(str);
-	new_str = ft_substr(str, 1, len - 2);
-	free(str);
-	return (new_str);
+
+static char *strip_quotes(const char *str)
+{
+    char *result;
+    size_t len = ft_strlen(str);
+    size_t result_len = 0;
+    int i;
+    int in_quotes = 0;
+    char quote_type = 0;
+    int escaped = 0;
+    
+    result = malloc(len + 1);
+    if (!result)
+        return NULL;
+    
+    result_len = 0;
+    for (i = 0; str[i]; i++)
+    {
+        // Обрабатываем экранирование
+        if (str[i] == '\\' && !escaped && (!in_quotes || quote_type == '"'))
+        {
+            escaped = 1;
+            result[result_len++] = str[i]; // Сохраняем символ экранирования
+            continue;
+        }
+        
+        // Обрабатываем кавычки
+        if ((str[i] == '"' || str[i] == '\'') && !escaped)
+        {
+            if (!in_quotes)
+            {
+                in_quotes = 1;
+                quote_type = str[i];
+                // Не добавляем кавычку в результат
+            }
+            else if (str[i] == quote_type)
+            {
+                in_quotes = 0;
+                quote_type = 0;
+                // Не добавляем кавычку в результат
+            }
+            else
+            {
+                // Другой тип кавычек внутри кавычек - добавляем как символ
+                result[result_len++] = str[i];
+            }
+        }
+        else
+        {
+            // Обычный символ или экранированный символ
+            result[result_len++] = str[i];
+        }
+        
+        escaped = 0; // Сбрасываем флаг экранирования после обработки символа
+    }
+    
+    result[result_len] = '\0';
+    return result;
 }
+
 
 /**
  * @brief Processes TOKEN_WORD tokens to strip enclosing quotes.
@@ -214,32 +267,35 @@ static char	*remove_enclosing_quotes(char *str)
  * @param tokens Array of tokens to process.
  * @return 0 on success, -1 on error.
  */
-int	strip_words(t_TokenArray *tokens)
+int strip_words(t_TokenArray *tokens)
 {
-	int		i;
-	char	*str;
-	size_t	len;
+    int i;
+    char *str;
+    char *result;
 
-	if (!tokens || !tokens->tokens)
-		return (-1);
-	i = 0;
-	while (i < tokens->count)
-	{
-		if (tokens->tokens[i].type == TOKEN_WORD
-			&& tokens->tokens[i].value)
-		{
-			str = tokens->tokens[i].value;
-			len = ft_strlen(str);
-			if (len >= 2 && is_enclosed_in_quotes(str))
-			{
-				tokens->tokens[i].value = remove_enclosing_quotes(str);
-				if (!tokens->tokens[i].value)
-					return (-1);
-			}
-		}
-		i++;
-	}
-	return (0);
+    if (!tokens || !tokens->tokens)
+        return (-1);
+    i = 0;
+    while (i < tokens->count)
+    {
+        if (tokens->tokens[i].type == TOKEN_WORD && tokens->tokens[i].value)
+        {
+            str = tokens->tokens[i].value;
+            
+            // Создаем новую строку без кавычек
+            result = strip_quotes(str);
+            
+            if (!result)
+                return (-1);
+                
+            free(str); // Освобождаем оригинальную строку
+            tokens->tokens[i].value = result; // Присваиваем новую строку без кавычек
+        }
+        i++;
+    }
+    return (0);
 }
+
+
 
 
