@@ -51,78 +51,8 @@ static char *append_to_result(char *result, const char *append)
 
 
 
-static char *process_variable(const char *input, size_t *i, t_mshell *minishell, char *result)
-{
-    char *substr;
-    char *var_value;
-
-    (*i)++;
-    
-    // Проверка на конец строки или неалфавитный символ после $
-    if (!input[*i] || (!ft_isalnum(input[*i]) && input[*i] != '_' && input[*i] != '?')) 
-    {
-        result = append_to_result(result, "$");
-        (*i)--; // Откатываемся, т.к. инкремент произойдет в основном цикле
-        return result;
-    }
-    
-    size_t start = *i;
-    // Специальный случай для $?
-    if (input[*i] == '?') 
-    {
-        (*i)++;
-        var_value = get_exit_code(minishell);
-        if (!var_value)
-            return (free(result), NULL);
-        result = append_to_result(result, var_value);
-        free(var_value);
-        (*i)--; // Корректировка индекса для следующей итерации
-        return result;
-    }
-    
-    // Обработка обычных переменных
-    while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_')) 
-        (*i)++;
-        
-    substr = ft_substr(input, start, *i - start);
-    if (!substr)
-        return (free(result), NULL);
-        
-    var_value = get_env_value(substr, minishell);
-    free(substr);
-    if (!var_value)
-        return (free(result), NULL);
-        
-    result = append_to_result(result, var_value);
-    free(var_value);
-    (*i)--;
-    return (result);
-}
 
 
-
-
-static int handle_quotes(char c, int *single_q, int *double_q)
-{
-    if (c == '\'')
-    {
-        if (!*double_q) // Игнорируем одинарные кавычки внутри двойных
-        {
-            *single_q = !*single_q;
-            return (1);
-        }
-    }
-    else if (c == '"')
-    {
-        if (!*single_q) // Игнорируем двойные кавычки внутри одинарных
-        {
-            *double_q = !*double_q;
-            return (1);
-        }
-    }
-    
-    return (0);
-}
 
 
 
@@ -152,16 +82,7 @@ static char	*handle_escape(const char *input, size_t *i, int single_q)
 	return (ft_strdup(single_char));
 }
 
-static char	*process_char(const char *input, size_t *i, int single_q)
-{
-	char	single_char[2];
 
-	single_char[0] = input[*i];
-	single_char[1] = '\0';
-	if (single_q && input[*i] == '$') // Treat `$` as a literal in single quotes
-		return (ft_strdup(single_char));
-	return (ft_strdup(single_char));
-}
 
 static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q, int double_q)
 {
@@ -200,86 +121,113 @@ static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int si
 
 char *expand_env_variables(const char *input, t_mshell *minishell)
 {
-    char *result;
-    size_t i;
-    int single_q = 0;
-    int double_q = 0;
-    char *append;
+    char *result = ft_strdup("");
+    size_t i = 0;
+    int single_q = 0; // Флаг для отслеживания одинарных кавычек
+    int double_q = 0; // Флаг для отслеживания двойных кавычек
 
-    if (!input)
-    {
-        debug_printf("expand_env_variables: input is NULL\n");
-        return (NULL);
-    }
-    
-    result = ft_strdup("");
-    if (!result)
-        return (NULL);
-        
-    i = 0;
+    if (!input || !result)
+        return NULL;
+
     while (input[i])
     {
-        // 1. Тильда - обрабатываем особо из-за кейса с кавычками
-        if (input[i] == '~')
+        if (input[i] == '\'' && !double_q) // Одинарные кавычки вне двойных
         {
-            if (single_q || double_q)
-            {
-                // Тильда в кавычках - НЕ расширяем
-                result = append_to_result(result, "~");
-            }
-            else
-            {
-                // Тильда не в кавычках - расширяем
-                append = expand_tilde(input, &i, minishell, single_q, double_q);
-                if (!append)
-                    return (free(result), NULL);
-                
-                result = append_to_result(result, append);
-                free(append);
-            }
-        }
-        // 2. Кавычки - отслеживаем для определения контекста
-        else if (handle_quotes(input[i], &single_q, &double_q))
-        {
+            single_q = !single_q;
             char quote[2] = {input[i], '\0'};
             result = append_to_result(result, quote);
         }
-        // 3. Экранирование
-        else if (input[i] == '\\' && !single_q)
+        else if (input[i] == '"' && !single_q) // Двойные кавычки вне одинарных
         {
-            append = handle_escape(input, &i, single_q);
-            if (!append)
-                return (free(result), NULL);
-            
-            result = append_to_result(result, append);
-            free(append);
+            double_q = !double_q;
+            char quote[2] = {input[i], '\0'};
+            result = append_to_result(result, quote);
         }
-        // 4. Переменные окружения
-        else if (input[i] == '$' && !single_q)
+        else if (input[i] == '\\' && !single_q) // Экранирование вне одинарных кавычек
         {
-            append = process_variable(input, &i, minishell, ft_strdup(""));
-            if (!append)
+            char *escaped = handle_escape(input, &i, single_q);
+            if (!escaped)
                 return (free(result), NULL);
-            
-            result = append_to_result(result, append);
-            free(append);
+            result = append_to_result(result, escaped);
+            free(escaped);
         }
-        // 5. Обычные символы
-        else
+        else if (input[i] == '$' && !single_q && input[i + 1]) // Переменная вне одинарных кавычек
         {
-            append = process_char(input, &i, single_q);
-            if (!append)
-                return (free(result), NULL);
+            i++; // Пропускаем $
             
-            result = append_to_result(result, append);
-            free(append);
+            // Специальный случай для $?
+            if (input[i] == '?')
+            {
+                char *exit_value = get_exit_code(minishell);
+                if (!exit_value)
+                    return (free(result), NULL);
+                result = append_to_result(result, exit_value);
+                free(exit_value);
+                i++;
+                continue;
+            }
+            
+            // Позиционный параметр (начинается с цифры)
+            if (ft_isdigit(input[i]))
+            {
+                char param_name[2] = {input[i], '\0'};
+                char *param_value = get_env_value(param_name, minishell);
+                if (!param_value)
+                    return (free(result), NULL);
+                
+                result = append_to_result(result, param_value);
+                free(param_value);
+                i++; // Переходим к следующему символу
+                continue;
+            }
+            
+            // Обычная переменная (начинается с буквы или _)
+            if (ft_isalpha(input[i]) || input[i] == '_')
+            {
+                size_t start = i;
+                while (input[i] && (ft_isalnum(input[i]) || input[i] == '_'))
+                    i++;
+                
+                char *var_name = ft_substr(input, start, i - start);
+                if (!var_name)
+                    return (free(result), NULL);
+                
+                char *var_value = get_env_value(var_name, minishell);
+                free(var_name);
+                if (!var_value)
+                    return (free(result), NULL);
+                
+                result = append_to_result(result, var_value);
+                free(var_value);
+                continue; // Продолжаем с нового символа
+            }
+            
+            // Если после $ не идет допустимое имя переменной, добавляем $ как обычный символ
+            result = append_to_result(result, "$");
+            // Не увеличиваем i, т.к. текущий символ нужно обработать в следующей итерации
+            continue;
+        }
+        else if (input[i] == '~' && !single_q && !double_q) // Тильда вне кавычек
+        {
+            char *home = expand_tilde(input, &i, minishell, single_q, double_q);
+            if (!home)
+                return (free(result), NULL);
+            result = append_to_result(result, home);
+            free(home);
+        }
+        else // Обычный символ
+        {
+            char c[2] = {input[i], '\0'};
+            result = append_to_result(result, c);
         }
         
         i++;
     }
     
-    return (result);
+    return result;
 }
+
+
 
 
 
