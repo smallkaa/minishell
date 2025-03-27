@@ -47,7 +47,7 @@ uint8_t run_executor(t_cmd *cmd)
 		print_error("Error (run_executor): missing components\n");
 		return (EXIT_FAILURE);
 	}
-	// test -------------------------------------------------//
+	// // test -------------------------------------------------//
 	// int i = 0;
 	// while(cmd->argv[i])
 	// {

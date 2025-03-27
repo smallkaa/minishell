@@ -65,3 +65,5 @@ sources_dump.txt
 minishell
 heredoc_tmp.txt
 m_tester/
+sandbox_tester/
+mini_tester_1/

@@ -37,22 +37,25 @@ static void	execute_command(t_cmd *cmd)
 }
 static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
 {
-	if (in_fd != STDIN_FILENO)
+	if (apply_redirections(cmd) != EXIT_SUCCESS)
+		return (-1);
+
+	if (!cmd->in_redir && in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
 			return (-1);
 		close(in_fd);
 	}
-	if (cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
+	if (!cmd->out_redir && cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
 		return (-1);
+
 	if (fds[0] != -1)
 		close(fds[0]);
 	if (fds[1] != -1)
 		close(fds[1]);
-	if (apply_redirections(cmd) != EXIT_SUCCESS)
-		return (-1);
 	return (EXIT_SUCCESS);
 }
+
 
 static int	handle_child(t_cmd *cmd, int in_fd, int *fds)
 {

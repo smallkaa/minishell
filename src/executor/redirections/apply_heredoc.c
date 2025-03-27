@@ -5,8 +5,6 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 
 	int		pipefd[2];
 	char	*line;
-	// char	*temp;
-	// t_cmd *temp_cmd;
 
 	if (pre_exec_validation(cmd, R_HEREDOC) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
@@ -23,6 +21,43 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 			free(line);
 			break ;
 		}
+		if (write(pipefd[1], line, ft_strlen(line)) == -1)
+		{
+			perror("-minishell: write");
+			free(line);
+			if (close(pipefd[1]) == -1)
+				perror_return("-minishell: close", EXIT_FAILURE);
+			if (close(pipefd[0]) == -1)
+				perror_return("-minishell: close", EXIT_FAILURE);
+		}
+		if (write(pipefd[1], "\n", 1) == -1)
+		{
+			perror("-minishell: write");
+			free(line);
+			if (close(pipefd[1]) == -1)
+				perror_return("-minishell: close", EXIT_FAILURE);
+			if (close(pipefd[0]) == -1)
+				perror_return("-minishell: close", EXIT_FAILURE);
+		}
+		free(line);
+	}
+	if (close(pipefd[1]) == -1)
+		perror_return("-minishell: close", EXIT_FAILURE);
+	if (dup2(pipefd[0], STDIN_FILENO) == -1)
+	{
+		perror("dup2");
+		if (close(pipefd[0]) == -1)
+			perror_return("-minishell: close", EXIT_FAILURE);
+		perror_return("-minishell: dup2", EXIT_FAILURE);
+	}
+	if (close(pipefd[0]) == -1)
+		perror_return("-minishell: close", EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+
+
+
 		/*
 		if (cmd->in_redir->expand == true)
 		{
@@ -46,38 +81,3 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 		}
 		*/
 		// Write the line (and a newline) to the write end of the pipe.
-
-		if (write(pipefd[1], line, ft_strlen(line)) == -1)
-		{
-			perror("-minishell: write");
-			free(line);
-			if (close(pipefd[1]) == -1)
-				perror_return("-minishell: close", EXIT_FAILURE);
-			if (close(pipefd[0]) == -1)
-				perror_return("-minishell: close", EXIT_FAILURE);
-		}
-		if (write(pipefd[1], "\n", 1) == -1)
-		{
-			perror("-minishell: write");
-			free(line);
-			if (close(pipefd[1]) == -1)
-				perror_return("-minishell: close", EXIT_FAILURE);
-			if (close(pipefd[0]) == -1)
-				perror_return("-minishell: close", EXIT_FAILURE);
-
-		}
-		free(line);
-	}
-	if (close(pipefd[1]) == -1)
-		perror_return("-minishell: close", EXIT_FAILURE);
-	if (dup2(pipefd[0], STDIN_FILENO) == -1)
-	{
-		perror("dup2");
-		if (close(pipefd[0]) == -1)
-			perror_return("-minishell: close", EXIT_FAILURE);
-		perror_return("-minishell: dup2", EXIT_FAILURE);
-	}
-	if (close(pipefd[0]) == -1)
-		perror_return("-minishell: close", EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}
