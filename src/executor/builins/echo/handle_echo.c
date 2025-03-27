@@ -4,6 +4,22 @@
  */
 #include "minishell.h"
 
+static int	is_echo_flag(char *arg)
+{
+	int	i;
+
+	if (!arg || arg[0] != '-' || arg[1] != 'n')
+		return (0);
+	i = 1;
+	while (arg[++i])
+	{
+		if (arg[i] != 'n')
+			return (0);
+	}
+	return (1);
+}
+
+
 /**
  * @brief Writes a string to the standard output.
  *
@@ -77,22 +93,15 @@ static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 {
 	int	i;
-	int	j;
 
 	i = 1;
-	while (cmd->argv[i] && cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
+	while (cmd->argv[i] && is_echo_flag(cmd->argv[i]))
 	{
-		j = 1;
-		while (cmd->argv[i][j] == 'n')
-			j++;
-		if (cmd->argv[i][j] != '\0')
-			break ;
 		*newline_flag = 0;
 		i++;
 	}
 	return (i);
 }
-
 /**
  * @brief Handles the `echo` built-in command in Minishell.
  *
