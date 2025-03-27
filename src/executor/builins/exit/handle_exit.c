@@ -22,7 +22,7 @@ static uint8_t	exit_numeric_error(char *arg)
 {
 	print_error("minishell: exit: ");
 	print_error(arg);
-	print_error(": numeric argument required");
+	print_error(": numeric argument required\n");
 	return (2);
 }
 

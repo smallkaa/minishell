@@ -6,45 +6,6 @@ void	print_error(char *msg)
 	ft_putstr_fd(msg, STDERR_FILENO);
 }
 
-// void	child_execve_error(t_cmd *cmd)
-// {
-// 	struct stat	st;
-
-// 	if (stat(cmd->binary, &st) == 0 && S_ISDIR(st.st_mode))
-// 	{
-// 		// Match Bash: "Is a directory"
-// 		print_error("-minishell: ");
-// 		print_error(cmd->binary);
-// 		print_error(": Is a directory\n");
-// 		_exit(126);
-// 	}
-// 	if (errno == ENOENT)
-// 	{
-// 		print_error(cmd->binary);
-// 		if (ft_strchr(cmd->argv[0], '/'))
-// 		{
-// 			print_error("-minishell: ");
-// 			print_error(": No such file or directory\n");
-// 		}
-// 		else
-// 			print_error(": command not found\n");
-// 		_exit(127);
-// 	}
-// 	else if (errno == EACCES)
-// 	{
-// 		print_error("-minishell: ");
-// 		print_error(cmd->binary);
-// 		print_error(": Permission denied\n");
-// 		_exit(126);
-// 	}
-// 	else
-// 	{
-// 		print_error("-minishell: ");
-// 		perror("execve");
-// 		_exit(1);
-// 	}
-// }
-
 void	child_execve_error(t_cmd *cmd)
 {
 	char		error_buf[ERROR_BUF_SIZE];
