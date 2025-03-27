@@ -147,6 +147,48 @@ static char	*process_char(const char *input, size_t *i, int single_q)
 	return (ft_strdup(single_char));
 }
 
+static char *expand_tilde(const char *input, size_t *i, t_mshell *mshell)
+{
+    char *home;
+    char *expanded;
+    size_t len = 1; // Start with just the ~
+
+    // Only expand if:
+    // 1. ~ is at start of input, OR
+    // 2. ~ is after whitespace, OR
+    // 3. ~ is after = (for assignments)
+    if (!(*i == 0 || ft_isspace(input[*i - 1]) || input[*i - 1] == '='))
+        return (ft_strdup("~"));
+
+    // Check what follows the ~
+    if (input[*i + 1] == '\0' || ft_isspace(input[*i + 1]))
+    {
+        // Case: just ~
+        home = ms_getenv(mshell, "HOME");
+        return (home ? ft_strdup(home) : ft_strdup("~"));
+    }
+    else if (input[*i + 1] == '/')
+    {
+        // Case: ~/path
+        home = ms_getenv(mshell, "HOME");
+        if (!home)
+            return (ft_strdup("~"));
+        
+        // Calculate the length of the path part (after ~/)
+        while (input[*i + 1 + len] && !ft_isspace(input[*i + 1 + len]))
+            len++;
+        
+        // Join HOME with the path part (excluding the ~)
+        expanded = ft_strjoin(home, input + *i + 1);
+        *i += len; // Advance past the path part
+        return (expanded);
+    }
+
+    // All other cases (like ~username) remain literal
+    return (ft_strdup("~"));
+}
+
+
 char	*expand_env_variables(const char *input,  t_mshell *minishell)
 {
 	char	*result;
@@ -165,6 +207,11 @@ char	*expand_env_variables(const char *input,  t_mshell *minishell)
 	double_q = 0;
 	while (input[i])
 	{
+        if (input[i] == '~' && !single_q)
+        {
+            append = expand_tilde(input, &i, minishell);
+        }
+        else 
 		if (handle_quotes(input[i], &single_q, &double_q))
 		{
 			char single_char[2];
@@ -187,3 +234,4 @@ char	*expand_env_variables(const char *input,  t_mshell *minishell)
 	}
 	return (result);
 }
+
