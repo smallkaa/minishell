@@ -35,14 +35,34 @@ static uint8_t	exit_numeric_error(char *arg)
  * @param arg The argument string.
  * @return `true` if numeric, `false` otherwise.
  */
+// static bool	is_valid_numeric_exit_arg(const char *arg)
+// {
+// 	if (!arg || *arg == '\0')
+// 		return (false);
+// 	if (*arg == '-' || *arg == '+')
+// 		arg++;
+// 	if (!ft_isdigit(*arg))
+// 		return (false);
+// 	while (*arg)
+// 	{
+// 		if (!ft_isdigit(*arg))
+// 			return (false);
+// 		arg++;
+// 	}
+// 	return (true);
+// }
 static bool	is_valid_numeric_exit_arg(const char *arg)
 {
 	if (!arg || *arg == '\0')
 		return (false);
+
 	if (*arg == '-' || *arg == '+')
 		arg++;
-	if (!ft_isdigit(*arg))
+
+	// ⬇️ Check *again* after skipping sign
+	if (*arg == '\0') // nothing after +/-
 		return (false);
+
 	while (*arg)
 	{
 		if (!ft_isdigit(*arg))
@@ -81,7 +101,10 @@ static uint8_t	get_exit_status(char *arg)
 
 	exit_status = ft_atoll_exit(arg, &overflow);
 	if (overflow)
+	{
+		printf("overflow\n");
 		return (exit_numeric_error(arg));
+	}
 	return ((uint8_t)(exit_status & 0xFF));
 }
 

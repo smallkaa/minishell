@@ -49,28 +49,22 @@ static const char	*parse_sign(const char *str, int *sign)
  */
 static long long	convert_to_ll(const char *str, int sign, bool *overflow)
 {
-	long long	res;
-	int			digit;
+	unsigned long long	res = 0;
+	int					digit;
 
 	*overflow = false;
-	res = 0;
 	while (ft_isdigit(*str))
 	{
 		digit = *str - '0';
-		if (sign == 1 && res > (LLONG_MAX - digit) / 10)
+		if (res > (unsigned long long)(LLONG_MAX + (sign == -1)))
 		{
 			*overflow = true;
-			return (LLONG_MAX);
-		}
-		if (sign == -1 && res > -(LLONG_MIN + digit) / 10)
-		{
-			*overflow = true;
-			return (LLONG_MIN);
+			return (sign == 1 ? LLONG_MAX : LLONG_MIN);
 		}
 		res = res * 10 + digit;
 		str++;
 	}
-	return (res * sign);
+	return ((long long)(res * sign));
 }
 
 /**
