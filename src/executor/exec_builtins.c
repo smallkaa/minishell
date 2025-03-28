@@ -21,7 +21,7 @@ const t_builtin_dispatch	*get_builtin_table(size_t *size)
 	return (table);
 }
 
-uint8_t	exec_builtin(t_cmd *cmd)
+uint8_t	exec_builtins(t_cmd *cmd)
 {
 	size_t						i;
 	size_t						size;

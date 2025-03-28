@@ -24,7 +24,7 @@ static void	execute_command(t_cmd *cmd)
 	{
 		if (is_builtin(cmd))
 		{
-			exit_status = exec_builtin(cmd);
+			exit_status = exec_builtins(cmd);
 			free_minishell(cmd->minishell);
 			_exit(exit_status);
 		}
@@ -36,9 +36,9 @@ static void	execute_command(t_cmd *cmd)
 		_exit(exit_status);
 
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	// fprintf(stderr, "errno = %d (%s)\n", errno, strerror(errno)); // test
 	child_execve_error(cmd);
 }
+
 static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
 {
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
@@ -59,7 +59,6 @@ static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
 		close(fds[1]);
 	return (EXIT_SUCCESS);
 }
-
 
 static int	handle_child(t_cmd *cmd, int in_fd, int *fds)
 {
@@ -88,6 +87,7 @@ static int	wait_for_children(pid_t *pids, int count, uint8_t *exit_status)
 	}
 	return (EXIT_SUCCESS);
 }
+
 static int	create_pipe_if_needed(t_cmd *cmd, int *fds)
 {
 	fds[0] = -1;
