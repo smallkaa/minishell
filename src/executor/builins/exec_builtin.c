@@ -4,43 +4,36 @@
  */
 #include "minishell.h"
 
-/**
- * @brief Executes a built-in command in Minishell.
- *
- * This function determines which built-in command is being executed by
- * comparing the first argument (`cmd->argv[0]`) against known built-in commands.
- * If a match is found, the corresponding handler function is called.
- *
- * Supported built-in commands:
- * - `exit`   → Calls `handle_exit()`
- * - `echo`   → Calls `handle_echo()`
- * - `pwd`    → Calls `handle_pwd()`
- * - `cd`     → Calls `handle_cd()`
- * - `env`    → Calls `handle_env()`
- * - `export` → Calls `handle_export()`
- * - `unset`  → Calls `handle_unset()`
- *
- * @param cmd Pointer to the command structure containing the command arguments.
- * @return The exit status of the built-in command execution.
- *         - `EXIT_SUCCESS` if no matching built-in command is found.
- *         - Otherwise, the return value of the corresponding built-in handler.
- */
+const t_builtin_dispatch	*get_builtin_dispatch_table(size_t *size)
+{
+	static const t_builtin_dispatch	table[] = {
+	{"cd", &handle_cd},
+	{"echo", &handle_echo},
+	{"env", &handle_env},
+	{"exit", &handle_exit},
+	{"export", &handle_export},
+	{"pwd", &handle_pwd},
+	{"unset", &handle_unset},
+	};
+
+	if (size)
+		*size = sizeof(table) / sizeof(table[0]);
+	return (table);
+}
+
 uint8_t	exec_builtin(t_cmd *cmd)
 {
-	if (ft_strcmp(cmd->argv[0], "exit") == 0)
-		return (handle_exit(cmd));
-	else if (ft_strcmp(cmd->argv[0], "echo") == 0)
-		return (handle_echo(cmd));
-	else if (ft_strcmp(cmd->argv[0], "pwd") == 0)
-		return (handle_pwd(cmd));
-	else if (ft_strcmp(cmd->argv[0], "cd") == 0)
-		return (handle_cd(cmd));
-	else if (ft_strcmp(cmd->argv[0], "env") == 0)
-		return (handle_env(cmd));
-	else if (ft_strcmp(cmd->argv[0], "export") == 0)
-		return (handle_export(cmd));
-	else if (ft_strcmp(cmd->argv[0], "unset") == 0)
-		return (handle_unset(cmd));
-	else
-		return (EXIT_SUCCESS);
+	size_t						i;
+	size_t						size;
+	const t_builtin_dispatch	*table;
+
+	table = get_builtin_dispatch_table(&size);
+	i = 0;
+	while (i < size)
+	{
+		if (ft_strcmp(cmd->argv[0], (char *)table[i].name) == 0)
+			return (table[i].func(cmd));
+		i++;
+	}
+	return (EXIT_FAILURE);
 }
