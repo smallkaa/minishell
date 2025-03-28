@@ -58,6 +58,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 	while (1)
 	{
+
 		input = readline("minishell: ");
 
 		// check for EOF / Ctrl+D
@@ -109,8 +110,28 @@ int	main(int argc, char **argv, char **envp)
 		exit_status = run_script_mode(minishell, argv[1]);
 
 	// Handle interactive mode
-	else
+	else 
 		exit_status = run_interactive_mode(minishell);
+
+	//--------------------uncomment for big test ---------------------------------//
+	// else if (isatty(fileno(stdin)))
+	// 	exit_status = run_interactive_mode(minishell);
+	// else
+	// {
+	// 	// Read one line from stdin (used by testers)
+	// 	char *line = get_next_line(fileno(stdin));
+	// 	if (!line)
+	// 		exit_status = EXIT_FAILURE;
+	// 	else
+	// 	{
+	// 		char *trimmed = ft_strtrim(line, "\n");
+	// 		free(line);
+	// 		exit_status = run_command_mode(minishell, trimmed);
+	// 		free(trimmed);
+	// 	}
+	// }
+
+	//--------------------uncomment for big test ---------------------------------//
 
 	free_minishell(minishell);
 	rl_clear_history();
