@@ -4,7 +4,7 @@
  */
 #include "minishell.h"
 
-const t_builtin_dispatch	*get_builtin_dispatch_table(size_t *size)
+const t_builtin_dispatch	*get_builtin_table(size_t *size)
 {
 	static const t_builtin_dispatch	table[] = {
 	{"cd", &handle_cd},
@@ -27,7 +27,7 @@ uint8_t	exec_builtin(t_cmd *cmd)
 	size_t						size;
 	const t_builtin_dispatch	*table;
 
-	table = get_builtin_dispatch_table(&size);
+	table = get_builtin_table(&size);
 	i = 0;
 	while (i < size)
 	{

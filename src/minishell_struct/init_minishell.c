@@ -67,22 +67,6 @@ static int	setup_environment(t_mshell	*mshell, char **envp)
 }
 
 /**
- * @brief Sets up built-in shell commands.
- *
- * This function initializes the list of built-in commands available in the shell.
- *
- * @param minishell Pointer to the `t_mshell` structure.
- * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on failure.
- */
-static int	setup_builtin_commands(t_mshell	*mshell)
-{
-	mshell->builtin = setup_builtin();
-	if (!mshell->builtin)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}
-
-/**
  * @brief Initializes the Minishell structure.
  *
  * This function initializes the shell by:
@@ -104,11 +88,6 @@ t_mshell	*init_mshell(char **envp)
 	if (!mshell)
 		return (NULL);
 	if (setup_environment(mshell, envp) == EXIT_FAILURE)
-	{
-		free_minishell(mshell);
-		return (NULL);
-	}
-	if (setup_builtin_commands(mshell) == EXIT_FAILURE)
 	{
 		free_minishell(mshell);
 		return (NULL);

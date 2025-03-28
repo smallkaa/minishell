@@ -69,30 +69,6 @@ void	free_hash_table(t_hash_table *hash_table)
 	free(hash_table);
 }
 
-/**
- * @brief Frees the built-in command list.
- *
- * Iterates through the `builtin` array, freeing each allocated string,
- * and then frees the array itself.
- *
- * @param builtin The array of built-in command names to free.
- */
-void	free_builtin(char **builtin)
-{
-	int	i;
-
-	if (!builtin)
-		return ;
-	i = 0;
-	while (builtin[i])
-	{
-		free(builtin[i]);
-		builtin[i] = NULL;
-		i++;
-	}
-	free(builtin);
-}
-
 void	free_cmd(t_cmd *cmd)
 {
 	t_cmd	*next;
@@ -132,11 +108,6 @@ void free_minishell(t_mshell *minishell)
 	{
 		free_hash_table(minishell->hash_table);
 		minishell->hash_table = NULL;
-	}
-	if (minishell->builtin)
-	{
-		free_builtin(minishell->builtin);
-		minishell->builtin = NULL;
 	}
 	free(minishell);
 	minishell = NULL;
