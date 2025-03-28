@@ -110,10 +110,19 @@ int	main(int argc, char **argv, char **envp)
 		exit_status = run_script_mode(minishell, argv[1]);
 
 	// Handle interactive mode
+
+	//------------------- Step 1 -----------------------------------------------//
+	//--------------------comment for big test ---------------------------------//
+
 	else 
 		exit_status = run_interactive_mode(minishell);
 
-	//--------------------uncomment for big test ---------------------------------//
+	//--------------------comment for big test ---------------------------------//
+
+
+	//------------------- Step 2 -----------------------------------------------//
+	//--------------------uncomment for big test -------------------------------//
+	
 	// else if (isatty(fileno(stdin)))
 	// 	exit_status = run_interactive_mode(minishell);
 	// else
@@ -131,7 +140,7 @@ int	main(int argc, char **argv, char **envp)
 	// 	}
 	// }
 
-	//--------------------uncomment for big test ---------------------------------//
+	//--------------------uncomment for big test -------------------------------//
 
 	free_minishell(minishell);
 	rl_clear_history();
