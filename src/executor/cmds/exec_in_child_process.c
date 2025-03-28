@@ -23,7 +23,11 @@ static void	execute_command(t_cmd *cmd)
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))
-		_exit(exec_builtin(cmd));
+		{
+			exit_status = exec_builtin(cmd);
+			free_minishell(cmd->minishell);
+			_exit(exit_status);
+		}
 		else
 			cmd_missing_command_error(cmd);
 	}

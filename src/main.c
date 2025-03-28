@@ -23,25 +23,29 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	int		in_fd;
 
 	in_fd = open(file, O_RDONLY);
-    if (in_fd < 0)
-    {
-        print_error("minishell: cannot open script file\n");
-        return (EXIT_FAILURE);
-    }
+	if (in_fd < 0)
+	{
+		print_error("minishell: cannot open script file\n");
+		return (EXIT_FAILURE);
+	}
 	input = NULL;
-    while ((input = get_next_line(in_fd)) != NULL)
-    {
+	while ((input = get_next_line(in_fd)) != NULL)
+	{
 		cmd = run_parser(mshell, input);
 		if (!cmd)
+		{
+			free(input);
+			input = NULL;
 			continue ;
+		}
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		cmd = NULL;
 
 		free(input);
 		input = NULL;
-    }
-    close(in_fd);
+	}
+	close(in_fd);
 	return (exit_status);
 }
 
@@ -71,7 +75,11 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		// Step 3: process input
 		cmd = run_parser(mshell, input);
 		if (!cmd)
+		{
+			free(input);
+			input = NULL;
 			continue ;
+		}
 
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);

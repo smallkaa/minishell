@@ -18,3 +18,8 @@ valgrind  --leak-check=full ./minishell
  ```
 ### Testers to try with
 - https://github.com/LucasKuhn/minishell_tester
+
+## Use supression file to avoid readline() leaks
+```bash
+valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
+```

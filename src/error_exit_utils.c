@@ -19,6 +19,7 @@ void	child_execve_error(t_cmd *cmd)
 		ft_strlcat(error_buf, ": Is a directory\n", ERROR_BUF_SIZE);
 		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 			write(STDERR_FILENO, "-minishell: failed to print error\n", 34);
+		free_minishell(cmd->minishell);
 		_exit(126);
 	}
 	if (errno == ENOENT)
@@ -31,6 +32,7 @@ void	child_execve_error(t_cmd *cmd)
 			ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
 		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 			write(STDERR_FILENO, "-minishell: failed to print error\n", 34);
+		free_minishell(cmd->minishell);
 		_exit(127);
 	}
 	else if (errno == EACCES)
@@ -41,6 +43,7 @@ void	child_execve_error(t_cmd *cmd)
 
 		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 			write(STDERR_FILENO, "-minishell: failed to print error\n", 34);
+		free_minishell(cmd->minishell);
 		_exit(126);
 	}
 	else
@@ -51,6 +54,7 @@ void	child_execve_error(t_cmd *cmd)
 
 		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 			write(STDERR_FILENO, "-minishell: failed to print error\n", 34);
+		free_minishell(cmd->minishell);
 		_exit(1);
 	}
 }
@@ -72,6 +76,7 @@ void	cmd_missing_command_error(t_cmd *cmd)
 		ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 		write(STDERR_FILENO, "-minishell: error: failed to print error\n", 40);
+	free_minishell(cmd->minishell);
 	_exit(127);
 }
 
