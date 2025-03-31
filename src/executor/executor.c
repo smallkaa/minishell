@@ -75,7 +75,7 @@ uint8_t	run_executor(t_cmd *cmd)
 		print_error("Error (run_executor): missing components\n");
 		return (EXIT_FAILURE);
 	}
-		// // test -------------------------------------------------//
+	// 	// // test -------------------------------------------------//
 	// int i = 0;
 	// while(cmd->argv[i])
 	// {
@@ -91,6 +91,33 @@ uint8_t	run_executor(t_cmd *cmd)
 	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
 	// if (cmd->in_redir)
 	// 	printf("---in_redir[%s]:\n", cmd->in_redir->filename);
+
+	// if (cmd->extra_in_redirs)
+	// {
+	// 	t_list *current = cmd->extra_in_redirs;
+	// 	int i = 0;
+
+	// 	while (current)
+	// 	{
+	// 		printf("---in extra files[%d]: {%s}\n", i, (char *)current->content); // Casting content to char *
+	// 		current = current->next;
+	// 		i++;
+	// 	}
+	// }
+
+	// if (cmd->extra_out_redirs)
+	// {
+	// 	t_list *current = cmd->extra_out_redirs;
+	// 	int i = 0;
+
+	// 	while (current)
+	// 	{
+	// 		printf("---out extra files[%d]: {%s}\n", i, (char *)current->content); // Casting content to char *
+	// 		current = current->next;
+	// 		i++;
+	// 	}
+	// }
+
 	 // end test -----------------------------------------------//
 
 	if (!is_builtin(cmd) || cmd->next)
