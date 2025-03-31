@@ -81,6 +81,8 @@ void debug_print_parsed_commands(t_cmd *cmd)
 	if(!is_debug_mode())
 		return;
     int cmd_count = 1;
+	t_list	*tmp;
+
 
     printf("\n==== Parsed Command Structure ====\n");
     while (cmd)
@@ -101,6 +103,26 @@ void debug_print_parsed_commands(t_cmd *cmd)
         debug_print_redirection(cmd->in_redir, "Input");
         debug_print_redirection(cmd->out_redir, "Output");
 
+		if (cmd->extra_in_redirs)
+		{
+			tmp = cmd->extra_in_redirs;
+			while (tmp)
+			{
+				printf("  Ignored Input Redirection: < \"%s\"\n", (char *)tmp->content);
+				tmp = tmp->next;
+			}
+		}
+		
+		if (cmd->extra_out_redirs)
+		{
+			tmp = cmd->extra_out_redirs;
+			while (tmp)
+			{
+				printf("  Ignored Output Redirection: > \"%s\"\n", (char *)tmp->content);
+				tmp = tmp->next;
+			}
+		}
+		
         // Check if there's a next command in a pipeline
         if (cmd->next)
             printf("  Piped to next command ->\n");

@@ -143,6 +143,30 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 	new_tokens->count = j; // Обновляем реальное количество токенов
 }
 
+static void	store_old_out_redir(t_cmd *cmd)
+{
+	if (cmd->out_redir)
+	{
+		ft_lstadd_back(&cmd->extra_out_redirs,
+			ft_lstnew(ft_strdup(cmd->out_redir->filename)));
+		free(cmd->out_redir->filename);
+		free(cmd->out_redir);
+		cmd->out_redir = NULL;
+	}
+}
+
+static void	store_old_in_redir(t_cmd *cmd)
+{
+	if (cmd->in_redir)
+	{
+		ft_lstadd_back(&cmd->extra_in_redirs,
+			ft_lstnew(ft_strdup(cmd->in_redir->filename)));
+		free(cmd->in_redir->filename);
+		free(cmd->in_redir);
+		cmd->in_redir = NULL;
+	}
+}
+
 int	group_word_tokens(t_TokenArray *tokens)
 {
 	t_TokenArray	new_tokens;
@@ -267,11 +291,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 
                 // Add this redirection to the command
                 if (current) {
-                    // Free existing input redirection if any
-                    if (current->in_redir) {
-                        free(current->in_redir->filename);
-                        free(current->in_redir);
-                    }
+					store_old_in_redir(current);
                     current->in_redir = redir;
                 } else {
                     free(redir->filename);
@@ -303,14 +323,9 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // The next token should be the filename
             if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
                 redir->filename = ft_strdup(tokens->tokens[i+1].value);
-
+				store_old_out_redir(current);
                 // Add this redirection to the command
                 if (current) {
-                    // Free existing output redirection if any
-                    if (current->out_redir) {
-                        free(current->out_redir->filename);
-                        free(current->out_redir);
-                    }
                     current->out_redir = redir;
                 } else {
                     free(redir->filename);

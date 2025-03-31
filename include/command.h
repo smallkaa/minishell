@@ -1,5 +1,6 @@
 #ifndef COMMAND_H
 # define COMMAND_H
+# include "libft.h"
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64
@@ -70,6 +71,8 @@ typedef struct s_cmd
 	t_cmd				*next;
 	t_mshell			*minishell;
 	bool				in_pipe;
+	t_list	*extra_in_redirs;
+	t_list	*extra_out_redirs;
 }	t_cmd;
 
 # endif  /* COMMAND_H */
