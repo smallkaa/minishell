@@ -35,34 +35,14 @@ static uint8_t	exit_numeric_error(char *arg)
  * @param arg The argument string.
  * @return `true` if numeric, `false` otherwise.
  */
-// static bool	is_valid_numeric_exit_arg(const char *arg)
-// {
-// 	if (!arg || *arg == '\0')
-// 		return (false);
-// 	if (*arg == '-' || *arg == '+')
-// 		arg++;
-// 	if (!ft_isdigit(*arg))
-// 		return (false);
-// 	while (*arg)
-// 	{
-// 		if (!ft_isdigit(*arg))
-// 			return (false);
-// 		arg++;
-// 	}
-// 	return (true);
-// }
 static bool	is_valid_numeric_exit_arg(const char *arg)
 {
 	if (!arg || *arg == '\0')
 		return (false);
-
 	if (*arg == '-' || *arg == '+')
 		arg++;
-
-	// ⬇️ Check *again* after skipping sign
-	if (*arg == '\0') // nothing after +/-
+	if (!ft_isdigit(*arg))  // Ensure there is a digit after the sign
 		return (false);
-
 	while (*arg)
 	{
 		if (!ft_isdigit(*arg))
@@ -71,6 +51,8 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 	}
 	return (true);
 }
+
+
 
 /**
  * @brief Handles cases where too many arguments are passed to `exit`.
@@ -85,24 +67,15 @@ static uint8_t	handle_too_many_args(void)
 	return (1);
 }
 
-/**
- * @brief Parses and retrieves the exit status from an argument.
- *
- * The exit status is taken modulo `256` (`& 0xFF`) to ensure it falls
- * within the valid range (0-255).
- *
- * @param arg The argument string.
- * @return The parsed exit status.
- */
+
 static uint8_t	get_exit_status(char *arg)
 {
 	long long	exit_status;
 	bool		overflow;
 
 	exit_status = ft_atoll_exit(arg, &overflow);
-	if (overflow)
+	if (overflow || exit_status > LLONG_MAX || exit_status < LLONG_MIN)
 	{
-		printf("overflow\n");
 		return (exit_numeric_error(arg));
 	}
 	return ((uint8_t)(exit_status & 0xFF));
@@ -129,7 +102,7 @@ uint8_t	handle_exit(t_cmd *cmd)
 		print_error("minishell: exit: no *cmd instance\n");
 		return (EXIT_FAILURE);
 	}
-	printf("exit\n");
+	// printf("exit\n");
 	if (!cmd->argv[1] || cmd->argv[1][0] == '\0')
 		return (cmd->minishell->exit_status);
 	if (!is_valid_numeric_exit_arg(cmd->argv[1]))

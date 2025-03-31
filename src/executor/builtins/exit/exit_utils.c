@@ -5,86 +5,80 @@
 #include "minishell.h"
 
 /**
- * @brief Skips leading whitespace characters in a string.
+ * @brief Skips leading whitespace and checks for +/- sign.
  *
- * @param str The input string.
- * @return A pointer to the first non-whitespace character.
+ * @param str_ptr  A pointer to the string pointer (because we modify it).
+ * @return		 +1 if the sign is positive, -1 if negative.
  */
-static const char	*skip_whitespace(const char *str)
+static int	skip_whitespace_and_sign(const char **str_ptr)
 {
+	const char *str;
+	int sign;
+
+	str = *str_ptr;
+	sign = 1;
 	while (ft_isspace(*str))
 		str++;
-	return (str);
-}
-
-/**
- * @brief Parses the sign of a number and updates the pointer accordingly.
- *
- * @param str The input string.
- * @param sign A pointer to store the sign (1 for positive, -1 for negative).
- * @return A pointer to the first numeric character in the string.
- */
-static const char	*parse_sign(const char *str, int *sign)
-{
-	*sign = 1;
-	if (*str == '-' || *str == '+')
+	if (*str == '+' || *str == '-')
 	{
 		if (*str == '-')
-			*sign = -1;
+			sign = -1;
 		str++;
 	}
-	return (str);
+	*str_ptr = str;
+	return (sign);
 }
 
 /**
- * @brief Converts a string to a long long integer while checking for overflow.
+ * @brief Checks if adding `digit` to `current_result` would overflow (positive).
  *
- * If the value exceeds `LLONG_MAX` or `LLONG_MIN`, overflow is detected.
- *
- * @param str The input string containing the number.
- * @param sign The sign of the number (1 or -1).
- * @param overflow Pointer to a boolean flag indicating overflow.
- * @return The converted long long integer or LLONG_MAX/LLONG_MIN in case
- *         of overflow.
+ * @param current_result The number so far.
+ * @param digit		  The next digit to add.
+ * @return true if overflow would occur, false otherwise.
  */
-static long long	convert_to_ll(const char *str, int sign, bool *overflow)
+static bool	check_overflow_pos(long long current_result, int digit)
 {
-	unsigned long long	res = 0;
-	int					digit;
+	if (current_result > (LLONG_MAX - digit) / 10)
+		return (true);
+	return (false);
+}
 
+/**
+ * @brief Checks if adding `digit` to `current_result` would overflow (negative).
+ *
+ * @param current_result The number so far (still positive if you haven't multiplied by sign).
+ * @param digit		  The next digit to add.
+ * @return true if overflow would occur, false otherwise.
+ */
+static bool	check_overflow_neg(long long current_result, int digit)
+{
+	if (current_result > (-(LLONG_MIN + digit) / 10))
+		return (true);
+	return (false);
+}
+
+long long ft_atoll_exit(const char *str, bool *overflow)
+{
+	long long	result;
+	int			sign;
+	int			digit;
+
+	result = 0;
 	*overflow = false;
+	sign = skip_whitespace_and_sign(&str);
 	while (ft_isdigit(*str))
 	{
 		digit = *str - '0';
-		if (res > (unsigned long long)(LLONG_MAX + (sign == -1)))
+		if ((sign == 1 && check_overflow_pos(result, digit))
+			|| (sign == -1 && check_overflow_neg(result, digit)))
 		{
 			*overflow = true;
-			return (sign == 1 ? LLONG_MAX : LLONG_MIN);
+			return (0);
 		}
-		res = res * 10 + digit;
+		result = result * 10 + digit;
 		str++;
 	}
-	return ((long long)(res * sign));
-}
-
-/**
- * @brief Converts a string to a long long integer, handling errors and
- *        overflow.
- *
- * @param str The input string.
- * @param overflow Pointer to a boolean flag indicating overflow.
- * @return The converted long long integer or 0 in case of an error.
- */
-long long	ft_atoll_exit(const char *str, bool *overflow)
-{
-	int		sign;
-
-	str = skip_whitespace(str);
-	str = parse_sign(str, &sign);
-	if (!ft_isdigit(*str))
-	{
-		*overflow = true;
-		return (0);
-	}
-	return (convert_to_ll(str, sign, overflow));
+	if (sign == -1)
+		result = -result;
+	return (result);
 }
