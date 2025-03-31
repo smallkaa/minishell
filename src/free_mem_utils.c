@@ -89,6 +89,8 @@ void	free_cmd(t_cmd *cmd)
 			free(cmd->in_redir);
 		if (cmd->out_redir)
 			free(cmd->out_redir);
+		ft_lstclear(&cmd->extra_out_redirs, free);
+		ft_lstclear(&cmd->extra_in_redirs, free);
 		next = cmd->next;
 		free(cmd);
 		cmd = next;
