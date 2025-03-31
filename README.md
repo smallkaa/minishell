@@ -17,4 +17,15 @@ valgrind --track-fds=yes ./minishell
 valgrind  --leak-check=full ./minishell
  ```
 ### Testers to try with
-- https://github.com/LucasKuhn/minishell_tester
+```bash
+https://github.com/LucasKuhn/minishell_tester
+```
+```bash
+https://github.com/zstenger93/42_minishell_tester
+```
+
+
+## Use supression file to avoid readline() leaks
+```bash
+valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
+```

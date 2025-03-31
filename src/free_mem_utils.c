@@ -87,6 +87,7 @@ void	free_builtin(char **builtin)
 	while (builtin[i])
 	{
 		free(builtin[i]);
+		builtin[i] = NULL;
 		i++;
 	}
 	free(builtin);
@@ -106,25 +107,38 @@ void	free_cmd(t_cmd *cmd)
 				free(cmd->argv[i++]);
 			free(cmd->argv);
 		}
-		free(cmd->binary);
-		free(cmd->in_redir);
-		free(cmd->out_redir);
+		if (cmd->binary)
+			free(cmd->binary);
+		if (cmd->in_redir)
+			free(cmd->in_redir);
+		if (cmd->out_redir)
+			free(cmd->out_redir);
 		next = cmd->next;
 		free(cmd);
 		cmd = next;
 	}
 }
 
-void	free_minishell(t_mshell *minishell)
+void free_minishell(t_mshell *minishell)
 {
 	if (!minishell)
 		return ;
-	if(minishell->env)
+	if (minishell->env)
+	{
 		free_env(minishell->env);
-	if(minishell->hash_table)
+		minishell->env = NULL;
+	}
+	if (minishell->hash_table)
+	{
 		free_hash_table(minishell->hash_table);
-	if(minishell->builtin)
+		minishell->hash_table = NULL;
+	}
+	if (minishell->builtin)
+	{
 		free_builtin(minishell->builtin);
+		minishell->builtin = NULL;
+	}
 	free(minishell);
 	minishell = NULL;
 }
+

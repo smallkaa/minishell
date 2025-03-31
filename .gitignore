@@ -60,8 +60,11 @@ dkms.conf
 .vscode/
 
 # tests
-minishell_tester/
 sources_dump.txt
 minishell
 heredoc_tmp.txt
 m_tester/
+sandbox_tester/
+42_minishell_tester/
+42_minishell_tester_2/
+42_minishell_tester_3/

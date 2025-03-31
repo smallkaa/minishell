@@ -23,25 +23,29 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	int		in_fd;
 
 	in_fd = open(file, O_RDONLY);
-    if (in_fd < 0)
-    {
-        print_error("minishell: cannot open script file\n");
-        return (EXIT_FAILURE);
-    }
+	if (in_fd < 0)
+	{
+		print_error("minishell: cannot open script file\n");
+		return (EXIT_FAILURE);
+	}
 	input = NULL;
-    while ((input = get_next_line(in_fd)) != NULL)
-    {
+	while ((input = get_next_line(in_fd)) != NULL)
+	{
 		cmd = run_parser(mshell, input);
 		if (!cmd)
+		{
+			free(input);
+			input = NULL;
 			continue ;
+		}
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		cmd = NULL;
 
 		free(input);
 		input = NULL;
-    }
-    close(in_fd);
+	}
+	close(in_fd);
 	return (exit_status);
 }
 
@@ -54,6 +58,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 	while (1)
 	{
+
 		input = readline("minishell: ");
 
 		// check for EOF / Ctrl+D
@@ -71,7 +76,11 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		// Step 3: process input
 		cmd = run_parser(mshell, input);
 		if (!cmd)
+		{
+			free(input);
+			input = NULL;
 			continue ;
+		}
 
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
@@ -101,8 +110,37 @@ int	main(int argc, char **argv, char **envp)
 		exit_status = run_script_mode(minishell, argv[1]);
 
 	// Handle interactive mode
-	else
+
+	//------------------- Step 1 -----------------------------------------------//
+	//--------------------comment for big test ---------------------------------//
+
+	else 
 		exit_status = run_interactive_mode(minishell);
+
+	//--------------------comment for big test ---------------------------------//
+
+
+	//------------------- Step 2 -----------------------------------------------//
+	//--------------------uncomment for big test -------------------------------//
+	
+	// else if (isatty(fileno(stdin)))
+	// 	exit_status = run_interactive_mode(minishell);
+	// else
+	// {
+	// 	// Read one line from stdin (used by testers)
+	// 	char *line = get_next_line(fileno(stdin));
+	// 	if (!line)
+	// 		exit_status = EXIT_FAILURE;
+	// 	else
+	// 	{
+	// 		char *trimmed = ft_strtrim(line, "\n");
+	// 		free(line);
+	// 		exit_status = run_command_mode(minishell, trimmed);
+	// 		free(trimmed);
+	// 	}
+	// }
+
+	//--------------------uncomment for big test -------------------------------//
 
 	free_minishell(minishell);
 	rl_clear_history();
