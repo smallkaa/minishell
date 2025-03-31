@@ -23,18 +23,20 @@ RM      := rm -rf
 SRC_DIRS := src \
 			src/parser \
 			src/executor \
-			src/minishell_struct \
-			src/executor/cmds \
-			src/executor/builins \
-			src/executor/builins/cd \
-			src/executor/builins/echo \
-			src/executor/builins/env \
-			src/executor/builins/exit \
-			src/executor/builins/export \
-			src/executor/builins/pwd \
-			src/executor/builins/unset \
-			src/executor/redirections
-
+			src/mshell \
+			src/mshell/env \
+			src/mshell/varables_hash_table \
+			src/executor/builtins \
+			src/executor/builtins/cd \
+			src/executor/builtins/echo \
+			src/executor/builtins/env \
+			src/executor/builtins/exit \
+			src/executor/builtins/export \
+			src/executor/builtins/pwd \
+			src/executor/builtins/unset \
+			src/executor/pipeline \
+			src/executor/redirections \
+			src/executor/redirections/handlers
 
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft

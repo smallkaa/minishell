@@ -114,31 +114,31 @@ int	main(int argc, char **argv, char **envp)
 	//------------------- Step 1 -----------------------------------------------//
 	//--------------------comment for big test ---------------------------------//
 
-	else 
-		exit_status = run_interactive_mode(minishell);
+	// else
+	// 	exit_status = run_interactive_mode(minishell);
 
 	//--------------------comment for big test ---------------------------------//
 
 
 	//------------------- Step 2 -----------------------------------------------//
 	//--------------------uncomment for big test -------------------------------//
-	
-	// else if (isatty(fileno(stdin)))
-	// 	exit_status = run_interactive_mode(minishell);
-	// else
-	// {
-	// 	// Read one line from stdin (used by testers)
-	// 	char *line = get_next_line(fileno(stdin));
-	// 	if (!line)
-	// 		exit_status = EXIT_FAILURE;
-	// 	else
-	// 	{
-	// 		char *trimmed = ft_strtrim(line, "\n");
-	// 		free(line);
-	// 		exit_status = run_command_mode(minishell, trimmed);
-	// 		free(trimmed);
-	// 	}
-	// }
+
+	else if (isatty(fileno(stdin)))
+		exit_status = run_interactive_mode(minishell);
+	else
+	{
+		// Read one line from stdin (used by testers)
+		char *line = get_next_line(fileno(stdin));
+		if (!line)
+			exit_status = EXIT_FAILURE;
+		else
+		{
+			char *trimmed = ft_strtrim(line, "\n");
+			free(line);
+			exit_status = run_command_mode(minishell, trimmed);
+			free(trimmed);
+		}
+	}
 
 	//--------------------uncomment for big test -------------------------------//
 

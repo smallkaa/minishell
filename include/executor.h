@@ -17,6 +17,7 @@ typedef struct s_mshell	t_mshell;
 typedef struct s_mshell_var	t_mshell_var;
 typedef struct s_hash_table	t_hash_table;
 typedef enum e_redir_type t_redir_type;
+typedef struct s_builtin_dispatch t_builtin_dispatch;
 
 /*------FUNCTIONS---------------------------------------------------*/
 
@@ -27,7 +28,8 @@ uint8_t			exec_cmd(t_cmd *cmd);
 
 // builtin functions
 bool			is_builtin(t_cmd *cmd);
-uint8_t			exec_builtin(t_cmd *cmd);
+uint8_t			exec_builtins(t_cmd *cmd);
+const t_builtin_dispatch	*get_builtin_table(size_t *size);
 
 // exit
 uint8_t			handle_exit(t_cmd *cmd);
@@ -49,8 +51,6 @@ t_mshell_var	*create_new_variable( char *key,  char *value, int assigned);
 uint8_t			handle_cd(t_cmd *cmd);
 bool			is_valid_value(t_cmd *cmd);
 bool 			get_directory(char *cwd, t_cmd *cmd);
-
-
 
 // redirections <, <<, >, >>
 

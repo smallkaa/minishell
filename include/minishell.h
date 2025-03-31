@@ -25,6 +25,12 @@
 
 #define HASH_SIZE 128
 
+typedef struct s_builtin_dispatch
+{
+	const char	*name;
+	uint8_t		(*func)(t_cmd *);
+}	t_builtin_dispatch;
+
 /**
  * @struct	s_mshell_var
  * @brief	Represents a single environment variable in minishell.
@@ -66,7 +72,6 @@ typedef struct s_mshell
 {
 	char			**env;
 	t_hash_table	*hash_table;
-	char			**builtin;
 	bool			pipe;
 	uint8_t			exit_status;
 }	t_mshell;
