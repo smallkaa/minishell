@@ -74,6 +74,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		debug_printf("Return: %s\n", input); // test print statment
 
 		// Step 3: process input
+
 		cmd = run_parser(mshell, input);
 		if (!cmd)
 		{
@@ -81,6 +82,9 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			input = NULL;
 			continue ;
 		}
+		// printf("here\n");
+		// return 1;
+
 
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);

@@ -180,6 +180,7 @@ static int	count_exported_vars(t_hash_table *ht)
  */
 void	update_env(t_mshell *mshell)
 {
+
 	int		count;
 	char	**new_env;
 	bool	populated;

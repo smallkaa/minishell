@@ -67,9 +67,7 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 	pair = split_key_value(arg);
 	if (!is_valid_varname(pair->key))
 	{
-		print_error("-minishell: export: '");
-		print_error(pair->key);
-		print_error("': not a valid identifier\n");
+		print_export_error(pair);
 		free(pair->key);
 		free(pair->value);
 		free(pair);
@@ -89,7 +87,7 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
  */
 static void	print_export_usage(char *arg)
 {
-	print_error("bash: export: ");
+	print_error("-minishell: export: ");
 	print_error(arg);
 	print_error(": invalid option\nexport: usage: export [-fn] [name[=value] ...] or export -p\n");
 }

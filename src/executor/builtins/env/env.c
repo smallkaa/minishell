@@ -20,18 +20,30 @@
  *
  * @param var Pointer to the first variable in the bucket.
  */
-static void	print_env_bucket(t_mshell_var *var)
+// static void	print_env_bucket(t_mshell_var *var)
+// {
+// 	while (var)
+// 	{
+// 		if (var->val_assigned)
+// 		{
+// 			if (var->value)
+// 				printf("%s=%s\n", var->key, var->value);
+// 			else
+// 				printf("%s=\n", var->key);
+// 		}
+// 		var = var->next;
+// 	}
+// }
+
+void	print_env(t_cmd *cmd)
 {
-	while (var)
+	int	i;
+
+	i = 0;
+	while(cmd->minishell->env[i])
 	{
-		if (var->val_assigned)
-		{
-			if (var->value)
-				printf("%s=%s\n", var->key, var->value);
-			else
-				printf("%s=\n", var->key);
-		}
-		var = var->next;
+		printf("%s\n", cmd->minishell->env[i]);
+		i++;
 	}
 }
 
@@ -53,8 +65,8 @@ static void	print_env_bucket(t_mshell_var *var)
  */
 uint8_t	handle_env(t_cmd *cmd)
 {
-	t_hash_table	*ht;
-	int				i;
+	// t_hash_table	*ht;
+	// int				i;
 	uint8_t			exit_status;
 
 	if (cmd->argv[1])
@@ -63,13 +75,14 @@ uint8_t	handle_env(t_cmd *cmd)
 		exit_status = EXIT_FAILURE;
 		return (exit_status);
 	}
-	ht = cmd->minishell->hash_table;
-	i = 0;
-	while (i < HASH_SIZE)
-	{
-		print_env_bucket(ht->buckets[i]);
-		i++;
-	}
+	// ht = cmd->minishell->hash_table;
+	// i = 0;
+	// while (i < HASH_SIZE)
+	// {
+	// 	print_env_bucket(ht->buckets[i]);
+	// 	i++;
+	// }
+	print_env(cmd);
 	exit_status = EXIT_SUCCESS;
 	return (exit_status);
 }

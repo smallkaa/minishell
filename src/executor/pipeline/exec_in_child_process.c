@@ -20,6 +20,10 @@ static void	execute_command(t_cmd *cmd)
 {
 	uint8_t	exit_status;
 
+	if(ft_strcmp(cmd->argv[0], "") == 0)
+		_exit(EXIT_SUCCESS);
+
+
 	if (cmd->binary == NULL)
 	{
 		if (is_builtin(cmd))

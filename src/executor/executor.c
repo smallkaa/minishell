@@ -68,6 +68,7 @@ static uint8_t	execute_builtin(t_cmd *cmd)
 uint8_t	run_executor(t_cmd *cmd)
 {
 	t_mshell	*minishell;
+	int i;
 
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
@@ -76,7 +77,8 @@ uint8_t	run_executor(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// 	// // test -------------------------------------------------//
-	// int i = 0;
+	
+	// i = 0;
 	// while(cmd->argv[i])
 	// {
 	// 	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
@@ -87,6 +89,10 @@ uint8_t	run_executor(t_cmd *cmd)
 	// 	printf("---binary (%p)\n", cmd->binary);
 	// else
 	// 	printf("---cmd->binary: NOT found\n");
+
+
+
+
 	// if (cmd->out_redir)
 	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
 	// if (cmd->in_redir)
@@ -105,6 +111,7 @@ uint8_t	run_executor(t_cmd *cmd)
 	// 	}
 	// }
 
+
 	// if (cmd->extra_out_redirs)
 	// {
 	// 	t_list *current = cmd->extra_out_redirs;
@@ -118,8 +125,25 @@ uint8_t	run_executor(t_cmd *cmd)
 	// 	}
 	// }
 
-	 // end test -----------------------------------------------//
+	// end test -----------------------------------------------//
 
+	if (cmd && cmd->argv != NULL)
+	{
+		i = 0;
+		while (cmd->argv[i] != NULL)
+		i++;
+
+		if (i > 1)
+		{
+			set_variable(cmd->minishell, "_", cmd->argv[i - 1], 1);
+			update_env(cmd->minishell);
+		}
+		else
+		{
+			set_variable(cmd->minishell, "_", cmd->argv[0], 1);
+			update_env(cmd->minishell);
+		}
+	}
 	if (!is_builtin(cmd) || cmd->next)
 		return (execute_pipeline_or_binary(cmd));
 	else

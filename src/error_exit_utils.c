@@ -6,6 +6,26 @@ void	print_error(char *msg)
 	ft_putstr_fd(msg, STDERR_FILENO);
 }
 
+void	print_export_error(t_mshell_var *pair)
+{
+	print_error("-minishell: export: `");
+	print_error(pair->key);
+	if (pair->value)
+	{
+		print_error("=");
+		print_error(pair->value);
+	}
+	print_error("': not a valid identifier\n");
+}
+
+
+void	print_unset_error(char *str)
+{
+		print_error("-minishell: unset: ");
+		write(STDERR_FILENO, str, 2);
+		print_error(": invalid option\n");
+		print_error("unset: usage: unset [name ...]\n");
+}
 void	child_execve_error(t_cmd *cmd)
 {
 	char		error_buf[ERROR_BUF_SIZE];

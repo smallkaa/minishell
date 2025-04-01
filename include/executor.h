@@ -75,6 +75,7 @@ bool			is_pipeline_limit(int *cmd_count);
 void			child_execve_error(t_cmd *cmd);
 uint8_t			perror_return(char *msg, u_int8_t exit_status);
 void	cmd_missing_command_error(t_cmd *cmd);
-
+void	print_export_error(t_mshell_var *pair);
+void	print_unset_error(char *str);
 
 #endif /* EXECUTOR_H */
