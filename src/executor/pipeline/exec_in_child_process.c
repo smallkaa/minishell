@@ -44,7 +44,11 @@ static void	execute_command(t_cmd *cmd)
 		print_error("Command '' not found\n");
 		_exit(127);
 	}
-
+	// if (cmd->argv[0] == NULL || cmd->argv[0][0] == '\0')
+	// {
+	// 	// print_error("Command '' not found\n");
+	// 	_exit(0);
+	// }
 
 	if (cmd->binary == NULL)
 	{
