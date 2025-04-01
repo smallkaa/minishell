@@ -93,6 +93,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
  */
 static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
+
 	char	old_cwd[MS_PATHMAX];
 
 	if (!cmd || !cmd->argv[1] || !cmd->minishell)
@@ -101,7 +102,7 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(cmd->argv[1]) != 0)
 	{
-		print_error("-minishell: ");
+		print_error("-minishell: cd: ");
 		perror(cmd->argv[1]);
 		return (EXIT_FAILURE);
 	}
