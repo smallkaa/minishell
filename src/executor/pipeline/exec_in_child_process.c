@@ -16,9 +16,28 @@ static uint8_t	validate_dots(t_cmd *cmd)
 	return (EXIT_SUCCESS);
 }
 
+
+
+// int is_minishell_executable(t_cmd *cmd)
+// {
+//     if (ft_strcmp(cmd->argv[0], "./minishell") == 0)
+// 	{
+// 		printf("---ft_strcmp == 0\n");
+//         return (1);
+// 	}
+// 	printf("---ft_strcmp != 0\n");
+//     return (0);
+// }
+
 static void	execute_command(t_cmd *cmd)
 {
 	uint8_t	exit_status;
+
+	// if (is_minishell_executable(cmd))
+	// {
+	// 	if (update_shlvl(cmd) == EXIT_FAILURE)
+	// 		_exit(EXIT_FAILURE);
+	// }
 
 	if(ft_strcmp(cmd->argv[0], "") == 0)
 		_exit(EXIT_SUCCESS);
@@ -38,6 +57,7 @@ static void	execute_command(t_cmd *cmd)
 	exit_status = validate_dots(cmd);
 	if (exit_status != EXIT_SUCCESS )
 		_exit(exit_status);
+
 
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	child_execve_error(cmd);

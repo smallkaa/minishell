@@ -77,7 +77,7 @@ uint8_t	run_executor(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// 	// // test -------------------------------------------------//
-	
+
 	// i = 0;
 	// while(cmd->argv[i])
 	// {

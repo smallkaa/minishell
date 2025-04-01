@@ -92,7 +92,7 @@ t_mshell	*init_mshell(char **envp)
 		free_minishell(mshell);
 		return (NULL);
 	}
-	mshell->pipe = false;
+	// mshell->pipe = false;
 	mshell->exit_status = 0;
 	return (mshell);
 }

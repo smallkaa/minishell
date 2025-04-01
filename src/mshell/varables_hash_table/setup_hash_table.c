@@ -74,7 +74,6 @@ void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned)
 	new_var->next = mshell->hash_table->buckets[index];
 	mshell->hash_table->buckets[index] = new_var;
 }
-
 /**
  * @brief Loads environment variables into the hash table.
  *
@@ -88,6 +87,8 @@ static void	load_env_into_ht(t_mshell *mshell)
 	t_mshell_var	*tmp;
 	int				i;
 	char			*home;
+	// char			*level_str;
+	// int				shlvl;
 
 	i = 0;
 	while (mshell->env[i])
@@ -102,14 +103,17 @@ static void	load_env_into_ht(t_mshell *mshell)
 		}
 		i++;
 	}
+
 	home = ms_getenv(mshell, "HOME");
 	if (!home)
 	{
 		print_error("minishell: load_env_into_ht: failed to retrieve home directory\n");
-		return ;
+		return;
 	}
 	set_variable(mshell, "OLDPWD", home, 1);
+	set_variable(mshell, "SHLVL", "1", 1);
 }
+
 
 /**
  * @brief Initializes a new hash table for environment variables.
