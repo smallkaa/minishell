@@ -70,42 +70,6 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * @brief Iterates through all arguments of `unset` and removes each variable.
- *
- * This function loops over `cmd->argv`, starting from the first argument
- * (`argv[1]`),
- * and removes each specified variable from the Minishell environment using
- * `remove_var_from_ht()`.
- *
- * @param cmd Pointer to the command structure containing command arguments.
- * @return Always returns `EXIT_SUCCESS`.
- */
-// static uint8_t	do_unset_loop(t_cmd *cmd)
-// {
-// 	int		i;
-
-// 	if (!cmd || !cmd->minishell || !cmd->argv)
-// 	{
-// 		print_error("minishell: unset: no cmd or args instanse\n");
-// 		return (EXIT_FAILURE);
-// 	}
-// 	if (!is_valid_identifier(cmd->argv[1]))
-// 		return (EXIT_SUCCESS);
-// 	// {
-// 	// 	print_error("-minishell: unset: '");
-// 	// 	write(STDERR_FILENO, cmd->argv[1], 2);
-// 	// 	print_error("': not a valid identifier\n");
-// 	// 	return (2);
-// 	// }
-// 	i = 1;
-// 	while (cmd->argv[i])
-// 	{
-// 		remove_var_from_ht(cmd->minishell, cmd->argv[i]);
-// 		i++;
-// 	}
-// 	return (EXIT_SUCCESS);
-// }
 
 static uint8_t	do_unset_loop(t_cmd *cmd)
 {
@@ -115,12 +79,15 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
 	{
 		if (is_invalid_option(cmd->argv[i]))
 		{
-			print_error("minishell: unset: ");
-			write(STDERR_FILENO, cmd->argv[i], 2);
-			print_error(": invalid option\n");
-			print_error("unset: usage: unset [name ...]\n");
-			cmd->minishell->exit_status = 2;
-			return (EXIT_FAILURE);
+			// print_error("-minishell: unset: ");
+			// write(STDERR_FILENO, cmd->argv[i], 2);
+			// print_error(": invalid option\n");
+			// print_error("unset: usage: unset [name ...]\n");
+			// cmd->minishell->exit_status = 2;
+			// return (EXIT_FAILURE);
+
+			print_unset_error(cmd->argv[i]);
+			return (2);
 		}
 		if (is_valid_identifier(cmd->argv[i]))
 			remove_var_from_ht(cmd->minishell, cmd->argv[i]);

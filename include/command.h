@@ -85,7 +85,6 @@ typedef struct s_redir
 	t_redir_type	type;
 	char			*filename;
 	struct s_redir	*next;
-	bool			is_heredoc_expanded; //  for heredoc processing
 }	t_redir;
 
 typedef struct s_cmd
@@ -95,7 +94,6 @@ typedef struct s_cmd
 	t_redir			*redirs;   // linked list of redirections
 	struct s_cmd	*next;
 	t_mshell		*minishell;
-	bool			in_pipe;
 }	t_cmd;
 
 

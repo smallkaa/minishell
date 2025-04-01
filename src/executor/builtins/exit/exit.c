@@ -103,8 +103,13 @@ uint8_t	handle_exit(t_cmd *cmd)
 		return (EXIT_FAILURE);
 	}
 	// printf("exit\n");
-	if (!cmd->argv[1] || cmd->argv[1][0] == '\0')
+	if (!cmd->argv[1])
 		return (cmd->minishell->exit_status);
+	if (cmd->argv[1][0] == '\0')
+	{
+		exit_numeric_error(cmd->argv[1]);
+		return (2);
+	}
 	if (!is_valid_numeric_exit_arg(cmd->argv[1]))
 		return (exit_numeric_error(cmd->argv[1]));
 	if (cmd->argv[2])

@@ -135,10 +135,13 @@ static void	print_sorted_env(t_mshell *mshell, char **keys, int count)
 	while (i < count)
 	{
 		value = ms_getenv(mshell, keys[i]);
-		if (value)
-			(void)printf("declare -x %s=\"%s\"\n", keys[i], value);
-		else
-			(void)printf("declare -x %s\n", keys[i]);
+		if (ft_strcmp(keys[i], "_") != 0)
+		{
+			if (value)
+					(void)printf("declare -x %s=\"%s\"\n", keys[i], value);
+			else
+				(void)printf("declare -x %s\n", keys[i]);
+		}
 		i++;
 	}
 }
