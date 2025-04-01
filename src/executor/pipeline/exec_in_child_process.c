@@ -40,7 +40,10 @@ static void	execute_command(t_cmd *cmd)
 	// }
 
 	if(ft_strcmp(cmd->argv[0], "") == 0)
-		_exit(EXIT_SUCCESS);
+	{
+		print_error("Command '' not found\n");
+		_exit(127);
+	}
 
 
 	if (cmd->binary == NULL)
