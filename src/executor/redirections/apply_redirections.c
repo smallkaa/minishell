@@ -1,27 +1,28 @@
 #include "minishell.h"
 
-uint8_t apply_single_redirection(t_cmd *cmd, t_redir *redir)
+uint8_t	apply_single_redirection(t_cmd *cmd, t_redir *redir)
 {
-	uint8_t	result;
+	uint8_t	exit_status;
 
 	if (redir->type == R_INPUT)
-		result = apply_in_redirection(cmd);
+		exit_status = apply_in_redirection(cmd);
 	else if (redir->type == R_OUTPUT || redir->type == R_APPEND)
-		result = apply_out_redirection(cmd);
+		exit_status = apply_out_redirection(cmd);
 	else if (redir->type == R_HEREDOC)
-		result = apply_heredoc(cmd);
+		exit_status = apply_heredoc(cmd);
 	else
 	{
-		print_error("Error: apply_single_redirection: invalid redirection type\n");
+		print_error("Error: apply_redirections: invalid redirection type\n");
 		return (EXIT_FAILURE);
 	}
-	return (result);
+	return (exit_status);
 }
-uint8_t apply_redirections(t_cmd *cmd)
+
+uint8_t	apply_redirections(t_cmd *cmd)
 {
 	t_redir	*redir;
 	t_list	*current_redir;
-	int		result;
+	uint8_t	exit_status;
 
 	if (!cmd)
 	{
@@ -34,9 +35,9 @@ uint8_t apply_redirections(t_cmd *cmd)
 	while (current_redir)
 	{
 		redir = (t_redir *)current_redir->content;
-		result = apply_single_redirection(cmd, redir);
-		if (result != EXIT_SUCCESS)
-			return (result);
+		exit_status = apply_single_redirection(cmd, redir);
+		if (exit_status != EXIT_SUCCESS)
+			return (exit_status);
 		current_redir = current_redir->next;
 	}
 	return (EXIT_SUCCESS);

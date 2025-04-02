@@ -14,6 +14,7 @@ static uint8_t	apply_mode(t_redir *redir, int *mode)
 	}
 	return (EXIT_SUCCESS);
 }
+
 int	open_output_file(t_redir *redir, int mode)
 {
 	int	out_fd;

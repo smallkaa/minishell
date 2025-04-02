@@ -13,7 +13,8 @@ uint8_t	write_heredoc_to_pipe(int pipefd, char *delimiter)
 			free(line);
 			break ;
 		}
-		if (write(pipefd, line, ft_strlen(line)) == -1 || write(pipefd, "\n", 1) == -1)
+		if (write(pipefd, line, ft_strlen(line)) == -1
+			|| write(pipefd, "\n", 1) == -1)
 		{
 			perror("-minishell: write");
 			free(line);
@@ -53,8 +54,9 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 {
 	t_list	*current_redir;
 	t_redir	*redir;
-	uint8_t	result = EXIT_SUCCESS;
+	uint8_t	exit_status;
 
+	exit_status = EXIT_SUCCESS;
 	if (!cmd->redirs)
 		return (EXIT_SUCCESS);
 	current_redir = cmd->redirs;
@@ -63,11 +65,11 @@ uint8_t	apply_heredoc(t_cmd *cmd)
 		redir = (t_redir *)current_redir->content;
 		if (redir->type == R_HEREDOC)
 		{
-			result = setup_heredoc_pipe(redir);
-			if (result != EXIT_SUCCESS)
-				return (result);
+			exit_status = setup_heredoc_pipe(redir);
+			if (exit_status != EXIT_SUCCESS)
+				return (exit_status);
 		}
 		current_redir = current_redir->next;
 	}
-	return (result);
+	return (exit_status);
 }
