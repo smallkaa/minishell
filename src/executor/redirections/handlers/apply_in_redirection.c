@@ -31,9 +31,9 @@ uint8_t	apply_in_redirection(t_cmd *cmd)
 	t_list	*current_redir;
 	t_redir	*redir;
 	int		in_fd;
-	uint8_t	result;
+	uint8_t	exit_status;
 
-	result = EXIT_SUCCESS;
+	exit_status = EXIT_SUCCESS;
 	if (!cmd->redirs)
 		return (EXIT_SUCCESS);
 	current_redir = cmd->redirs;
@@ -45,11 +45,11 @@ uint8_t	apply_in_redirection(t_cmd *cmd)
 			in_fd = open_input_file(redir->filename);
 			if (in_fd < 0)
 				return (EXIT_FAILURE);
-			result = apply_input_fd(in_fd);
-			if (result != EXIT_SUCCESS)
-				return (result);
+			exit_status = apply_input_fd(in_fd);
+			if (exit_status != EXIT_SUCCESS)
+				return (exit_status);
 		}
 		current_redir = current_redir->next;
 	}
-	return (result);
+	return (exit_status);
 }
