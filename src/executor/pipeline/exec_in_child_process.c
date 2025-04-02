@@ -70,26 +70,73 @@ static void	execute_command(t_cmd *cmd)
 	child_execve_error(cmd);
 }
 
+// static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
+// {
+// 	if (apply_redirections(cmd) != EXIT_SUCCESS)
+// 		return (-1);
+
+// 	if (!cmd->in_redir && in_fd != STDIN_FILENO)
+// 	{
+// 		if (dup2(in_fd, STDIN_FILENO) == -1)
+// 			return (-1);
+// 		close(in_fd);
+// 	}
+// 	if (!cmd->out_redir && cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
+// 		return (-1);
+
+// 	if (fds[0] != -1)
+// 		close(fds[0]);
+// 	if (fds[1] != -1)
+// 		close(fds[1]);
+// 	return (EXIT_SUCCESS);
+// }
+bool cmd_has_input_redirection(t_cmd *cmd)
+{
+    t_list  *node;
+    t_redir *redir;
+
+    if (!cmd || !cmd->redirs)
+        return false;
+
+    node = cmd->redirs;
+    while (node)
+    {
+        redir = (t_redir *)node->content;
+        if (redir->type == R_INPUT)
+            return true; // Found an R_INPUT
+        node = node->next;
+    }
+    return false;
+}
 static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
 {
-	if (apply_redirections(cmd) != EXIT_SUCCESS)
-		return (-1);
+    // 1) If there's a next command, set the pipe for STDOUT first
+    if (cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
+        return (-1);
 
-	if (!cmd->in_redir && in_fd != STDIN_FILENO)
-	{
-		if (dup2(in_fd, STDIN_FILENO) == -1)
-			return (-1);
-		close(in_fd);
-	}
-	if (!cmd->out_redir && cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
-		return (-1);
+    // 2) Now apply all redirections (which may override the pipe)
+    if (apply_redirections(cmd) != EXIT_SUCCESS)
+        return (-1);
 
-	if (fds[0] != -1)
-		close(fds[0]);
-	if (fds[1] != -1)
-		close(fds[1]);
-	return (EXIT_SUCCESS);
+    // 3) If there's no `<` redirection, but we have leftover `in_fd`, use that for STDIN
+    bool has_in_redir = cmd_has_input_redirection(cmd);
+    if (!has_in_redir && in_fd != STDIN_FILENO)
+    {
+        if (dup2(in_fd, STDIN_FILENO) == -1)
+            return (-1);
+        close(in_fd);
+    }
+
+    // 4) Close the pipe ends
+    if (fds[0] != -1)
+        close(fds[0]);
+    if (fds[1] != -1)
+        close(fds[1]);
+
+    return (EXIT_SUCCESS);
 }
+
+
 
 static int	handle_child(t_cmd *cmd, int in_fd, int *fds)
 {
