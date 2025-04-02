@@ -1,11 +1,11 @@
 #include "minishell.h"
 
-static uint8_t	apply_mode(t_cmd *cmd, int *mode)
+static uint8_t	apply_mode(t_redir *redir, int *mode)
 {
 	*mode = O_WRONLY | O_CREAT;
-	if (cmd->out_redir->type == R_OUTPUT)
+	if (redir->type == R_OUTPUT)
 		*mode |= O_TRUNC;
-	else if (cmd->out_redir->type == R_APPEND)
+	else if (redir->type == R_APPEND)
 		*mode |= O_APPEND;
 	else
 	{
@@ -17,30 +17,49 @@ static uint8_t	apply_mode(t_cmd *cmd, int *mode)
 
 uint8_t	apply_out_redirection(t_cmd *cmd)
 {
-	int	out_fd;
-	int	mode;
+	int		out_fd;
+	int		mode;
+	t_list	*current_redir;
+	t_redir	*redir;
+	uint8_t result = EXIT_SUCCESS;
 
-	if (pre_exec_validation(cmd, R_OUTPUT) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	if (apply_mode(cmd, &mode) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	out_fd = open(cmd->out_redir->filename, mode, 0644);
-	if (out_fd < 0)
-	{
-		print_error("-minishell: ");
-		perror(cmd->out_redir->filename);
-		return (EXIT_FAILURE);
+	if (!cmd->redirs)
+		return (EXIT_SUCCESS);
 
-	}
-	if (dup2(out_fd, STDOUT_FILENO) == -1)
+	current_redir = cmd->redirs;
+	while (current_redir)
 	{
-		if (close(out_fd) == -1)
-			perror_return("-minishell: close", EXIT_FAILURE);
-		perror_return("-minishell: dup2", EXIT_FAILURE);
+		redir = (t_redir *)current_redir->content;
+
+		if (redir->type == R_OUTPUT || redir->type == R_APPEND)
+		{
+			if (apply_mode(redir, &mode) == EXIT_FAILURE)
+				return (EXIT_FAILURE);
+
+			out_fd = open(redir->filename, mode, 0644);
+			if (out_fd < 0)
+			{
+				print_error("-minishell: ");
+				perror(redir->filename);
+				return (EXIT_FAILURE);
+			}
+			if (dup2(out_fd, STDOUT_FILENO) == -1)
+			{
+				if (close(out_fd) == -1)
+					perror_return("-minishell: close", EXIT_FAILURE);
+				perror_return("-minishell: dup2", EXIT_FAILURE);
+			}
+			if (close(out_fd) == -1)
+				perror_return("-minishell: close", EXIT_FAILURE);
+
+			// After successfully applying the redirection, continue to the next one.
+			result = EXIT_SUCCESS;
+		}
+
+		current_redir = current_redir->next;
 	}
-	if (close(out_fd) == -1)
-		perror_return("-minishell: close", EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+
+	return (result);
 }
 
 // fprintf(stderr, "errno: %d (%s)\n", errno, strerror(errno));

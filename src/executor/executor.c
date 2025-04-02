@@ -90,8 +90,40 @@ uint8_t	run_executor(t_cmd *cmd)
 	// else
 	// 	printf("---cmd->binary: NOT found\n");
 
+	// // Printing redirections
+	// i = 0;
+	// if (cmd->redirs)
+	// {
+	// 	t_list *current_redir = cmd->redirs;
+	// 	while (current_redir)
+	// 	{
+	// 		t_redir *redir = (t_redir *)current_redir->content;
 
+	// 		printf("---redirection[%d]: ", i);
+	// 		if (redir->type == R_INPUT)
+	// 			printf("'<' ");
+	// 		else if (redir->type == R_OUTPUT)
+	// 			printf("'>' ");
+	// 		else if (redir->type == R_APPEND)
+	// 			printf("'>>' ");
+	// 		else if (redir->type == R_HEREDOC)
+	// 			printf("'<<' ");
 
+	// 		if (redir->filename)
+	// 			printf("\"%s\"\n", redir->filename);
+	// 		else
+	// 			printf("(NULL)\n");
+
+	// 		printf("---expand: %s\n", redir->expand ? "true" : "false");
+
+	// 		current_redir = current_redir->next;
+	// 		i++;
+	// 	}
+	// }
+	// else
+	// {
+	// 	printf("---No redirections found\n");
+	// }
 
 	// if (cmd->out_redir)
 	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
