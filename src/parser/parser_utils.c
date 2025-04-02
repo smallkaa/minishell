@@ -131,3 +131,84 @@ void debug_print_parsed_commands(t_cmd *cmd)
     }
     printf("======================================\n\n");
 }
+
+// --- Функции освобождения памяти (исправленные) ---
+
+/**
+ * @brief Освобождает память, выделенную для одного редиректа (t_redir).
+ * Используется как функция-делитер для ft_lstclear.
+ * @param content Указатель на содержимое узла списка (t_redir *).
+ */
+void	free_redir(void *content)
+{
+	t_redir	*redir;
+
+	if (!content)
+		return ;
+	redir = (t_redir *)content;
+	// Освобождаем строку с именем файла/ограничителем
+	free(redir->filename);
+	redir->filename = NULL;
+	// Освобождаем саму структуру редиректа
+	free(redir); // [cite: 1]
+}
+
+/**
+ * @brief Освобождает память, выделенную для одной команды (t_cmd).
+ * Включая ее аргументы, путь к бинарнику и список редиректов.
+ * @param cmd Указатель на структуру команды для освобождения.
+ */
+void	free_command(t_cmd *cmd)
+{
+	int	i;
+
+	if (!cmd)
+		return ;
+	// Освобождаем путь к бинарнику (если он был скопирован)
+	free(cmd->binary); // [cite: 1]
+	cmd->binary = NULL;
+	// Освобождаем массив аргументов (argv)
+	if (cmd->argv)
+	{
+		i = 0;
+		while (cmd->argv[i])
+		{
+			free(cmd->argv[i]); // Освобождаем каждую строку аргумента [cite: 1]
+			cmd->argv[i] = NULL;
+			i++;
+		}
+		free(cmd->argv); // Освобождаем сам массив указателей [cite: 1]
+		cmd->argv = NULL;
+	}
+	// *** Строки для argc и argv_capacity удалены ***
+	// Освобождаем список редиректов, используя ft_lstclear и free_redir
+	if (cmd->redirs) // [cite: 1]
+	{
+		ft_lstclear(&cmd->redirs, free_redir); // [cite: 1]
+		cmd->redirs = NULL; // Убедимся, что указатель обнулен
+	}
+	// Не освобождаем cmd->minishell, так как он общий
+	// Освобождаем саму структуру команды
+	free(cmd); // [cite: 1]
+}
+
+/**
+ * @brief Освобождает всю цепочку команд (связанный список t_cmd).
+ * @param head Указатель на УКАЗАТЕЛЬ на голову списка команд.
+ */
+void	free_command_list(t_cmd **head)
+{
+	t_cmd	*current;
+	t_cmd	*next;
+
+	if (!head || !*head)
+		return ;
+	current = *head;
+	while (current != NULL)
+	{
+		next = current->next; // Сохраняем указатель на следующую команду [cite: 1]
+		free_command(current); // Освобождаем текущую команду
+		current = next; // Переходим к следующей
+	}
+	*head = NULL; // Устанавливаем голову списка в NULL после очистки
+}

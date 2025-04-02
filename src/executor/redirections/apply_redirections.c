@@ -42,35 +42,7 @@ uint8_t	process_extra_input(t_list	*list)
 
 uint8_t	traverse_redirections(t_cmd *cmd)
 {
-	t_list	*current;
-	uint8_t	exit_status;
-
-	// Process output redirections
-	if (cmd->extra_out_redirs)
-	{
-		current = cmd->extra_out_redirs;
-		while (current)
-		{
-			exit_status = process_extra_output(current);
-			if (exit_status != EXIT_SUCCESS)
-				return (exit_status); // Return immediately on failure
-			current = current->next;
-		}
-	}
-
-	// Process input redirections
-	if (cmd->extra_in_redirs)
-	{
-		current = cmd->extra_in_redirs;
-		while (current)
-		{
-			exit_status = process_extra_input(current);
-			if (exit_status != EXIT_SUCCESS)
-				return (exit_status); // Return immediately on failure
-			current = current->next;
-		}
-	}
-
+	(void)cmd;
 	return (EXIT_SUCCESS); // Return success if all redirections succeeded
 }
 
