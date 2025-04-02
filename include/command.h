@@ -71,8 +71,7 @@ typedef struct s_cmd
 	t_cmd				*next;
 	t_mshell			*minishell;
 	bool				in_pipe;
-	t_list	*extra_in_redirs;
-	t_list	*extra_out_redirs;
+    t_list   *redirs;       // Список всех редиректов (t_redir*)
 }	t_cmd;
 
 # endif  /* COMMAND_H */

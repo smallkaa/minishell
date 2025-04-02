@@ -143,29 +143,6 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 	new_tokens->count = j; // Обновляем реальное количество токенов
 }
 
-static void	store_old_out_redir(t_cmd *cmd)
-{
-	if (cmd->out_redir)
-	{
-		ft_lstadd_back(&cmd->extra_out_redirs,
-			ft_lstnew(ft_strdup(cmd->out_redir->filename)));
-		free(cmd->out_redir->filename);
-		free(cmd->out_redir);
-		cmd->out_redir = NULL;
-	}
-}
-
-static void	store_old_in_redir(t_cmd *cmd)
-{
-	if (cmd->in_redir)
-	{
-		ft_lstadd_back(&cmd->extra_in_redirs,
-			ft_lstnew(ft_strdup(cmd->in_redir->filename)));
-		free(cmd->in_redir->filename);
-		free(cmd->in_redir);
-		cmd->in_redir = NULL;
-	}
-}
 
 int	group_word_tokens(t_TokenArray *tokens)
 {
@@ -269,75 +246,85 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Reset current to NULL to create a new command in the next iteration
             current = NULL;
         }
-        else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
-                 tokens->tokens[i].type == TOKEN_HEREDOC)
-        {
-            // Create a new redirection structure
-            t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
-            if (!redir)
-                return NULL;
+		else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
+			tokens->tokens[i].type == TOKEN_HEREDOC)
+		{
+		if (!current) {
+			// Ошибка: Редирект без команды. Нужно обработать.
+			// Возможно, создать пустую команду или вернуть ошибку парсинга.
+			// В bash это синтаксическая ошибка: "> file" или "< file" без команды.
+			print_error("Syntax error: redirection without command\n"); 
+			// TODO: Освободить память и вернуть NULL или обработать иначе
+			return NULL; // Пример обработки ошибки
+		}
+		if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+		t_redir *redir = malloc(sizeof(t_redir));
+		if (!redir) {
+			// Обработка ошибки выделения памяти
+			// TODO: Освободить всю выделенную память для команды
+			return NULL; 
+		}
 
-            // Set the redirection type based on token type
-            if (tokens->tokens[i].type == TOKEN_REDIRECT_IN)
-                redir->type = R_INPUT;
-            else // TOKEN_HEREDOC
-                redir->type = R_HEREDOC;
+		redir->type = (tokens->tokens[i].type == TOKEN_REDIRECT_IN) ? R_INPUT : R_HEREDOC;
+		redir->filename = ft_strdup(tokens->tokens[i+1].value);
+		// redir->expand = true; // Если нужно поле expand
 
-            redir->expand = true; // Default value
+		if (!redir->filename) {
+				// Обработка ошибки выделения памяти
+				free(redir);
+				// TODO: Освободить всю выделенную память для команды
+				return NULL;
+		}
 
-            // The next token should be the file/delimiter
-            if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
-                redir->filename = ft_strdup(tokens->tokens[i+1].value);
+		// Добавляем в ОБЩИЙ список редиректов
+		ft_lstadd_back(&current->redirs, ft_lstnew(redir)); 
+		i++; // Пропускаем имя файла/ограничитель
+		} else {
+		// Ошибка: нет имени файла/ограничителя после редиректа
+		print_error("Syntax error: missing name for redirection\n");
+		// TODO: Освободить память и вернуть NULL или обработать иначе
+		return NULL; // Пример обработки ошибки
+		}
+		}
+		// TOKEN_REDIRECT_OUT и TOKEN_APPEND_OUT
+		else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
+			tokens->tokens[i].type == TOKEN_APPEND_OUT) 
+		{
+		if (!current) {
+			// Ошибка: Редирект без команды.
+			print_error("Syntax error: redirection without command\n"); 
+			// TODO: Освободить память и вернуть NULL или обработать иначе
+			return NULL;
+		}
+		if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+		t_redir *redir = malloc(sizeof(t_redir));
+			if (!redir) {
+				// Обработка ошибки выделения памяти
+				// TODO: Освободить всю выделенную память для команды
+				return NULL; 
+			}
 
-                // Add this redirection to the command
-                if (current) {
-					store_old_in_redir(current);
-                    current->in_redir = redir;
-                } else {
-                    free(redir->filename);
-                    free(redir);
-                }
+		redir->type = (tokens->tokens[i].type == TOKEN_REDIRECT_OUT) ? R_OUTPUT : R_APPEND;
+		redir->filename = ft_strdup(tokens->tokens[i+1].value);
+			// redir->expand = true; // Если нужно поле expand
 
-                // Skip the filename token
-                i++;
-            } else {
-                free(redir);
-            }
-        }
-        else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
-                 tokens->tokens[i].type == TOKEN_APPEND_OUT)
-        {
-            // Create a new redirection structure
-            t_redir *redir = (t_redir *)malloc(sizeof(t_redir));
-            if (!redir)
-                return NULL;
+			if (!redir->filename) {
+				// Обработка ошибки выделения памяти
+				free(redir);
+				// TODO: Освободить всю выделенную память для команды
+				return NULL;
+			}
 
-            // Set the redirection type based on token type
-            if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT)
-                redir->type = R_OUTPUT;
-            else // TOKEN_APPEND_OUT
-                redir->type = R_APPEND;
-
-            redir->expand = true; // Default value
-
-            // The next token should be the filename
-            if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
-                redir->filename = ft_strdup(tokens->tokens[i+1].value);
-				store_old_out_redir(current);
-                // Add this redirection to the command
-                if (current) {
-                    current->out_redir = redir;
-                } else {
-                    free(redir->filename);
-                    free(redir);
-                }
-
-                // Skip the filename token
-                i++;
-            } else {
-                free(redir);
-            }
-        }
+		// Добавляем в ОБЩИЙ список редиректов
+		ft_lstadd_back(&current->redirs, ft_lstnew(redir));
+		i++; // Пропускаем имя файла
+		} else {
+			// Ошибка: нет имени файла после редиректа
+		print_error("Syntax error: missing name for redirection\n");
+		// TODO: Освободить память и вернуть NULL или обработать иначе
+		return NULL; // Пример обработки ошибки
+		}
+		}
 
         i++;
     }

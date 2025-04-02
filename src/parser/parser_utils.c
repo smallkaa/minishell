@@ -60,11 +60,11 @@ void	explain_token(t_Token token)
 	debug_printf("\033[0m");
 }
 
-void debug_print_redirection(t_redir *redir, char *type)
+void debug_print_single_redirection(t_redir *redir)
 {
     if (!redir)
         return;
-    printf("  %s Redirection: ", type);
+    printf("    Redirection: ");
     if (redir->type == R_INPUT)
         printf("< ");
     else if (redir->type == R_OUTPUT)
@@ -73,24 +73,29 @@ void debug_print_redirection(t_redir *redir, char *type)
         printf(">> ");
     else if (redir->type == R_HEREDOC)
         printf("<< ");
-    printf("\"%s\"\n", redir->filename);
+    else
+        printf("[Unknown Type %d] ", redir->type); // Для отладки неизвестных типов
+
+    printf("\"%s\"", redir->filename ? redir->filename : "(NULL Filename!)");
+    printf("\n");
 }
+
 
 void debug_print_parsed_commands(t_cmd *cmd)
 {
-	if(!is_debug_mode())
-		return;
+    if (!is_debug_mode())
+         return;
+
     int cmd_count = 1;
-	t_list	*tmp;
+    t_list *redir_node; // Узел для итерации по списку редиректов
+    t_redir *redir;     // Указатель на данные редиректа
 
-
-    printf("\n==== Parsed Command Structure ====\n");
+    printf("\n==== Parsed Command Structure (New) ====\n");
     while (cmd)
     {
         printf("Command %d:\n", cmd_count);
         printf("  Executable: %s\n", cmd->binary ? cmd->binary : "(NULL)");
 
-        // Print arguments
         if (cmd->argv)
         {
             printf("  Arguments: ");
@@ -98,37 +103,31 @@ void debug_print_parsed_commands(t_cmd *cmd)
                 printf("\"%s\" ", cmd->argv[i]);
             printf("\n");
         }
-
-        // Print input and output redirections
-        debug_print_redirection(cmd->in_redir, "Input");
-        debug_print_redirection(cmd->out_redir, "Output");
-
-		if (cmd->extra_in_redirs)
-		{
-			tmp = cmd->extra_in_redirs;
-			while (tmp)
-			{
-				printf("  Ignored Input Redirection: < \"%s\"\n", (char *)tmp->content);
-				tmp = tmp->next;
-			}
-		}
-		
-		if (cmd->extra_out_redirs)
-		{
-			tmp = cmd->extra_out_redirs;
-			while (tmp)
-			{
-				printf("  Ignored Output Redirection: > \"%s\"\n", (char *)tmp->content);
-				tmp = tmp->next;
-			}
-		}
-		
-        // Check if there's a next command in a pipeline
+        // Печать всех редиректов из списка cmd->redirs
+        printf("  Redirections (in order):\n");
+        redir_node = cmd->redirs; // Получаем начало списка редиректов
+        if (!redir_node)
+        {
+            printf("    (None)\n"); // Сообщение, если редиректов нет
+        }
+        while (redir_node)
+        {
+            // Получаем указатель на структуру t_redir из узла списка
+            redir = (t_redir *)redir_node->content;
+            // Печатаем информацию об этом редиректе
+            debug_print_single_redirection(redir);
+            // Переходим к следующему узлу
+            redir_node = redir_node->next;
+        }
+        // Печать информации о пайпе
         if (cmd->next)
             printf("  Piped to next command ->\n");
 
+        // Переход к следующей команде
         cmd = cmd->next;
         cmd_count++;
+        // Добавляем пустую строку для лучшей читаемости между командами
+        if (cmd) printf("\n");
     }
-    printf("==================================\n\n");
+    printf("======================================\n\n");
 }
