@@ -72,7 +72,12 @@ t_Token get_next_token(void)
         token.type = TOKEN_EOF;
         return token;
     }
-    
+    if (*current_input == '<' && *(current_input + 1) == '<') {
+        current_input += 2;
+        token.type = TOKEN_HEREDOC;
+        token.value = ft_strdup("<<");
+        return token;
+    }    
     // Проверяем спецсимволы (|, <, >, &) - они всегда отдельные токены
     if (ft_is_special_char(*current_input)) {
         char special_char = *current_input++;
