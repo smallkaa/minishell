@@ -103,7 +103,7 @@ char	*find_binary(t_cmd *cmd)
 {
 	char	*binary;
 
-	if (!cmd || !cmd->argv || !cmd->argv[0])
+	if (!cmd || !cmd->argv || !cmd->argv[0] || ft_strlen(cmd->argv[0]) == 0)
 	{
 		cmd->minishell->exit_status = 127;
 		return (NULL);
