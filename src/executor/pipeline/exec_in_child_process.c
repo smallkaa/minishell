@@ -15,29 +15,52 @@ static uint8_t	validate_dots(t_cmd *cmd)
 	}
 	return (EXIT_SUCCESS);
 }
+uint8_t update_shlvl(t_cmd *cmd)
+{
+    int shlvl;
+    char *str_shlvl = ms_getenv(cmd->minishell, "SHLVL");
+    char *new_shlvl;
+
+    if (!str_shlvl)
+        shlvl = 1; // If SHLVL doesn't exist, initialize it to 1
+    else
+        shlvl = ft_atoi(str_shlvl);
+
+    shlvl++; // Increment SHLVL
+
+    new_shlvl = ft_itoa(shlvl);
+    if (!new_shlvl)
+        return (EXIT_FAILURE);
+
+    set_variable(cmd->minishell, "SHLVL", new_shlvl, 1); // Save the updated SHLVL
+    free(new_shlvl);
+
+    // Make sure to update the environment array
+    update_env(cmd->minishell);
+
+    return (EXIT_SUCCESS);
+}
 
 
 
-// int is_minishell_executable(t_cmd *cmd)
-// {
-//     if (ft_strcmp(cmd->argv[0], "./minishell") == 0)
-// 	{
-// 		printf("---ft_strcmp == 0\n");
-//         return (1);
-// 	}
-// 	printf("---ft_strcmp != 0\n");
-//     return (0);
-// }
+int is_minishell_executable(t_cmd *cmd)
+{
+    if (ft_strcmp(cmd->argv[0], "./minishell") == 0)
+	{
+        return (1);
+	}
+    return (0);
+}
 
 static void	execute_command(t_cmd *cmd)
 {
 	uint8_t	exit_status;
 
-	// if (is_minishell_executable(cmd))
-	// {
-	// 	if (update_shlvl(cmd) == EXIT_FAILURE)
-	// 		_exit(EXIT_FAILURE);
-	// }
+	if (is_minishell_executable(cmd))
+	{
+		if (update_shlvl(cmd) == EXIT_FAILURE)
+			_exit(EXIT_FAILURE);
+	}
 
 	if(ft_strcmp(cmd->argv[0], "") == 0)
 	{

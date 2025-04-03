@@ -111,7 +111,7 @@ static void	load_env_into_ht(t_mshell *mshell)
 		return;
 	}
 	set_variable(mshell, "OLDPWD", home, 1);
-	set_variable(mshell, "SHLVL", "1", 1);
+	// set_variable(mshell, "SHLVL", "1", 1);
 }
 
 
