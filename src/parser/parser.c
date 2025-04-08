@@ -171,6 +171,39 @@ int	group_word_tokens(t_TokenArray *tokens)
 	return (0);
 }
 
+// Создаёт пустую команду с argv[0] = ""
+static t_cmd *create_empty_command(t_mshell *shell)
+{
+	t_cmd	*cmd;
+
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return (NULL);
+	memset(cmd, 0, sizeof(t_cmd));
+
+	cmd->argv = malloc(sizeof(char *) * 2);
+	if (!cmd->argv)
+	{
+		free(cmd);
+		return (NULL);
+	}
+	cmd->argv[0] = ft_strdup("");
+	if (!cmd->argv[0])
+	{
+		free(cmd->argv);
+		free(cmd);
+		return (NULL);
+	}
+	cmd->argv[1] = NULL;
+	cmd->minishell = shell;
+	cmd->next = NULL;
+	cmd->in_redir = NULL;
+	cmd->out_redir = NULL;
+	cmd->redirs = NULL;
+
+	return (cmd);
+}
+
 
 t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
@@ -205,7 +238,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 
                 // Initialize command structure
                 new_cmd->binary = NULL;
-                new_cmd->argv[0] = strdup(tokens->tokens[i].value);
+                new_cmd->argv[0] = ft_strdup(tokens->tokens[i].value);
                 new_cmd->minishell = shell;
                 new_cmd->next = NULL;
                 new_cmd->in_redir = NULL;
@@ -231,7 +264,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                 // Attach as argument to the current command
                 if (arg_index < MAX_ARGS)
                 {
-                    current->argv[arg_index] = strdup(tokens->tokens[i].value);
+                    current->argv[arg_index] = ft_strdup(tokens->tokens[i].value);
                     arg_index++;
 
                 }
@@ -249,14 +282,24 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 		else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
 			tokens->tokens[i].type == TOKEN_HEREDOC)
 		{
-		if (!current) {
-			// Ошибка: Редирект без команды. Нужно обработать.
-			// Возможно, создать пустую команду или вернуть ошибку парсинга.
-			// В bash это синтаксическая ошибка: "> file" или "< file" без команды.
-			print_error("Syntax error: redirection without command\n"); 
-			// TODO: Освободить память и вернуть NULL или обработать иначе
-			return NULL; // Пример обработки ошибки
+		if (!current)
+		{
+			current = create_empty_command(shell);
+			if (!current)
+				return NULL;
+		
+			// Добавляем её в цепочку
+			if (!head)
+				head = current;
+			else
+			{
+				t_cmd *last = head;
+				while (last->next)
+					last = last->next;
+				last->next = current;
+			}
 		}
+			
 		if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
 		t_redir *redir = malloc(sizeof(t_redir));
 		if (!redir) {
@@ -290,13 +333,24 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 		else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
 			tokens->tokens[i].type == TOKEN_APPEND_OUT) 
 		{
-		if (!current) {
-			// Ошибка: Редирект без команды.
-			print_error("Syntax error: redirection without command\n"); 
-			// TODO: Освободить память и вернуть NULL или обработать иначе
-			return NULL;
-		}
-		if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
+			if (!current)
+			{
+				current = create_empty_command(shell);
+				if (!current)
+					return NULL;
+		
+				// Добавляем её в цепочку
+				if (!head)
+					head = current;
+				else
+				{
+					t_cmd *last = head;
+					while (last->next)
+						last = last->next;
+					last->next = current;
+				}
+			}
+			if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
 		t_redir *redir = malloc(sizeof(t_redir));
 			if (!redir) {
 				// Обработка ошибки выделения памяти
@@ -332,6 +386,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
     // Ensure last command argv is NULL-terminated
     if (current && current->argv)
     {
+		if (arg_index > 0)
         current->argv[arg_index] = NULL;
     }
 
