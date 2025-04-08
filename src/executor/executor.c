@@ -78,84 +78,54 @@ uint8_t	run_executor(t_cmd *cmd)
 	}
 	// 	// // test -------------------------------------------------//
 
-	// i = 0;
-	// while(cmd->argv[i])
-	// {
-	// 	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
-	// 	i++;
-	// }
-	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
-	// if (cmd->binary)
-	// 	printf("---binary (%p)\n", cmd->binary);
-	// else
-	// 	printf("---cmd->binary: NOT found\n");
+	i = 0;
+	while(cmd->argv[i])
+	{
+		printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+		i++;
+	}
+	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	if (cmd->binary)
+		printf("---binary (%p)\n", cmd->binary);
+	else
+		printf("---cmd->binary: NOT found\n");
 
-	// // Printing redirections
-	// i = 0;
-	// if (cmd->redirs)
-	// {
-	// 	t_list *current_redir = cmd->redirs;
-	// 	while (current_redir)
-	// 	{
-	// 		t_redir *redir = (t_redir *)current_redir->content;
+	//-----------------------------------------------
+	// Printing redirections
+	i = 0;
+	if (cmd->redirs)
+	{
+		t_list *current_redir = cmd->redirs;
+		while (current_redir)
+		{
+			t_redir *redir = (t_redir *)current_redir->content;
 
-	// 		printf("---redirection[%d]: ", i);
-	// 		if (redir->type == R_INPUT)
-	// 			printf("'<' ");
-	// 		else if (redir->type == R_OUTPUT)
-	// 			printf("'>' ");
-	// 		else if (redir->type == R_APPEND)
-	// 			printf("'>>' ");
-	// 		else if (redir->type == R_HEREDOC)
-	// 			printf("'<<' ");
+			printf("---redirection[%d]: ", i);
+			if (redir->type == R_INPUT)
+				printf("'<' ");
+			else if (redir->type == R_OUTPUT)
+				printf("'>' ");
+			else if (redir->type == R_APPEND)
+				printf("'>>' ");
+			else if (redir->type == R_HEREDOC)
+				printf("'<<' ");
 
-	// 		if (redir->filename)
-	// 			printf("\"%s\"\n", redir->filename);
-	// 		else
-	// 			printf("(NULL)\n");
+			if (redir->filename)
+				printf("\"%s\"\n", redir->filename);
+			else
+				printf("(NULL)\n");
 
-	// 		printf("---expand: %s\n", redir->expand ? "true" : "false");
+			printf("---expand: %s\n", redir->expand ? "true" : "false");
 
-	// 		current_redir = current_redir->next;
-	// 		i++;
-	// 	}
-	// }
-	// else
-	// {
-	// 	printf("---No redirections found\n");
-	// }
+			current_redir = current_redir->next;
+			i++;
+		}
+	}
+	else
+	{
+		printf("---No redirections found\n");
+	}
 
-	// if (cmd->out_redir)
-	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
-	// if (cmd->in_redir)
-	// 	printf("---in_redir[%s]:\n", cmd->in_redir->filename);
-
-	// if (cmd->extra_in_redirs)
-	// {
-	// 	t_list *current = cmd->extra_in_redirs;
-	// 	int i = 0;
-
-	// 	while (current)
-	// 	{
-	// 		printf("---in extra files[%d]: {%s}\n", i, (char *)current->content); // Casting content to char *
-	// 		current = current->next;
-	// 		i++;
-	// 	}
-	// }
-
-
-	// if (cmd->extra_out_redirs)
-	// {
-	// 	t_list *current = cmd->extra_out_redirs;
-	// 	int i = 0;
-
-	// 	while (current)
-	// 	{
-	// 		printf("---out extra files[%d]: {%s}\n", i, (char *)current->content); // Casting content to char *
-	// 		current = current->next;
-	// 		i++;
-	// 	}
-	// }
 
 	// end test -----------------------------------------------//
 

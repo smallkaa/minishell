@@ -101,10 +101,15 @@ bool cmd_has_input_redirection(t_cmd *cmd)
 static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
 {
 	bool	has_in_redir;
+	int exit_status;
 
 	if (cmd->next && dup2(fds[1], STDOUT_FILENO) == -1)
 		return (-1);
-	if (apply_redirections(cmd) != EXIT_SUCCESS)
+	
+	exit_status = apply_redirections(cmd);
+	if (exit_status == EXIT_SUCCESS && (ft_strcmp(cmd->argv[0], "") == 0))
+		return (2);
+	if (exit_status != EXIT_SUCCESS)
 		return (-1);
 	has_in_redir = cmd_has_input_redirection(cmd);
 	if (!has_in_redir && in_fd != STDIN_FILENO)
@@ -122,8 +127,14 @@ static int	handle_dup_and_close(int in_fd, int *fds, t_cmd *cmd)
 
 static int	handle_child(t_cmd *cmd, int in_fd, int *fds)
 {
-	if (handle_dup_and_close(in_fd, fds, cmd) == -1)
+	int exit_status;
+
+	exit_status = handle_dup_and_close(in_fd, fds, cmd);
+
+	if (exit_status == -1)
 		_exit(EXIT_FAILURE);
+	else if (exit_status == 2)
+		_exit(EXIT_SUCCESS);
 	execute_command(cmd);
 	return (EXIT_SUCCESS);
 }
