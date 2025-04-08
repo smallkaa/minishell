@@ -197,8 +197,6 @@ static t_cmd *create_empty_command(t_mshell *shell)
 	cmd->argv[1] = NULL;
 	cmd->minishell = shell;
 	cmd->next = NULL;
-	cmd->in_redir = NULL;
-	cmd->out_redir = NULL;
 	cmd->redirs = NULL;
 
 	return (cmd);
@@ -241,8 +239,6 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
                 new_cmd->argv[0] = ft_strdup(tokens->tokens[i].value);
                 new_cmd->minishell = shell;
                 new_cmd->next = NULL;
-                new_cmd->in_redir = NULL;
-                new_cmd->out_redir = NULL;
 
                 arg_index = 1;
 
@@ -275,7 +271,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
             // Close the current argument list
             if (current && current->argv)
                 current->argv[arg_index] = NULL;
-            
+
             // Reset current to NULL to create a new command in the next iteration
             current = NULL;
         }
@@ -287,7 +283,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 			current = create_empty_command(shell);
 			if (!current)
 				return NULL;
-		
+
 			// Добавляем её в цепочку
 			if (!head)
 				head = current;
@@ -299,13 +295,13 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 				last->next = current;
 			}
 		}
-			
+
 		if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
 		t_redir *redir = malloc(sizeof(t_redir));
 		if (!redir) {
 			// Обработка ошибки выделения памяти
 			// TODO: Освободить всю выделенную память для команды
-			return NULL; 
+			return NULL;
 		}
 
 		redir->type = (tokens->tokens[i].type == TOKEN_REDIRECT_IN) ? R_INPUT : R_HEREDOC;
@@ -320,7 +316,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 		}
 
 		// Добавляем в ОБЩИЙ список редиректов
-		ft_lstadd_back(&current->redirs, ft_lstnew(redir)); 
+		ft_lstadd_back(&current->redirs, ft_lstnew(redir));
 		i++; // Пропускаем имя файла/ограничитель
 		} else {
 		// Ошибка: нет имени файла/ограничителя после редиректа
@@ -331,14 +327,14 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 		}
 		// TOKEN_REDIRECT_OUT и TOKEN_APPEND_OUT
 		else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
-			tokens->tokens[i].type == TOKEN_APPEND_OUT) 
+			tokens->tokens[i].type == TOKEN_APPEND_OUT)
 		{
 			if (!current)
 			{
 				current = create_empty_command(shell);
 				if (!current)
 					return NULL;
-		
+
 				// Добавляем её в цепочку
 				if (!head)
 					head = current;
@@ -355,7 +351,7 @@ t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 			if (!redir) {
 				// Обработка ошибки выделения памяти
 				// TODO: Освободить всю выделенную память для команды
-				return NULL; 
+				return NULL;
 			}
 
 		redir->type = (tokens->tokens[i].type == TOKEN_REDIRECT_OUT) ? R_OUTPUT : R_APPEND;

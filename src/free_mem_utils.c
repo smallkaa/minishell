@@ -85,10 +85,6 @@ void	free_cmd(t_cmd *cmd)
 		}
 		if (cmd->binary)
 			free(cmd->binary);
-		if (cmd->in_redir)
-			free(cmd->in_redir);
-		if (cmd->out_redir)
-			free(cmd->out_redir);
 		next = cmd->next;
 		free(cmd);
 		cmd = next;

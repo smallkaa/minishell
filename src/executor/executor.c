@@ -152,37 +152,6 @@ uint8_t	run_executor(t_cmd *cmd)
 		return (execute_builtin(cmd));
 }
 
-
-// old version
-// uint8_t run_executor(t_cmd *cmd)
-// {
-// 	t_mshell	*minishell;
-// 	u_int8_t	exit_status;
-
-// 	minishell = cmd->minishell;
-// 	if (!minishell || !minishell->env || !minishell->hash_table)
-// 	{
-// 		print_error("Error (run_executor): missing components\n");
-// 		return (EXIT_FAILURE);
-// 	}
-// 	// // test -------------------------------------------------//
-// 	// int i = 0;
-// 	// while(cmd->argv[i])
-// 	// {
-// 	// 	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
-// 	// 	i++;
-// 	// }
-// 	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
-// 	// if (cmd->binary)
-// 	// 	printf("---binary (%p)\n", cmd->binary);
-// 	// else
-// 	// 	printf("---cmd->binary: NOT found\n");
-// 	// if (cmd->out_redir)
-// 	// 	printf("---out_file[%s]:\n", cmd->out_redir->filename);
-// 	// if (cmd->in_redir)
-// 	// 	printf("---in_redir[%s]:\n", cmd->in_redir->filename);
-// 	 // end test -----------------------------------------------//
-
 // 	if (!is_builtin(cmd) || cmd->next)
 // 	{
 // 		minishell->exit_status = exec_in_child_process(cmd);

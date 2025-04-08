@@ -66,8 +66,6 @@ typedef struct s_cmd
 {
 	char				**argv;
 	char				*binary;
-	t_redir				*in_redir;
-	t_redir				*out_redir;
 	t_cmd				*next;
 	t_mshell			*minishell;
 	bool				in_pipe;
@@ -75,42 +73,3 @@ typedef struct s_cmd
 }	t_cmd;
 
 # endif  /* COMMAND_H */
-
-
-// beta
-/*
-typedef struct s_redir
-{
-	t_redir_type	type;
-	char			*filename;
-	struct s_redir	*next;
-}	t_redir;
-
-typedef struct s_cmd
-{
-	char			**argv;
-	char			*binary;
-	t_redir			*redirs;   // linked list of redirections
-	struct s_cmd	*next;
-	t_mshell		*minishell;
-}	t_cmd;
-
-
-# command
-grep "hello" < input.txt > output.txt >> log.txt
-
-# parser creates cmd struct:
-cmd->argv = ["grep", "hello", NULL];
-cmd->redirs:
-	-> R_INPUT ("input.txt")
-	-> R_OUTPUT ("output.txt")
-	-> R_APPEND ("log.txt")
-
-# executor in child process:
-- Iterate redirections list:
-	- open input.txt and dup2 to STDIN_FILENO
-	- open output.txt for writing and dup2 to STDOUT_FILENO
-	- open log.txt in append mode and redirect STDOUT again
-# execute "grep hello"
-execve("grep", ["grep", "hello"], env);
-*/
