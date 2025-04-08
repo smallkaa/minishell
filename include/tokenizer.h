@@ -52,4 +52,16 @@ bool	is_in_single_quotes(char *str);
 bool	is_in_double_quotes(char *str);
 void	expand_tokens(t_TokenArray *tokens, t_mshell *ms);
 
+int			is_input_redir(t_TokenType type);
+int			is_output_redir(t_TokenType type);
+t_cmd		*finalize_cmd_list(t_list **cmd_list);
+void		free_cmd_list(t_list **cmd_list);
+void		handle_word_token(t_mshell *shell, t_list **cmd_list,
+				t_cmd **current, char *value);
+int			handle_input_redir(t_mshell *shell, t_list **cmd_list,
+				t_cmd **current, t_Token *token);
+int			handle_output_redir(t_mshell *shell, t_list **cmd_list,
+				t_cmd **current, t_Token *token);
+void	free_list_nodes_only(t_list **lst);
+
 #endif

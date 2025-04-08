@@ -171,235 +171,60 @@ int	group_word_tokens(t_TokenArray *tokens)
 	return (0);
 }
 
-// Создаёт пустую команду с argv[0] = ""
-static t_cmd *create_empty_command(t_mshell *shell)
+
+
+
+t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
-	t_cmd	*cmd;
+	t_list	*cmd_list;
+	t_cmd	*current;
+	t_cmd	*head;
+	t_cmd	*cmd_ptr;
+	int		i;
 
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	memset(cmd, 0, sizeof(t_cmd));
-
-	cmd->argv = malloc(sizeof(char *) * 2);
-	if (!cmd->argv)
+	cmd_list = NULL;
+	current = NULL;
+	i = 0;
+	while (tokens && i < tokens->count)
 	{
-		free(cmd);
-		return (NULL);
+		if (tokens->tokens[i].type == TOKEN_WORD)
+			handle_word_token(shell, &cmd_list, &current,
+				tokens->tokens[i].value);
+		else if (tokens->tokens[i].type == TOKEN_PIPE)
+			current = NULL;
+		else if (is_input_redir(tokens->tokens[i].type))
+		{
+			if (handle_input_redir(shell, &cmd_list, &current,
+					&tokens->tokens[i]) < 0)
+				return (free_cmd_list(&cmd_list), NULL);
+			i++;
+		}
+		else if (is_output_redir(tokens->tokens[i].type))
+		{
+			if (handle_output_redir(shell, &cmd_list, &current,
+					&tokens->tokens[i]) < 0)
+				return (free_cmd_list(&cmd_list), NULL);
+			i++;
+		}
+		i++;
 	}
-	cmd->argv[0] = ft_strdup("");
-	if (!cmd->argv[0])
+	if (current && current->argv)
 	{
-		free(cmd->argv);
-		free(cmd);
-		return (NULL);
+		int j = 0;
+		while (current->argv[j])
+			j++;
+		current->argv[j] = NULL;
 	}
-	cmd->argv[1] = NULL;
-	cmd->minishell = shell;
-	cmd->next = NULL;
-	cmd->in_redir = NULL;
-	cmd->out_redir = NULL;
-	cmd->redirs = NULL;
-
-	return (cmd);
+	head = finalize_cmd_list(&cmd_list);
+	cmd_ptr = head;
+	while (cmd_ptr)
+	{
+		cmd_ptr->binary = find_binary(cmd_ptr);
+		cmd_ptr = cmd_ptr->next;
+	}
+	return (head);
 }
 
-
-t_cmd *create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
-{
-    t_cmd *head = NULL;
-    t_cmd *current = NULL;
-    int i = 0;
-    int arg_index = 0;
-
-    // Guard against empty input
-    if (!tokens || tokens->count == 0)
-        return NULL;
-
-    while (i < tokens->count)
-    {
-        if (tokens->tokens[i].type == TOKEN_WORD)
-        {
-            // If we don't have a command yet, create one
-            if (!current)
-            {
-                t_cmd *new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
-                if (!new_cmd)
-                    return NULL;
-                memset(new_cmd, 0, sizeof(t_cmd));
-
-                // Allocate space for arguments
-                new_cmd->argv = (char **)malloc(sizeof(char *) * (MAX_ARGS + 1));
-                if (!new_cmd->argv)
-                {
-                    free(new_cmd);
-                    return NULL;
-                }
-
-                // Initialize command structure
-                new_cmd->binary = NULL;
-                new_cmd->argv[0] = ft_strdup(tokens->tokens[i].value);
-                new_cmd->minishell = shell;
-                new_cmd->next = NULL;
-                new_cmd->in_redir = NULL;
-                new_cmd->out_redir = NULL;
-
-                arg_index = 1;
-
-                // Link new command in pipeline
-                if (!head)
-                    head = new_cmd;
-                else
-                {
-                    // Find last command in chain to append to
-                    t_cmd *last = head;
-                    while (last->next)
-                        last = last->next;
-                    last->next = new_cmd;
-                }
-                current = new_cmd;
-            }
-            else
-            {
-                // Attach as argument to the current command
-                if (arg_index < MAX_ARGS)
-                {
-                    current->argv[arg_index] = ft_strdup(tokens->tokens[i].value);
-                    arg_index++;
-
-                }
-            }
-        }
-        else if (tokens->tokens[i].type == TOKEN_PIPE)
-        {
-            // Close the current argument list
-            if (current && current->argv)
-                current->argv[arg_index] = NULL;
-            
-            // Reset current to NULL to create a new command in the next iteration
-            current = NULL;
-        }
-		else if (tokens->tokens[i].type == TOKEN_REDIRECT_IN ||
-			tokens->tokens[i].type == TOKEN_HEREDOC)
-		{
-		if (!current)
-		{
-			current = create_empty_command(shell);
-			if (!current)
-				return NULL;
-		
-			// Добавляем её в цепочку
-			if (!head)
-				head = current;
-			else
-			{
-				t_cmd *last = head;
-				while (last->next)
-					last = last->next;
-				last->next = current;
-			}
-		}
-			
-		if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
-		t_redir *redir = malloc(sizeof(t_redir));
-		if (!redir) {
-			// Обработка ошибки выделения памяти
-			// TODO: Освободить всю выделенную память для команды
-			return NULL; 
-		}
-
-		redir->type = (tokens->tokens[i].type == TOKEN_REDIRECT_IN) ? R_INPUT : R_HEREDOC;
-		redir->filename = ft_strdup(tokens->tokens[i+1].value);
-		// redir->expand = true; // Если нужно поле expand
-
-		if (!redir->filename) {
-				// Обработка ошибки выделения памяти
-				free(redir);
-				// TODO: Освободить всю выделенную память для команды
-				return NULL;
-		}
-
-		// Добавляем в ОБЩИЙ список редиректов
-		ft_lstadd_back(&current->redirs, ft_lstnew(redir)); 
-		i++; // Пропускаем имя файла/ограничитель
-		} else {
-		// Ошибка: нет имени файла/ограничителя после редиректа
-		print_error("Syntax error: missing name for redirection\n");
-		// TODO: Освободить память и вернуть NULL или обработать иначе
-		return NULL; // Пример обработки ошибки
-		}
-		}
-		// TOKEN_REDIRECT_OUT и TOKEN_APPEND_OUT
-		else if (tokens->tokens[i].type == TOKEN_REDIRECT_OUT ||
-			tokens->tokens[i].type == TOKEN_APPEND_OUT) 
-		{
-			if (!current)
-			{
-				current = create_empty_command(shell);
-				if (!current)
-					return NULL;
-		
-				// Добавляем её в цепочку
-				if (!head)
-					head = current;
-				else
-				{
-					t_cmd *last = head;
-					while (last->next)
-						last = last->next;
-					last->next = current;
-				}
-			}
-			if (i + 1 < tokens->count && tokens->tokens[i+1].type == TOKEN_WORD) {
-		t_redir *redir = malloc(sizeof(t_redir));
-			if (!redir) {
-				// Обработка ошибки выделения памяти
-				// TODO: Освободить всю выделенную память для команды
-				return NULL; 
-			}
-
-		redir->type = (tokens->tokens[i].type == TOKEN_REDIRECT_OUT) ? R_OUTPUT : R_APPEND;
-		redir->filename = ft_strdup(tokens->tokens[i+1].value);
-			// redir->expand = true; // Если нужно поле expand
-
-			if (!redir->filename) {
-				// Обработка ошибки выделения памяти
-				free(redir);
-				// TODO: Освободить всю выделенную память для команды
-				return NULL;
-			}
-
-		// Добавляем в ОБЩИЙ список редиректов
-		ft_lstadd_back(&current->redirs, ft_lstnew(redir));
-		i++; // Пропускаем имя файла
-		} else {
-			// Ошибка: нет имени файла после редиректа
-		print_error("Syntax error: missing name for redirection\n");
-		// TODO: Освободить память и вернуть NULL или обработать иначе
-		return NULL; // Пример обработки ошибки
-		}
-		}
-
-        i++;
-    }
-
-    // Ensure last command argv is NULL-terminated
-    if (current && current->argv)
-    {
-		if (arg_index > 0)
-        current->argv[arg_index] = NULL;
-    }
-
-    // Set binary paths for all commands in the pipeline
-    t_cmd *cmd_ptr = head;
-    while (cmd_ptr)
-    {
-        cmd_ptr->binary = find_binary(cmd_ptr);
-        cmd_ptr = cmd_ptr->next;
-    }
-
-    return head;
-}
 
 t_cmd *run_parser(t_mshell *minishell, char *input)
 {
