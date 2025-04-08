@@ -6,7 +6,7 @@
 # define MAX_ARGS 64
 
 // Maximum number of commands in a pipeline.
-# define MAX_CMDS 300
+# define MAX_CMDS 1000
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 

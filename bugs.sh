@@ -260,6 +260,73 @@ pwd
 #42_minishell_tester/cmds/mand/1_builtins.sh:328
 # works in minishell
 
+#Case 132
+#42_minishell_tester/cmds/mand/1_builtins.sh:333
+# works in minishell
+
+#Case 133
+#42_minishell_tester/cmds/mand/1_builtins.sh:337
+# works in minishell
+
+#Case 134
+#42_minishell_tester/cmds/mand/1_builtins.sh:342
+# works in minishell
+
+#Case 135
+#42_minishell_tester/cmds/mand/1_builtins.sh:347
+# works in minishell
+
+#Case 137
+#42_minishell_tester/cmds/mand/1_builtins.sh:354
+# works in minishell
+
+#Case 138
+#42_minishell_tester/cmds/mand/1_builtins.sh:356
+# works in minishell
+
+#Case 139
+#42_minishell_tester/cmds/mand/1_builtins.sh:358
+# works in minishell
+
+# **************************************************************************** #
+#                                  PIPELINES                                   #
+# **************************************************************************** #
+
+#Case 3
+#42_minishell_tester/cmds/mand/1_pipelines.sh:8
+# works in minishell
+
+#Case 26
+#42_minishell_tester/cmds/mand/1_pipelines.sh:59
+ls | cat << stop | ls -la | cat << stop1
+12
+32232
+23
+stop
+awdaw
+daswd
+stop1
+
+#Case 27
+#42_minishell_tester/cmds/mand/1_pipelines.sh:68
+ls | cat << stop | ls -la | cat << stop1 | ls | cat << stop2 | ls -la | cat << stop3
+$USER
+ad
+as $HOME
+stop
+awd
+wf$PWDdqwdwqd
+stop1
+das
+das
+stop2
+dsq
+wd
+wf$PWDdqwdwqd
+stop3
+
+
+
 ####################################################################
 #                         REDIRECTIONS                             #
 ####################################################################

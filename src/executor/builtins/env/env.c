@@ -71,9 +71,10 @@ uint8_t	handle_env(t_cmd *cmd)
 
 	if (cmd->argv[1])
 	{
-		print_error("Usage: ./minishell: env\n");
-		exit_status = EXIT_FAILURE;
-		return (exit_status);
+		print_error("env: ‘");
+		print_error(cmd->argv[1]);
+		print_error("‘: No such file or directory\n");
+		return (127);
 	}
 	// ht = cmd->minishell->hash_table;
 	// i = 0;

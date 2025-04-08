@@ -16,6 +16,7 @@
 # include <stdint.h>
 # include <limits.h>
 #include <sys/stat.h>
+#include <string.h>
 
 # include "libft.h"
 # include "executor.h"

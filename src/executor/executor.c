@@ -76,7 +76,7 @@ uint8_t	run_executor(t_cmd *cmd)
 		print_error("Error (run_executor): missing components\n");
 		return (EXIT_FAILURE);
 	}
-	// 	// // test -------------------------------------------------//
+		// test -------------------------------------------------//
 
 	// i = 0;
 	// while(cmd->argv[i])
@@ -90,8 +90,8 @@ uint8_t	run_executor(t_cmd *cmd)
 	// else
 	// 	printf("---cmd->binary: NOT found\n");
 
-	// //-----------------------------------------------
-	// // Printing redirections
+	//-----------------------------------------------
+	// Printing redirections
 	// i = 0;
 	// if (cmd->redirs)
 	// {
