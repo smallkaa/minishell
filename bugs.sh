@@ -110,9 +110,155 @@ echo $T
 #                                   BUILTINS                                   #
 # **************************************************************************** #
 
+#Case 13
+#42_minishell_tester/cmds/mand/1_builtins.sh:31  
+# works in minishell
 
 
+#Case 14
+#42_minishell_tester/cmds/mand/1_builtins.sh:33
+# works in minishell
 
+#Case 16
+#42_minishell_tester/cmds/mand/1_builtins.sh:37
+echo $"HOME"
+
+#Case 17
+#42_minishell_tester/cmds/mand/1_builtins.sh:39
+echo $"HOME"
+
+#Case 73
+#42_minishell_tester/cmds/mand/1_builtins.sh:152
+# works in minishell
+
+#Case 91
+#42_minishell_tester/cmds/mand/1_builtins.sh:190
+# works in minishell
+
+#Case 92
+#42_minishell_tester/cmds/mand/1_builtins.sh:194
+# works in minishell
+
+#Case 94
+#42_minishell_tester/cmds/mand/1_builtins.sh:201
+# works in minishell
+
+
+#Case 95
+#42_minishell_tester/cmds/mand/1_builtins.sh:205
+# works in minishell
+
+
+#Case 96
+#42_minishell_tester/cmds/mand/1_builtins.sh:209
+# works in minishell
+
+#Case 97
+#42_minishell_tester/cmds/mand/1_builtins.sh:213
+# works in minishell
+
+#Case 98
+#42_minishell_tester/cmds/mand/1_builtins.sh:217
+# works in minishell
+
+#Case 99
+#42_minishell_tester/cmds/mand/1_builtins.sh:221
+# works in minishell
+
+#Case 100
+#42_minishell_tester/cmds/mand/1_builtins.sh:225
+# works in minishell
+
+#Case 101
+#42_minishell_tester/cmds/mand/1_builtins.sh:229
+# works in minishell
+
+#Case 102 !!!!! --------- no need to expand now, hope to pass without it
+#42_minishell_tester/cmds/mand/1_builtins.sh:233
+# works in minishell
+
+#Case 105 !!!!! --------- no need to expand now, hope to pass without it
+#42_minishell_tester/cmds/mand/1_builtins.sh:239
+# works in minishell
+
+#Case 107 !!!!! --------- no need to expand now, hope to pass without it
+#42_minishell_tester/cmds/mand/1_builtins.sh:243
+# works in minishell
+
+#Case 114
+#42_minishell_tester/cmds/mand/1_builtins.sh:257
+# works in minishell
+
+#Case 115
+#42_minishell_tester/cmds/mand/1_builtins.sh:261
+# works in minishell
+
+#Case 116
+#42_minishell_tester/cmds/mand/1_builtins.sh:265
+# works in minishell
+
+#Case 117
+#42_minishell_tester/cmds/mand/1_builtins.sh:269
+# works in minishell
+
+#Case 118
+#42_minishell_tester/cmds/mand/1_builtins.sh:273
+# works in minishell
+
+#Case 119 !!!!! --------- no need to expand now, hope to pass without it
+#42_minishell_tester/cmds/mand/1_builtins.sh:278
+pwd
+cd ?
+pwd
+
+#Case 120
+#42_minishell_tester/cmds/mand/1_builtins.sh:282
+# works in minishell
+
+#Case 121
+#42_minishell_tester/cmds/mand/1_builtins.sh:286
+# works in minishell
+
+#Case 122
+#42_minishell_tester/cmds/mand/1_builtins.sh:290
+# works in minishell
+
+#Case 123
+#42_minishell_tester/cmds/mand/1_builtins.sh:294
+# works in minishell
+
+#Case 124
+#42_minishell_tester/cmds/mand/1_builtins.sh:298
+# works in minishell
+
+#Case 125
+#42_minishell_tester/cmds/mand/1_builtins.sh:302
+# works in minishell
+
+#Case 126
+#42_minishell_tester/cmds/mand/1_builtins.sh:306
+# works in minishell
+
+#Case 127
+#42_minishell_tester/cmds/mand/1_builtins.sh:310
+# works in minishell
+
+#Case 128
+#42_minishell_tester/cmds/mand/1_builtins.sh:314
+# works in minishell
+
+#Case 129
+#42_minishell_tester/cmds/mand/1_builtins.sh:320
+# works in minishell
+
+
+#Case 130
+#42_minishell_tester/cmds/mand/1_builtins.sh:324
+# works in minishell
+
+#Case 131
+#42_minishell_tester/cmds/mand/1_builtins.sh:328
+# works in minishell
 
 ####################################################################
 #                         REDIRECTIONS                             #
