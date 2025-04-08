@@ -95,14 +95,21 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
 
 	char	old_cwd[MS_PATHMAX];
+	char 	*old_pwd;
 
 	if (!cmd || !cmd->argv[1] || !cmd->minishell)
 		return (EXIT_FAILURE);
 	ft_bzero(old_cwd, MS_PATHMAX);
 	(void)get_directory(old_cwd, cmd);
-	if (chdir(cmd->argv[1]) != 0)
+	if (ft_strcmp(cmd->argv[1], "-") == 0)
 	{
-		print_error("-minishell: cd: ");
+		old_pwd = ft_strdup(ms_getenv(cmd->minishell, "OLDPWD"));
+		chdir(old_pwd);
+	}
+
+	else if (chdir(cmd->argv[1]) != 0)
+	{
+		print_error("minishell: cd: ");
 		perror(cmd->argv[1]);
 		return (EXIT_FAILURE);
 	}

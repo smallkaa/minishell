@@ -78,53 +78,53 @@ uint8_t	run_executor(t_cmd *cmd)
 	}
 	// 	// // test -------------------------------------------------//
 
-	i = 0;
-	while(cmd->argv[i])
-	{
-		printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
-		i++;
-	}
-	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
-	if (cmd->binary)
-		printf("---binary (%p)\n", cmd->binary);
-	else
-		printf("---cmd->binary: NOT found\n");
+	// i = 0;
+	// while(cmd->argv[i])
+	// {
+	// 	printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// 	i++;
+	// }
+	// printf("---argv[%d]: {%s}\n", i, cmd->argv[i]);
+	// if (cmd->binary)
+	// 	printf("---binary (%p)\n", cmd->binary);
+	// else
+	// 	printf("---cmd->binary: NOT found\n");
 
-	//-----------------------------------------------
-	// Printing redirections
-	i = 0;
-	if (cmd->redirs)
-	{
-		t_list *current_redir = cmd->redirs;
-		while (current_redir)
-		{
-			t_redir *redir = (t_redir *)current_redir->content;
+	// //-----------------------------------------------
+	// // Printing redirections
+	// i = 0;
+	// if (cmd->redirs)
+	// {
+	// 	t_list *current_redir = cmd->redirs;
+	// 	while (current_redir)
+	// 	{
+	// 		t_redir *redir = (t_redir *)current_redir->content;
 
-			printf("---redirection[%d]: ", i);
-			if (redir->type == R_INPUT)
-				printf("'<' ");
-			else if (redir->type == R_OUTPUT)
-				printf("'>' ");
-			else if (redir->type == R_APPEND)
-				printf("'>>' ");
-			else if (redir->type == R_HEREDOC)
-				printf("'<<' ");
+	// 		printf("---redirection[%d]: ", i);
+	// 		if (redir->type == R_INPUT)
+	// 			printf("'<' ");
+	// 		else if (redir->type == R_OUTPUT)
+	// 			printf("'>' ");
+	// 		else if (redir->type == R_APPEND)
+	// 			printf("'>>' ");
+	// 		else if (redir->type == R_HEREDOC)
+	// 			printf("'<<' ");
 
-			if (redir->filename)
-				printf("\"%s\"\n", redir->filename);
-			else
-				printf("(NULL)\n");
+	// 		if (redir->filename)
+	// 			printf("\"%s\"\n", redir->filename);
+	// 		else
+	// 			printf("(NULL)\n");
 
-			printf("---expand: %s\n", redir->expand ? "true" : "false");
+	// 		printf("---expand: %s\n", redir->expand ? "true" : "false");
 
-			current_redir = current_redir->next;
-			i++;
-		}
-	}
-	else
-	{
-		printf("---No redirections found\n");
-	}
+	// 		current_redir = current_redir->next;
+	// 		i++;
+	// 	}
+	// }
+	// else
+	// {
+	// 	printf("---No redirections found\n");
+	// }
 
 
 	// end test -----------------------------------------------//
