@@ -1,16 +1,16 @@
 #ifndef COMMAND_H
-# define COMMAND_H
-# include "libft.h"
+#define COMMAND_H
+#include "libft.h"
 
 // Maximum number of arguments per command.
-# define MAX_ARGS 64
+#define MAX_ARGS 64
 
 // Maximum number of commands in a pipeline.
-# define MAX_CMDS 1000
+#define MAX_CMDS 1000
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
-typedef struct s_mshell	t_mshell;
+typedef struct s_mshell t_mshell;
 
 /**
  * @enum e_redir_type
@@ -27,7 +27,7 @@ typedef enum e_redir_type
 	R_OUTPUT,
 	R_APPEND,
 	R_HEREDOC
-}	t_redir_type;
+} t_redir_type;
 
 /**
  * @struct s_redir
@@ -40,12 +40,12 @@ typedef enum e_redir_type
  */
 typedef struct s_redir
 {
-	t_redir_type	type;
-	char			*filename;
-	int				target_fd;
-	int				hdoc_fd;
-	bool			expand;
-}	t_redir;
+	t_redir_type type;
+	char *filename;
+	int target_fd;
+	int fd;
+	bool expand;
+} t_redir;
 
 /**
  * @struct s_cmd
@@ -66,12 +66,12 @@ typedef struct s_redir
  */
 typedef struct s_cmd
 {
-	char				**argv;
-	char				*binary;
-	t_cmd				*next;
-	t_mshell			*minishell;
-	bool				in_pipe;
-    t_list   *redirs;       // Список всех редиректов (t_redir*)
-}	t_cmd;
+	char **argv;
+	char *binary;
+	t_cmd *next;
+	t_mshell *minishell;
+	bool in_pipe;
+	t_list *redirs; // Список всех редиректов (t_redir*)
+} t_cmd;
 
-# endif  /* COMMAND_H */
+#endif /* COMMAND_H */

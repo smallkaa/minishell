@@ -84,57 +84,77 @@ bool cmd_has_any_input_redir(t_cmd *c)
 	return false;
 }
 
-void apply_output_redirs(t_cmd *c)
+uint8_t apply_output_redirs(t_cmd *c)
 {
-	for (t_list *n = c->redirs; n; n = n->next)
+	t_list *n = c->redirs;
+	while (n)
 	{
 		t_redir *r = n->content;
 		int fd = -1;
+
 		if (r->type == R_OUTPUT)
 			fd = open(r->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		else if (r->type == R_APPEND)
 			fd = open(r->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (fd == -1)
-			perror("open output redir");
-		if (fd != -1)
+		else
 		{
-			dup2(fd, r->target_fd);
-			close(fd);
+			n = n->next;
+			continue;
 		}
+		if (fd == -1)
+		{
+			perror("apply_output_redirs: open");
+			return (EXIT_FAILURE);
+		}
+		dup2(fd, r->target_fd);
+		close(fd);
+		n = n->next;
 	}
+	return (EXIT_SUCCESS);
 }
 
-void apply_input_redirs(t_cmd *c, int prev_pipe_fd)
+uint8_t apply_input_redirs(t_cmd *c, int prev_pipe_fd)
 {
-	for (t_list *n = c->redirs; n; n = n->next)
+	t_list *n = c->redirs;
+	while (n)
 	{
 		t_redir *r = n->content;
 		if (r->type == R_HEREDOC)
 		{
-			dup2(r->hdoc_fd, STDIN_FILENO);
-			close(r->hdoc_fd);
+			dup2(r->fd, STDIN_FILENO);
+			close(r->fd);
 		}
 		else if (r->type == R_INPUT)
 		{
 			int fd = open(r->filename, O_RDONLY);
 			if (fd == -1)
-				perror("open input redir");
+			{
+				perror("apply_input_redirs: open:");
+				return (EXIT_FAILURE);
+			}
 			dup2(fd, STDIN_FILENO);
 			close(fd);
 		}
+		n = n->next;
 	}
 	if (!cmd_has_any_input_redir(c) && prev_pipe_fd != STDIN_FILENO)
 		dup2(prev_pipe_fd, STDIN_FILENO);
+
+	return (EXIT_SUCCESS);
 }
 
-static void close_unused_fds(int in_fd, int *pipe_fd)
+uint8_t close_unused_fds(int in_fd, int *pipe_fd)
 {
 	if (in_fd != STDIN_FILENO)
-		close(in_fd);
+		if (close(in_fd) == -1)
+			perror_return("-close_unused_fds: close in_fd ", EXIT_FAILURE);
 	if (pipe_fd[0] != -1)
-		close(pipe_fd[0]);
+		if (close(pipe_fd[0]) == -1)
+			perror_return("-close_unused_fds: close pipe_fd[0]", EXIT_FAILURE);
 	if (pipe_fd[1] != -1)
-		close(pipe_fd[1]);
+		if (close(pipe_fd[1]) == -1)
+			perror_return("-close_unused_fds: close pipe_fd[1]", EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 /* ── Pipeline execution ───────────────────────────────────────────────── */
@@ -160,11 +180,18 @@ uint8_t exec_in_child_process(t_cmd *cmd)
 		{
 			if (cmd->next)
 				dup2(pipe_fd[1], STDOUT_FILENO);
-			apply_input_redirs(cmd, in_fd);
-			apply_output_redirs(cmd);
-			close_unused_fds(in_fd, pipe_fd);
+			exit_status = apply_input_redirs(cmd, in_fd);
+			if (exit_status != EXIT_SUCCESS)
+				exit(exit_status);
+			exit_status = apply_output_redirs(cmd);
+			if (exit_status != EXIT_SUCCESS)
+				exit(exit_status);
+			exit_status = close_unused_fds(in_fd, pipe_fd);
+			if (exit_status != EXIT_SUCCESS)
+				exit(exit_status);
 			execute_command(cmd);
 			perror("execve failed");
+			exit(EXIT_FAILURE);
 		}
 
 		pids[idx++] = pid;
@@ -214,7 +241,7 @@ void setup_all_heredocs(t_cmd *cmd)
 		{
 			t_redir *r = rlist->content;
 			if (is_heredoc(r))
-				r->hdoc_fd = new_heredoc_fd(r->filename);
+				r->fd = new_heredoc_fd(r->filename);
 			rlist = rlist->next;
 		}
 		cmd = cmd->next;

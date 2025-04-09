@@ -2,7 +2,7 @@
 #                                COMPARE PARSING                               #
 # ****************************************************************************
 #Case 11
-#42_minishell_tester/cmds/mand/0_compare_parsing.sh:26  
+#42_minishell_tester/cmds/mand/0_compare_parsing.sh:26
 /bin/echo $"HOME"$USER
 
 #Case 12
@@ -26,7 +26,7 @@
 # **************************************************************************** #
 
 #Case 2
-#42_minishell_tester/cmds/mand/10_parsing_hell.sh:7  
+#42_minishell_tester/cmds/mand/10_parsing_hell.sh:7
 >">" asd
 
 #Case 3
@@ -111,7 +111,7 @@ echo $T
 # **************************************************************************** #
 
 #Case 13
-#42_minishell_tester/cmds/mand/1_builtins.sh:31  
+#42_minishell_tester/cmds/mand/1_builtins.sh:31
 # works in minishell
 
 
@@ -298,32 +298,36 @@ pwd
 
 #Case 26
 #42_minishell_tester/cmds/mand/1_pipelines.sh:59
-ls | cat << stop | ls -la | cat << stop1
-12
-32232
-23
-stop
-awdaw
-daswd
-stop1
+# works in minishell
 
 #Case 27
 #42_minishell_tester/cmds/mand/1_pipelines.sh:68
-ls | cat << stop | ls -la | cat << stop1 | ls | cat << stop2 | ls -la | cat << stop3
-$USER
-ad
-as $HOME
+# works in minishell
+
+#Case 28
+#42_minishell_tester/cmds/mand/1_pipelines.sh:84
+# works in minishell
+
+#Case 29
+#42_minishell_tester/cmds/mand/1_pipelines.sh:96
+ls | cat << stop | ls -la | cat << stop1 | ls | cat << stop2 | ls -la > > out | cat << stop3
+fe
+wf
+fwe
+f
 stop
-awd
-wf$PWDdqwdwqd
+dw
 stop1
-das
-das
+dwasd
 stop2
-dsq
-wd
-wf$PWDdqwdwqd
-stop3
+cat Makefile | ls > out
+cat out
+/bin/rm -f out
+
+#Case 30
+#42_minishell_tester/cmds/mand/1_pipelines.sh:110
+# works in minishell
+
 
 
 
@@ -332,34 +336,34 @@ stop3
 ####################################################################
 
 #Case 59
-#42_minishell_tester/cmds/mand/1_redirs.sh:121 
+#42_minishell_tester/cmds/mand/1_redirs.sh:121
 # works in minishell
 
 #Case 60
-# 42_minishell_tester/cmds/mand/1_redirs.sh:125  
+# 42_minishell_tester/cmds/mand/1_redirs.sh:125
 # no '\n' parsing
 /bin/echo "cat this text\n" > tmp_redir_out
 cat <tmp_redir_out
 
 # Case 65
-# 42_minishell_tester/cmds/mand/1_redirs.sh:138  
+# 42_minishell_tester/cmds/mand/1_redirs.sh:138
 # works in minishell
 
 # Case 66
-# 42_minishell_tester/cmds/mand/1_redirs.sh:142 
+# 42_minishell_tester/cmds/mand/1_redirs.sh:142
 # works in minishell
 
 # Case 67
-# 42_minishell_tester/cmds/mand/1_redirs.sh:153 
+# 42_minishell_tester/cmds/mand/1_redirs.sh:153
 # works in minishell
 
 # Case 80
-# 42_minishell_tester/cmds/mand/1_redirs.sh:186 
+# 42_minishell_tester/cmds/mand/1_redirs.sh:186
 # works in minishell
 
 
 # Case 81
-# 42_minishell_tester/cmds/mand/1_redirs.sh:186 
+# 42_minishell_tester/cmds/mand/1_redirs.sh:186
 # works in minishell
 
 # Case 82
