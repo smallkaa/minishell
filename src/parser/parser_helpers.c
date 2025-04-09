@@ -27,8 +27,6 @@ t_cmd *create_empty_command(t_mshell *shell)
 	cmd->argv[1] = NULL;
 	cmd->minishell = shell;
 	cmd->next = NULL;
-	cmd->in_redir = NULL;
-	cmd->out_redir = NULL;
 	cmd->redirs = NULL;
 
 	return (cmd);
