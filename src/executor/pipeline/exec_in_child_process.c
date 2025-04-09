@@ -84,64 +84,64 @@ bool cmd_has_any_input_redir(t_cmd *c)
 	return false;
 }
 
-uint8_t apply_output_redirs(t_cmd *c)
-{
-	t_list *n = c->redirs;
-	while (n)
-	{
-		t_redir *r = n->content;
-		int fd = -1;
+// uint8_t apply_output_redirs(t_cmd *c)
+// {
+// 	t_list *n = c->redirs;
+// 	while (n)
+// 	{
+// 		t_redir *r = n->content;
+// 		int fd = -1;
 
-		if (r->type == R_OUTPUT)
-			fd = open(r->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else if (r->type == R_APPEND)
-			fd = open(r->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else
-		{
-			n = n->next;
-			continue;
-		}
-		if (fd == -1)
-		{
-			perror("apply_output_redirs: open");
-			return (EXIT_FAILURE);
-		}
-		dup2(fd, r->target_fd);
-		close(fd);
-		n = n->next;
-	}
-	return (EXIT_SUCCESS);
-}
+// 		if (r->type == R_OUTPUT)
+// 			fd = open(r->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+// 		else if (r->type == R_APPEND)
+// 			fd = open(r->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 		else
+// 		{
+// 			n = n->next;
+// 			continue;
+// 		}
+// 		if (fd == -1)
+// 		{
+// 			perror("apply_output_redirs: open");
+// 			return (EXIT_FAILURE);
+// 		}
+// 		dup2(fd, r->target_fd);
+// 		close(fd);
+// 		n = n->next;
+// 	}
+// 	return (EXIT_SUCCESS);
+// }
 
-uint8_t apply_input_redirs(t_cmd *c, int prev_pipe_fd)
-{
-	t_list *n = c->redirs;
-	while (n)
-	{
-		t_redir *r = n->content;
-		if (r->type == R_HEREDOC)
-		{
-			dup2(r->fd, STDIN_FILENO);
-			close(r->fd);
-		}
-		else if (r->type == R_INPUT)
-		{
-			int fd = open(r->filename, O_RDONLY);
-			if (fd == -1)
-			{
-				perror("apply_input_redirs: open:");
-				return (EXIT_FAILURE);
-			}
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-		}
-		n = n->next;
-	}
-	if (!cmd_has_any_input_redir(c) && prev_pipe_fd != STDIN_FILENO)
-		dup2(prev_pipe_fd, STDIN_FILENO);
+// uint8_t apply_input_redirs(t_cmd *c, int prev_pipe_fd)
+// {
+// 	t_list *n = c->redirs;
+// 	while (n)
+// 	{
+// 		t_redir *r = n->content;
+// 		if (r->type == R_HEREDOC)
+// 		{
+// 			dup2(r->fd, STDIN_FILENO);
+// 			close(r->fd);
+// 		}
+// 		else if (r->type == R_INPUT)
+// 		{
+// 			int fd = open(r->filename, O_RDONLY);
+// 			if (fd == -1)
+// 			{
+// 				perror("apply_input_redirs: open:");
+// 				return (EXIT_FAILURE);
+// 			}
+// 			dup2(fd, STDIN_FILENO);
+// 			close(fd);
+// 		}
+// 		n = n->next;
+// 	}
+// 	if (!cmd_has_any_input_redir(c) && prev_pipe_fd != STDIN_FILENO)
+// 		dup2(prev_pipe_fd, STDIN_FILENO);
 
-	return (EXIT_SUCCESS);
-}
+// 	return (EXIT_SUCCESS);
+// }
 
 uint8_t close_unused_fds(int in_fd, int *pipe_fd)
 {
@@ -180,12 +180,22 @@ uint8_t exec_in_child_process(t_cmd *cmd)
 		{
 			if (cmd->next)
 				dup2(pipe_fd[1], STDOUT_FILENO);
-			exit_status = apply_input_redirs(cmd, in_fd);
+
+			if (in_fd != STDIN_FILENO)
+				dup2(in_fd, STDIN_FILENO);
+
+			// exit_status = apply_input_redirs(cmd, in_fd);
+			// if (exit_status != EXIT_SUCCESS)
+			// 	exit(exit_status);
+			// exit_status = apply_output_redirs(cmd);
+			// if (exit_status != EXIT_SUCCESS)
+			// 	exit(exit_status);
+
+			exit_status = apply_redirections(cmd);
 			if (exit_status != EXIT_SUCCESS)
 				exit(exit_status);
-			exit_status = apply_output_redirs(cmd);
-			if (exit_status != EXIT_SUCCESS)
-				exit(exit_status);
+
+
 			exit_status = close_unused_fds(in_fd, pipe_fd);
 			if (exit_status != EXIT_SUCCESS)
 				exit(exit_status);
@@ -193,6 +203,7 @@ uint8_t exec_in_child_process(t_cmd *cmd)
 			perror("execve failed");
 			exit(EXIT_FAILURE);
 		}
+
 
 		pids[idx++] = pid;
 		close(pipe_fd[1]);
