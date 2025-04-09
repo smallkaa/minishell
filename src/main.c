@@ -49,45 +49,98 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	return (exit_status);
 }
 
+// uint8_t	run_interactive_mode(t_mshell *mshell)
+// {
+// 	char	*input;
+// 	uint8_t	exit_status;
+// 	t_cmd	*cmd;
+
+
+// 	while (1)
+// 	{
+
+// 		input = readline("minishell: ");
+
+// 		// check for EOF / Ctrl+D
+// 		if (!input)
+// 			return (EXIT_FAILURE);
+
+// 		// Step 2: add input to history
+// 		if (*input)
+// 			add_history(input);
+
+// 		debug_printf("Return: %s\n", input); // test print statment
+
+// 		// Step 3: process input
+
+// 		cmd = run_parser(mshell, input);
+// 		if (!cmd)
+// 		{
+// 			free(input);
+// 			input = NULL;
+// 			continue ;
+// 		}
+
+// 		exit_status = run_executor(cmd);
+// 		free_cmd(cmd);
+// 		cmd = NULL;
+// 		free(input);
+// 		input = NULL;
+// 	}
+// 	return (exit_status);
+// }
+
+void free_split(char **array)
+{
+	int i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
 uint8_t	run_interactive_mode(t_mshell *mshell)
 {
 	char	*input;
 	uint8_t	exit_status;
 	t_cmd	*cmd;
-
+	char	**lines;
+	int		i;
 
 	while (1)
 	{
-
 		input = readline("minishell: ");
 
-		// check for EOF / Ctrl+D
-		if (!input)
+		if (!input) // EOF (Ctrl+D)
 			return (EXIT_FAILURE);
 
-		// printf("Input: [%s]\n", input); //test
-
-		// Step 2: add input to history
 		if (*input)
 			add_history(input);
 
-		debug_printf("Return: %s\n", input); // test print statment
-
-		// Step 3: process input
-
-		cmd = run_parser(mshell, input);
-		if (!cmd)
+		lines = ft_split(input, '\n');
+		i = 0;
+		while (lines && lines[i])
 		{
-			free(input);
-			input = NULL;
-			continue ;
+			// Ignore empty lines
+			if (lines[i][0] == '\0')
+			{
+				i++;
+				continue;
+			}
+
+			cmd = run_parser(mshell, lines[i]);
+			if (cmd)
+			{
+				exit_status = run_executor(cmd);
+				free_cmd(cmd);
+			}
+			i++;
 		}
 
-		exit_status = run_executor(cmd);
-		free_cmd(cmd);
-		cmd = NULL;
+		free_split(lines);
 		free(input);
-		input = NULL;
 	}
 	return (exit_status);
 }
