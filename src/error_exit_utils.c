@@ -76,6 +76,7 @@ void cmd_missing_command_error(t_cmd *cmd)
 		_exit(127);
 	}
 	ft_bzero(error_buf, ERROR_BUF_SIZE);
+	write(STDERR_FILENO, "-minishell: ", 12);
 	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
 	if (strchr(cmd->argv[0], '/'))
 		ft_strlcat(error_buf, ": No such file or directory\n", ERROR_BUF_SIZE);
