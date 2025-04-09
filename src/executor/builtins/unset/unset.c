@@ -121,8 +121,9 @@ static uint8_t do_unset_loop(t_cmd *cmd)
  *		 arguments were provided.
  *		 `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
  */
-uint8_t handle_unset(t_cmd *cmd)
+uint8_t handle_unset(t_cmd *cmd, int in_pipe)
 {
+	(void)in_pipe;
 	if (!cmd || !cmd->argv)
 	{
 		print_error("minishell: unset: no cmd or minishell instanse\n");

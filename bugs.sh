@@ -288,12 +288,20 @@ pwd
 #42_minishell_tester/cmds/mand/1_builtins.sh:358
 # works in minishell
 
+#Case 224 !!!!! --------- no need to expand now, hope to pass without it
+#42_minishell_tester/cmds/mand/1_builtins.sh:552
+unset TES;T
+
 # **************************************************************************** #
 #                                  PIPELINES                                   #
 # **************************************************************************** #
 
 #Case 3
 #42_minishell_tester/cmds/mand/1_pipelines.sh:8
+# works in minishell
+
+#Case 25
+#42_minishell_tester/cmds/mand/1_pipelines.sh:55
 # works in minishell
 
 #Case 26
@@ -310,6 +318,7 @@ pwd
 
 #Case 29
 #42_minishell_tester/cmds/mand/1_pipelines.sh:96
+# parsing error
 ls | cat << stop | ls -la | cat << stop1 | ls | cat << stop2 | ls -la > > out | cat << stop3
 fe
 wf
@@ -328,7 +337,13 @@ cat out
 #42_minishell_tester/cmds/mand/1_pipelines.sh:110
 # works in minishell
 
+#Case 33
+#42_minishell_tester/cmds/mand/1_pipelines.sh:138
+# parsing error
+|ls | ls
 
+#Case 36
+#42_minishell_tester/cmds/mand/1_pipelines.sh:144
 
 
 ####################################################################
@@ -341,7 +356,7 @@ cat out
 
 #Case 60
 # 42_minishell_tester/cmds/mand/1_redirs.sh:125
-# no '\n' parsing
+# parsing
 /bin/echo "cat this text\n" > tmp_redir_out
 cat <tmp_redir_out
 
@@ -360,7 +375,6 @@ cat <tmp_redir_out
 # Case 80
 # 42_minishell_tester/cmds/mand/1_redirs.sh:186
 # works in minishell
-
 
 # Case 81
 # 42_minishell_tester/cmds/mand/1_redirs.sh:186
@@ -386,7 +400,6 @@ hello
 # Case 85
 # 42_minishell_tester/cmds/mand/1_redirs.sh:223
 # works in minishell
-
 
 # Case 86
 # 42_minishell_tester/cmds/mand/1_redirs.sh:229
@@ -416,4 +429,16 @@ lim
 # 42_minishell_tester/cmds/mand/1_redirs.sh:253
 # works in minishell
 
+
+  # **************************************************************************** #
+  #                                     SCMD                                     #
+  # **************************************************************************** #
+
+# Case 7
+# 42_minishell_tester/cmds/mand/1_redirs.sh:24
+# works in minishell
+
+# Case 8
+# 42_minishell_tester/cmds/mand/1_redirs.sh:27
+# works in minishell
 
