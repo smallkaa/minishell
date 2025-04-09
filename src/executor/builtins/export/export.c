@@ -13,12 +13,12 @@
  * @param keys Array of allocated strings containing environment variable keys.
  * @param num_keys Number of keys in the array.
  */
-void	free_keys(char **keys, int num_kyes)
+void free_keys(char **keys, int num_kyes)
 {
-	int	i;
+	int i;
 
 	if (!keys)
-		return ;
+		return;
 	i = 0;
 	while (i < num_kyes)
 	{
@@ -27,9 +27,9 @@ void	free_keys(char **keys, int num_kyes)
 	}
 	free(keys);
 }
-bool	is_valid_varname(const char *key)
+bool is_valid_varname(const char *key)
 {
-	int	i;
+	int i;
 
 	if (!key || !(ft_isalpha(key[0]) || key[0] == '_'))
 		return (false);
@@ -58,16 +58,16 @@ bool	is_valid_varname(const char *key)
  * @return `EXIT_SUCCESS` (0) if the variable was successfully processed.
  *         `EXIT_FAILURE` (1) if the argument is invalid.
  */
-static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
+static uint8_t process_export_arg(t_cmd *cmd, char *arg)
 {
-	char			*eq;
-	int				assigned;
-	t_mshell_var	*pair;
+	char *eq;
+	int assigned;
+	t_mshell_var *pair;
 
 	pair = split_key_value(arg);
 	if (!is_valid_varname(pair->key))
 	{
-		print_export_error(pair);
+		export_error(pair);
 		free(pair->key);
 		free(pair->value);
 		free(pair);
@@ -85,7 +85,7 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 /**
  * @brief Prints the bash-like usage message for invalid options.
  */
-static void	print_export_usage(char *arg)
+static void print_export_usage(char *arg)
 {
 	print_error("-minishell: export: ");
 	print_error(arg);
@@ -97,7 +97,7 @@ static void	print_export_usage(char *arg)
  *
  * Since we're not supporting any valid options, anything starting with '-' is invalid.
  */
-static bool	is_invalid_option(const char *arg)
+static bool is_invalid_option(const char *arg)
 {
 	if (!arg)
 		return (false);
@@ -120,11 +120,11 @@ static bool	is_invalid_option(const char *arg)
  * @param cmd Pointer to the command structure.
  * @return 0 if all OK, 1 if invalid identifier, 2 if invalid option.
  */
-uint8_t	handle_export(t_cmd *cmd)
+uint8_t handle_export(t_cmd *cmd)
 {
-	uint8_t	exit_status;
-	int		i;
-	uint8_t	ret;
+	uint8_t exit_status;
+	int i;
+	uint8_t ret;
 
 	exit_status = 0;
 	if (!cmd->argv[1])

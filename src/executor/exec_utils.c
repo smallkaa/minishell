@@ -4,15 +4,6 @@
  */
 #include "minishell.h"
 
-// void	cleanup_heredoc(t_cmd *cmd)
-// {
-// 	if (cmd->in_redir && cmd->in_redir->type == R_HEREDOC)
-// 	{
-// 		if (unlink(HEREDOC_TFILE) == -1)
-// 			fatal_error("unlink", EXIT_FAILURE);
-// 	}
-// }
-
 /**
  * @brief Splits a `KEY=VALUE` string into a `t_mshell_var` structure.
  *

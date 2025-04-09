@@ -31,47 +31,44 @@ typedef enum e_redir_type
 
 /**
  * @struct s_redir
- * @brief Structure for handling I/O redirections.
+ * @brief Represents a single redirection in a command.
  *
- * - `type`:		The type of redirection.
- * - `filename`:	For `R_INPUT`, `R_OUTPUT`, or `R_APPEND`,
- * 					this stores the filename.
- *					For `R_HEREDOC`, it stores the delimiter string.
+ * - type:      The redirection type (input, output, append, heredoc).
+ * - filename:  File name for input/output, or delimiter for heredoc.
+ * - target_fd: File descriptor to redirect (typically STDIN_FILENO or STDOUT_FILENO).
+ * - fd:        Runtime file descriptor used (especially for heredoc).
+ * - expand:    Indicates whether to perform variable expansion (for heredocs).
  */
 typedef struct s_redir
 {
-	t_redir_type type;
-	char *filename;
-	int target_fd;
-	int fd;
-	bool expand;
-} t_redir;
-
+	t_redir_type	type;
+	char	*filename;
+	int		target_fd;
+	int		fd;
+	bool	expand;
+}	t_redir;
 /**
  * @struct s_cmd
- * @brief Represents a single command in a pipeline.
+ * @brief Represents a command node in a pipeline.
  *
- * - `argv`:		NULL-terminated array of command arguments.
- * - `binary`:		Binary from PATH env for execve().
- * - `in_redir`:	Pointer to input redirection struct, if any.
- * - `out_redir`:	Pointer to output redirection struct, if any.
- * - `next`:		Pointer to the next command in the pipeline.
- * - `shell`:		Pointer to shell structure.
+ * - argv:      NULL-terminated list of arguments for the command.
+ * - binary:    Resolved binary path to be executed.
+ * - next:      Pointer to the next command in a pipeline.
+ * - minishell: Pointer to the main shell state/context.
+ * - redirs:    List of redirections associated with this command (t_list of t_redir*).
  *
  * Example pipeline: `ls -l | grep minishell | wc -l`
- * - cmd1:	`ls -l`
- * - cmd2:	`grep minishell`
- * - cmd3:	`wc -l`
- * - cmd4:	`NULL` (end of pipeline)
+ * - cmd1: "ls -l"
+ * - cmd2: "grep minishell"
+ * - cmd3: "wc -l"
  */
 typedef struct s_cmd
 {
-	char **argv;
-	char *binary;
-	t_cmd *next;
-	t_mshell *minishell;
-	bool in_pipe;
-	t_list *redirs; // Список всех редиректов (t_redir*)
-} t_cmd;
+	char		**argv;
+	char		*binary;
+	t_cmd		*next;
+	t_mshell	*minishell;
+	t_list		*redirs; // Список всех редиректов (t_redir*)
+}	t_cmd;
 
 #endif /* COMMAND_H */

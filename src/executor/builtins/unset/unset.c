@@ -4,7 +4,7 @@
  */
 #include "minishell.h"
 
-static bool	is_invalid_option(const char *name)
+static bool is_invalid_option(const char *name)
 {
 	return (name && name[0] == '-' && name[1]);
 }
@@ -38,11 +38,11 @@ bool is_valid_identifier(const char *name)
  * @param mshell Pointer to the Minishell structure containing the hash table.
  * @param key The name of the variable to be removed.
  */
-static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
+static uint8_t remove_var_from_ht(t_mshell *mshell, char *key)
 {
-	unsigned long	index;
-	t_mshell_var	*prev;
-	t_mshell_var	*current;
+	unsigned long index;
+	t_mshell_var *prev;
+	t_mshell_var *current;
 
 	// if (!mshell || mshell->hash_table || !key)
 	// {
@@ -62,7 +62,7 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 				prev->next = current->next;
 			free_mshell_var(current);
 			update_env(mshell);
-			return  (EXIT_SUCCESS);
+			return (EXIT_SUCCESS);
 		}
 		prev = current;
 		current = current->next;
@@ -70,10 +70,9 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 	return (EXIT_SUCCESS);
 }
 
-
-static uint8_t	do_unset_loop(t_cmd *cmd)
+static uint8_t do_unset_loop(t_cmd *cmd)
 {
-	int		i = 1;
+	int i = 1;
 
 	while (cmd->argv[i])
 	{
@@ -86,7 +85,7 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
 			// cmd->minishell->exit_status = 2;
 			// return (EXIT_FAILURE);
 
-			print_unset_error(cmd->argv[i]);
+			unset_error(cmd->argv[i]);
 			return (2);
 		}
 		if (is_valid_identifier(cmd->argv[i]))
@@ -122,7 +121,7 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
  *		 arguments were provided.
  *		 `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
  */
-uint8_t	handle_unset(t_cmd *cmd)
+uint8_t handle_unset(t_cmd *cmd)
 {
 	if (!cmd || !cmd->argv)
 	{
