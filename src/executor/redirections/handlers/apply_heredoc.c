@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-uint8_t	write_heredoc_to_pipe(int pipefd, char *delimiter)
+uint8_t	write_heredoc_to_pipe(int pipefd, const  char *delimiter)
 {
 	char	*line;
 
@@ -8,7 +8,7 @@ uint8_t	write_heredoc_to_pipe(int pipefd, char *delimiter)
 	while (1)
 	{
 		line = readline("> ");
-		if (line == NULL || ft_strcmp(line, delimiter) == 0)
+		if (line == NULL || ft_strcmp(line, (char *)delimiter) == 0)
 		{
 			free(line);
 			break ;

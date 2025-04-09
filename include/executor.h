@@ -58,8 +58,9 @@ uint8_t			apply_redirections(t_cmd *cmd);
 uint8_t			apply_heredoc(t_cmd *cmd);
 uint8_t			apply_in_redirection(t_cmd *cmd);
 uint8_t			apply_out_redirection(t_cmd *cmd);
-
-
+void apply_redirs_in_child(t_cmd *cmd);
+void setup_all_heredocs(t_cmd *cmd);
+uint8_t	write_heredoc_to_pipe(int pipefd, const  char *delimiter);
 
 // void	cleanup_heredoc(t_cmd *cmd);
 

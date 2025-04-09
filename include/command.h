@@ -42,6 +42,8 @@ typedef struct s_redir
 {
 	t_redir_type	type;
 	char			*filename;
+	int				target_fd;
+	int				hdoc_fd;
 	bool			expand;
 }	t_redir;
 

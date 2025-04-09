@@ -129,6 +129,8 @@ uint8_t	run_executor(t_cmd *cmd)
 
 	// end test -----------------------------------------------//
 
+
+
 	if (cmd && cmd->argv != NULL)
 	{
 		i = 0;
@@ -146,6 +148,9 @@ uint8_t	run_executor(t_cmd *cmd)
 			update_env(cmd->minishell);
 		}
 	}
+
+	setup_all_heredocs(cmd);
+
 	if (!is_builtin(cmd) || cmd->next)
 		return (execute_pipeline_or_binary(cmd));
 	else
