@@ -5,12 +5,14 @@
 #include "../include/minishell.h"
 
 static const char *current_input = NULL;
+static const char *input_base = NULL; 
 static char *token_buffer = NULL;
 static size_t token_buffer_size = 0;
 
 // Public API function - Initialize the tokenizer
 void tokenizer_init(const char *input) {
     current_input = input;
+	input_base = input;
     
     // Выделяем буфер размером с входную строку + 1 символ для нулевого символа
     token_buffer_size = ft_strlen(input) + 1;
@@ -49,6 +51,7 @@ static int ft_is_special_char(char c) {
 
 t_Token get_next_token(void)
 {
+	int saw_space = 0;
     t_Token token = {0};
     token.type = TOKEN_WORD;
     
@@ -65,13 +68,39 @@ t_Token get_next_token(void)
     }
     
     // Пропустить пробелы
-    while (*current_input && (*current_input == ' ' || *current_input == '\t'))
-        current_input++;
-    
-    if (!*current_input) {
+	while (*current_input && (*current_input == ' ' || *current_input == '\t'))
+	{
+		saw_space = 1;
+		current_input++;
+	}
+	token.needs_join = saw_space;
+
+	if (!*current_input) {
         token.type = TOKEN_EOF;
         return token;
     }
+	// $"..." должно быть отдельным токеном
+    if (*current_input == '$' && *(current_input + 1) == '"')
+	{
+		size_t index = 0;
+		token.type = TOKEN_WORD;
+		token.in_double_quotes = 1;
+
+		token_buffer[index++] = *current_input++; // $
+		token_buffer[index++] = *current_input++; // "
+
+		// Считываем строку до закрывающей "
+		while (*current_input && *current_input != '"')
+			token_buffer[index++] = *current_input++;
+
+		if (*current_input == '"')
+			token_buffer[index++] = *current_input++;
+
+		token_buffer[index] = '\0';
+		token.value = ft_strdup(token_buffer);
+		return token;
+	}
+
     if (*current_input == '<' && *(current_input + 1) == '<') {
         current_input += 2;
         token.type = TOKEN_HEREDOC;

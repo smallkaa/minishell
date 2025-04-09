@@ -6,6 +6,20 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 
 	if (!token || !token->value)
 		return;
+	if (ft_strncmp(token->value, "$\"", 2) == 0)
+	{
+		size_t len = ft_strlen(token->value);
+		// Найти первую и последнюю кавычку
+		if (len >= 3 && token->value[len - 1] == '"')
+		{
+			char *content = ft_substr(token->value, 2, len - 3); // без $ и кавычек
+			if (content)
+			{
+				free(token->value);
+				token->value = content;
+			}
+		}
+	}
 	expanded = expand_env_variables(token->value, ms);
 	if (expanded)
 	{

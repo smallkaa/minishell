@@ -153,6 +153,14 @@ char *expand_env_variables(const char *input, t_mshell *minishell)
         }
         else if (input[i] == '$' && !single_q && input[i + 1]) // Переменная вне одинарных кавычек
         {
+			// ✨ Bash-compatible: do NOT expand $"VAR"
+			if (input[i + 1] == '"')
+			{
+				char sym[2] = { '$', '\0' };
+				result = append_to_result(result, sym);
+				i++; // ← только $ пропускаем, кавычка обработается позже
+				continue;
+			}
             i++; // Пропускаем $
             
             // Специальный случай для $?
@@ -201,10 +209,10 @@ char *expand_env_variables(const char *input, t_mshell *minishell)
                 free(var_value);
                 continue; // Продолжаем с нового символа
             }
-            
+            i++;
             // Если после $ не идет допустимое имя переменной, добавляем $ как обычный символ
-            result = append_to_result(result, "$");
-            // Не увеличиваем i, т.к. текущий символ нужно обработать в следующей итерации
+			char sym[2] = { '$', '\0' };
+			result = append_to_result(result, sym);            // Не увеличиваем i, т.к. текущий символ нужно обработать в следующей итерации
             continue;
         }
         else if (input[i] == '~' && !single_q && !double_q) // Тильда вне кавычек

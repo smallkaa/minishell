@@ -22,6 +22,7 @@ typedef struct s_token
 	t_TokenType	type;
 	int	in_single_quotes;
 	int	in_double_quotes;
+	bool		needs_join;
 }	t_Token;
 
 // Token array for storing all tokens

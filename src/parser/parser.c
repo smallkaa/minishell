@@ -61,87 +61,77 @@ static void	token_array_free(t_TokenArray *array)
 
 static int	count_new_tokens(t_TokenArray *tokens)
 {
-	int		i;
-	int		count;
+	int i = 0;
+	int count = 0;
 
-	i = 0;
-	count = 0;
 	while (i < tokens->count)
 	{
-		if (tokens->tokens[i].type == TOKEN_WORD)
+		if (tokens->tokens[i].type != TOKEN_WORD)
 		{
-			// Первый токен считаем отдельно
 			count++;
 			i++;
-
-			// Проверяем наличие следующих токенов-слов
-			if (i < tokens->count && tokens->tokens[i].type == TOKEN_WORD)
-			{
-				// Остальные считаем как один объединенный токен
-				count++;
-				while (i < tokens->count && tokens->tokens[i].type == TOKEN_WORD)
-					i++;
-			}
+			continue;
 		}
-		else
+
+		// Начало группы склеиваемых токенов
+		count++; // мы создадим хотя бы 1 токен
+		i++;
+
+		while (i < tokens->count &&
+			   tokens->tokens[i].type == TOKEN_WORD &&
+			   tokens->tokens[i].needs_join == 0)
 		{
-			count++;
-			i++;
+			i++; // склеивается, не требует нового токена
 		}
 	}
-	return (count);
+	return count;
 }
+
 
 static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 {
-	int		i;
-	int		j;
-	char	*grouped_str;
+	int		i = 0;
+	int		j = 0;
+	char	*grouped = NULL;
 
-	i = 0;
-	j = 0;
 	while (i < old_tokens->count)
 	{
-		if (old_tokens->tokens[i].type == TOKEN_WORD)
+		if (old_tokens->tokens[i].type != TOKEN_WORD)
 		{
-			// Добавляем первый токен как есть
-			new_tokens->tokens[j++] = old_tokens->tokens[i++];
-
-			// Проверяем, есть ли следующие токены-слова для объединения
-			if (i < old_tokens->count && old_tokens->tokens[i].type == TOKEN_WORD)
-			{
-				// Инициализируем объединенную строку значением второго токена
-				grouped_str = ft_strdup(old_tokens->tokens[i++].value);
-
-				// Добавляем все последующие токены к объединенной строке
-				while (i < old_tokens->count && old_tokens->tokens[i].type == TOKEN_WORD)
-				{
-					char *temp = ft_strjoin(grouped_str, " ");
-					free(grouped_str);
-					if (!temp)
-						return; // Здесь нужна обработка ошибки
-
-					grouped_str = ft_strjoin(temp, old_tokens->tokens[i].value);
-					free(temp);
-					if (!grouped_str)
-						return; // Здесь нужна обработка ошибки
-
-					i++;
-				}
-
-				// Создаем новый токен для объединенной строки
-				new_tokens->tokens[j].type = TOKEN_WORD;
-				new_tokens->tokens[j].value = grouped_str;
-				j++;
-			}
+			memset(&new_tokens->tokens[j], 0, sizeof(t_Token));
+			new_tokens->tokens[j].type = old_tokens->tokens[i].type;
+			new_tokens->tokens[j].value = ft_strdup(old_tokens->tokens[i].value);
+			j++;
+			i++;
+			continue;
 		}
-		else
+
+		// Начинаем новую группу
+		grouped = ft_strdup(old_tokens->tokens[i].value);
+		i++;
+
+		while (i < old_tokens->count &&
+			   old_tokens->tokens[i].type == TOKEN_WORD &&
+			   old_tokens->tokens[i].needs_join == 0)
 		{
-			new_tokens->tokens[j++] = old_tokens->tokens[i++];
+			char *tmp = ft_strjoin(grouped, old_tokens->tokens[i].value);
+			free(grouped);
+			grouped = tmp;
+			i++;
 		}
+
+		memset(&new_tokens->tokens[j], 0, sizeof(t_Token));
+		new_tokens->tokens[j].type = TOKEN_WORD;
+		new_tokens->tokens[j].value = grouped;
+		j++;
 	}
-	new_tokens->count = j; // Обновляем реальное количество токенов
+
+	new_tokens->count = j;
 }
+
+
+
+
 
 
 int	group_word_tokens(t_TokenArray *tokens)
@@ -250,7 +240,8 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
 	// Ilia: close for tests
-    //group_word_tokens(tokens);//TODO: error handling
+	// обратно раскомментировал, изменил поведение, теперь TOKEN_WORD склеиваются только если они были рядом
+    group_word_tokens(tokens);//TODO: error handling
 
  	expand_tokens(tokens, minishell);
 	strip_words(tokens);
