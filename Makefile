@@ -1,9 +1,13 @@
 # Detect OS
 UNAME := $(shell uname)
+BIGTEST ?= 0
 
 # Default flags
 LDFLAGS :=
 CFLAGS  := -g -Wall -Wextra -Werror -Wuninitialized
+ifeq ($(BIGTEST),1)
+	CFLAGS += -DBIGTEST
+endif
 
 # macOS-specific flags for Readline (2DO: fix extern void rl_replace_line(const char *, int) in signals.c)
 ifeq ($(UNAME), Darwin)
