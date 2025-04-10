@@ -4,25 +4,13 @@
  */
 #include "minishell.h"
 
-/**
- * @brief Checks if the given argument for the `cd` command is valid.
- *
- * This function verifies whether the argument provided to the `cd` command
- * contains spaces. If spaces are found, the argument is considered invalid.
- *
- * @param cmd Pointer to the command structure containing arguments.
- * @return `true` if the argument is valid (no spaces), `false` if it
- *         contains spaces.
- *
- * @note Assumes `cmd->argv[1]` is not NULL. Ensure `cmd` is validated
- *       before calling.
- */
-bool	is_valid_value(t_cmd *cmd)
-{
-	if (ft_strchr(cmd->argv[1], ' '))
-		return (false);
-	return (true);
-}
+
+// bool	is_only_endline(t_cmd *cmd)
+// {
+// 	if (ft_strchr(cmd->argv[1], '\n'))
+// 		return (false);
+// 	return (true);
+// }
 
 /**
  * @brief Retrieves the current working directory.

@@ -54,7 +54,7 @@ t_mshell_var *create_new_variable(char *key, char *value, int assigned);
 
 // cd
 uint8_t handle_cd(t_cmd *cmd, int in_pipe);
-bool is_valid_value(t_cmd *cmd);
+// bool is_only_endline(t_cmd *cmd);
 bool get_directory(char *cwd, t_cmd *cmd);
 
 // redirections <, <<, >, >>

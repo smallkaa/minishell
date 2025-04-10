@@ -92,7 +92,7 @@ uint8_t run_executor(t_cmd *cmd)
 	// else
 	// 	printf("---cmd->binary: NOT found\n");
 
-	// //-----------------------------------------------
+	// // //-----------------------------------------------
 	// // Printing redirections
 
 	// j = 0;

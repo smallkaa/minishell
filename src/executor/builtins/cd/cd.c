@@ -148,8 +148,8 @@ uint8_t	handle_cd(t_cmd *cmd, int in_pipe)
 		status = cd_no_args(cmd);
 	else if (cmd->argv[2])
 		status = cd_too_many_args();
-	else if (!is_valid_value(cmd))
-		status = cd_too_many_args();
+	else if (ft_strlen(cmd->argv[1]) == 0)
+		return (EXIT_SUCCESS);
 	else
 		status = change_and_update_pwd(cmd);
 	cmd->minishell->exit_status = status;
