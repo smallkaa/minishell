@@ -70,7 +70,7 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(home_path) != 0)
 	{
-		print_error("-minishell: ");
+		print_error("minishell: ");
 		perror(cmd->argv[0]);
 		return (EXIT_FAILURE);
 	}

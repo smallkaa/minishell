@@ -1,0 +1,122 @@
+#!/bin/bash
+
+echo "Test 1: Simple assignment"
+export VAR1=hello
+echo $?
+env | grep VAR1
+echo
+
+echo "Test 2: Reassign existing variable"
+export VAR1=world
+echo $?
+env | grep VAR1
+echo
+
+echo "Test 3: Export without value"
+export VAR2
+echo $?
+env | grep VAR2
+echo
+
+echo "Test 4: Export with empty value"
+export VAR3=
+echo $?
+env | grep VAR3
+echo
+
+echo "Test 5: Invalid identifier (starts with digit)"
+export 1INVALID=value
+echo $?
+env | grep 1INVALID
+echo
+
+echo "Test 6: Invalid identifier (contains special char)"
+export INV@LID=value
+echo $?
+env | grep INV@LID
+echo
+
+echo "Test 7: Using = only"
+export =
+echo $?
+env | grep "="
+echo
+
+echo "Test 8: Export multiple vars"
+export A1=1 A2=2 A3=3
+echo $?
+env | grep A[123]
+echo
+
+echo "Test 9: Export with quotes"
+export Q1="quoted value"
+echo $?
+env | grep Q1
+echo
+
+echo "Test 10: Export with single quotes"
+export Q2='single quotes'
+echo $?
+env | grep Q2
+echo
+
+echo "Test 11: Export with escaped characters"
+export ESC="line1\nline2"
+echo $?
+env | grep ESC
+echo
+
+echo "Test 12: Export with spaces (invalid)"
+export SPACED VAR=value
+echo $?
+env | grep VAR
+echo
+
+echo "Test 13: Export and overwrite PATH"
+export PATH=/usr/test/bin
+echo $?
+echo $PATH
+echo
+
+echo "Test 14: Export existing variable"
+MYVAR=123
+export MYVAR
+echo $?
+env | grep MYVAR
+echo
+
+echo "Test 15: Export mixed with assignments and no assignments"
+export MIXED=val1 MIXED2
+echo $?
+env | grep MIXED
+env | grep MIXED2
+echo
+
+echo "Test 16: Export nothing"
+export
+echo $?
+echo
+
+echo "Test 17: Export with invalid syntax"
+export =
+echo $?
+echo
+
+echo "Test 18: Export with space after equals"
+export TEST18= spaced
+echo $?
+env | grep TEST18
+echo
+
+echo "Test 19: Export with newline in value"
+export NEWLINE="line1
+line2"
+echo $?
+env | grep NEWLINE
+echo
+
+echo "Test 20: Export with dollar reference"
+export DOLLAR_REF=$VAR1
+echo $?
+env | grep DOLLAR_REF
+echo

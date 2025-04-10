@@ -4,7 +4,7 @@ static uint8_t validate_dots(t_cmd *cmd)
 {
 	if (ft_strcmp(cmd->argv[0], ".") == 0 && !cmd->argv[1])
 	{
-		print_error("-minishell: .: filename argument required\n");
+		print_error("minishell: .: filename argument required\n");
 		print_error(".: usage: . filename [arguments]\n");
 		return (2);
 	}

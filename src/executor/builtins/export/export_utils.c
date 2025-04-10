@@ -63,7 +63,7 @@ static void	collect_keys(t_hash_table *ht, char ***keys, int *count)
 	*keys = malloc(sizeof(char *) * total_keys);
 	if (!(*keys))
 	{
-		print_error("-minishell: export: key memory allocation failed\n");
+		print_error("minishell: export: key memory allocation failed\n");
 		return ;
 	}
 	key_index = 0;
@@ -168,13 +168,13 @@ void	handle_sorted_env(t_mshell *mshell)
 
 	if (!mshell || !mshell->hash_table)
 	{
-		print_error("-minishell: export: no mshell or hash_table found\n");
+		print_error("minishell: export: no mshell or hash_table found\n");
 		return ;
 	}
 	collect_keys(mshell->hash_table, &keys, &count);
 	if (!keys)
 	{
-		print_error("-minishell: export: keys memory allocation failed\n");
+		print_error("minishell: export: keys memory allocation failed\n");
 		return ;
 	}
 	bubble_sort(keys, count);

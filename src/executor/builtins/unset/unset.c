@@ -78,7 +78,7 @@ static uint8_t do_unset_loop(t_cmd *cmd)
 	{
 		if (is_invalid_option(cmd->argv[i]))
 		{
-			// print_error("-minishell: unset: ");
+			// print_error("minishell: unset: ");
 			// write(STDERR_FILENO, cmd->argv[i], 2);
 			// print_error(": invalid option\n");
 			// print_error("unset: usage: unset [name ...]\n");
