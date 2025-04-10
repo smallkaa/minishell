@@ -175,6 +175,18 @@ uint8_t exec_in_pipes(t_cmd *cmd)
 
 		pids[idx++] = pid;
 
+		t_list *rlist = cmd->redirs;
+		while (rlist)
+		{
+			t_redir *r = (t_redir *)rlist->content;
+			if (r->type == R_HEREDOC && r->fd != -1)
+			{
+				close(r->fd);
+				r->fd = -1;
+			}
+			rlist = rlist->next;
+		}
+
 		if (pipe_fd[1] >= 0)
 			if (close(pipe_fd[1]) == -1)
 			{
