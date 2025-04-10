@@ -83,6 +83,10 @@ static uint8_t execute_command(t_cmd *cmd)
 	// printf("DEBUG: execute_command() ready for execve()\n");
 
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
+
+
+	dprintf(STDERR_FILENO, "DEBUG: errno = %d (%s)\n", errno, strerror(errno));  /// debug
+
 	child_execve_error(cmd);
 	return (EXIT_FAILURE);
 }

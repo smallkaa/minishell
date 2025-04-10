@@ -41,7 +41,7 @@ void child_execve_error(t_cmd *cmd)
 	{
 		write(STDERR_FILENO, "-minishell: ", 12);
 		write(STDERR_FILENO, cmd->binary, ft_strlen(cmd->binary));
-		if (ft_strchr(cmd->argv[0], '/'))
+		if (strchr(cmd->argv[0], '/') || !cmd->binary)
 			write(STDERR_FILENO, ": No such file or directory\n", 28);
 		else
 			write(STDERR_FILENO, ": command not found\n", 20);
@@ -78,7 +78,7 @@ void cmd_missing_command_error(t_cmd *cmd)
 	ft_bzero(error_buf, ERROR_BUF_SIZE);
 	write(STDERR_FILENO, "-minishell: ", 12);
 	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
-	if (strchr(cmd->argv[0], '/'))
+	if (strchr(cmd->argv[0], '/') || !cmd->binary)
 		ft_strlcat(error_buf, ": No such file or directory\n", ERROR_BUF_SIZE);
 	else
 		ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
