@@ -92,42 +92,65 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 {
 	int		i = 0;
 	int		j = 0;
-	char	*grouped = NULL;
 
 	while (i < old_tokens->count)
 	{
-		if (old_tokens->tokens[i].type != TOKEN_WORD)
+		t_Token *tok = &old_tokens->tokens[i];
+
+
+		if (tok->type != TOKEN_WORD)
 		{
-			memset(&new_tokens->tokens[j], 0, sizeof(t_Token));
-			new_tokens->tokens[j].type = old_tokens->tokens[i].type;
-			new_tokens->tokens[j].value = ft_strdup(old_tokens->tokens[i].value);
-			j++;
+			new_tokens->tokens[j++] = *tok;
 			i++;
 			continue;
 		}
 
-		// Начинаем новую группу
-		grouped = ft_strdup(old_tokens->tokens[i].value);
+		// 🚫 Если токен после пробела — не склеиваем
+		if (tok->needs_join == 1)
+		{
+			new_tokens->tokens[j++] = *tok;
+			i++;
+			continue;
+		}
+
+		// 🧩 Начинаем склеивать
+		char *grouped = ft_strdup(tok->value);
+		bool single_q = tok->in_single_quotes;
+		bool double_q = tok->in_double_quotes;
+		int curr_qstyle = tok->quote_style;
+
 		i++;
 
 		while (i < old_tokens->count &&
 			   old_tokens->tokens[i].type == TOKEN_WORD &&
-			   old_tokens->tokens[i].needs_join == 0)
+			   old_tokens->tokens[i].needs_join == 0 &&
+			   old_tokens->tokens[i].quote_style == curr_qstyle)
 		{
+
 			char *tmp = ft_strjoin(grouped, old_tokens->tokens[i].value);
 			free(grouped);
 			grouped = tmp;
+
+			if (old_tokens->tokens[i].in_single_quotes)
+				single_q = true;
+			if (old_tokens->tokens[i].in_double_quotes)
+				double_q = true;
 			i++;
 		}
 
-		memset(&new_tokens->tokens[j], 0, sizeof(t_Token));
-		new_tokens->tokens[j].type = TOKEN_WORD;
-		new_tokens->tokens[j].value = grouped;
-		j++;
+		t_Token new_token = {0};
+		new_token.type = TOKEN_WORD;
+		new_token.value = grouped;
+		new_token.in_single_quotes = single_q;
+		new_token.in_double_quotes = double_q;
+		new_token.quote_style = curr_qstyle;
+		new_tokens->tokens[j++] = new_token;
 	}
-
 	new_tokens->count = j;
 }
+
+
+
 
 
 
@@ -239,6 +262,9 @@ t_cmd *run_parser(t_mshell *minishell, char *input)
         if (token.type != TOKEN_EOF)
             token_array_add(tokens, token);
     } while (token.type != TOKEN_EOF);
+
+	i = 0;
+
 	// Ilia: close for tests
 	// обратно раскомментировал, изменил поведение, теперь TOKEN_WORD склеиваются только если они были рядом
     group_word_tokens(tokens);//TODO: error handling

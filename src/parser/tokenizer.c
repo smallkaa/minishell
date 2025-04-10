@@ -101,6 +101,56 @@ t_Token get_next_token(void)
 		return token;
 	}
 
+	if (*current_input == '"')
+	{
+		size_t index = 0;
+		current_input++; // Пропускаем первую "
+	
+		token.type = TOKEN_WORD;
+		token.in_double_quotes = 1;
+		token.quote_style = 2;
+		while (*current_input && *current_input != '"')
+		{
+			if (index < token_buffer_size - 1)
+				token_buffer[index++] = *current_input;
+			current_input++;
+		}
+	
+		if (*current_input == '"')
+			current_input++; // Пропустить закрывающую "
+	
+		token_buffer[index] = '\0';
+		token.value = ft_strdup(token_buffer);
+
+		return token;
+	}
+	
+	if (*current_input == '\'')
+	{
+		size_t index = 0;
+		current_input++; // пропускаем первую '
+
+		token.type = TOKEN_WORD;
+		token.in_single_quotes = 1;
+		token.quote_style = 1;
+
+
+		while (*current_input && *current_input != '\'')
+		{
+			if (index < token_buffer_size - 1)
+				token_buffer[index++] = *current_input;
+			current_input++;
+		}
+
+		if (*current_input == '\'')
+			current_input++; // пропускаем закрывающую '
+
+		token_buffer[index] = '\0';
+		token.value = ft_strdup(token_buffer);
+		return token;
+	}
+
+
     if (*current_input == '<' && *(current_input + 1) == '<') {
         current_input += 2;
         token.type = TOKEN_HEREDOC;
@@ -156,9 +206,19 @@ t_Token get_next_token(void)
         
         current_input++;
     }
+
+
+	// Завершаем строку
+	token_buffer[index] = '\0';
+
+	if (in_single_quote)
+			token.quote_style = 1;
+		else if (in_double_quote)
+			token.quote_style = 2;
+		else
+			token.quote_style = 0;
     
-    // Завершаем строку
-    token_buffer[index] = '\0';
+
     
     // Проверяем на открытые кавычки
     if (in_single_quote || in_double_quote) {
@@ -208,59 +268,43 @@ bool	is_in_double_quotes(char *str)
 	return (str[0] == '"' && str[len - 1] == '"');
 }
 
-
-
-static char *strip_quotes(const char *str)
+static char	*strip_quotes_preserving_inner(const char *str, int quote_style)
 {
-    char *result;
-    size_t len = ft_strlen(str);
-    size_t result_len = 0;
-    int i;
-    int in_single_quotes = 0;
-    int in_double_quotes = 0;
-    
-    result = malloc(len + 1);
-    if (!result)
-        return NULL;
-    
-    for (i = 0; str[i]; i++)
-    {
-        if (str[i] == '\\' && (str[i+1] == '\'' || str[i+1] == '"'))
-        {
-            // Экранированная кавычка - сохраняем её
-            result[result_len++] = str[i+1];
-            i++; // Пропускаем обратный слэш
-        }
-        else if (str[i] == '\'' && !in_double_quotes)
-        {
-            // Одинарные кавычки вне двойных
-            in_single_quotes = !in_single_quotes;
-        }
-        else if (str[i] == '"' && !in_single_quotes)
-        {
-            // Двойные кавычки вне одинарных
-            in_double_quotes = !in_double_quotes;
-        }
-        else if (str[i] == '\'' && in_double_quotes)
-        {
-            // Одинарные кавычки внутри двойных - сохраняем
-            result[result_len++] = '\'';
-        }
-        else if (str[i] == '"' && in_single_quotes)
-        {
-            // Двойные кавычки внутри одинарных - сохраняем
-            result[result_len++] = '"';
-        }
-        else
-        {
-            // Все остальные символы
-            result[result_len++] = str[i];
-        }
-    }
-    
-    result[result_len] = '\0';
-    return result;
+	char	*result;
+	size_t	len = ft_strlen(str);
+	size_t	j = 0;
+	size_t	i = 0;
+	bool	in_squote = false;
+	bool	in_dquote = false;
+
+	result = malloc(len + 1);
+	if (!result)
+		return (NULL);
+
+	while (str[i])
+	{
+		if (str[i] == '\'' && quote_style == 1 && !in_dquote)
+		{
+			in_squote = !in_squote;
+			i++;
+			continue;
+		}
+		else if (str[i] == '"' && quote_style == 2 && !in_squote)
+		{
+			in_dquote = !in_dquote;
+			i++;
+			continue;
+		}
+		else
+		{
+			result[j++] = str[i++];
+		}
+	}
+	result[j] = '\0';
+	return result;
+
 }
+
 
 
 
@@ -277,33 +321,38 @@ static char *strip_quotes(const char *str)
  */
 int strip_words(t_TokenArray *tokens)
 {
-    int i;
-    char *str;
-    char *result;
+	int		i;
+	char	*str;
+	char	*result;
 
-    if (!tokens || !tokens->tokens)
-        return (-1);
-        
-    i = 0;
-    while (i < tokens->count)
-    {
-        if (tokens->tokens[i].type == TOKEN_WORD && tokens->tokens[i].value)
-        {
-            str = tokens->tokens[i].value;
-            
-            // Создаем новую строку без кавычек
-            result = strip_quotes(str);
-            
-            if (!result)
-                return (-1);
-                
-            free(str); // Освобождаем оригинальную строку
-            tokens->tokens[i].value = result; // Присваиваем новую строку без кавычек
-        }
-        i++;
-    }
-    return (0);
+	if (!tokens || !tokens->tokens)
+		return (-1);
+
+	i = 0;
+	while (i < tokens->count)
+	{
+		t_Token *tok = &tokens->tokens[i];
+
+		if (tok->type == TOKEN_WORD && tok->value)
+		{
+			if (tok->in_single_quotes && tok->in_double_quotes)
+			{
+				// вложенные кавычки — не трогаем
+				i++;
+				continue;
+			}
+			str = tok->value;
+			result = strip_quotes_preserving_inner(str, tok->quote_style);
+			if (!result)
+				return (-1);
+			free(str);
+			tok->value = result;
+		}
+		i++;
+	}
+	return (0);
 }
+
 
 
 

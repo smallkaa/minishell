@@ -23,6 +23,7 @@ typedef struct s_token
 	int	in_single_quotes;
 	int	in_double_quotes;
 	bool		needs_join;
+	int		quote_style; // 0 = none, 1 = single, 2 = double
 }	t_Token;
 
 // Token array for storing all tokens
@@ -44,7 +45,7 @@ void	free_token(t_Token *token);
 
 // Free tokenizer resources
 void	tokenizer_cleanup(void);
-char *expand_env_variables(const char *input,  t_mshell *minishell);
+char *expand_env_variables(const char *input, t_mshell *minishell, int quote_style);
 void	print_token(t_Token token);
 void	explain_token(t_Token token);
 void debug_print_parsed_commands(t_cmd *cmd);
@@ -64,5 +65,19 @@ int			handle_input_redir(t_mshell *shell, t_list **cmd_list,
 int			handle_output_redir(t_mshell *shell, t_list **cmd_list,
 				t_cmd **current, t_Token *token);
 void	free_list_nodes_only(t_list **lst);
+
+void	append_char_to_result(char c, char **result);
+void	handle_single_quote(const char *input, size_t *i, int *single_q, char **result, int double_q);
+void	handle_double_quote(const char *input, size_t *i, int *double_q, char **result, int single_q);
+void	handle_backslash(const char *input, size_t *i, char **result, int single_q);
+void	handle_tilde(const char *input, size_t *i, char **result, t_mshell *mshell, int single_q, int double_q);
+void	handle_dollar(const char *input, size_t *i, char **result, t_mshell *mshell, int single_q, int double_q);
+
+char *get_env_value(const char *var, t_mshell *minishell);
+char *append_to_result(char *result, const char *append);
+char *handle_escape(const char *input, size_t *i, int single_q);
+char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q, int double_q);
+char *get_exit_code(t_mshell *minishell);
+
 
 #endif
