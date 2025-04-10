@@ -25,9 +25,9 @@ void unset_error(char *str)
 	print_error("unset: usage: unset [name ...]\n");
 }
 
-void child_execve_error(t_cmd *cmd)
+void	child_execve_error(t_cmd *cmd)
 {
-	struct stat st;
+	struct stat	st;
 
 	if (stat(cmd->binary, &st) == 0 && S_ISDIR(st.st_mode))
 	{
@@ -40,12 +40,13 @@ void child_execve_error(t_cmd *cmd)
 	if (errno == ENOENT)
 	{
 		write(STDERR_FILENO, "-minishell: ", 12);
-		write(STDERR_FILENO, cmd->binary, ft_strlen(cmd->binary));
-		if (strchr(cmd->argv[0], '/') || !cmd->binary)
+		write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
+	
+		if (strchr(cmd->argv[0], '/') || !ms_getenv(cmd->minishell, "PATH") || ms_getenv(cmd->minishell, "PATH")[0] == '\0')
 			write(STDERR_FILENO, ": No such file or directory\n", 28);
 		else
 			write(STDERR_FILENO, ": command not found\n", 20);
-		free_minishell(cmd->minishell);
+	
 		_exit(127);
 	}
 	else if (errno == EACCES)
@@ -53,6 +54,14 @@ void child_execve_error(t_cmd *cmd)
 		write(STDERR_FILENO, "-minishell: ", 12);
 		write(STDERR_FILENO, cmd->binary, ft_strlen(cmd->binary));
 		write(STDERR_FILENO, ": Permission denied\n", 20);
+		free_minishell(cmd->minishell);
+		_exit(126);
+	}
+	else if (errno == ENOEXEC)
+	{
+		write(STDERR_FILENO, "-minishell: ", 12);
+		write(STDERR_FILENO, cmd->binary, ft_strlen(cmd->binary));
+		write(STDERR_FILENO, ": Exec format error\n", 20);
 		free_minishell(cmd->minishell);
 		_exit(126);
 	}
@@ -66,24 +75,26 @@ void child_execve_error(t_cmd *cmd)
 	}
 }
 
-void cmd_missing_command_error(t_cmd *cmd)
+void	cmd_missing_command_error(t_cmd *cmd)
 {
-	char error_buf[ERROR_BUF_SIZE];
+	const char	*path;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
 		write(STDERR_FILENO, "-minishell: invalid command structure\n", 37);
 		_exit(127);
 	}
-	ft_bzero(error_buf, ERROR_BUF_SIZE);
+
+	
 	write(STDERR_FILENO, "-minishell: ", 12);
-	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
-	if (strchr(cmd->argv[0], '/') || !cmd->binary)
-		ft_strlcat(error_buf, ": No such file or directory\n", ERROR_BUF_SIZE);
+	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
+	
+	path = ms_getenv(cmd->minishell, "PATH");
+	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
+		write(STDERR_FILENO, ": No such file or directory\n", 28);
 	else
-		ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
-	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "-minishell: error: failed to print error\n", 40);
+		write(STDERR_FILENO, ": command not found\n", 20);
+
 	free_minishell(cmd->minishell);
 	_exit(127);
 }

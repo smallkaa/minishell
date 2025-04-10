@@ -42,6 +42,7 @@ $USER
 
 #Case 13
 #42_minishell_tester/cmds/mand/10_parsing_hell.sh:37
+#parsing
 export T=">>"
 $T lol
 
@@ -442,6 +443,42 @@ lim
 # 42_minishell_tester/cmds/mand/1_redirs.sh:27
 # works in minishell
 
-  # **************************************************************************** #
-  #                                  PATH FAILS                                  #
-  # **************************************************************************** #
+# **************************************************************************** #
+#                                  PATH FAILS                                  #
+# **************************************************************************** #
+
+# Case 1
+# 42_minishell_tester/cmds/mand/1_redirs.sh:5
+# works in minishell
+
+# Case 2
+# 42_minishell_tester/cmds/mand/1_redirs.sh:12
+# works in minishell
+
+# Case 3
+# 42_minishell_tester/cmds/mand/1_redirs.sh:21
+# works in minishell
+
+# Case 5
+# 42_minishell_tester/cmds/mand/1_redirs.sh:26
+# works in minishell
+
+# Case 8
+# 42_minishell_tester/cmds/mand/1_redirs.sh:32
+# works in minishell
+
+# Case 9
+# 42_minishell_tester/cmds/mand/1_redirs.sh:35
+# works in minishell
+
+# Case 10
+# 42_minishell_tester/cmds/mand/1_redirs.sh:39
+# works in minishell
+
+# Case 11
+# 42_minishell_tester/cmds/mand/1_redirs.sh:47
+# works in minishell
+
+# Case 13
+# 42_minishell_tester/cmds/mand/1_redirs.sh:68
+# works in minishell

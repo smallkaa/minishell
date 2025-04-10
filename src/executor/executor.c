@@ -87,10 +87,8 @@ uint8_t run_executor(t_cmd *cmd)
 	// 	j++;
 	// }
 	// printf("---argv[%d]: {%s}\n", j, cmd->argv[j]);
-	// if (cmd->binary)
-	// 	printf("---binary (%p)\n", cmd->binary);
-	// else
-	// 	printf("---cmd->binary: NOT found\n");
+	// printf("---binary (%p)\n", cmd->binary);
+
 
 	// // //-----------------------------------------------
 	// // Printing redirections

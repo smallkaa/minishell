@@ -64,18 +64,14 @@ static uint8_t execute_command(t_cmd *cmd)
 	{
 		if (is_builtin(cmd))
 		{
-			// printf("DEBUG: execute_command() is_builtin success\n");
-
 			exit_status = exec_builtins(cmd, 0);
 			free_minishell(cmd->minishell);
-
-			// printf("DEBUG: execute_command() exiting...\n");
-
 			_exit(exit_status);
 		}
 		else
 			cmd_missing_command_error(cmd);
 	}
+
 	exit_status = validate_dots(cmd);
 	if (exit_status != EXIT_SUCCESS)
 		_exit(exit_status);
@@ -85,7 +81,17 @@ static uint8_t execute_command(t_cmd *cmd)
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 
 
-	dprintf(STDERR_FILENO, "DEBUG: errno = %d (%s)\n", errno, strerror(errno));  /// debug
+	// if (execve(cmd->binary, cmd->argv, cmd->minishell->env) == -1)
+	// {
+	// 	if (errno == ENOEXEC)
+	// 	{
+	// 		// Not a valid executable format (no shebang, not ELF, etc.)
+	// 		// Fallback: run it using /bin/sh or $SHELL
+	// 		execve(cmd->minishell, ["sh", path_to_file, ...], cmd->minishell->env);
+	// 	}
+	// }
+
+	// dprintf(STDERR_FILENO, "DEBUG: errno = %d (%s)\n", errno, strerror(errno));  /// debug
 
 	child_execve_error(cmd);
 	return (EXIT_FAILURE);
