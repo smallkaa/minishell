@@ -1,4 +1,3 @@
-
 #include "minishell.h"
 
 uint8_t	close_unused_fds(int in_fd, int *pipe_fd)
@@ -23,8 +22,8 @@ uint8_t	close_unused_fds(int in_fd, int *pipe_fd)
 
 uint8_t	close_heredoc_fds(t_cmd *cmd)
 {
-	t_list *rlist;
-	t_redir *r;
+	t_list	*rlist;
+	t_redir	*r;
 
 	rlist = cmd->redirs;
 	while (rlist)

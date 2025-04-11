@@ -19,6 +19,15 @@ typedef struct s_hash_table t_hash_table;
 typedef enum e_redir_type t_redir_type;
 typedef struct s_builtin_dispatch t_builtin_dispatch;
 
+typedef struct s_pipe_info
+{
+	int		in_fd;
+	int		*pipe_fd;
+	pid_t	*pids;
+	int		*idx;
+}	t_pipe_info;
+
+
 /*------FUNCTIONS---------------------------------------------------*/
 
 // parent process
@@ -28,7 +37,8 @@ uint8_t	exec_in_current_process(t_cmd *cmd);
 uint8_t	exec_in_pipes(t_cmd *cmd);
 void	execute_command(t_cmd *cmd);
 void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd);
-void	handle_child_and_track(t_cmd *cmd, int in_fd, int *pipe_fd, pid_t *pids, int *idx);
+// void	handle_child_and_track(t_cmd *cmd, int in_fd, int *pipe_fd, pid_t *pids, int *idx);
+void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info);
 uint8_t	wait_for_children(pid_t *pids, int count);
 uint8_t	close_unused_fds(int in_fd, int *pipe_fd);
 uint8_t	close_heredoc_fds(t_cmd *cmd);

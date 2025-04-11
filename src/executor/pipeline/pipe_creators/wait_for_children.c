@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+
 uint8_t	wait_for_children(pid_t *pids, int count)
 {
 	int		i;

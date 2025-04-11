@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd)
+void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd)
 {
 	if (cmd->next && dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 	{
@@ -19,15 +19,17 @@ static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd)
 	execute_command(cmd);
 }
 
-void	handle_child_and_track(t_cmd *cmd, int in_fd, int *pipe_fd, pid_t *pids, int *idx)
+void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 {
-	pids[*idx] = fork();
-	if (pids[*idx] == -1)
+	info->pids[*info->idx] = fork();
+	if (info->pids[*info->idx] == -1)
 	{
 		perror("-exec_in_pipes: fork");
 		exit(EXIT_FAILURE);
 	}
-	if (pids[*idx] == 0)
-		child_process(cmd, in_fd, pipe_fd);
-	(*idx)++;
+	if (info->pids[*info->idx] == 0)
+		child_process(cmd, info->in_fd, info->pipe_fd);
+	// if (close_heredoc_fds(cmd) == EXIT_FAILURE)
+	// 	_exit(EXIT_FAILURE);
+	(*info->idx)++;
 }
