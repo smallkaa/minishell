@@ -33,8 +33,11 @@ static bool is_exit_command(t_cmd *cmd)
 
 static void cleanup_and_exit(t_cmd *cmd, int exit_status)
 {
+	t_mshell	*minishell;
+
+	minishell = cmd->minishell;
 	free_cmd(cmd);
-	free_minishell(cmd->minishell);
+	free_minishell(minishell);
 	rl_clear_history();
 	exit(exit_status);
 }
@@ -88,7 +91,6 @@ uint8_t run_executor(t_cmd *cmd)
 	// }
 	// printf("---argv[%d]: {%s}\n", j, cmd->argv[j]);
 	// printf("---binary (%p)\n", cmd->binary);
-
 
 	// // //-----------------------------------------------
 	// // Printing redirections

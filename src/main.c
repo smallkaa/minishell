@@ -1,4 +1,5 @@
 #include "minishell.h"
+
 uint8_t	run_command_mode(t_mshell *mshell, char *input)
 {
 	t_cmd	*cmd;
@@ -198,5 +199,7 @@ int	main(int argc, char **argv, char **envp)
 
 	free_minishell(minishell);
 	rl_clear_history();
+
 	return (exit_status);
 }
+
