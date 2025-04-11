@@ -97,7 +97,6 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 	{
 		t_Token *tok = &old_tokens->tokens[i];
 
-
 		if (tok->type != TOKEN_WORD)
 		{
 			new_tokens->tokens[j++] = *tok;
@@ -105,15 +104,7 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 			continue;
 		}
 
-		// 🚫 Если токен после пробела — не склеиваем
-		if (tok->needs_join == 1)
-		{
-			new_tokens->tokens[j++] = *tok;
-			i++;
-			continue;
-		}
-
-		// 🧩 Начинаем склеивать
+		// Начинаем группу — даже если needs_join == 1
 		char *grouped = ft_strdup(tok->value);
 		bool single_q = tok->in_single_quotes;
 		bool double_q = tok->in_double_quotes;
@@ -121,12 +112,11 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 
 		i++;
 
+		// Склеиваем только последующие токены с needs_join == 0
 		while (i < old_tokens->count &&
 			   old_tokens->tokens[i].type == TOKEN_WORD &&
-			   old_tokens->tokens[i].needs_join == 0 &&
-			   old_tokens->tokens[i].quote_style == curr_qstyle)
+			   old_tokens->tokens[i].needs_join == 0)
 		{
-
 			char *tmp = ft_strjoin(grouped, old_tokens->tokens[i].value);
 			free(grouped);
 			grouped = tmp;
@@ -148,6 +138,7 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 	}
 	new_tokens->count = j;
 }
+
 
 
 

@@ -98,6 +98,7 @@ t_Token get_next_token(void)
 
 		token_buffer[index] = '\0';
 		token.value = ft_strdup(token_buffer);
+		token.needs_join = saw_space;
 		return token;
 	}
 
@@ -121,7 +122,7 @@ t_Token get_next_token(void)
 	
 		token_buffer[index] = '\0';
 		token.value = ft_strdup(token_buffer);
-
+		token.needs_join = saw_space;
 		return token;
 	}
 	
@@ -147,6 +148,7 @@ t_Token get_next_token(void)
 
 		token_buffer[index] = '\0';
 		token.value = ft_strdup(token_buffer);
+		token.needs_join = saw_space;
 		return token;
 	}
 
@@ -228,7 +230,8 @@ t_Token get_next_token(void)
     
     // Создаем копию значения
     token.value = ft_strdup(token_buffer);
-    
+    token.needs_join = saw_space;
+
     return token;
 }
 
