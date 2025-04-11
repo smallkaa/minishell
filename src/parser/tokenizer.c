@@ -46,49 +46,38 @@ static int ft_is_special_char(char c) {
     return (c == '|' || c == '<' || c == '>' || c == '&');
 }
 
-
-
-
-// Public API function - Get the next token from the input
-
-
-t_Token	get_next_token(t_Tokenizer *tokenizer)
+static bool	tokenizer_should_end(t_Tokenizer *tokenizer, t_Token *token)
 {
-	t_Token	token;
-	size_t	index;
-	int		in_single_quote;
-	int		in_double_quote;
-	int		saw_space;
-
-	ft_bzero(&token, sizeof(t_Token));
-	token.type = TOKEN_WORD;
-	saw_space = 0;
-
 	if (!tokenizer || !tokenizer->buffer || tokenizer->buffer_size == 0)
 	{
 		write(2, "token_buffer not initialized\n", 30);
 		exit(1);
 	}
-
 	if (!*tokenizer->input)
 	{
-		token.type = TOKEN_EOF;
-		return (token);
+		token->type = TOKEN_EOF;
+		return (true);
 	}
+	return (false);
+}
 
+static void	tokenizer_skip_whitespace(t_Tokenizer *tokenizer, int *saw_space)
+{
+	*saw_space = 0;
 	while (*tokenizer->input && (*tokenizer->input == ' ' || *tokenizer->input == '\t'))
 	{
-		saw_space = 1;
+		*saw_space = 1;
 		tokenizer->input++;
 	}
-	token.needs_join = saw_space;
+}
 
-	if (!*tokenizer->input)
-	{
-		token.type = TOKEN_EOF;
-		return (token);
-	}
+static t_Token	tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer, int saw_space)
+{
+	t_Token		token;
+	size_t		index;
 
+	ft_bzero(&token, sizeof(t_Token));
+	token.type = TOKEN_WORD;
 	if (*tokenizer->input == '$' && *(tokenizer->input + 1) == '"')
 	{
 		index = 0;
@@ -102,114 +91,146 @@ t_Token	get_next_token(t_Tokenizer *tokenizer)
 		tokenizer->buffer[index] = '\0';
 		token.value = ft_strdup(tokenizer->buffer);
 		token.needs_join = saw_space;
-		return (token);
 	}
+	return (token);
+}
 
-	if (*tokenizer->input == '"')
-	{
-		index = 0;
-		tokenizer->input++;
+static t_Token	tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space)
+{
+	t_Token		token;
+	size_t		index;
+	char		quote;
+
+	ft_bzero(&token, sizeof(t_Token));
+	token.type = TOKEN_WORD;
+	quote = *tokenizer->input;
+	tokenizer->input++;
+	index = 0;
+	if (quote == '"')
 		token.in_double_quotes = 1;
-		token.quote_style = 2;
-		while (*tokenizer->input && *tokenizer->input != '"')
-		{
-			if (index < tokenizer->buffer_size - 1)
-				tokenizer->buffer[index++] = *tokenizer->input;
-			tokenizer->input++;
-		}
-		if (*tokenizer->input == '"')
-			tokenizer->input++;
-		tokenizer->buffer[index] = '\0';
-		token.value = ft_strdup(tokenizer->buffer);
-		token.needs_join = saw_space;
-		return (token);
-	}
-
-	if (*tokenizer->input == '\'')
-	{
-		index = 0;
-		tokenizer->input++;
+	else
 		token.in_single_quotes = 1;
-		token.quote_style = 1;
-		while (*tokenizer->input && *tokenizer->input != '\'')
-		{
-			if (index < tokenizer->buffer_size - 1)
-				tokenizer->buffer[index++] = *tokenizer->input;
-			tokenizer->input++;
-		}
-		if (*tokenizer->input == '\'')
-			tokenizer->input++;
-		tokenizer->buffer[index] = '\0';
-		token.value = ft_strdup(tokenizer->buffer);
-		token.needs_join = saw_space;
-		return (token);
+	token.quote_style = (quote == '"') * 2 + (quote == '\'');
+	while (*tokenizer->input && *tokenizer->input != quote)
+	{
+		if (index < tokenizer->buffer_size - 1)
+			tokenizer->buffer[index++] = *tokenizer->input;
+		tokenizer->input++;
 	}
+	if (*tokenizer->input == quote)
+		tokenizer->input++;
+	tokenizer->buffer[index] = '\0';
+	token.value = ft_strdup(tokenizer->buffer);
+	token.needs_join = saw_space;
+	return (token);
+}
 
+static t_Token	tokenizer_parse_redirection(t_Tokenizer *tokenizer)
+{
+	t_Token token;
+
+	ft_bzero(&token, sizeof(t_Token));
 	if (*tokenizer->input == '<' && *(tokenizer->input + 1) == '<')
 	{
 		tokenizer->input += 2;
 		token.type = TOKEN_HEREDOC;
 		token.value = ft_strdup("<<");
-		return (token);
 	}
-	if (*tokenizer->input == '>' && *(tokenizer->input + 1) == '>')
+	else if (*tokenizer->input == '>' && *(tokenizer->input + 1) == '>')
 	{
 		tokenizer->input += 2;
 		token.type = TOKEN_APPEND_OUT;
 		token.value = ft_strdup(">>");
-		return (token);
 	}
+	return (token);
+}
 
-	if (ft_is_special_char(*tokenizer->input))
-	{
-		token.value = malloc(2);
-		token.value[0] = *tokenizer->input++;
-		token.value[1] = '\0';
-		return (token);
-	}
+static t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer)
+{
+	t_Token	token;
 
+	ft_bzero(&token, sizeof(t_Token));
+	if (*tokenizer->input == '|')
+		token.type = TOKEN_PIPE;
+	else if (*tokenizer->input == '<')
+		token.type = TOKEN_REDIRECT_IN;
+	else if (*tokenizer->input == '>')
+		token.type = TOKEN_REDIRECT_OUT;
+	else if (*tokenizer->input == '&')
+		token.type = TOKEN_BACKGROUND;
+	else
+		token.type = TOKEN_WORD;
+	token.value = malloc(2);
+	token.value[0] = *tokenizer->input++;
+	token.value[1] = '\0';
+	return (token);
+}
+
+
+static t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space)
+{
+	t_Token	token;
+	char		c;
+	size_t		index;
+	int		in_single;
+	int		in_double;
+
+	ft_bzero(&token, sizeof(t_Token));
+	token.type = TOKEN_WORD;
 	index = 0;
-	in_single_quote = 0;
-	in_double_quote = 0;
+	in_single = 0;
+	in_double = 0;
 	while (*tokenizer->input)
 	{
-		char c = *tokenizer->input;
-
-		if ((c == ' ' || c == '\t') && !in_single_quote && !in_double_quote)
-			break;
-		if (ft_is_special_char(c) && !in_single_quote && !in_double_quote)
-			break;
-		if (c == '\'' && !in_double_quote)
-		{
-			in_single_quote = !in_single_quote;
-			token.in_single_quotes = 1;
-		}
-		else if (c == '"' && !in_single_quote)
-		{
-			in_double_quote = !in_double_quote;
-			token.in_double_quotes = 1;
-		}
+		c = *tokenizer->input;
+		if ((c == ' ' || c == '\t') && !in_single && !in_double)
+			break ;
+		if (ft_is_special_char(c) && !in_single && !in_double)
+			break ;
+		if (c == '\'' && !in_double)
+			in_single = !in_single;
+		else if (c == '"' && !in_single)
+			in_double = !in_double;
 		if (index < tokenizer->buffer_size - 1)
 			tokenizer->buffer[index++] = c;
 		tokenizer->input++;
 	}
 	tokenizer->buffer[index] = '\0';
-
-	if (in_single_quote)
-		token.quote_style = 1;
-	else if (in_double_quote)
-		token.quote_style = 2;
-	else
-		token.quote_style = 0;
-
+	token.quote_style = (in_single) ? 1 : (in_double) ? 2 : 0;
+	token.in_single_quotes = (in_single != 0);
+	token.in_double_quotes = (in_double != 0);
 	token.value = ft_strdup(tokenizer->buffer);
 	token.needs_join = saw_space;
-
 	return (token);
 }
 
+t_Token	get_next_token(t_Tokenizer *tokenizer)
+{
+	t_Token	token;
+	int		saw_space;
 
-
+	ft_bzero(&token, sizeof(t_Token));
+	token.type = TOKEN_WORD;
+	if (tokenizer_should_end(tokenizer, &token))
+		return (token);
+	tokenizer_skip_whitespace(tokenizer, &saw_space);
+	token.needs_join = saw_space;
+	if (!*tokenizer->input)
+	{
+		token.type = TOKEN_EOF;
+		return (token);
+	}
+	if (*tokenizer->input == '$' && *(tokenizer->input + 1) == '"')
+		return (tokenizer_parse_special_dollar_quote(tokenizer, saw_space));
+	if (*tokenizer->input == '"' || *tokenizer->input == '\'')
+		return (tokenizer_parse_quoted(tokenizer, saw_space));
+	if ((*tokenizer->input == '<' && *(tokenizer->input + 1) == '<') ||
+		(*tokenizer->input == '>' && *(tokenizer->input + 1) == '>'))
+		return (tokenizer_parse_redirection(tokenizer));
+	if (ft_is_special_char(*tokenizer->input))
+		return (tokenizer_parse_operator(tokenizer));
+	return (tokenizer_parse_word(tokenizer, saw_space));
+}
 
 
 
