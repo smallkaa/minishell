@@ -6,19 +6,41 @@ static uint8_t	apply_input_redirection(t_redir *redir)
 
 	if (redir->type == R_HEREDOC)
 	{
+		if (redir->fd == -1)
+		{
+			perror("apply_input_redirection: fd already closed\n");
+			return (EXIT_FAILURE);
+		}
 		if (dup2(redir->fd, STDIN_FILENO) == -1)
-			return (perror_return("dup2 heredoc", EXIT_FAILURE));
-		close(redir->fd);
+		{
+			perror("apply_input_redirection: dup2 heredoc");
+			return (EXIT_FAILURE);
+		}
+		if (close(redir->fd) == -1)
+		{
+			perror("apply_input_redirection: close heredoc");
+			return (EXIT_FAILURE);
+		}
+		redir->fd = -1;
 	}
+
 	else if (redir->type == R_INPUT)
 	{
 		fd = open(redir->filename, O_RDONLY);
 		if (fd == -1)
-			return (perror_return(redir->filename, EXIT_FAILURE));
+		{
+			perror(redir->filename);
+			return (EXIT_FAILURE);
+		}
 		if (dup2(fd, STDIN_FILENO) == -1)
 		{
-			close(fd);
-			return (perror_return("dup2 input", EXIT_FAILURE));
+			if (close(fd) == -1)
+			{
+				perror("apply_input_redirection: close input");
+				return (EXIT_FAILURE);
+			}
+			perror("apply_input_redirection: dup2 input");
+			return (EXIT_FAILURE);
 		}
 		close(fd);
 	}
