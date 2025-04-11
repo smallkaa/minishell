@@ -41,12 +41,12 @@ void	child_execve_error(t_cmd *cmd)
 	{
 		write(STDERR_FILENO, "-minishell: ", 12);
 		write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
-	
+
 		if (strchr(cmd->argv[0], '/') || !ms_getenv(cmd->minishell, "PATH") || ms_getenv(cmd->minishell, "PATH")[0] == '\0')
 			write(STDERR_FILENO, ": No such file or directory\n", 28);
 		else
 			write(STDERR_FILENO, ": command not found\n", 20);
-	
+
 		_exit(127);
 	}
 	else if (errno == EACCES)
@@ -85,10 +85,10 @@ void	cmd_missing_command_error(t_cmd *cmd)
 		_exit(127);
 	}
 
-	
+
 	write(STDERR_FILENO, "-minishell: ", 12);
 	write(STDERR_FILENO, cmd->argv[0], ft_strlen(cmd->argv[0]));
-	
+
 	path = ms_getenv(cmd->minishell, "PATH");
 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
 		write(STDERR_FILENO, ": No such file or directory\n", 28);

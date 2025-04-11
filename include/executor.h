@@ -21,9 +21,25 @@ typedef struct s_builtin_dispatch t_builtin_dispatch;
 
 /*------FUNCTIONS---------------------------------------------------*/
 
-// standart cmd exec functions
+// parent process
 uint8_t	exec_in_current_process(t_cmd *cmd);
+
+// pipes
 uint8_t	exec_in_pipes(t_cmd *cmd);
+void	execute_command(t_cmd *cmd);
+void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd);
+void	handle_child_and_track(t_cmd *cmd, int in_fd, int *pipe_fd, pid_t *pids, int *idx);
+uint8_t	wait_for_children(pid_t *pids, int count);
+uint8_t	close_unused_fds(int in_fd, int *pipe_fd);
+uint8_t	close_heredoc_fds(t_cmd *cmd);
+void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd);
+
+// pipe utils
+bool	is_minishell_executable(t_cmd *cmd);
+uint8_t	validate_dots(t_cmd *cmd);
+uint8_t	update_shlvl(t_cmd *cmd);
+void	handle_empty_command(t_cmd *cmd);
+uint8_t	validate_dots(t_cmd *cmd);
 
 // builtin
 bool	is_builtin(t_cmd *cmd);
