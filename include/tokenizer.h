@@ -34,17 +34,22 @@ typedef struct s_tokens_array
 	int		capacity;
 }	t_TokenArray;
 
-// Initialize the tokenizer with input string
-void	tokenizer_init(const char *input);
+typedef struct s_tokenizer
+{
+	const char	*input;
+	const char	*input_base;
+	char		*buffer;
+	size_t		buffer_size;
+}	t_Tokenizer;
+
+
 
 // Get the next token from the input
-t_Token	get_next_token(void);
+t_Token	get_next_token(t_Tokenizer *tokenizer);
 
 // Free resources used by a token
 void	free_token(t_Token *token);
 
-// Free tokenizer resources
-void	tokenizer_cleanup(void);
 char *expand_env_variables(const char *input, t_mshell *minishell, int quote_style);
 void	print_token(t_Token token);
 void	explain_token(t_Token token);
@@ -53,6 +58,9 @@ int	strip_words(t_TokenArray *tokens);
 bool	is_in_single_quotes(char *str);
 bool	is_in_double_quotes(char *str);
 void	expand_tokens(t_TokenArray *tokens, t_mshell *ms);
+
+t_Tokenizer	*tokenizer_create(const char *input);
+void		tokenizer_destroy(t_Tokenizer *tokenizer);
 
 int			is_input_redir(t_TokenType type);
 int			is_output_redir(t_TokenType type);

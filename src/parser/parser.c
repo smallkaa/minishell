@@ -230,60 +230,46 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 }
 
 
-t_cmd *run_parser(t_mshell *minishell, char *input)
+t_cmd	*run_parser(t_mshell *minishell, char *input)
 {
-    //char *expanded_input;
-    t_TokenArray *tokens;
-    t_Token token;
-    t_cmd *cmd;
-    int i;
+	t_Tokenizer		*tokenizer;
+	t_TokenArray	*tokens;
+	t_Token			token;
+	t_cmd			*cmd;
+	int				i;
 
-//    debug_printf("\nExpanding: %s\n\n", input);
+	debug_printf("\nTokenizing: %s\n\n", input);
+	tokenizer = tokenizer_create(input);
+	if (!tokenizer)
+		return (NULL);
 
-//    expanded_input = expand_env_variables(input, minishell);
-//    if (!expanded_input)
-//        return (NULL);
+	tokens = token_array_init();
+	do {
+		token = get_next_token(tokenizer);
+		if (token.type != TOKEN_EOF)
+			token_array_add(tokens, token);
+	} while (token.type != TOKEN_EOF);
 
-    debug_printf("\nTokenizing: %s\n\n", input);
-    tokenizer_init(input);
-
-    tokens = token_array_init();
-    do {
-        token = get_next_token();
-        if (token.type != TOKEN_EOF)
-            token_array_add(tokens, token);
-    } while (token.type != TOKEN_EOF);
-
-	i = 0;
-
-	// Ilia: close for tests
-	// обратно раскомментировал, изменил поведение, теперь TOKEN_WORD склеиваются только если они были рядом
-    group_word_tokens(tokens);//TODO: error handling
-
- 	expand_tokens(tokens, minishell);
+	group_word_tokens(tokens); // TODO: error handling
+	expand_tokens(tokens, minishell);
 	strip_words(tokens);
 
-    cmd = create_command_from_tokens(minishell, tokens);
-    //free(expanded_input);
+	cmd = create_command_from_tokens(minishell, tokens);
 
-    tokenizer_cleanup();
-    debug_printf("Found %d token(s):\n", tokens->count);
-    i = 0;
-    while (i < tokens->count)
-    {
-        debug_printf("\nToken %d:\n", i);
-        print_token(tokens->tokens[i]);
-        explain_token(tokens->tokens[i]);
-        i++;
-    }
-    token_array_free(tokens);
-    debug_print_parsed_commands(cmd);
+	tokenizer_destroy(tokenizer);
 
-    // //debug
-    // if (!cmd)
-    // {
-    //     print_error("[TEST]: run_parser(), No input from the user side / empty prompt\n");
-    //     print_error("[TEST]: It's no error, just continue waiting for the next command\n");
-    // }
-    return (cmd);
+	debug_printf("Found %d token(s):\n", tokens->count);
+	i = 0;
+	while (i < tokens->count)
+	{
+		debug_printf("\nToken %d:\n", i);
+		print_token(tokens->tokens[i]);
+		explain_token(tokens->tokens[i]);
+		i++;
+	}
+	token_array_free(tokens);
+	debug_print_parsed_commands(cmd);
+
+	return (cmd);
 }
+
