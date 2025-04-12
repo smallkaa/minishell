@@ -219,20 +219,29 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 				tokens->tokens[i].value);
 		else if (tokens->tokens[i].type == TOKEN_PIPE)
 			current = NULL;
-		else if (is_input_redir(tokens->tokens[i].type))
+		if (is_input_redir(tokens->tokens[i].type))
 		{
-			if (handle_input_redir(shell, &cmd_list, &current,
-					&tokens->tokens[i]) < 0)
+			if (!is_valid_redir_target(tokens, i))
+			{
+				print_error("syntax error near unexpected token `newline'\n");
+				return (free_cmd_list(&cmd_list), NULL);
+			}
+			if (handle_input_redir(shell, &cmd_list, &current, &tokens->tokens[i]) < 0)
+				return (free_cmd_list(&cmd_list), NULL);
+			i++;
+		}		
+		if (is_output_redir(tokens->tokens[i].type))
+		{
+			if (!is_valid_redir_target(tokens, i))
+			{
+				print_error("syntax error near unexpected token `newline'\n");
+				return (free_cmd_list(&cmd_list), NULL);
+			}
+			if (handle_output_redir(shell, &cmd_list, &current, &tokens->tokens[i]) < 0)
 				return (free_cmd_list(&cmd_list), NULL);
 			i++;
 		}
-		else if (is_output_redir(tokens->tokens[i].type))
-		{
-			if (handle_output_redir(shell, &cmd_list, &current,
-					&tokens->tokens[i]) < 0)
-				return (free_cmd_list(&cmd_list), NULL);
-			i++;
-		}
+		
 		i++;
 	}
 	if (current && current->argv)

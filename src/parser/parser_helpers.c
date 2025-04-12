@@ -177,3 +177,15 @@ int	handle_output_redir(t_mshell *shell, t_list **cmd_list,
 	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir));
 	return (0);
 }
+
+// parser_helpers.c
+bool	is_valid_redir_target(t_TokenArray *tokens, int i)
+{
+	if (!tokens || i + 1 >= tokens->count)
+		return (false);
+	if (tokens->tokens[i + 1].type != TOKEN_WORD)
+		return (false);
+	if (!tokens->tokens[i + 1].value || tokens->tokens[i + 1].value[0] == '\0')
+		return (false);
+	return (true);
+}
