@@ -41,13 +41,41 @@ void handle_double_quote(const char *input, size_t *i,
 void handle_backslash(const char *input, size_t *i,
 	char **result, int single_q)
 {
-	char *escaped = handle_escape(input, i, single_q);
-	if (escaped)
+	if (!input[*i + 1])
 	{
-		*result = append_to_result(*result, escaped);
-		free(escaped);
+		append_char_to_result('\\', result);
+		(*i)++;
+		return;
+	}
+
+	(*i)++;
+
+	// внутри одинарных кавычек — сохраняем как есть
+	if (single_q)
+	{
+		append_char_to_result('\\', result);
+		append_char_to_result(input[*i], result);
+		(*i)++;
+		return;
+	}
+
+	char next = input[*i];
+
+	// только определённые символы экранируются
+	if (next == '$' || next == '\\' || next == '"' || next == '\'')
+	{
+		append_char_to_result(next, result);
+		(*i)++;
+	}
+	else
+	{
+		// экранирование ничего не делает — оставляем как есть
+		append_char_to_result('\\', result);
+		append_char_to_result(next, result);
+		(*i)++;
 	}
 }
+
 
 void handle_tilde(const char *input, size_t *i, char **result,
 	t_mshell *mshell, int single_q, int double_q)
