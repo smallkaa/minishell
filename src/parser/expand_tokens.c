@@ -3,14 +3,19 @@
 static void	expand_token_value(t_Token *token, t_mshell *ms)
 {
 	char	*expanded;
+
 	if (!token || !token->value)
-		return;
+		return ;
 
-	// 🔒 Не делать expand, если токен в одинарных кавычках
-	if (token->in_single_quotes)
-		return;
+	// Только если полностью в одинарных кавычках (не раскрывать $)
+	if (token->quote_style == 1)
+	{
+		size_t len = ft_strlen(token->value);
+		if (len >= 2 && token->value[0] == '\'' && token->value[len - 1] == '\'')
+			return ;
+	}
 
-	// ✨ Bash: $"VAR" — локализованная строка, просто обрезаем
+	// $"" → просто обрезаем
 	if (ft_strncmp(token->value, "$\"", 2) == 0)
 	{
 		size_t len = ft_strlen(token->value);
@@ -44,6 +49,7 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 		}
 	}
 }
+
 
 
 

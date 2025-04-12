@@ -170,39 +170,47 @@ static t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer)
 static t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space)
 {
 	t_Token	token;
-	char		c;
-	size_t		index;
-	int		in_single;
-	int		in_double;
+	char	c;
+	size_t	index;
 
 	ft_bzero(&token, sizeof(t_Token));
 	token.type = TOKEN_WORD;
 	index = 0;
-	in_single = 0;
-	in_double = 0;
+
 	while (*tokenizer->input)
 	{
 		c = *tokenizer->input;
-		if ((c == ' ' || c == '\t') && !in_single && !in_double)
-			break ;
-		if (ft_is_special_char(c) && !in_single && !in_double)
-			break ;
-		if (c == '\'' && !in_double)
-			in_single = !in_single;
-		else if (c == '"' && !in_single)
-			in_double = !in_double;
+
+		// пробел завершает токен
+		if ((c == ' ' || c == '\t'))
+			break;
+
+		// спец. символ завершает токен
+		if (ft_is_special_char(c))
+			break;
+
+		// кавычки требуют отдельного токена
+		if (c == '\'' || c == '"')
+			break;
+
 		if (index < tokenizer->buffer_size - 1)
 			tokenizer->buffer[index++] = c;
 		tokenizer->input++;
 	}
+
+	// если ничего не накопили, а следующее — кавычка, вернёмся в get_next_token
+	if (index == 0 && (*tokenizer->input == '\'' || *tokenizer->input == '"'))
+		return (get_next_token(tokenizer));
+
 	tokenizer->buffer[index] = '\0';
-	token.quote_style = (in_single) ? 1 : (in_double) ? 2 : 0;
-	token.in_single_quotes = (in_single != 0);
-	token.in_double_quotes = (in_double != 0);
 	token.value = ft_strdup(tokenizer->buffer);
+	token.quote_style = 0;
+	token.in_single_quotes = 0;
+	token.in_double_quotes = 0;
 	token.needs_join = saw_space;
 	return (token);
 }
+
 
 t_Token	get_next_token(t_Tokenizer *tokenizer)
 {
