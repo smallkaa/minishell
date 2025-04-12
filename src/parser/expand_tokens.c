@@ -3,6 +3,7 @@
 static void	expand_token_value(t_Token *token, t_mshell *ms)
 {
 	char	*expanded;
+//	printf("TOKEN: value before expand = '%s'\n", token->value);
 
 	if (!token || !token->value)
 		return ;
@@ -29,7 +30,13 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 			}
 		}
 	}
-
+	if (!ft_strchr(token->value, '$') &&
+	!ft_strchr(token->value, '~') &&
+	!ft_strchr(token->value, '\\'))
+	{
+		// Нет переменных, нечего раскрывать
+		return;
+	}
 	expanded = expand_env_variables(token->value, ms, token->quote_style);
 
 	if (expanded)

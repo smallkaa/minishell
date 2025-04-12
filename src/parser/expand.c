@@ -63,10 +63,12 @@ char	*handle_escape(const char *input, size_t *i, int single_q)
 	(*i)++;
 	if (single_q) // No escape processing inside single quotes
 	{
+
 		single_char[0] = '\\';
 		single_char[1] = input[*i];
 		return (ft_strdup(single_char));
 	}
+
 	if (input[*i] == 'n')
 		return (ft_strdup("\n"));
 	if (input[*i] == 't')
@@ -77,6 +79,8 @@ char	*handle_escape(const char *input, size_t *i, int single_q)
 		return (ft_strdup("\""));
 	if (input[*i] == '\'')
 		return (ft_strdup("\'"));
+	if (input[*i] == '$')
+		return (ft_strdup("$"));
 	single_char[0] = input[*i];
 	single_char[1] = '\0';
 	return (ft_strdup(single_char));
@@ -117,6 +121,7 @@ char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q,
 
 char *expand_env_variables(const char *input, t_mshell *minishell, int quote_style)
 {
+
 	char *result = ft_strdup("");
 	size_t i = 0;
 	int single_q = (quote_style == 1);
@@ -131,10 +136,29 @@ char *expand_env_variables(const char *input, t_mshell *minishell, int quote_sty
 			handle_single_quote(input, &i, &single_q, &result, double_q);
 		else if (input[i] == '"')
 			handle_double_quote(input, &i, &double_q, &result, single_q);
+		else if (input[i] == '\\' && input[i + 1] == '$')
+		{
+			// Экранированный доллар → не expand
+			append_char_to_result('$', &result);
+			i += 2;
+		}
 		else if (input[i] == '\\')
+		{
 			handle_backslash(input, &i, &result, single_q);
+		}
 		else if (input[i] == '$')
+		{
+			if (!input[i + 1] ||
+				!(ft_isalpha(input[i + 1]) || input[i + 1] == '_' ||
+					input[i + 1] == '?' || ft_isdigit(input[i + 1])))
+			{
+				append_char_to_result('$', &result);
+				i++;
+				continue;
+			}
 			handle_dollar(input, &i, &result, minishell, single_q, double_q);
+		}
+		
 		else if (input[i] == '~')
 			handle_tilde(input, &i, &result, minishell, single_q, double_q);
 		else
