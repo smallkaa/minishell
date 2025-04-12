@@ -66,6 +66,11 @@ static int	count_new_tokens(t_TokenArray *tokens)
 
 	while (i < tokens->count)
 	{
+		if (tokens->tokens[i].type == TOKEN_EMPTY)
+		{
+			i++;
+			continue;
+		}
 		if (tokens->tokens[i].type != TOKEN_WORD)
 		{
 			count++;
@@ -90,12 +95,21 @@ static int	count_new_tokens(t_TokenArray *tokens)
 
 static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 {
+	//printf("DEBUG: fill_new_tokens — count=%d\n", old_tokens->count);
+
 	int		i = 0;
 	int		j = 0;
 
 	while (i < old_tokens->count)
 	{
 		t_Token *tok = &old_tokens->tokens[i];
+		//printf("DEBUG: i=%d type=%d value='%s'\n", i, tok->type,
+//			tok->value ? tok->value : "(null)");
+		if (tok->type == TOKEN_EMPTY)
+		{
+			i++;
+			continue;
+		}
 
 		if (tok->type != TOKEN_WORD)
 		{
@@ -114,9 +128,18 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 
 		// Склеиваем только последующие токены с needs_join == 0
 		while (i < old_tokens->count &&
-			   old_tokens->tokens[i].type == TOKEN_WORD &&
+			   old_tokens->tokens[i].type == TOKEN_WORD && old_tokens->tokens[i].type != TOKEN_EMPTY &&
 			   old_tokens->tokens[i].needs_join == 0)
 		{
+			//printf("  INNER: i=%d type=%d value='%s' needs_join=%d\n", i,
+			//	old_tokens->tokens[i].type,
+			//	old_tokens->tokens[i].value ? old_tokens->tokens[i].value : "(null)",
+			//	old_tokens->tokens[i].needs_join);
+			if (old_tokens->tokens[i].type == TOKEN_EMPTY)
+			{
+				i++;
+				continue;
+			}
 			char *tmp = ft_strjoin(grouped, old_tokens->tokens[i].value);
 			free(grouped);
 			grouped = tmp;
@@ -251,6 +274,12 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	} while (token.type != TOKEN_EOF);
 
 	expand_tokens(tokens, minishell);
+	/*printf("TOKENS BEFORE GROUPING: %d\n", tokens->count);
+	for (int x = 0; x < tokens->count; x++)
+	{
+		printf("  [%d] type=%d value='%s'\n", x, tokens->tokens[x].type,
+			tokens->tokens[x].value ? tokens->tokens[x].value : "(null)");
+	}*/
 	group_word_tokens(tokens); // TODO: error handling
 	strip_words(tokens);
 

@@ -31,8 +31,18 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 	}
 
 	expanded = expand_env_variables(token->value, ms, token->quote_style);
+
 	if (expanded)
 	{
+
+		if (expanded[0] == '\0' && token->quote_style == 0)
+		{
+			free(token->value);
+			token->value = NULL;
+			token->type = TOKEN_EMPTY;
+			free(expanded);
+			return;
+		}
 		free(token->value);
 		token->value = expanded;
 

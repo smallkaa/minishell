@@ -71,7 +71,7 @@ void handle_tilde(const char *input, size_t *i, char **result,
 void	handle_dollar(const char *input, size_t *i, char **result,
 	t_mshell *mshell, int single_q, int double_q)
 {
-    (void)double_q;
+	(void)double_q;
 	if (single_q)
 	{
 		append_char_to_result('$', result);
@@ -87,6 +87,7 @@ void	handle_dollar(const char *input, size_t *i, char **result,
 		return;
 	}
 
+	// $?
 	if (input[*i] == '?')
 	{
 		char *exit_code = get_exit_code(mshell);
@@ -99,19 +100,7 @@ void	handle_dollar(const char *input, size_t *i, char **result,
 		return;
 	}
 
-	if (ft_isdigit(input[*i]))
-	{
-		char name[2] = {input[*i], '\0'};
-		char *val = get_env_value(name, mshell);
-		if (val)
-		{
-			*result = append_to_result(*result, val);
-			free(val);
-		}
-		(*i)++;
-		return;
-	}
-
+	// $VAR_NAME
 	if (ft_isalpha(input[*i]) || input[*i] == '_')
 	{
 		size_t start = *i;
@@ -130,7 +119,23 @@ void	handle_dollar(const char *input, size_t *i, char **result,
 		return;
 	}
 
-	// если символ после $ невалиден
+	// $1, $2, ... (одна цифра)
+	if (ft_isdigit(input[*i]))
+	{
+		char name[2] = {input[*i], '\0'};
+		char *val = get_env_value(name, mshell);
+		if (val)
+		{
+			*result = append_to_result(*result, val);
+			free(val);
+		}
+		(*i)++;
+		return;
+	}
+
+	// ❌ если ничего не подходит — просто добавить $
 	append_char_to_result('$', result);
 }
+
+
 

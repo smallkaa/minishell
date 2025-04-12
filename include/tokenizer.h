@@ -12,6 +12,7 @@ typedef enum e_possible_tokens
 	TOKEN_APPEND_OUT,
 	TOKEN_BACKGROUND,
 	TOKEN_HEREDOC,
+	TOKEN_EMPTY,
 	TOKEN_EOF
 }	t_TokenType;
 
