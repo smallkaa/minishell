@@ -1,9 +1,13 @@
 # Detect OS
 UNAME := $(shell uname)
+BIGTEST ?= 0
 
 # Default flags
 LDFLAGS :=
 CFLAGS  := -g -Wall -Wextra -Werror -Wuninitialized
+ifeq ($(BIGTEST),1)
+	CFLAGS += -DBIGTEST
+endif
 
 # macOS-specific flags for Readline (2DO: fix extern void rl_replace_line(const char *, int) in signals.c)
 ifeq ($(UNAME), Darwin)
@@ -60,7 +64,7 @@ DOXYFILE = Doxyfile
 
 # Compile all
 $(NAME): $(OBJ_FILES) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(LDFLAGS) -lreadline
+	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -g -o $(NAME) $(LDFLAGS) -lreadline
 	@echo "\033[32m\"$(NAME)\": successfully created!\033[0m"
 	find . -type f \( -name "*.c" -o -name "*.h" -o -name "Makefile" \) -exec awk 'FNR==1{print "File: "FILENAME "\n"}{print}' {} + > sources_dump.txt
 # Rule for compiling object files with correct paths

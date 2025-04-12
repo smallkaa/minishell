@@ -3,17 +3,57 @@
 static void	expand_token_value(t_Token *token, t_mshell *ms)
 {
 	char	*expanded;
+//	printf("TOKEN: value before expand = '%s'\n", token->value);
 
 	if (!token || !token->value)
+		return ;
+
+	// Только если полностью в одинарных кавычках (не раскрывать $)
+	if (token->quote_style == 1)
+	{
+		size_t len = ft_strlen(token->value);
+		if (len >= 2 && token->value[0] == '\'' && token->value[len - 1] == '\'')
+			return ;
+	}
+
+	// $"" → просто обрезаем
+	if (ft_strncmp(token->value, "$\"", 2) == 0)
+	{
+		size_t len = ft_strlen(token->value);
+		if (len >= 3 && token->value[len - 1] == '"')
+		{
+			char *content = ft_substr(token->value, 2, len - 3);
+			if (content)
+			{
+				free(token->value);
+				token->value = content;
+			}
+		}
+	}
+	if (!ft_strchr(token->value, '$') &&
+	!ft_strchr(token->value, '~') &&
+	!ft_strchr(token->value, '\\'))
+	{
+		// Нет переменных, нечего раскрывать
 		return;
-	expanded = expand_env_variables(token->value, ms);
+	}
+	expanded = expand_env_variables(token->value, ms, token->quote_style);
+
 	if (expanded)
 	{
+
+		if (expanded[0] == '\0' && token->quote_style == 0)
+		{
+			free(token->value);
+			token->value = NULL;
+			token->type = TOKEN_EMPTY;
+			free(expanded);
+			return;
+		}
 		free(token->value);
 		token->value = expanded;
 
-		// Обновление типа токена на основе его значения
-		if (!token->in_single_quotes) // Только если не в одинарных кавычках
+		if (!token->in_single_quotes)
 		{
 			if (ft_strcmp(expanded, "|") == 0)
 				token->type = TOKEN_PIPE;
@@ -23,10 +63,11 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 				token->type = TOKEN_REDIRECT_OUT;
 			else if (ft_strcmp(expanded, ">>") == 0)
 				token->type = TOKEN_APPEND_OUT;
-			// можно добавить больше проверок, если нужно
 		}
 	}
 }
+
+
 
 
 
