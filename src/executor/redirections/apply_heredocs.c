@@ -1,6 +1,11 @@
 #include "minishell.h"
 
-uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
+bool	is_heredoc(t_redir *redirection)
+{
+	return (redirection->type == R_HEREDOC);
+}
+
+static uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
 {
 	char	*line;
 
@@ -46,29 +51,25 @@ static uint8_t	new_heredoc_fd(const char *delim)
 	return (pipe_fd[0]);
 }
 
-static bool	is_heredoc(t_redir *redirection)
-{
-	return (redirection->type == R_HEREDOC);
-}
 uint8_t apply_heredocs(t_cmd *cmd)
 {
-	t_cmd *start = cmd;
+	t_cmd	*initial_cmd_list;
+	t_redir	*redirection;
+	t_list	*redir_list;
 
+	initial_cmd_list = cmd;
 	while (cmd)
 	{
-		t_list *redir_list = cmd->redirs;
-
+		redir_list = cmd->redirs;
 		while (redir_list)
 		{
-			t_redir *redirection = redir_list->content;
-
+			redirection = redir_list->content;
 			if (is_heredoc(redirection))
 			{
 				redirection->fd = new_heredoc_fd(redirection->filename);
 				if (redirection->fd == -1)
 				{
-					// printf("DEBUG: apply_heredocs: redirection->fd == '%d'\n", redirection->fd);
-					close_all_heredoc_fds(start);
+					close_all_heredoc_fds(initial_cmd_list);
 					return (EXIT_FAILURE);
 				}
 			}

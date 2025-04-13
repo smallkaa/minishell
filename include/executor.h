@@ -17,6 +17,7 @@ typedef struct s_mshell t_mshell;
 typedef struct s_mshell_var t_mshell_var;
 typedef struct s_hash_table t_hash_table;
 typedef enum e_redir_type t_redir_type;
+typedef struct s_redir t_redir;
 typedef struct s_builtin_dispatch t_builtin_dispatch;
 
 typedef struct s_pipe_info
@@ -37,6 +38,7 @@ void	print_pid(const char *label);
 uint8_t	exec_in_current_process(t_cmd *cmd);
 
 // pipes
+bool	is_heredoc(t_redir *redirection);
 uint8_t	exec_in_pipes(t_cmd *cmd);
 void	execute_command(t_cmd *cmd);
 void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd);
