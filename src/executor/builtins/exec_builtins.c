@@ -35,7 +35,5 @@ uint8_t exec_builtins(t_cmd *cmd, int in_pipe)
 			return (table[i].func(cmd, in_pipe));
 		i++;
 	}
-	// printf("DEBUG: exec_builtins() success\n");
-
 	return (EXIT_FAILURE);
 }

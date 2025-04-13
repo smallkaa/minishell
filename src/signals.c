@@ -53,4 +53,7 @@ void setup_signal_handlers()
     sa.sa_handler = handle_sigquit;
     sigaction(SIGQUIT, &sa, NULL);
 
+    // pipes ???
+    // signal(SIGPIPE, SIG_IGN);
+
 }

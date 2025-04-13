@@ -39,7 +39,9 @@ SRC_DIRS := src \
 			src/executor/builtins/pwd \
 			src/executor/builtins/unset \
 			src/executor/pipeline \
-			src/executor/redirections 
+			src/executor/redirections \
+			src/executor/pipeline/pipe_creators \
+			src/executor/pipeline/pipe_executors
 
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft

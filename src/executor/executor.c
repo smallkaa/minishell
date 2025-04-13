@@ -4,7 +4,11 @@
  */
 #include "minishell.h"
 
-bool is_builtin(t_cmd *cmd)
+// void	print_pid(const char *label)
+// {
+// 	printf("DEBUG: %s - PID: %d, PPID: %d\n", label, getpid(), getppid());
+// }
+bool	is_builtin(t_cmd *cmd)
 {
 	const t_builtin_dispatch *table;
 	size_t size;
@@ -21,9 +25,9 @@ bool is_builtin(t_cmd *cmd)
 	return (false);
 }
 
-static bool is_exit_command(t_cmd *cmd)
+static bool	is_exit_command(t_cmd *cmd)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (cmd->argv[i])
@@ -31,20 +35,21 @@ static bool is_exit_command(t_cmd *cmd)
 	return (ft_strcmp(cmd->argv[i - 1], "exit") == 0);
 }
 
-static void cleanup_and_exit(t_cmd *cmd, int exit_status)
+static void	cleanup_and_exit(t_cmd *cmd, int exit_status)
 {
+	t_mshell	*minishell;
+
+	minishell = cmd->minishell;
 	free_cmd(cmd);
-	free_minishell(cmd->minishell);
+	free_minishell(minishell);
 	rl_clear_history();
 	exit(exit_status);
 }
 
-static uint8_t execute_pipeline_or_binary(t_cmd *cmd)
+static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 {
-	// printf("DEBUG: start execute_pipeline_or_binary\n");
-
-	t_mshell *minishell;
-	uint8_t exit_status;
+	t_mshell	*minishell;
+	uint8_t		exit_status;
 
 	minishell = cmd->minishell;
 	exit_status = exec_in_pipes(cmd);
@@ -56,8 +61,8 @@ static uint8_t execute_pipeline_or_binary(t_cmd *cmd)
 
 static uint8_t execute_builtin(t_cmd *cmd)
 {
-	t_mshell *minishell;
-	uint8_t exit_status;
+	t_mshell	*minishell;
+	uint8_t		exit_status;
 
 	minishell = cmd->minishell;
 	exit_status = exec_in_current_process(cmd);
@@ -67,7 +72,7 @@ static uint8_t execute_builtin(t_cmd *cmd)
 	return (exit_status);
 }
 
-uint8_t run_executor(t_cmd *cmd)
+uint8_t	run_executor(t_cmd *cmd)
 {
 	t_mshell *minishell;
 	uint8_t exit_status;
@@ -88,7 +93,6 @@ uint8_t run_executor(t_cmd *cmd)
 	// }
 	// printf("---argv[%d]: {%s}\n", j, cmd->argv[j]);
 	// printf("---binary (%p)\n", cmd->binary);
-
 
 	// // //-----------------------------------------------
 	// // Printing redirections
@@ -136,7 +140,6 @@ uint8_t run_executor(t_cmd *cmd)
 		i = 0;
 		while (cmd->argv[i])
 			i++;
-
 		if (i > 0)
 			set_variable(cmd->minishell, "_", cmd->argv[i - 1], 1);
 		else
@@ -144,15 +147,10 @@ uint8_t run_executor(t_cmd *cmd)
 
 		update_env(cmd->minishell);
 	}
-
 	exit_status = apply_heredocs(cmd);
-	if (exit_status != EXIT_SUCCESS)
-		return (exit_status);
-
 	if (!is_builtin(cmd) || cmd->next)
-	{
-		return (execute_pipeline_or_binary(cmd));
-	}
+		exit_status = execute_pipeline_or_binary(cmd);
 	else
-		return (execute_builtin(cmd));
+		exit_status = execute_builtin(cmd);
+	return (exit_status);
 }

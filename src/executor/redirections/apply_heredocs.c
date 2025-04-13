@@ -1,6 +1,11 @@
 #include "minishell.h"
 
-uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
+bool	is_heredoc(t_redir *redirection)
+{
+	return (redirection->type == R_HEREDOC);
+}
+
+static uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
 {
 	char	*line;
 
@@ -29,24 +34,30 @@ static uint8_t	new_heredoc_fd(const char *delim)
 	int pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
-		perror_return("-new_heredoc_fd: pipe", -1);
+	{
+		perror("-new_heredoc_fd: pipe");
+		return (-1);
+	}
 	if (write_heredoc_to_pipe(pipe_fd[1], delim) != EXIT_SUCCESS)
-		perror_return("-new_heredoc_fd: write", -1);
+	{
+		perror("-new_heredoc_fd: write");
+		return (-1);
+	}
 	if (close(pipe_fd[1]) == -1)
-		perror_return("-new_heredoc_fd: close", -1);
+	{
+		perror("-new_heredoc_fd: close");
+		return (-1);
+	}
 	return (pipe_fd[0]);
 }
 
-static bool	is_heredoc(t_redir *redirection)
+uint8_t apply_heredocs(t_cmd *cmd)
 {
-	return (redirection->type == R_HEREDOC);
-}
+	t_cmd	*initial_cmd_list;
+	t_redir	*redirection;
+	t_list	*redir_list;
 
-uint8_t	apply_heredocs(t_cmd *cmd)
-{
-	t_list *redir_list;
-	t_redir *redirection;
-
+	initial_cmd_list = cmd;
 	while (cmd)
 	{
 		redir_list = cmd->redirs;
@@ -57,7 +68,10 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 			{
 				redirection->fd = new_heredoc_fd(redirection->filename);
 				if (redirection->fd == -1)
+				{
+					close_all_heredoc_fds(initial_cmd_list);
 					return (EXIT_FAILURE);
+				}
 			}
 			redir_list = redir_list->next;
 		}
@@ -65,3 +79,4 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 	}
 	return (EXIT_SUCCESS);
 }
+
