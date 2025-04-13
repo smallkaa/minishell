@@ -132,6 +132,7 @@ uint8_t run_executor(t_cmd *cmd)
 	// end test -----------------------------------------------//
 
 	int i;
+	t_cmd *start = cmd;
 
 	if (cmd && cmd->argv)
 	{
@@ -148,13 +149,13 @@ uint8_t run_executor(t_cmd *cmd)
 	}
 
 	exit_status = apply_heredocs(cmd);
-	if (exit_status != EXIT_SUCCESS)
-		return (exit_status);
-
 	if (!is_builtin(cmd) || cmd->next)
-	{
-		return (execute_pipeline_or_binary(cmd));
-	}
+		exit_status = execute_pipeline_or_binary(cmd);
 	else
-		return (execute_builtin(cmd));
+		exit_status = execute_builtin(cmd);
+
+	// ✅ Clean up remaining heredoc FDs (e.g. for single builtins)
+	close_all_heredoc_fds(start);
+
+	return (exit_status);
 }

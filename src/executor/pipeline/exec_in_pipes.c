@@ -31,6 +31,7 @@ uint8_t	close_heredoc_fds(t_cmd *cmd)
 		r = rlist->content;
 		if (r->type == R_HEREDOC && r->fd != -1)
 		{
+			printf("DEBUG: close_heredoc_fds: r->fd  == '%d'\n", r->fd);
 			if (close(r->fd) == -1)
 			{
 				perror("-close_heredoc_fds: close");
@@ -62,6 +63,7 @@ void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
 
 void close_all_heredoc_fds(t_cmd *cmd_list)
 {
+	printf("DEBUG: in close_all_heredoc_fds()\n");
 	t_cmd	*cmd;
 	t_list	*rlist;
 	t_redir	*r;
@@ -73,8 +75,12 @@ void close_all_heredoc_fds(t_cmd *cmd_list)
 		while (rlist)
 		{
 			r = (t_redir *)rlist->content;
+			printf("DEBUG: close_all_heredoc_fds:rlist->content == '%d'\n", r->type);
+			printf("DEBUG: close_all_heredoc_fds: r->fd ==  '%d'\n", r->fd );
 			if (r->type == R_HEREDOC && r->fd != -1)
 			{
+				printf("DEBUG: close_all_heredoc_fds: closing fds for '%s'\n", cmd->argv[0]);
+
 				if (close(r->fd) == -1)
 					perror("close_all_heredoc_fds: close");
 				r->fd = -1;

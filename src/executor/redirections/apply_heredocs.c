@@ -55,6 +55,7 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 {
 	t_list *redir_list;
 	t_redir *redirection;
+	t_cmd *start = cmd;
 
 	while (cmd)
 	{
@@ -66,7 +67,10 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 			{
 				redirection->fd = new_heredoc_fd(redirection->filename);
 				if (redirection->fd == -1)
+				{
+					close_all_heredoc_fds(start);
 					return (EXIT_FAILURE);
+				}
 			}
 			redir_list = redir_list->next;
 		}
