@@ -50,24 +50,24 @@ static bool	is_heredoc(t_redir *redirection)
 {
 	return (redirection->type == R_HEREDOC);
 }
-
-uint8_t	apply_heredocs(t_cmd *cmd)
+uint8_t apply_heredocs(t_cmd *cmd)
 {
-	t_list *redir_list;
-	t_redir *redirection;
 	t_cmd *start = cmd;
 
 	while (cmd)
 	{
-		redir_list = cmd->redirs;
+		t_list *redir_list = cmd->redirs;
+
 		while (redir_list)
 		{
-			redirection = redir_list->content;
+			t_redir *redirection = redir_list->content;
+
 			if (is_heredoc(redirection))
 			{
 				redirection->fd = new_heredoc_fd(redirection->filename);
 				if (redirection->fd == -1)
 				{
+					// printf("DEBUG: apply_heredocs: redirection->fd == '%d'\n", redirection->fd);
 					close_all_heredoc_fds(start);
 					return (EXIT_FAILURE);
 				}
@@ -78,3 +78,4 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 	}
 	return (EXIT_SUCCESS);
 }
+

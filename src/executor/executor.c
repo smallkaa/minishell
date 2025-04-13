@@ -4,6 +4,10 @@
  */
 #include "minishell.h"
 
+void	print_pid(const char *label)
+{
+	printf("DEBUG: %s - PID: %d, PPID: %d\n", label, getpid(), getppid());
+}
 bool is_builtin(t_cmd *cmd)
 {
 	const t_builtin_dispatch *table;
@@ -132,7 +136,7 @@ uint8_t run_executor(t_cmd *cmd)
 	// end test -----------------------------------------------//
 
 	int i;
-	t_cmd *start = cmd;
+	// t_cmd *start = cmd;
 
 	if (cmd && cmd->argv)
 	{
@@ -155,7 +159,8 @@ uint8_t run_executor(t_cmd *cmd)
 		exit_status = execute_builtin(cmd);
 
 	// ✅ Clean up remaining heredoc FDs (e.g. for single builtins)
-	close_all_heredoc_fds(start);
+	// printf("DEBUG: executor: I am before close_all_heredoc_fds\n");
+	// close_all_heredoc_fds(start);
 
 	return (exit_status);
 }

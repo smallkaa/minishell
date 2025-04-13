@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static uint8_t	apply_input_redirection(t_redir *redir)
+static uint8_t apply_input_redirection(t_redir *redir)
 {
 	int fd;
 
@@ -8,7 +8,7 @@ static uint8_t	apply_input_redirection(t_redir *redir)
 	{
 		if (redir->fd == -1)
 		{
-			perror("apply_input_redirection: fd already closed\n");
+			fprintf(stderr, "apply_input_redirection: heredoc fd already closed\n");
 			return (EXIT_FAILURE);
 		}
 		if (dup2(redir->fd, STDIN_FILENO) == -1)
@@ -21,9 +21,8 @@ static uint8_t	apply_input_redirection(t_redir *redir)
 			perror("apply_input_redirection: close heredoc");
 			return (EXIT_FAILURE);
 		}
-		redir->fd = -1;
+		// redir->fd = -2;
 	}
-
 	else if (redir->type == R_INPUT)
 	{
 		fd = open(redir->filename, O_RDONLY);
@@ -34,18 +33,19 @@ static uint8_t	apply_input_redirection(t_redir *redir)
 		}
 		if (dup2(fd, STDIN_FILENO) == -1)
 		{
-			if (close(fd) == -1)
-			{
-				perror("apply_input_redirection: close input");
-				return (EXIT_FAILURE);
-			}
 			perror("apply_input_redirection: dup2 input");
+			close(fd); // still try to close even after dup2 failure
 			return (EXIT_FAILURE);
 		}
-		close(fd);
+		if (close(fd) == -1)
+		{
+			perror("apply_input_redirection: close input file");
+			return (EXIT_FAILURE);
+		}
 	}
 	return (EXIT_SUCCESS);
 }
+
 
 static uint8_t	apply_output_redirection(t_redir *redir)
 {

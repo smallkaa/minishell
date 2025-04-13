@@ -25,11 +25,14 @@ typedef struct s_pipe_info
 	int		*pipe_fd;
 	pid_t	*pids;
 	int		*idx;
+	t_cmd       *cmd_list;
 }	t_pipe_info;
 
 
 /*------FUNCTIONS---------------------------------------------------*/
 
+
+void	print_pid(const char *label);
 // parent process
 uint8_t	exec_in_current_process(t_cmd *cmd);
 

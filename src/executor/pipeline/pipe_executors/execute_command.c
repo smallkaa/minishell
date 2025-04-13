@@ -22,14 +22,18 @@ void	exec_cmd(t_cmd *cmd)
 
 void	execute_command(t_cmd *cmd)
 {
+
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 		_exit(EXIT_FAILURE);
 	if (ft_strcmp(cmd->argv[0], "") == 0)
 		handle_empty_command(cmd);
 	if (!cmd->binary)
 	{
+		// close_all_heredoc_fds(cmd);
 		if (is_builtin(cmd))
+		{
 			handle_builtin_and_exit(cmd);
+		}
 		else
 			cmd_missing_command_error(cmd);
 	}
