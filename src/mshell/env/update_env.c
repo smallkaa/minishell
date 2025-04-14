@@ -1,65 +1,4 @@
-/**
- * @file minishell_env_update.c
- * @brief Functions to manage and update the Minishell environment.
- */
 #include "minishell.h"
-
-/**
- * @brief Creates a formatted environment entry string.
- *
- * Constructs a new string in the format `KEY=VALUE` using the provided
- * environment variable structure.
- *
- * @param var Pointer to the `t_mshell_var` structure containing key-value data.
- * @return A newly allocated string containing `KEY=VALUE`, or NULL on failure.
- */
-static char	*create_env_entry(t_mshell_var *var)
-{
-	size_t	total_len;
-	char	*entry;
-	char	*val;
-	int		len_key;
-	int		len_val;
-
-	val = NULL;
-	if (var->value)
-		val = var->value;
-	else
-		val = "";
-	len_key = ft_strlen(var->key);
-	len_val = ft_strlen(val);
-	total_len = len_key + len_val + 2;
-	entry = malloc(total_len);
-	if (!entry)
-		return (NULL);
-	ft_strlcpy(entry, var->key, total_len);
-	ft_strlcat(entry, "=", total_len);
-	ft_strlcat(entry, val, total_len);
-	return (entry);
-}
-
-/**
- * @brief Frees the memory allocated for the old environment array.
- *
- * Iterates through the `env` array, freeing each entry, and then
- * frees the array itself.
- *
- * @param env The environment array to free.
- */
-static void	free_old_env(char **env)
-{
-	int	i;
-
-	if (!env)
-		return;
-	i = 0;
-	while (env[i])
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
-}
 
 /**
  * @brief Adds an assigned environment variable to the new environment array.
@@ -72,21 +11,21 @@ static void	free_old_env(char **env)
  * @param idx Pointer to the current index in `new_env`.
  * @return `true` if the entry was added successfully, `false` on failure.
  */
-bool add_env_entry(t_mshell_var *var, char **new_env, int *idx)
+bool	add_env_entry(t_mshell_var *var, char **new_env, int *idx)
 {
-	char *entry;
+	char	*entry;
 
 	entry = create_env_entry(var);
 	if (!entry)
-		return false;
-
+		return (false);
 	new_env[*idx] = entry;
 	(*idx)++;
-	return true;
+	return (true);
 }
 
 /**
- * @brief Processes a single bucket in the hash table and adds entries to `new_env`.
+ * @brief Processes a single bucket in the hash table and adds 
+ * entries to `new_env`.
  *
  * Iterates through all variables in a bucket and adds assigned variables
  * to `new_env` in the format `KEY=VALUE`.
@@ -94,7 +33,8 @@ bool add_env_entry(t_mshell_var *var, char **new_env, int *idx)
  * @param bucket The linked list of environment variables in a bucket.
  * @param new_env The array where environment variables are stored.
  * @param idx Pointer to the current index in `new_env`.
- * @return `true` if all entries were added successfully, `false` if a failure occurred.
+ * @return `true` if all entries were added successfully, `false` 
+ * if a failure occurred.
  */
 bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
 {
@@ -150,7 +90,7 @@ static bool	populate_env_array(t_mshell *mshell, char **new_env)
  */
 static int	count_exported_vars(t_hash_table *ht)
 {
-	int 			i;
+	int				i;
 	int				count;
 	t_mshell_var	*curr;
 
@@ -180,7 +120,6 @@ static int	count_exported_vars(t_hash_table *ht)
  */
 void	update_env(t_mshell *mshell)
 {
-
 	int		count;
 	char	**new_env;
 	bool	populated;
@@ -190,13 +129,13 @@ void	update_env(t_mshell *mshell)
 	if (!new_env)
 	{
 		print_error("malloc failed\n");
-		return;
+		return ;
 	}
 	populated = populate_env_array(mshell, new_env);
 	if (!populated)
 	{
 		free_old_env(new_env);
-		return;
+		return ;
 	}
 	free_old_env(mshell->env);
 	mshell->env = new_env;

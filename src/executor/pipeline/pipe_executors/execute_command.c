@@ -4,7 +4,7 @@ static void	handle_builtin_and_exit(t_cmd *cmd)
 {
 	uint8_t	exit_status;
 
-	exit_status = exec_builtins(cmd, 0);
+	exit_status = exec_builtins(cmd);
 	free_minishell(cmd->minishell);
 	_exit(exit_status);
 }
@@ -22,7 +22,6 @@ void	exec_cmd(t_cmd *cmd)
 
 void	execute_command(t_cmd *cmd)
 {
-
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 		_exit(EXIT_FAILURE);
 	if (ft_strcmp(cmd->argv[0], "") == 0)

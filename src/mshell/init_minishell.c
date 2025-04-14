@@ -75,7 +75,8 @@ static int	setup_environment(t_mshell	*mshell, char **envp)
  * - Initializing the hash table for variable storage.
  * - Loading built-in commands.
  *
- * If any initialization step fails, the allocated memory is freed and NULL is returned.
+ * If any initialization step fails, the allocated memory is 
+ * freed and NULL is returned.
  *
  * @param envp The array of environment variables from the system.
  * @return A pointer to the initialized `t_mshell` structure, or NULL on failure.
@@ -92,7 +93,6 @@ t_mshell	*init_mshell(char **envp)
 		free_minishell(mshell);
 		return (NULL);
 	}
-	// mshell->pipe = false;
 	mshell->exit_status = 0;
 	return (mshell);
 }

@@ -4,25 +4,25 @@
  */
 #include "minishell.h"
 
-static bool is_invalid_option(const char *name)
+static bool	is_invalid_option(const char *name)
 {
 	return (name && name[0] == '-' && name[1]);
 }
 
-bool is_valid_identifier(const char *name)
+static bool	is_valid_identifier(const char *name)
 {
-	int i;
+	int	i;
 
 	if (!name || (!ft_isalpha(name[0]) && name[0] != '_'))
-		return false;
+		return (false);
 	i = 1;
 	while (name[i])
 	{
 		if (!ft_isalnum(name[i]) && name[i] != '_')
-			return false;
+			return (false);
 		i++;
 	}
-	return true;
+	return (true);
 }
 
 /**
@@ -38,17 +38,12 @@ bool is_valid_identifier(const char *name)
  * @param mshell Pointer to the Minishell structure containing the hash table.
  * @param key The name of the variable to be removed.
  */
-static uint8_t remove_var_from_ht(t_mshell *mshell, char *key)
+static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 {
-	unsigned long index;
-	t_mshell_var *prev;
-	t_mshell_var *current;
+	unsigned long	index;
+	t_mshell_var	*prev;
+	t_mshell_var	*current;
 
-	// if (!mshell || mshell->hash_table || !key)
-	// {
-	// 	print_error("minishell: unset: no minishell, hash_table or key instanse\n");
-	// 	return (EXIT_FAILURE);
-	// }
 	prev = NULL;
 	index = hash_function(key);
 	current = mshell->hash_table->buckets[index];
@@ -70,21 +65,15 @@ static uint8_t remove_var_from_ht(t_mshell *mshell, char *key)
 	return (EXIT_SUCCESS);
 }
 
-static uint8_t do_unset_loop(t_cmd *cmd)
+static uint8_t	do_unset_loop(t_cmd *cmd)
 {
-	int i = 1;
+	int	i;
 
+	i = 1;
 	while (cmd->argv[i])
 	{
 		if (is_invalid_option(cmd->argv[i]))
 		{
-			// print_error("minishell: unset: ");
-			// write(STDERR_FILENO, cmd->argv[i], 2);
-			// print_error(": invalid option\n");
-			// print_error("unset: usage: unset [name ...]\n");
-			// cmd->minishell->exit_status = 2;
-			// return (EXIT_FAILURE);
-
 			unset_error(cmd->argv[i]);
 			return (2);
 		}
@@ -121,9 +110,8 @@ static uint8_t do_unset_loop(t_cmd *cmd)
  *		 arguments were provided.
  *		 `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
  */
-uint8_t handle_unset(t_cmd *cmd, int in_pipe)
+uint8_t	handle_unset(t_cmd *cmd)
 {
-	(void)in_pipe;
 	if (!cmd || !cmd->argv)
 	{
 		print_error("minishell: unset: no cmd or minishell instanse\n");

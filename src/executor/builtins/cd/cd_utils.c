@@ -4,14 +4,6 @@
  */
 #include "minishell.h"
 
-
-// bool	is_only_endline(t_cmd *cmd)
-// {
-// 	if (ft_strchr(cmd->argv[1], '\n'))
-// 		return (false);
-// 	return (true);
-// }
-
 /**
  * @brief Retrieves the current working directory.
  *

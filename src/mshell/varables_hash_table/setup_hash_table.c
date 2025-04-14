@@ -15,7 +15,7 @@
  * @param assigned Flag indicating if the variable is assigned a value.
  * @return A pointer to the newly created variable, or NULL if allocation fails.
  */
-t_mshell_var	*create_new_variable( char *key,  char *value, int assigned)
+t_mshell_var	*create_new_variable( char *key, char *value, int assigned)
 {
 	t_mshell_var	*new_var;
 
@@ -46,7 +46,7 @@ t_mshell_var	*create_new_variable( char *key,  char *value, int assigned)
  * @param value The value of the variable. Can be NULL.
  * @param assigned Flag indicating if the variable is assigned a value.
  */
-void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned)
+void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
 	unsigned int	index;
 	t_mshell_var	*curr;
@@ -74,6 +74,7 @@ void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned)
 	new_var->next = mshell->hash_table->buckets[index];
 	mshell->hash_table->buckets[index] = new_var;
 }
+
 /**
  * @brief Loads environment variables into the hash table.
  *
@@ -87,8 +88,6 @@ static void	load_env_into_ht(t_mshell *mshell)
 	t_mshell_var	*tmp;
 	int				i;
 	char			*home;
-	// char			*level_str;
-	// int				shlvl;
 
 	i = 0;
 	while (mshell->env[i])
@@ -103,17 +102,14 @@ static void	load_env_into_ht(t_mshell *mshell)
 		}
 		i++;
 	}
-
 	home = ms_getenv(mshell, "HOME");
 	if (!home)
 	{
-		print_error("minishell: load_env_into_ht: failed to retrieve home directory\n");
-		return;
+		print_error("minishell: load_env_into_ht: retrieve home dir failed\n");
+		return ;
 	}
 	set_variable(mshell, "OLDPWD", home, 1);
-	// set_variable(mshell, "SHLVL", "1", 1);
 }
-
 
 /**
  * @brief Initializes a new hash table for environment variables.

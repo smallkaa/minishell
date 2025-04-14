@@ -1,42 +1,4 @@
-/**
- * @file handle_echo.c
- * @brief Functions for handling the `echo` built-in command in Minishell.
- */
 #include "minishell.h"
-
-static int	is_wrapped_in_quotes(char *s)
-{
-	size_t	len;
-
-	if (!s)
-		return (0);
-	len = ft_strlen(s);
-	if (len < 2)
-		return (0);
-	return ((s[0] == '\'' && s[len - 1] == '\'')
-		|| (s[0] == '"' && s[len - 1] == '"'));
-}
-
-
-static int	is_echo_flag(char *arg)
-{
-	int	i;
-
-	if (!arg || arg[0] != '-' || arg[1] != 'n')
-		return (0);
-	// Не считать аргумент флагом, если в нём есть кавычки
-	if (ft_strchr(arg, '\'') || ft_strchr(arg, '"'))
-		return (0);
-	i = 1;
-	while (arg[++i])
-	{
-		if (arg[i] != 'n')
-			return (0);
-	}
-	return (1);
-}
-
-
 
 /**
  * @brief Writes a string to the standard output.
@@ -122,6 +84,7 @@ static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 	}
 	return (i);
 }
+
 /**
  * @brief Handles the `echo` built-in command in Minishell.
  *
@@ -137,9 +100,8 @@ static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
  * @param cmd Pointer to the command structure.
  * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on failure.
  */
-uint8_t	handle_echo(t_cmd *cmd, int in_pipe)
+uint8_t	handle_echo(t_cmd *cmd)
 {
-	(void)in_pipe;
 	int		i;
 	uint8_t	exit_status;
 	int		newline_flag;

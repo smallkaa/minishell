@@ -18,7 +18,8 @@ static uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
 			free(line);
 			break ;
 		}
-		if (write(pipe_fd, line, ft_strlen(line)) == -1 || write(pipe_fd, "\n", 1) == -1)
+		if (write(pipe_fd, line, ft_strlen(line)) == -1
+			|| write(pipe_fd, "\n", 1) == -1)
 		{
 			perror("-write_heredoc_to_pipe: write");
 			free(line);
@@ -31,7 +32,7 @@ static uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
 
 static uint8_t	new_heredoc_fd(const char *delim)
 {
-	int pipe_fd[2];
+	int	pipe_fd[2];
 
 	if (pipe(pipe_fd) == -1)
 	{
@@ -51,7 +52,7 @@ static uint8_t	new_heredoc_fd(const char *delim)
 	return (pipe_fd[0]);
 }
 
-uint8_t apply_heredocs(t_cmd *cmd)
+uint8_t	apply_heredocs(t_cmd *cmd)
 {
 	t_cmd	*initial_cmd_list;
 	t_redir	*redirection;
@@ -79,4 +80,3 @@ uint8_t apply_heredocs(t_cmd *cmd)
 	}
 	return (EXIT_SUCCESS);
 }
-

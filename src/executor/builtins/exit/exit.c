@@ -41,7 +41,7 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 		return (false);
 	if (*arg == '-' || *arg == '+')
 		arg++;
-	if (!ft_isdigit(*arg))  // Ensure there is a digit after the sign
+	if (!ft_isdigit(*arg))
 		return (false);
 	while (*arg)
 	{
@@ -51,8 +51,6 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 	}
 	return (true);
 }
-
-
 
 /**
  * @brief Handles cases where too many arguments are passed to `exit`.
@@ -66,7 +64,6 @@ static uint8_t	handle_too_many_args(void)
 	ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 	return (1);
 }
-
 
 static uint8_t	get_exit_status(char *arg)
 {
@@ -95,15 +92,13 @@ static uint8_t	get_exit_status(char *arg)
  * @return `EXIT_SUCCESS` (0) or `EXIT_FAILURE` (1) (not actually used,
  *         as `exit` terminates).
  */
-uint8_t	handle_exit(t_cmd *cmd, int in_pipe)
+uint8_t	handle_exit(t_cmd *cmd)
 {
-	(void)in_pipe;
 	if (!cmd)
 	{
 		print_error("minishell: exit: no *cmd instance\n");
 		return (EXIT_FAILURE);
 	}
-	// printf("exit\n");
 	if (!cmd->argv[1])
 		return (cmd->minishell->exit_status);
 	if (cmd->argv[1][0] == '\0')

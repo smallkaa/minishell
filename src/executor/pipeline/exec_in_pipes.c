@@ -1,5 +1,17 @@
 #include "minishell.h"
 
+static void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
+{
+	if (cmd->next)
+	{
+		if (pipe(pipe_fd) == -1)
+		{
+			perror("-exec_in_pipes: pipe");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
 uint8_t	close_unused_fds(int in_fd, int *pipe_fd)
 {
 	if (in_fd != STDIN_FILENO && close(in_fd) == -1)
@@ -63,8 +75,7 @@ void	close_all_heredoc_fds(t_cmd *cmd_list)
 	}
 }
 
-
-uint8_t exec_in_pipes(t_cmd *cmd_list)
+uint8_t	exec_in_pipes(t_cmd *cmd_list)
 {
 	int			pipe_fd[2];
 	pid_t		pids[MAX_CMDS];
@@ -89,5 +100,5 @@ uint8_t exec_in_pipes(t_cmd *cmd_list)
 		cmd = cmd->next;
 	}
 	close_all_heredoc_fds(cmd_list);
-	return wait_for_children(pids, idx);
+	return (wait_for_children(pids, idx));
 }
