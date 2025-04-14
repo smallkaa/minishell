@@ -1,84 +1,18 @@
-/**
- * @file handle_export_utils.c
- * @brief Helper functions for handle_export()
- */
 #include "minishell.h"
 
-/**
- * @brief Counts the total number of environment variable keys in the
- *        hash table.
- *
- * This function iterates through all buckets of the hash table and counts the
- * number of stored keys.
- *
- * @param ht Pointer to the hash table storing environment variables.
- * @return The total number of keys in the hash table.
- */
-static int	count_total_keys(t_hash_table *ht)
+static void	free_keys(char **keys, int num_kyes)
 {
-	int				i;
-	int				total_keys;
-	t_mshell_var	*var;
+	int	i;
 
+	if (!keys)
+		return ;
 	i = 0;
-	total_keys = 0;
-	while (i < HASH_SIZE)
+	while (i < num_kyes)
 	{
-		var = ht->buckets[i];
-		while (var)
-		{
-			total_keys++;
-			var = var->next;
-		}
+		free(keys[i]);
 		i++;
 	}
-	return (total_keys);
-}
-
-/**
- * @brief Collects all environment variable keys from the hash table into
- *        an array.
- *
- * This function allocates memory for an array of strings, each holding a
- * key from the environment. The total number of collected keys is stored
- * in `count`.
- *
- * @param ht Pointer to the hash table storing environment variables.
- * @param keys Pointer to a dynamically allocated array to store environment
- *             variable keys.
- * @param count Pointer to an integer that will store the number of collected
- *              keys.
- */
-static void	collect_keys(t_hash_table *ht, char ***keys, int *count)
-{
-	int				total_keys;
-	t_mshell_var	*var;
-	int				i;
-	int				key_index;
-
-	if (!ht || !keys || !count)
-		return ;
-	total_keys = count_total_keys(ht);
-	*count = total_keys;
-	*keys = malloc(sizeof(char *) * total_keys);
-	if (!(*keys))
-	{
-		print_error("minishell: export: key memory allocation failed\n");
-		return ;
-	}
-	key_index = 0;
-	i = 0;
-	while (i < HASH_SIZE)
-	{
-		var = ht->buckets[i];
-		while (var)
-		{
-			(*keys)[key_index] = ft_strdup(var->key);
-			key_index++;
-			var = var->next;
-		}
-		i++;
-	}
+	free(keys);
 }
 
 /**
@@ -115,8 +49,8 @@ static void	bubble_sort(char **keys, int count)
 }
 
 /**
- * @brief Prints sorted environment variables in the `declare -x key="value"`
- *        format.
+ * @brief Prints sorted environment variables in the 
+ * `declare -x key="value"` format.
  *
  * Iterates over the sorted keys, retrieves their values, and prints them in
  * the format used by `export` in Bash. If a variable has no value, it is
@@ -138,7 +72,7 @@ static void	print_sorted_env(t_mshell *mshell, char **keys, int count)
 		if (ft_strcmp(keys[i], "_") != 0)
 		{
 			if (value)
-					(void)printf("declare -x %s=\"%s\"\n", keys[i], value);
+				(void)printf("declare -x %s=\"%s\"\n", keys[i], value);
 			else
 				(void)printf("declare -x %s\n", keys[i]);
 		}

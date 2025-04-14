@@ -79,7 +79,7 @@ uint8_t handle_env(t_cmd *cmd);
 // export
 uint8_t handle_export(t_cmd *cmd);
 void handle_sorted_env(t_mshell *mshell);
-void free_keys(char **keys, int num_kyes);
+void	collect_keys(t_hash_table *ht, char ***keys, int *count);
 
 // unset
 uint8_t handle_unset(t_cmd *cmd);

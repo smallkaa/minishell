@@ -1,7 +1,3 @@
-/**
- * @file handle_export.c
- * @brief Functions for handling the `export` built-in command in Minishell.
- */
 #include "minishell.h"
 /**
  * @brief Frees the dynamically allocated memory for sorted environment
@@ -13,24 +9,10 @@
  * @param keys Array of allocated strings containing environment variable keys.
  * @param num_keys Number of keys in the array.
  */
-void	free_keys(char **keys, int num_kyes)
-{
-	int	i;
-
-	if (!keys)
-		return;
-	i = 0;
-	while (i < num_kyes)
-	{
-		free(keys[i]);
-		i++;
-	}
-	free(keys);
-}
 
 static bool	is_valid_varname(const char *key)
 {
-	int i;
+	int	i;
 
 	if (!key || !(ft_isalpha(key[0]) || key[0] == '_'))
 		return (false);
@@ -55,7 +37,8 @@ static bool	is_valid_varname(const char *key)
  * If the variable name is invalid, an error message is printed.
  *
  * @param cmd Pointer to the command structure containing environment context.
- * @param arg The argument string containing a variable name (and optional value).
+ * @param arg The argument string containing a variable name 
+ * (and optional value).
  * @return `EXIT_SUCCESS` (0) if the variable was successfully processed.
  *         `EXIT_FAILURE` (1) if the argument is invalid.
  */
@@ -79,7 +62,6 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 		assigned = 1;
 	else
 		assigned = 0;
-
 	set_variable(cmd->minishell, pair->key, pair->value, assigned);
 	free(pair->key);
 	free(pair->value);
@@ -94,13 +76,15 @@ static void	print_export_usage(char *arg)
 {
 	print_error("minishell: export: ");
 	print_error(arg);
-	print_error(": invalid option\nexport: usage: export [-fn] [name[=value] ...] or export -p\n");
+	print_error(": invalid option\n" \
+		"export: usage: export [-fn] [name[=value] ...] or export -p\n");
 }
 
 /**
  * @brief Checks if the given argument is an invalid export "option".
  *
- * Since we're not supporting any valid options, anything starting with '-' is invalid.
+ * Since we're not supporting any valid options, anything starting 
+ * with '-' is invalid.
  */
 static bool	is_invalid_option(const char *arg)
 {
@@ -112,14 +96,19 @@ static bool	is_invalid_option(const char *arg)
 }
 
 /**
- * @brief Handles the `export` built-in command in Minishell (no options supported).
+ * @brief Handles the `export` built-in command in Minishell 
+ * (no options supported).
  *
  * Behavior:
- * - If `export` is called **without arguments**, it prints the current exported variables.
+ * - If `export` is called **without arguments**, 
+ * it prints the current exported variables.
  * - If called with arguments:
- *   -- If argument starts with '-', print usage & return 2 immediately (invalid option).
- *   -- Else, validate the variable name. If invalid => not a valid identifier => exit code 1.
- * - If multiple invalid variables appear, the final exit code is 1 if at least one was invalid.
+ *   -- If argument starts with '-', print usage & return 
+ * 2 immediately (invalid option).
+ *   -- Else, validate the variable name. 
+ * If invalid => not a valid identifier => exit code 1.
+ * - If multiple invalid variables appear, the final exit code is 
+ * 1 if at least one was invalid.
  * - If executed in a pipeline, the process exits with the appropriate status.
  *
  * @param cmd Pointer to the command structure.
