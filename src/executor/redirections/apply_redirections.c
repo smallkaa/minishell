@@ -1,51 +1,103 @@
 #include "minishell.h"
 
-static uint8_t apply_input_redirection(t_redir *redir)
-{
-	int fd;
+// static uint8_t	apply_input_redirection(t_redir *redir)
+// {
+// 	int	fd;
 
-	if (redir->type == R_HEREDOC)
+// 	if (redir->type == R_HEREDOC)
+// 	{
+// 		if (redir->fd == -1)
+// 		{
+// 			fprintf(stderr, "apply_input_redirection: fd already closed\n");
+// 			return (EXIT_FAILURE);
+// 		}
+// 		if (dup2(redir->fd, STDIN_FILENO) == -1)
+// 		{
+// 			perror("apply_input_redirection: dup2 heredoc");
+// 			return (EXIT_FAILURE);
+// 		}
+// 		if (close(redir->fd) == -1)
+// 		{
+// 			perror("apply_input_redirection: close heredoc");
+// 			return (EXIT_FAILURE);
+// 		}
+// 		redir->fd = -2;
+// 	}
+// 	else if (redir->type == R_INPUT)
+// 	{
+// 		fd = open(redir->filename, O_RDONLY);
+// 		if (fd == -1)
+// 		{
+// 			perror(redir->filename);
+// 			return (EXIT_FAILURE);
+// 		}
+// 		if (dup2(fd, STDIN_FILENO) == -1)
+// 		{
+// 			perror("apply_input_redirection: dup2 input");
+// 			close(fd);
+// 			return (EXIT_FAILURE);
+// 		}
+// 		if (close(fd) == -1)
+// 		{
+// 			perror("apply_input_redirection: close input file");
+// 			return (EXIT_FAILURE);
+// 		}
+// 	}
+// 	return (EXIT_SUCCESS);
+// }
+static uint8_t	handle_heredoc_redirection(t_redir *redir)
+{
+	if (redir->fd == -1)
 	{
-		if (redir->fd == -1)
-		{
-			fprintf(stderr, "apply_input_redirection: heredoc fd already closed\n");
-			return (EXIT_FAILURE);
-		}
-		if (dup2(redir->fd, STDIN_FILENO) == -1)
-		{
-			perror("apply_input_redirection: dup2 heredoc");
-			return (EXIT_FAILURE);
-		}
-		if (close(redir->fd) == -1)
-		{
-			perror("apply_input_redirection: close heredoc");
-			return (EXIT_FAILURE);
-		}
-		redir->fd = -2;
+		fprintf(stderr, "apply_input_redirection: fd already closed\n");
+		return (EXIT_FAILURE);
 	}
-	else if (redir->type == R_INPUT)
+	if (dup2(redir->fd, STDIN_FILENO) == -1)
 	{
-		fd = open(redir->filename, O_RDONLY);
-		if (fd == -1)
-		{
-			perror(redir->filename);
-			return (EXIT_FAILURE);
-		}
-		if (dup2(fd, STDIN_FILENO) == -1)
-		{
-			perror("apply_input_redirection: dup2 input");
-			close(fd); // still try to close even after dup2 failure
-			return (EXIT_FAILURE);
-		}
-		if (close(fd) == -1)
-		{
-			perror("apply_input_redirection: close input file");
-			return (EXIT_FAILURE);
-		}
+		perror("apply_input_redirection: dup2 heredoc");
+		return (EXIT_FAILURE);
+	}
+	if (close(redir->fd) == -1)
+	{
+		perror("apply_input_redirection: close heredoc");
+		return (EXIT_FAILURE);
+	}
+	redir->fd = -2;
+	return (EXIT_SUCCESS);
+}
+
+static uint8_t	handle_file_input_redirection(t_redir *redir)
+{
+	int	fd;
+
+	fd = open(redir->filename, O_RDONLY);
+	if (fd == -1)
+	{
+		perror(redir->filename);
+		return (EXIT_FAILURE);
+	}
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		perror("apply_input_redirection: dup2 input");
+		close(fd);
+		return (EXIT_FAILURE);
+	}
+	if (close(fd) == -1)
+	{
+		perror("apply_input_redirection: close input file");
+		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
 
+static uint8_t	apply_input_redirection(t_redir *redir)
+{
+	if (redir->type == R_HEREDOC)
+		return (handle_heredoc_redirection(redir));
+	else if (redir->type == R_INPUT)
+		return (handle_file_input_redirection(redir));
+	return (EXIT_SUCCESS);
+}
 
 static uint8_t	apply_output_redirection(t_redir *redir)
 {
