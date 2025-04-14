@@ -40,7 +40,7 @@ void	print_env(t_cmd *cmd)
 	int	i;
 
 	i = 0;
-	while(cmd->minishell->env[i])
+	while (cmd->minishell->env[i])
 	{
 		printf("%s\n", cmd->minishell->env[i]);
 		i++;
@@ -65,7 +65,7 @@ void	print_env(t_cmd *cmd)
  */
 uint8_t	handle_env(t_cmd *cmd)
 {
-	uint8_t			exit_status;
+	uint8_t	exit_status;
 
 	if (cmd->argv[1])
 	{
