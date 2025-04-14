@@ -45,6 +45,21 @@ static void	cleanup_and_exit(t_cmd *cmd, int exit_status)
 	rl_clear_history();
 	exit(exit_status);
 }
+static char *get_last_meaningful_arg(t_cmd *cmd)
+{
+	int i = 0;
+
+	while (cmd->argv[i])
+		i++;
+
+	if (i == 0)
+		return cmd->argv[0];
+
+	if ((ft_strcmp(cmd->argv[0], "export") == 0) && ft_strchr(cmd->argv[i - 1], '='))
+		return cmd->argv[0];  // treat 'export VAR=VAL' as just 'export'
+
+	return cmd->argv[i - 1];
+}
 
 static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 {
@@ -133,20 +148,15 @@ uint8_t	run_executor(t_cmd *cmd)
 
 	// end test -----------------------------------------------//
 
-	int i;
+	// int i;
 
 	if (cmd && cmd->argv)
 	{
-		i = 0;
-		while (cmd->argv[i])
-			i++;
-		if (i > 0)
-			set_variable(cmd->minishell, "_", cmd->argv[i - 1], 1);
-		else
-			set_variable(cmd->minishell, "_", "", 1);
-
-		update_env(cmd->minishell);
+		char *last_arg = get_last_meaningful_arg(cmd);
+		set_variable(minishell, "_", last_arg, 1);
+		update_env(minishell);
 	}
+
 	exit_status = apply_heredocs(cmd);
 	if (!is_builtin(cmd) || cmd->next)
 		exit_status = execute_pipeline_or_binary(cmd);
