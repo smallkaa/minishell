@@ -58,7 +58,7 @@ static bool	check_overflow_neg(long long current_result, int digit)
 	return (false);
 }
 
-long long ft_atoll_exit(const char *str, bool *overflow)
+long long	ft_atoll_exit(const char *str, bool *overflow)
 {
 	long long	result;
 	int			sign;

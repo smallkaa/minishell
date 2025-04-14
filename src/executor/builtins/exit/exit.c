@@ -41,7 +41,7 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 		return (false);
 	if (*arg == '-' || *arg == '+')
 		arg++;
-	if (!ft_isdigit(*arg))  // Ensure there is a digit after the sign
+	if (!ft_isdigit(*arg))
 		return (false);
 	while (*arg)
 	{
@@ -51,8 +51,6 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 	}
 	return (true);
 }
-
-
 
 /**
  * @brief Handles cases where too many arguments are passed to `exit`.
@@ -66,7 +64,6 @@ static uint8_t	handle_too_many_args(void)
 	ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 	return (1);
 }
-
 
 static uint8_t	get_exit_status(char *arg)
 {
