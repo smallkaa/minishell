@@ -36,7 +36,6 @@
 // 	return (binary);
 // }
 
-
 static char	*handle_direct_path(t_cmd *cmd)
 {
 	char	*binary;
