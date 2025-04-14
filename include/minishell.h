@@ -83,6 +83,9 @@ t_mshell		*init_mshell(char **envp);
 char			**setup_env(char **envp);
 char			**setup_builtin(void);
 char			*find_binary(t_cmd *cmd);
+char	*create_env_entry(t_mshell_var *var);
+void	free_old_env(char **env);
+
 
 // setup hash table
 int		setup_hash_table(t_mshell	*mshell);
@@ -92,6 +95,7 @@ void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
 void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
 unsigned int	hash_function(const char *key);
 void	update_env(t_mshell *mshell);
+
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
 

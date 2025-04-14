@@ -2,9 +2,9 @@
 
 char	**setup_env(char **envp)
 {
-	int	i;
-	int	envp_len;
-	char **env;
+	int		i;
+	int		envp_len;
+	char	**env;
 
 	envp_len = ft_arr_size(envp);
 	env = malloc((envp_len + 1) * sizeof(char *));
@@ -14,7 +14,7 @@ char	**setup_env(char **envp)
 		return (NULL);
 	}
 	i = 0;
-	while(envp[i])
+	while (envp[i])
 	{
 		env[i] = ft_strdup(envp[i]);
 		i++;
