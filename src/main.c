@@ -93,7 +93,11 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 
 void free_split(char **array)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
+	if (!array)
+		return ;
 	while (array[i])
 	{
 		free(array[i]);
@@ -110,17 +114,23 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 	char	**lines;
 	int		i;
 
+	lines = NULL;
+
 	while (1)
 	{
 		input = readline("minishell: ");
 
 		if (!input) // EOF (Ctrl+D)
 			return (EXIT_FAILURE);
-
 		if (*input)
 			add_history(input);
-
 		lines = ft_split(input, '\n');
+		if (!lines)
+		{
+			free(input);
+			continue ;
+		}
+
 		i = 0;
 		while (lines && lines[i])
 		{
@@ -139,7 +149,6 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			}
 			i++;
 		}
-
 		free_split(lines);
 		free(input);
 	}

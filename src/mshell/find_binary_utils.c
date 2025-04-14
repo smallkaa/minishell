@@ -64,7 +64,6 @@ char	*search_paths(char **paths, t_cmd *cmd)
 		binary = assign_binary(paths[i], cmd);
 		if (binary)
 			return (binary);
-		free(binary);
 		i++;
 	}
 	return (NULL);
