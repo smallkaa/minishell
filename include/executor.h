@@ -85,7 +85,6 @@ t_mshell_var *create_new_variable(char *key, char *value, int assigned);
 
 // cd
 uint8_t handle_cd(t_cmd *cmd);
-// bool is_only_endline(t_cmd *cmd);
 bool get_directory(char *cwd, t_cmd *cmd);
 
 // redirections <, <<, >, >>
@@ -93,8 +92,6 @@ uint8_t apply_redirections(t_cmd *cmd);
 uint8_t apply_heredocs(t_cmd *cmd);
 
 // utils
-bool is_valid_varname(const char *key_value_pair);
-bool is_valid_identifier(const char *s);
 t_mshell_var *split_key_value(char *key_value_pair);
 bool is_pipeline_limit(int *cmd_count);
 

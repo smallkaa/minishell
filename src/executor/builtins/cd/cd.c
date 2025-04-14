@@ -74,7 +74,6 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 		perror(cmd->argv[0]);
 		return (EXIT_FAILURE);
 	}
-		// return (cmd_error_handler(cmd, EXIT_FAILURE));
 	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }
@@ -93,9 +92,8 @@ static uint8_t	cd_no_args(t_cmd *cmd)
  */
 static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
-
 	char	old_cwd[MS_PATHMAX];
-	char 	*old_pwd;
+	char	*old_pwd;
 
 	if (!cmd || !cmd->argv[1] || !cmd->minishell)
 		return (EXIT_FAILURE);
@@ -106,14 +104,12 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 		old_pwd = ft_strdup(ms_getenv(cmd->minishell, "OLDPWD"));
 		chdir(old_pwd);
 	}
-
 	else if (chdir(cmd->argv[1]) != 0)
 	{
 		print_error("minishell: cd: ");
 		perror(cmd->argv[1]);
 		return (EXIT_FAILURE);
 	}
-		// return (cmd_error_handler(cmd, EXIT_FAILURE));
 	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }

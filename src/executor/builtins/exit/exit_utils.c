@@ -12,8 +12,8 @@
  */
 static int	skip_whitespace_and_sign(const char **str_ptr)
 {
-	const char *str;
-	int sign;
+	const char	*str;
+	int			sign;
 
 	str = *str_ptr;
 	sign = 1;
@@ -46,7 +46,8 @@ static bool	check_overflow_pos(long long current_result, int digit)
 /**
  * @brief Checks if adding `digit` to `current_result` would overflow (negative).
  *
- * @param current_result The number so far (still positive if you haven't multiplied by sign).
+ * @param current_result The number so far (still positive if you haven't
+ * multiplied by sign).
  * @param digit		  The next digit to add.
  * @return true if overflow would occur, false otherwise.
  */

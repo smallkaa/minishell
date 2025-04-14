@@ -15,7 +15,7 @@
  * @param option The invalid option provided by the user.
  * @return Returns an exit status of `2`, following standard shell behavior.
  */
-static uint8_t invalid_opt_exit(const char *cmd_name, const char *option)
+static uint8_t	invalid_opt_exit(const char *cmd_name, const char *option)
 {
 	uint8_t	exit_status;
 	char	error_buf[ERROR_BUF_SIZE];
@@ -65,7 +65,6 @@ static uint8_t	exec_pwd(t_cmd *cmd)
 			perror(cmd->binary);
 			return (EXIT_FAILURE);
 		}
-			// return (cmd_error_handler(cmd, EXIT_FAILURE));
 		printf("%s\n", w_dir);
 		return (EXIT_SUCCESS);
 	}
