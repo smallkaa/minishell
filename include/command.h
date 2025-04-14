@@ -1,16 +1,16 @@
 #ifndef COMMAND_H
-#define COMMAND_H
-#include "libft.h"
+# define COMMAND_H
+# include "libft.h"
 
 // Maximum number of arguments per command.
-#define MAX_ARGS 64
+# define MAX_ARGS 64
 
 // Maximum number of commands in a pipeline.
-#define MAX_CMDS 1000
+# define MAX_CMDS 1000
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
-typedef struct s_mshell t_mshell;
+typedef struct s_mshell	t_mshell;
 
 /**
  * @enum e_redir_type
@@ -27,7 +27,7 @@ typedef enum e_redir_type
 	R_OUTPUT,
 	R_APPEND,
 	R_HEREDOC
-} t_redir_type;
+}	t_redir_type;
 
 /**
  * @struct s_redir
@@ -35,17 +35,18 @@ typedef enum e_redir_type
  *
  * - type:      The redirection type (input, output, append, heredoc).
  * - filename:  File name for input/output, or delimiter for heredoc.
- * - target_fd: File descriptor to redirect (typically STDIN_FILENO or STDOUT_FILENO).
+ * - target_fd: File descriptor to redirect 
+ * (typically STDIN_FILENO or STDOUT_FILENO).
  * - fd:        Runtime file descriptor used (especially for heredoc).
  * - expand:    Indicates whether to perform variable expansion (for heredocs).
  */
 typedef struct s_redir
 {
 	t_redir_type	type;
-	char	*filename;
-	int		target_fd;
-	int		fd;
-	bool	expand;
+	char			*filename;
+	int				target_fd;
+	int				fd;
+	// bool			expand;
 }	t_redir;
 /**
  * @struct s_cmd
@@ -55,7 +56,8 @@ typedef struct s_redir
  * - binary:    Resolved binary path to be executed.
  * - next:      Pointer to the next command in a pipeline.
  * - minishell: Pointer to the main shell state/context.
- * - redirs:    List of redirections associated with this command (t_list of t_redir*).
+ * - redirs:    List of redirections associated with 
+ * this command (t_list of t_redir*).
  *
  * Example pipeline: `ls -l | grep minishell | wc -l`
  * - cmd1: "ls -l"
@@ -68,7 +70,7 @@ typedef struct s_cmd
 	char		*binary;
 	t_cmd		*next;
 	t_mshell	*minishell;
-	t_list		*redirs; // Список всех редиректов (t_redir*)
+	t_list		*redirs;
 }	t_cmd;
 
 #endif /* COMMAND_H */

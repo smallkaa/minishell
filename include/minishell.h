@@ -15,8 +15,8 @@
 # include <errno.h>
 # include <stdint.h>
 # include <limits.h>
-#include <sys/stat.h>
-#include <string.h>
+# include <sys/stat.h>
+# include <string.h>
 
 # include "libft.h"
 # include "executor.h"
@@ -24,8 +24,16 @@
 # include "signals.h"
 # include "command.h"
 
-#define HASH_SIZE 128
+# define HASH_SIZE 128
 
+/**
+ * @struct	s_builtin_dispatch
+ * @brief	Maps a builtin command name to its handler function.
+ *
+ * - `name`:	Name of the builtin command (e.g., "cd", "export", "exit").
+ * - `func`:	Pointer to the function that implements the builtin command.
+ *				The function returns a status code (0 = success, 1+ = error).
+ */
 typedef struct s_builtin_dispatch
 {
 	const char	*name;
@@ -62,13 +70,6 @@ typedef struct s_hash_table
 	t_mshell_var	*buckets[HASH_SIZE];
 }	t_hash_table;
 
-/**
- * @struct	s_mshell
- * @brief	Represents a general minishell structure.
- *
- * - `last_exit_stats`:	Int, the last exit status of
- * 						cmd, builtin, or cmd in pipe
- */
 typedef struct s_mshell
 {
 	char			**env;
@@ -77,50 +78,40 @@ typedef struct s_mshell
 	uint8_t			exit_status;
 }	t_mshell;
 
-
 // init minishell
 t_mshell		*init_mshell(char **envp);
 char			**setup_env(char **envp);
 char			**setup_builtin(void);
 char			*find_binary(t_cmd *cmd);
-char	*create_env_entry(t_mshell_var *var);
-void	free_old_env(char **env);
-
+char			*create_env_entry(t_mshell_var *var);
+void			free_old_env(char **env);
 
 // setup hash table
-int		setup_hash_table(t_mshell	*mshell);
-bool	add_env_entry(t_mshell_var *current, char **new_env, int *index);
-bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
-void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
-void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
+int				setup_hash_table(t_mshell	*mshell);
+bool			add_env_entry(t_mshell_var *current, char **new_env, int *index);
+bool			process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
+void			set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
+void			update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
 unsigned int	hash_function(const char *key);
-void	update_env(t_mshell *mshell);
-char	*search_paths(char **paths, t_cmd *cmd);
+void			update_env(t_mshell *mshell);
+char			*search_paths(char **paths, t_cmd *cmd);
 
 // parser
-t_cmd		*run_parser(t_mshell *shell, char *input);
+t_cmd			*run_parser(t_mshell *shell, char *input);
 
 // executor
 uint8_t	run_executor(t_cmd *cmd);
-
-int			ft_arr_size(char **arr);
-
-
-char		*ms_getenv(t_mshell *mshell, char *key);
-
+int				ft_arr_size(char **arr);
+char			*ms_getenv(t_mshell *mshell, char *key);
 
 // some shit exit utils, to be cleaned !!!!!!!
-
-bool		is_debug_mode(void);
-void		debug_printf(const char *format, ...);
-
-void		print_error(char *msg);
-
-// void		command_not_found_handle(t_cmd *cmd);
+bool			is_debug_mode(void);
+void			debug_printf(const char *format, ...);
+void			print_error(char *msg);
 
 // free memory utils
-void		free_minishell(t_mshell *minishell);
-void		free_mshell_var(t_mshell_var *var);
-void		free_cmd(t_cmd *cmd);
+void			free_minishell(t_mshell *minishell);
+void			free_mshell_var(t_mshell_var *var);
+void			free_cmd(t_cmd *cmd);
 
 #endif /* MINISHELL_H */
