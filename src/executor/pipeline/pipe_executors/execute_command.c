@@ -4,7 +4,7 @@ static void	handle_builtin_and_exit(t_cmd *cmd)
 {
 	uint8_t	exit_status;
 
-	exit_status = exec_builtins(cmd, 0);
+	exit_status = exec_builtins(cmd);
 	free_minishell(cmd->minishell);
 	_exit(exit_status);
 }

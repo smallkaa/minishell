@@ -120,16 +120,11 @@ static bool is_invalid_option(const char *arg)
  * @param cmd Pointer to the command structure.
  * @return 0 if all OK, 1 if invalid identifier, 2 if invalid option.
  */
-uint8_t handle_export(t_cmd *cmd, int in_pipe)
+uint8_t handle_export(t_cmd *cmd)
 {
 	uint8_t exit_status;
 	int i;
 	uint8_t ret;
-	if (in_pipe) // or pass a flag/context to indicate it
-	{
-		return (EXIT_SUCCESS);
-	}
-
 	exit_status = 0;
 	if (!cmd->argv[1])
 	{

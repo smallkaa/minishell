@@ -28,15 +28,9 @@ typedef struct s_cmd
 {
 	char			**argv;
 	char			*binary;
-	// delete t_redir	*in_redir;
-	// delete t_redir	*out_redir;
-
-	// add a new linked list
 	t_redir		 *redirs;  // Linked list of redirections
-
 	struct s_cmd	*next;
 	t_mshell		*minishell;
-	bool			in_pipe; // maybe no needed ....
 }	t_cmd;
 ```
 

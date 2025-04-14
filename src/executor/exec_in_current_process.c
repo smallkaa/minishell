@@ -30,7 +30,7 @@ static uint8_t	redirect_and_execute(t_cmd *cmd)
 	exit_status = apply_redirections(cmd);
 	if (exit_status != EXIT_SUCCESS)
 		return (exit_status);
-	return (exec_builtins(cmd, 0));
+	return (exec_builtins(cmd));
 }
 
 uint8_t	exec_in_current_process(t_cmd *cmd)

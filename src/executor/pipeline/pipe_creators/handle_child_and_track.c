@@ -44,7 +44,16 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *full_cmd_list)
 {
 	close_unused_heredocs_child(cmd, full_cmd_list);
-	if (cmd->next && !has_input_redirection(cmd->next))
+
+	// if (cmd->next && !has_input_redirection(cmd->next))
+	// {
+	// 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
+	// 	{
+	// 		perror("-exec_in_pipes: dup2 pipe_fd[1]");
+	// 		_exit(EXIT_FAILURE);
+	// 	}
+	// }
+	if (cmd->next)
 	{
 		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		{
@@ -71,10 +80,8 @@ void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *full_cmd_list)
 	execute_command(cmd);
 }
 
-
 void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 {
-
 	pid_t	pid;
 
 	pid = fork();

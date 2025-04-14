@@ -58,33 +58,33 @@ uint8_t	validate_dots(t_cmd *cmd);
 
 // builtin
 bool	is_builtin(t_cmd *cmd);
-uint8_t	exec_builtins(t_cmd *cmd, int in_pipe);
+uint8_t	exec_builtins(t_cmd *cmd);
 const	t_builtin_dispatch *get_builtin_table(size_t *size);
 
 // exit
-uint8_t handle_exit(t_cmd *cmd, int in_pipe);
+uint8_t handle_exit(t_cmd *cmd);
 long long ft_atoll_exit(const char *str, bool *overflow);
 
 // echo
-uint8_t handle_echo(t_cmd *cmd, int in_pipe);
+uint8_t handle_echo(t_cmd *cmd);
 
 // pwd
-uint8_t handle_pwd(t_cmd *cmd, int in_pipe);
+uint8_t handle_pwd(t_cmd *cmd);
 
 // env
-uint8_t handle_env(t_cmd *cmd, int in_pipe);
+uint8_t handle_env(t_cmd *cmd);
 
 // export
-uint8_t handle_export(t_cmd *cmd, int in_pipe);
+uint8_t handle_export(t_cmd *cmd);
 void handle_sorted_env(t_mshell *mshell);
 void free_keys(char **keys, int num_kyes);
 
 // unset
-uint8_t handle_unset(t_cmd *cmd, int in_pipe);
+uint8_t handle_unset(t_cmd *cmd);
 t_mshell_var *create_new_variable(char *key, char *value, int assigned);
 
 // cd
-uint8_t handle_cd(t_cmd *cmd, int in_pipe);
+uint8_t handle_cd(t_cmd *cmd);
 // bool is_only_endline(t_cmd *cmd);
 bool get_directory(char *cwd, t_cmd *cmd);
 

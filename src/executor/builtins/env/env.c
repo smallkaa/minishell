@@ -63,16 +63,9 @@ void	print_env(t_cmd *cmd)
  * @return `EXIT_SUCCESS` (0) if variables were displayed successfully.
  *         `EXIT_FAILURE` (1) if arguments were provided (invalid usage).
  */
-uint8_t	handle_env(t_cmd *cmd, int in_pipe)
+uint8_t	handle_env(t_cmd *cmd)
 {
-	// t_hash_table	*ht;
-	// int				i;
 	uint8_t			exit_status;
-
-	if (in_pipe) // or pass a flag/context to indicate it
-	{
-		return (EXIT_SUCCESS);
-	}
 
 	if (cmd->argv[1])
 	{
@@ -81,13 +74,6 @@ uint8_t	handle_env(t_cmd *cmd, int in_pipe)
 		print_error("‘: No such file or directory\n");
 		return (127);
 	}
-	// ht = cmd->minishell->hash_table;
-	// i = 0;
-	// while (i < HASH_SIZE)
-	// {
-	// 	print_env_bucket(ht->buckets[i]);
-	// 	i++;
-	// }
 	print_env(cmd);
 	exit_status = EXIT_SUCCESS;
 	return (exit_status);

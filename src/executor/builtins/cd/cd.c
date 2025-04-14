@@ -134,9 +134,8 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
  * @return `EXIT_SUCCESS` (0) if the command executes successfully.
  *         `EXIT_FAILURE` (1) if an error occurs.
  */
-uint8_t	handle_cd(t_cmd *cmd, int in_pipe)
+uint8_t	handle_cd(t_cmd *cmd)
 {
-	(void)in_pipe;
 	uint8_t	status;
 
 	if (!cmd || !cmd->minishell)

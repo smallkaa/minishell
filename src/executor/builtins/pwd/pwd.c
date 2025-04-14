@@ -92,9 +92,8 @@ static uint8_t	exec_pwd(t_cmd *cmd)
  *         `EXIT_FAILURE` (1) if an error occurs (e.g., invalid option).
  *         `2` if an invalid option is detected.
  */
-uint8_t	handle_pwd(t_cmd *cmd, int in_pipe)
+uint8_t	handle_pwd(t_cmd *cmd)
 {
-	(void)in_pipe;
 	uint8_t	exit_status;
 
 	if (!cmd->argv[1])

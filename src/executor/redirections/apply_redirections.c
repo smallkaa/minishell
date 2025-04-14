@@ -21,7 +21,7 @@ static uint8_t apply_input_redirection(t_redir *redir)
 			perror("apply_input_redirection: close heredoc");
 			return (EXIT_FAILURE);
 		}
-		// redir->fd = -2;
+		redir->fd = -2;
 	}
 	else if (redir->type == R_INPUT)
 	{

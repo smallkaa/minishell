@@ -137,9 +137,8 @@ static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
  * @param cmd Pointer to the command structure.
  * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on failure.
  */
-uint8_t	handle_echo(t_cmd *cmd, int in_pipe)
+uint8_t	handle_echo(t_cmd *cmd)
 {
-	(void)in_pipe;
 	int		i;
 	uint8_t	exit_status;
 	int		newline_flag;

@@ -29,7 +29,7 @@
 typedef struct s_builtin_dispatch
 {
 	const char	*name;
-	uint8_t		(*func)(t_cmd *, int);
+	uint8_t		(*func)(t_cmd *);
 }	t_builtin_dispatch;
 
 /**

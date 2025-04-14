@@ -95,15 +95,13 @@ static uint8_t	get_exit_status(char *arg)
  * @return `EXIT_SUCCESS` (0) or `EXIT_FAILURE` (1) (not actually used,
  *         as `exit` terminates).
  */
-uint8_t	handle_exit(t_cmd *cmd, int in_pipe)
+uint8_t	handle_exit(t_cmd *cmd)
 {
-	(void)in_pipe;
 	if (!cmd)
 	{
 		print_error("minishell: exit: no *cmd instance\n");
 		return (EXIT_FAILURE);
 	}
-	// printf("exit\n");
 	if (!cmd->argv[1])
 		return (cmd->minishell->exit_status);
 	if (cmd->argv[1][0] == '\0')
