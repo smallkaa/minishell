@@ -95,6 +95,7 @@ void	set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
 void	update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
 unsigned int	hash_function(const char *key);
 void	update_env(t_mshell *mshell);
+char	*search_paths(char **paths, t_cmd *cmd);
 
 // parser
 t_cmd		*run_parser(t_mshell *shell, char *input);
