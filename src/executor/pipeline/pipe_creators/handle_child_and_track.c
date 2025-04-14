@@ -1,21 +1,5 @@
 #include "minishell.h"
 
-bool	has_input_redirection(t_cmd *cmd)
-{
-	t_list	*node;
-	t_redir	*redirection;
-
-	node = cmd->redirs;
-	while (node)
-	{
-		redirection = (t_redir *)node->content;
-		if (redirection->type == R_INPUT || redirection->type == R_HEREDOC)
-			return (true);
-		node = node->next;
-	}
-	return (false);
-}
-
 void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 {
 	t_cmd	*cmd;
@@ -43,9 +27,9 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 	}
 }
 
-void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *full_cmd_list)
+static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
-	close_unused_heredocs_child(cmd, full_cmd_list);
+	close_unused_heredocs_child(cmd, cmd_list);
 	if (cmd->next)
 	{
 		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
@@ -67,7 +51,7 @@ void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *full_cmd_list)
 	execute_command(cmd);
 }
 
-void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
+void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 {
 	pid_t	pid;
 
