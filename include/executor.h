@@ -104,5 +104,6 @@ uint8_t perror_return(char *msg, u_int8_t exit_status);
 void cmd_missing_command_error(t_cmd *cmd);
 void export_error(t_mshell_var *pair);
 void unset_error(char *str);
+uint8_t perror_exit_child(char *msg, u_int8_t exit_status);
 
 #endif /* EXECUTOR_H */
