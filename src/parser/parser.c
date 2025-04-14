@@ -110,7 +110,11 @@ static void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 			i++;
 			continue;
 		}
-
+		if (tok->type == TOKEN_WORD && tok->value == NULL)
+		{
+			i++;
+			continue;
+		}
 		if (tok->type != TOKEN_WORD)
 		{
 			new_tokens->tokens[j++] = *tok;
@@ -199,68 +203,92 @@ int	group_word_tokens(t_TokenArray *tokens)
 }
 
 
-
-
 t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 {
-	t_list	*cmd_list;
-	t_cmd	*current;
-	t_cmd	*head;
-	t_cmd	*cmd_ptr;
-	int		i;
+	t_list	*cmd_list = NULL;
+	t_cmd	*current = NULL;
+	int		i = 0;
 
-	cmd_list = NULL;
-	current = NULL;
-	i = 0;
 	while (tokens && i < tokens->count)
 	{
-		if (tokens->tokens[i].type == TOKEN_WORD)
-			handle_word_token(shell, &cmd_list, &current,
-				tokens->tokens[i].value);
-		else if (tokens->tokens[i].type == TOKEN_PIPE)
+		t_TokenType type = tokens->tokens[i].type;
+
+		// PIPE: начинаем новую команду
+		if (type == TOKEN_PIPE)
+		{
 			current = NULL;
-		if (is_input_redir(tokens->tokens[i].type))
-		{
-			if (!is_valid_redir_target(tokens, i))
-			{
-				print_error("syntax error near unexpected token `newline'\n");
-				return (free_cmd_list(&cmd_list), NULL);
-			}
-			if (handle_input_redir(shell, &cmd_list, &current, &tokens->tokens[i]) < 0)
-				return (free_cmd_list(&cmd_list), NULL);
 			i++;
-		}		
-		if (is_output_redir(tokens->tokens[i].type))
-		{
-			if (!is_valid_redir_target(tokens, i))
-			{
-				print_error("syntax error near unexpected token `newline'\n");
-				return (free_cmd_list(&cmd_list), NULL);
-			}
-			if (handle_output_redir(shell, &cmd_list, &current, &tokens->tokens[i]) < 0)
-				return (free_cmd_list(&cmd_list), NULL);
-			i++;
+			continue;
 		}
-		
+
+		// если это redir — создаём команду, если её ещё нет
+		if (is_input_redir(type) || is_output_redir(type))
+		{
+			if (!is_valid_redir_target(tokens, i))
+			{
+				print_error("syntax error near unexpected token `newline'\n");
+				free_cmd_list(&cmd_list);
+				return (NULL);
+			}
+			if (!current)
+			{
+				current = create_empty_command(shell);
+				if (!current)
+					return (free_cmd_list(&cmd_list), NULL);
+				ft_lstadd_back(&cmd_list, ft_lstnew(current));
+			}
+			if (is_input_redir(type))
+			{
+				if (handle_input_redir(shell, &cmd_list, &current, &tokens->tokens[i]) < 0)
+					return (free_cmd_list(&cmd_list), NULL);
+			}
+			else if (is_output_redir(type))
+			{
+				if (handle_output_redir(shell, &cmd_list, &current, &tokens->tokens[i]) < 0)
+					return (free_cmd_list(&cmd_list), NULL);
+			}
+			i += 2; // редирект + его аргумент
+			continue;
+		}
+
+		// если это слово (команда или аргумент)
+		if (type == TOKEN_WORD)
+		{
+			if (!current)
+			{
+				current = create_empty_command(shell);
+				if (!current)
+					return (free_cmd_list(&cmd_list), NULL);
+				ft_lstadd_back(&cmd_list, ft_lstnew(current));
+			}
+			handle_word_token(shell, &cmd_list, &current, tokens->tokens[i].value);
+			i++;
+			continue;
+		}
+
+		// игнорируем любые другие токены
 		i++;
 	}
-	if (current && current->argv)
-	{
-		int j = 0;
-		while (current->argv[j])
-			j++;
-		current->argv[j] = NULL;
-	}
-	head = finalize_cmd_list(&cmd_list);
-	cmd_ptr = head;
+
+	// финализируем argv
+	t_cmd *head = finalize_cmd_list(&cmd_list);
+	t_cmd *cmd_ptr = head;
 	while (cmd_ptr)
 	{
+		// гарантируем null-терминацию
+		if (cmd_ptr->argv)
+		{
+			int j = 0;
+			while (j < MAX_ARGS && cmd_ptr->argv[j])
+				j++;
+			while (j < MAX_ARGS)
+				cmd_ptr->argv[j++] = NULL;		
+		}
 		cmd_ptr->binary = find_binary(cmd_ptr);
 		cmd_ptr = cmd_ptr->next;
 	}
-	return (head);
+	return head;
 }
-
 
 t_cmd	*run_parser(t_mshell *minishell, char *input)
 {

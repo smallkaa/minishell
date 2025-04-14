@@ -6,25 +6,17 @@ t_cmd *create_empty_command(t_mshell *shell)
 {
 	t_cmd	*cmd;
 
-	cmd = malloc(sizeof(t_cmd));
+	cmd = ft_calloc(sizeof(t_cmd),1);
 	if (!cmd)
 		return (NULL);
 	memset(cmd, 0, sizeof(t_cmd));
 
-	cmd->argv = malloc(sizeof(char *) * 2);
+	cmd->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *));
 	if (!cmd->argv)
 	{
 		free(cmd);
 		return (NULL);
 	}
-	cmd->argv[0] = ft_strdup("");
-	if (!cmd->argv[0])
-	{
-		free(cmd->argv);
-		free(cmd);
-		return (NULL);
-	}
-	cmd->argv[1] = NULL;
 	cmd->minishell = shell;
 	cmd->next = NULL;
 	cmd->redirs = NULL;
@@ -98,15 +90,16 @@ void	handle_word_token(t_mshell *shell, t_list **cmd_list,
 	t_cmd **current, char *value)
 {
 	int	arg_index;
-
+	if (!value)
+		return ;
 	arg_index = 0;
 	if (!(*current))
 	{
-		*current = malloc(sizeof(t_cmd));
+		*current = ft_calloc(sizeof(t_cmd),1);
 		if (!(*current))
 			return ;
 		ft_bzero(*current, sizeof(t_cmd));
-		(*current)->argv = malloc(sizeof(char *) * (MAX_ARGS + 1));
+		(*current)->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *));
 		if (!(*current)->argv)
 			return (free(*current), *current = NULL, (void)0);
 		(*current)->argv[0] = ft_strdup(value);
@@ -118,7 +111,10 @@ void	handle_word_token(t_mshell *shell, t_list **cmd_list,
 		while ((*current)->argv[arg_index])
 			arg_index++;
 		if (arg_index < MAX_ARGS)
-			(*current)->argv[arg_index++] = ft_strdup(value);
+		{
+			(*current)->argv[arg_index] = ft_strdup(value);
+			(*current)->argv[arg_index + 1] = NULL; 
+		}
 	}
 }
 

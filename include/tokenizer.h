@@ -88,6 +88,7 @@ char *handle_escape(const char *input, size_t *i, int single_q);
 char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q, int double_q);
 char *get_exit_code(t_mshell *minishell);
 bool	is_valid_redir_target(t_TokenArray *tokens, int i);
+t_cmd	*create_empty_command(t_mshell *shell);
 
 
 #endif

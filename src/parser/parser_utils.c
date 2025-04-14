@@ -2,16 +2,21 @@
 // Helper function to print token information
 void	print_token(t_Token token)
 {
-	const char	*type_names[] = {
-		"WORD", "PIPE", "REDIRECT_IN", "REDIRECT_OUT",
-		"APPEND_OUT", "BACKGROUND", "EOF"
-	};
 
-	debug_printf("Token: { type: %s", type_names[token.type]);
+	const char *token_type_names[] = {
+		[TOKEN_WORD] = "WORD",
+		[TOKEN_PIPE] = "PIPE",
+		[TOKEN_REDIRECT_IN] = "REDIRECT_IN",
+		[TOKEN_REDIRECT_OUT] = "REDIRECT_OUT",
+		[TOKEN_APPEND_OUT] = "APPEND_OUT",
+		[TOKEN_BACKGROUND] = "BACKGROUND",
+		[TOKEN_HEREDOC] = "HEREDOC",
+		[TOKEN_EMPTY] = "EMPTY",
+		[TOKEN_EOF] = "EOF"
+	};
+	debug_printf("Token: { type: %s", token_type_names[token.type]);
 	if (token.type == TOKEN_WORD)
-	{
-		debug_printf(", value: %s", token.value);
-	}
+		debug_printf(", value: %s", token.value ? token.value : "(NULL)");
 	debug_printf(" }\n");
 }
 
@@ -90,19 +95,25 @@ void debug_print_parsed_commands(t_cmd *cmd)
     t_list *redir_node; // Узел для итерации по списку редиректов
     t_redir *redir;     // Указатель на данные редиректа
 
-    printf("\n==== Parsed Command Structure (New) ====\n");
+    printf("\n==== Parsed Command Structure ====\n");
     while (cmd)
     {
         printf("Command %d:\n", cmd_count);
         printf("  Executable: %s\n", cmd->binary ? cmd->binary : "(NULL)");
+		if (cmd->argv)
+		{
+			printf("  Arguments: ");
+			for (int i = 0; i < MAX_ARGS && cmd->argv[i] != NULL; i++)
+			{
+				printf("    RAW argv[%d] = %p\n", i, (void *)cmd->argv[i]);
 
-        if (cmd->argv)
-        {
-            printf("  Arguments: ");
-            for (int i = 0; cmd->argv[i]; i++)
-                printf("\"%s\" ", cmd->argv[i]);
-            printf("\n");
-        }
+				if (cmd->argv[i])
+					printf("\"%s\" ", cmd->argv[i]);
+				else
+					printf("(NULL ARG!) ");
+			}
+			printf("\n");
+		}
         // Печать всех редиректов из списка cmd->redirs
         printf("  Redirections (in order):\n");
         redir_node = cmd->redirs; // Получаем начало списка редиректов
