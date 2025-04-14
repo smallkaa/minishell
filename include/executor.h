@@ -67,6 +67,8 @@ long long ft_atoll_exit(const char *str, bool *overflow);
 
 // echo
 uint8_t handle_echo(t_cmd *cmd);
+int	is_echo_flag(char *arg);
+int	is_wrapped_in_quotes(char *s);
 
 // pwd
 uint8_t handle_pwd(t_cmd *cmd);
