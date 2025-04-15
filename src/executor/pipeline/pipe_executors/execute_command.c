@@ -26,6 +26,8 @@ void	execute_command(t_cmd *cmd)
 	{
 		_exit(EXIT_SUCCESS);
 	}
+	if (cmd->minishell->syntax_exit_status != 0)
+		_exit(cmd->minishell->syntax_exit_status);
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 		_exit(EXIT_FAILURE);
 	if (ft_strcmp(cmd->argv[0], "") == 0)
