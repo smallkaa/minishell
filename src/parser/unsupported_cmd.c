@@ -13,6 +13,8 @@ int	known_unsupported_cmd(const char *cmd, const char **message)
 	const t_unsupported_cmd	issues[] = {
 		{"()", 2, "syntax error near unexpected token `)'\n"},
 		{"|||",2, "syntax error near unexpected token `||'"},
+		{"(echo) hi",2,"syntax error near unexpected token `hi'"},
+		{"(echo) (hi)",2,"syntax error near unexpected token `('"},
 		// Add more unsupported patterns here
 		{NULL, 0, NULL} // End marker
 	};
