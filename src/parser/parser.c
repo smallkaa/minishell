@@ -297,6 +297,8 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	t_Token			token;
 	t_cmd			*cmd;
 	int				i;
+	const char	*err_msg = NULL;
+	int			err_code = 0;
 
 	debug_printf("\nTokenizing: %s\n\n", input);
 	tokenizer = tokenizer_create(input);
@@ -311,12 +313,23 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	} while (token.type != TOKEN_EOF);
 
 	expand_tokens(tokens, minishell);
-	/*printf("TOKENS BEFORE GROUPING: %d\n", tokens->count);
-	for (int x = 0; x < tokens->count; x++)
+
+	if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD)
+{
+	err_code = known_unsupported_cmd(tokens->tokens[0].value, &err_msg);
+	if (err_code)
 	{
-		printf("  [%d] type=%d value='%s'\n", x, tokens->tokens[x].type,
-			tokens->tokens[x].value ? tokens->tokens[x].value : "(null)");
-	}*/
+		if (err_msg)
+			print_error((char *)err_msg);
+		else
+			print_error("minishell: unsupported syntax\n");
+		token_array_free(tokens);
+		tokenizer_destroy(tokenizer);
+		minishell->exit_status = err_code;
+		return (NULL);
+	}
+}
+	
 	group_word_tokens(tokens); // TODO: error handling
 	strip_words(tokens);
 

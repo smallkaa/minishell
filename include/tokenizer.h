@@ -43,7 +43,12 @@ typedef struct s_tokenizer
 	size_t		buffer_size;
 }	t_Tokenizer;
 
-
+typedef struct s_unsupported_cmd
+{
+	const char	*pattern;
+	int			error_code;
+	const char	*error_message;
+}	t_unsupported_cmd;
 
 // Get the next token from the input
 t_Token	get_next_token(t_Tokenizer *tokenizer);
@@ -89,6 +94,6 @@ char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q,
 char *get_exit_code(t_mshell *minishell);
 bool	is_valid_redir_target(t_TokenArray *tokens, int i);
 t_cmd	*create_empty_command(t_mshell *shell);
-
+int	known_unsupported_cmd(const char *cmd, const char **message);
 
 #endif
