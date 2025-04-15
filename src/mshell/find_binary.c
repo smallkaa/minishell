@@ -49,12 +49,12 @@ static char	*handle_direct_path(t_cmd *cmd)
 		cmd->minishell->exit_status = 127;
 		return (NULL);
 	}
-	if (access(binary, X_OK) != 0)
+/*	if (access(binary, X_OK) != 0)
 	{
 		free(binary);
 		cmd->minishell->exit_status = 126;
 		return (NULL);
-	}
+	}*/
 	return (binary);
 }
 
