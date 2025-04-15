@@ -42,7 +42,21 @@ static bool	check_overflow_pos(long long current_result, int digit)
 		return (true);
 	return (false);
 }
+// static bool check_overflow_pos(long long result, int digit)
+// {
+//     // If result > LLONG_MAX / 10, multiplying by 10 will overflow.
+//     if (result > LLONG_MAX / 10)
+//         return true;
 
+//     // If result == LLONG_MAX / 10, then adding `digit` may overflow.
+//     if (result == LLONG_MAX / 10)
+//     {
+//         // The largest digit we can add without overflowing is LLONG_MAX % 10 (7).
+//         if (digit > (LLONG_MAX % 10))
+//             return true;
+//     }
+//     return false;
+// }
 /**
  * @brief Checks if adding `digit` to `current_result` would overflow (negative).
  *

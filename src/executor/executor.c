@@ -16,6 +16,8 @@ bool	is_builtin(t_cmd *cmd)
 
 	table = get_builtin_table(&size);
 	i = 0;
+	if (!cmd->argv[0])
+		return (false);
 	while (i < size)
 	{
 		if (ft_strcmp(cmd->argv[0], (char *)table[i].name) == 0)
@@ -30,6 +32,8 @@ static bool	is_exit_command(t_cmd *cmd)
 	int	i;
 
 	i = 0;
+	if(!cmd->argv[0])
+		return (false);
 	while (cmd->argv[i])
 		i++;
 	return (ft_strcmp(cmd->argv[i - 1], "exit") == 0);

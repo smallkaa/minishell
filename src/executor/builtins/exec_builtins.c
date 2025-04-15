@@ -27,6 +27,8 @@ uint8_t	exec_builtins(t_cmd *cmd)
 	size_t						size;
 	const t_builtin_dispatch	*table;
 
+	if (!cmd->argv || !cmd->argv[0])
+		return (EXIT_FAILURE);
 	table = get_builtin_table(&size);
 	i = 0;
 	while (i < size)

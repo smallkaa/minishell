@@ -22,6 +22,10 @@ void	exec_cmd(t_cmd *cmd)
 
 void	execute_command(t_cmd *cmd)
 {
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+	{
+		_exit(EXIT_SUCCESS);
+	}
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 		_exit(EXIT_FAILURE);
 	if (ft_strcmp(cmd->argv[0], "") == 0)
