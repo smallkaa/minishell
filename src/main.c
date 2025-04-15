@@ -144,14 +144,16 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			cmd = run_parser(mshell, lines[i]);
 			if (cmd)
 			{
-				exit_status = run_executor(cmd);
-				free_cmd(cmd);
+
+					exit_status = run_executor(cmd);
+					free_cmd(cmd);
 			}
 			i++;
 		}
 		free_split(lines);
 		free(input);
 	}
+
 	return (exit_status);
 }
 

@@ -314,27 +314,29 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 
 	expand_tokens(tokens, minishell);
 
-	if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD)
-{
-	err_code = known_unsupported_cmd(tokens->tokens[0].value, &err_msg);
-	if (err_code)
-	{
-		if (err_msg)
-			print_error((char *)err_msg);
-		else
-			print_error("minishell: unsupported syntax\n");
-		token_array_free(tokens);
-		tokenizer_destroy(tokenizer);
-		minishell->exit_status = err_code;
-		return (NULL);
-	}
-}
-	
+
 	group_word_tokens(tokens); // TODO: error handling
 	strip_words(tokens);
 
 	cmd = create_command_from_tokens(minishell, tokens);
-
+	if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD)
+	{
+		err_code = known_unsupported_cmd(tokens->tokens[0].value, &err_msg);
+		if (err_code)
+		{
+			if (err_msg)
+				print_error((char *)err_msg);
+			else
+			{
+				print_error("minishell: unsupported syntax\n");
+			}
+				cmd->minishell->exit_status = err_code;
+				/*token_array_free(tokens);
+			tokenizer_destroy(tokenizer);
+			return (NULL);*/
+		}
+	}
+		
 	tokenizer_destroy(tokenizer);
 
 	debug_printf("Found %d token(s):\n", tokens->count);
