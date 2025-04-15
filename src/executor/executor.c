@@ -156,6 +156,14 @@ uint8_t	run_executor(t_cmd *cmd)
 		set_variable(minishell, "_", last_arg, 1);
 		update_env(minishell);
 	}
+	// if (cmd->minishell->exit_status == 126)
+	// {
+	// 	return (126);
+	// }
+	// if (cmd->minishell->exit_status == 127)
+	// {
+	// 	return (127);
+	// }
 
 	exit_status = apply_heredocs(cmd);
 	if (!is_builtin(cmd) || cmd->next)
