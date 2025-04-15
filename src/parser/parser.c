@@ -322,6 +322,7 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD)
 	{
 		err_code = known_unsupported_cmd(tokens->tokens[0].value, &err_msg);
+		minishell->syntax_exit_status = err_code;			
 		if (err_code)
 		{
 			if (err_msg)
@@ -330,10 +331,6 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 			{
 				print_error("minishell: unsupported syntax\n");
 			}
-				cmd->minishell->exit_status = err_code;
-				/*token_array_free(tokens);
-			tokenizer_destroy(tokenizer);
-			return (NULL);*/
 		}
 	}
 		

@@ -76,6 +76,7 @@ typedef struct s_mshell
 	t_hash_table	*hash_table;
 	bool			pipe;
 	uint8_t			exit_status;
+	uint8_t			syntax_exit_status;
 }	t_mshell;
 
 // init minishell

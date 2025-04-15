@@ -94,5 +94,6 @@ t_mshell	*init_mshell(char **envp)
 		return (NULL);
 	}
 	mshell->exit_status = 0;
+	mshell->syntax_exit_status = 0;
 	return (mshell);
 }
