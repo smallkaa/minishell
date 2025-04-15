@@ -24,7 +24,14 @@
 # include "signals.h"
 # include "command.h"
 
+
+// limits
+# define ERROR_BUF_SIZE 256
+# define MS_PATHMAX 4096
 # define HASH_SIZE 128
+# define HEREDOC_MAX_SIZE 1048576
+# define CMD_MAX_SIZE 1048576
+
 
 /**
  * @struct	s_builtin_dispatch

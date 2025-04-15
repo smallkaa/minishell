@@ -18,7 +18,8 @@ static int	ft_putstr_custom(char *str)
 	written = write(STDOUT_FILENO, str, ft_strlen(str));
 	if (written == -1)
 	{
-		perror("minishell: write");
+		if (errno != EPIPE)
+			perror("minishell: write");
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

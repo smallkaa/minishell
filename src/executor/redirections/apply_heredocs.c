@@ -1,5 +1,9 @@
 #include "minishell.h"
 
+bool heredoc_exceeds_limit(size_t total_written)
+{
+	return (total_written >= HEREDOC_MAX_SIZE);
+}
 bool	is_heredoc(t_redir *redirection)
 {
 	return (redirection->type == R_HEREDOC);
@@ -8,7 +12,9 @@ bool	is_heredoc(t_redir *redirection)
 static uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
 {
 	char	*line;
+	size_t	total_written;
 
+	total_written = 0;
 	line = NULL;
 	while (1)
 	{
@@ -18,10 +24,19 @@ static uint8_t	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
 			free(line);
 			break ;
 		}
+		total_written += ft_strlen(line) + 1;
+		if (heredoc_exceeds_limit(total_written))
+		{
+			print_error("minishell: heredoc: input too large\n");
+			free(line);
+			return (EXIT_FAILURE);
+		}
+
 		if (write(pipe_fd, line, ft_strlen(line)) == -1
 			|| write(pipe_fd, "\n", 1) == -1)
 		{
-			perror("-write_heredoc_to_pipe: write");
+			if (errno != EPIPE)
+				perror("-write_heredoc_to_pipe: write");
 			free(line);
 			return (EXIT_FAILURE);
 		}

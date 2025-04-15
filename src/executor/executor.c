@@ -90,11 +90,47 @@ static uint8_t execute_builtin(t_cmd *cmd)
 		cleanup_and_exit(cmd, exit_status);
 	return (exit_status);
 }
+void update_underscore(t_cmd *cmd, char *binary_path)
+{
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+		return;
+
+	if (is_builtin(cmd))
+	{
+		char *last_arg = get_last_meaningful_arg(cmd);
+		if (last_arg)
+			set_variable(cmd->minishell, "_", last_arg, 1);
+	}
+	else
+	{
+		if (binary_path)
+			set_variable(cmd->minishell, "_", binary_path, 1);
+		else
+			set_variable(cmd->minishell, "_", cmd->argv[0], 1); // fallback
+	}
+	update_env(cmd->minishell);
+}
+
+bool command_too_long(char **argv)
+{
+	size_t total_len = 0;
+	int i = 0;
+
+	while (argv[i])
+	{
+		total_len += ft_strlen(argv[i]) + 1; // +1 for space/null separator
+		if (total_len >= CMD_MAX_SIZE)
+			return true;
+		i++;
+	}
+	return false;
+}
 
 uint8_t	run_executor(t_cmd *cmd)
 {
 	t_mshell *minishell;
 	uint8_t exit_status;
+	// char *last_arg;
 
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
@@ -154,20 +190,23 @@ uint8_t	run_executor(t_cmd *cmd)
 
 	// int i;
 
-	if (cmd && cmd->argv)
+	// if (cmd && cmd->argv)
+	// {
+	// 	last_arg = get_last_meaningful_arg(cmd);
+	// 	set_variable(minishell, "_", last_arg, 1);
+	// 	update_env(minishell);
+	// }
+	if (cmd)
 	{
-		char *last_arg = get_last_meaningful_arg(cmd);
-		set_variable(minishell, "_", last_arg, 1);
-		update_env(minishell);
+		if (command_too_long(cmd->argv))
+		{
+			print_error("minishell: command too long\n");
+			minishell->exit_status = 2;
+			return (EXIT_FAILURE);
+		}
 	}
-	// if (cmd->minishell->exit_status == 126)
-	// {
-	// 	return (126);
-	// }
-	// if (cmd->minishell->exit_status == 127)
-	// {
-	// 	return (127);
-	// }
+
+	update_underscore(cmd, cmd->binary);
 
 	exit_status = apply_heredocs(cmd);
 	if (!is_builtin(cmd) || cmd->next)

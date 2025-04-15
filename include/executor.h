@@ -1,11 +1,6 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-# define ERROR_BUF_SIZE 256
-
-// limits for file name and full path
-# define MS_PATHMAX 4096
-# define NAME_MAX 255
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
