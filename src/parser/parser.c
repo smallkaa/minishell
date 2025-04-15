@@ -314,14 +314,9 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 
 	expand_tokens(tokens, minishell);
 
-
-	group_word_tokens(tokens); // TODO: error handling
-	strip_words(tokens);
-
-	cmd = create_command_from_tokens(minishell, tokens);
-	if (tokens->count == 1 && tokens->tokens[0].type == TOKEN_WORD)
+	if (input && ft_strlen(input)>0)
 	{
-		err_code = known_unsupported_cmd(tokens->tokens[0].value, &err_msg);
+		err_code = known_unsupported_cmd(input, &err_msg);
 		minishell->syntax_exit_status = err_code;			
 		if (err_code)
 		{
@@ -333,6 +328,11 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 			}
 		}
 	}
+
+	group_word_tokens(tokens); // TODO: error handling
+	strip_words(tokens);
+
+	cmd = create_command_from_tokens(minishell, tokens);
 		
 	tokenizer_destroy(tokenizer);
 
