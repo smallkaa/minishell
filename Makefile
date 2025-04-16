@@ -29,6 +29,7 @@ SRC_DIRS := src \
 			src/executor \
 			src/mshell \
 			src/mshell/env \
+			src/errors \
 			src/mshell/varables_hash_table \
 			src/executor/builtins \
 			src/executor/builtins/cd \

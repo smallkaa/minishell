@@ -32,7 +32,7 @@ uint8_t	close_unused_fds(int in_fd, int *pipe_fd)
 	return (EXIT_SUCCESS);
 }
 
-void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
+static void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
 {
 	if (pipe_fd[1] >= 0 && close(pipe_fd[1]) == -1)
 	{

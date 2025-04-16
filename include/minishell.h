@@ -1,39 +1,38 @@
 #ifndef MINISHELL_H
-# define MINISHELL_H
+#define MINISHELL_H
 
-# include <stdlib.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <stdbool.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <sys/wait.h>
-# include <fcntl.h>
-# include <string.h>
-# include <signal.h>
-# include <sys/types.h>
-# include <errno.h>
-# include <stdint.h>
-# include <limits.h>
-# include <sys/stat.h>
-# include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <string.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <stdint.h>
+#include <limits.h>
+#include <sys/stat.h>
+#include <string.h>
 
-# include "libft.h"
-# include "executor.h"
-# include "tokenizer.h"
-# include "signals.h"
-# include "command.h"
-
+#include "libft.h"
+#include "executor.h"
+#include "tokenizer.h"
+#include "signals.h"
+#include "command.h"
 
 // limits
-# define ERROR_BUF_SIZE 256
-# define MS_PATHMAX 4096
-# define HASH_SIZE 128
-# define HEREDOC_MAX_SIZE 1048576
-# define CMD_MAX_SIZE 1048576
+#define ERROR_BUF_SIZE 256
+#define MS_PATHMAX 4096
+#define HASH_SIZE 128
+#define HEREDOC_MAX_SIZE 1048576
+#define CMD_MAX_SIZE 1048576
 
 // errors
-# define WRITE_HERED_ERR -2
+#define WRITE_HERED_ERR -2
 /**
  * @struct	s_builtin_dispatch
  * @brief	Maps a builtin command name to its handler function.
@@ -44,9 +43,9 @@
  */
 typedef struct s_builtin_dispatch
 {
-	const char	*name;
-	uint8_t		(*func)(t_cmd *);
-}	t_builtin_dispatch;
+	const char *name;
+	uint8_t (*func)(t_cmd *);
+} t_builtin_disp;
 
 /**
  * @struct	s_mshell_var
@@ -59,11 +58,11 @@ typedef struct s_builtin_dispatch
  */
 typedef struct s_mshell_var
 {
-	char				*key;
-	char				*value;
-	int					val_assigned;
-	struct s_mshell_var	*next;
-}	t_mshell_var;
+	char *key;
+	char *value;
+	int val_assigned;
+	struct s_mshell_var *next;
+} t_mshell_var;
 
 /**
  * @struct	s_hash_table
@@ -75,52 +74,52 @@ typedef struct s_mshell_var
  */
 typedef struct s_hash_table
 {
-	t_mshell_var	*buckets[HASH_SIZE];
-}	t_hash_table;
+	t_mshell_var *buckets[HASH_SIZE];
+} t_hash_table;
 
 typedef struct s_mshell
 {
-	char			**env;
-	t_hash_table	*hash_table;
-	bool			pipe;
-	uint8_t			exit_status;
-	uint8_t			syntax_exit_status;
-}	t_mshell;
+	char **env;
+	t_hash_table *hash_table;
+	bool pipe;
+	uint8_t exit_status;
+	uint8_t syntax_exit_status;
+} t_mshell;
 
 // init minishell
-t_mshell		*init_mshell(char **envp);
-char			**setup_env(char **envp);
-char			**setup_builtin(void);
-char			*find_binary(t_cmd *cmd);
-char			*create_env_entry(t_mshell_var *var);
-void			free_old_env(char **env);
+t_mshell *init_mshell(char **envp);
+char **setup_env(char **envp);
+char **setup_builtin(void);
+char *find_binary(t_cmd *cmd);
+char *create_env_entry(t_mshell_var *var);
+void free_old_env(char **env);
 
 // setup hash table
-int				setup_hash_table(t_mshell	*mshell);
-bool			add_env_entry(t_mshell_var *current, char **new_env, int *index);
-bool			process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
-void			set_variable(t_mshell *mshell,  char *key, char *value, int assigned);
-void			update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell	*mshell);
-unsigned int	hash_function(const char *key);
-void			update_env(t_mshell *mshell);
-char			*search_paths(char **paths, t_cmd *cmd);
+int setup_hash_table(t_mshell *mshell);
+bool add_env_entry(t_mshell_var *current, char **new_env, int *index);
+bool process_env_bucket(t_mshell_var *bucket, char **new_env, int *index);
+void set_variable(t_mshell *mshell, char *key, char *value, int assigned);
+void update_existing_variable(t_mshell_var *current, t_mshell_var *mshell_var, int val_assigned, t_mshell *mshell);
+unsigned int hash_function(const char *key);
+void update_env(t_mshell *mshell);
+char *search_paths(char **paths, t_cmd *cmd);
 
 // parser
-t_cmd			*run_parser(t_mshell *shell, char *input);
+t_cmd *run_parser(t_mshell *shell, char *input);
 
 // executor
-uint8_t	run_executor(t_cmd *cmd);
-int				ft_arr_size(char **arr);
-char			*ms_getenv(t_mshell *mshell, char *key);
+uint8_t run_executor(t_cmd *cmd);
+int ft_arr_size(char **arr);
+char *ms_getenv(t_mshell *mshell, char *key);
 
 // some shit exit utils, to be cleaned !!!!!!!
-bool			is_debug_mode(void);
-void			debug_printf(const char *format, ...);
-void			print_error(char *msg);
+bool is_debug_mode(void);
+void debug_printf(const char *format, ...);
+void print_error(const char *msg);
 
 // free memory utils
-void			free_minishell(t_mshell *minishell);
-void			free_mshell_var(t_mshell_var *var);
-void			free_cmd(t_cmd *cmd);
+void free_minishell(t_mshell *minishell);
+void free_mshell_var(t_mshell_var *var);
+void free_cmd(t_cmd *cmd);
 
 #endif /* MINISHELL_H */

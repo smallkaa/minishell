@@ -8,9 +8,9 @@
 // {
 // 	printf("DEBUG: %s - PID: %d, PPID: %d\n", label, getpid(), getppid());
 // }
-bool	is_builtin(t_cmd *cmd)
+bool is_builtin(t_cmd *cmd)
 {
-	const t_builtin_dispatch *table;
+	const t_builtin_disp *table;
 	size_t size;
 	size_t i;
 
@@ -27,21 +27,21 @@ bool	is_builtin(t_cmd *cmd)
 	return (false);
 }
 
-static bool	is_exit_command(t_cmd *cmd)
+static bool is_exit_command(t_cmd *cmd)
 {
-	int	i;
+	int i;
 
 	i = 0;
-	if(!cmd->argv[0])
+	if (!cmd->argv[0])
 		return (false);
 	while (cmd->argv[i])
 		i++;
 	return (ft_strcmp(cmd->argv[i - 1], "exit") == 0);
 }
 
-static void	cleanup_and_exit(t_cmd *cmd, int exit_status)
+static void cleanup_and_exit(t_cmd *cmd, int exit_status)
 {
-	t_mshell	*minishell;
+	t_mshell *minishell;
 
 	minishell = cmd->minishell;
 	free_cmd(cmd);
@@ -60,15 +60,15 @@ static char *get_last_meaningful_arg(t_cmd *cmd)
 		return cmd->argv[0];
 
 	if ((ft_strcmp(cmd->argv[0], "export") == 0) && ft_strchr(cmd->argv[i - 1], '='))
-		return cmd->argv[0];  // treat 'export VAR=VAL' as just 'export'
+		return cmd->argv[0]; // treat 'export VAR=VAL' as just 'export'
 
 	return cmd->argv[i - 1];
 }
 
-static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
+static uint8_t execute_pipeline_or_binary(t_cmd *cmd)
 {
-	t_mshell	*minishell;
-	uint8_t		exit_status;
+	t_mshell *minishell;
+	uint8_t exit_status;
 
 	minishell = cmd->minishell;
 	exit_status = exec_in_pipes(cmd);
@@ -80,8 +80,8 @@ static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 
 static uint8_t execute_builtin(t_cmd *cmd)
 {
-	t_mshell	*minishell;
-	uint8_t		exit_status;
+	t_mshell *minishell;
+	uint8_t exit_status;
 
 	minishell = cmd->minishell;
 	exit_status = exec_in_current_process(cmd);
@@ -92,10 +92,10 @@ static uint8_t execute_builtin(t_cmd *cmd)
 }
 void update_underscore(t_cmd *cmd, char *binary_path)
 {
-	char	*last_arg;
+	char *last_arg;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
-		return ;
+		return;
 	if (is_builtin(cmd))
 	{
 		last_arg = get_last_meaningful_arg(cmd);
@@ -112,10 +112,10 @@ void update_underscore(t_cmd *cmd, char *binary_path)
 	update_env(cmd->minishell);
 }
 
-bool	command_too_long(char **argv)
+bool command_too_long(char **argv)
 {
-	size_t	total_len;
-	int		i;
+	size_t total_len;
+	int i;
 
 	total_len = 0;
 	i = 0;
@@ -129,17 +129,16 @@ bool	command_too_long(char **argv)
 	return (false);
 }
 
-uint8_t	run_executor(t_cmd *cmd)
+uint8_t run_executor(t_cmd *cmd)
 {
-	t_mshell	*minishell;
-	uint8_t		exit_status;
+	t_mshell *minishell;
+	uint8_t exit_status;
 
 	if (!cmd)
 		return (error_return("run_executor: no cmd found\n", EXIT_FAILURE));
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
 		return (error_return("run_executor: no mshell found\n", EXIT_FAILURE));
-
 
 	// test -------------------------------------------------//
 
@@ -201,7 +200,7 @@ uint8_t	run_executor(t_cmd *cmd)
 	exit_status = apply_heredocs(cmd);
 	if (exit_status != EXIT_SUCCESS)
 		return (exit_status);
-		
+
 	if (!is_builtin(cmd) || cmd->next)
 		exit_status = execute_pipeline_or_binary(cmd);
 	else
