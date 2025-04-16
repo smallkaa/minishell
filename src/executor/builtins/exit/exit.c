@@ -61,8 +61,7 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
  */
 static uint8_t	handle_too_many_args(void)
 {
-	ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
-	return (1);
+	return (error_return("exit: too many arguments\n", EXIT_FAILURE));
 }
 
 static uint8_t	get_exit_status(char *arg)
@@ -72,9 +71,7 @@ static uint8_t	get_exit_status(char *arg)
 
 	exit_status = ft_atoll_exit(arg, &overflow);
 	if (overflow || exit_status > LLONG_MAX || exit_status < LLONG_MIN)
-	{
 		return (exit_numeric_error(arg));
-	}
 	return ((uint8_t)(exit_status & 0xFF));
 }
 
@@ -95,17 +92,11 @@ static uint8_t	get_exit_status(char *arg)
 uint8_t	handle_exit(t_cmd *cmd)
 {
 	if (!cmd)
-	{
-		print_error("minishell: exit: no *cmd instance\n");
-		return (EXIT_FAILURE);
-	}
+		return (error_return("exit: no cmd\n", EXIT_FAILURE));
 	if (!cmd->argv[1])
 		return (cmd->minishell->exit_status);
 	if (cmd->argv[1][0] == '\0')
-	{
-		exit_numeric_error(cmd->argv[1]);
-		return (2);
-	}
+		return (exit_numeric_error(cmd->argv[1]));
 	if (!is_valid_numeric_exit_arg(cmd->argv[1]))
 		return (exit_numeric_error(cmd->argv[1]));
 	if (cmd->argv[2])
