@@ -48,6 +48,16 @@ void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
 	pipe_fd[0] = -1;
 	pipe_fd[1] = -1;
 }
+int safe_close(int *fd)
+{
+	if (fd && *fd >= 0)
+	{
+		if (close(*fd) == -1)
+			return (0);
+		*fd = -1;
+	}
+	return (1);
+}
 
 void	close_all_heredoc_fds(t_cmd *cmd_list)
 {
@@ -62,12 +72,8 @@ void	close_all_heredoc_fds(t_cmd *cmd_list)
 			redirection = rlist->content;
 			if (is_heredoc(redirection))
 			{
-				if (redirection->fd >= 0)
-				{
-					if (close(redirection->fd) == -1)
-						perror("close_all_heredoc_fds: close");
-					redirection->fd = -1;
-				}
+				if (!safe_close(&redirection->fd))
+					perror("close_all_heredoc_fds: close");
 			}
 			rlist = rlist->next;
 		}

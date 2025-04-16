@@ -6,7 +6,7 @@ static int	backup_fd(int fd)
 
 	backup = dup(fd);
 	if (backup == -1)
-		perror_return("-backup_fd: dup", -1);
+		return (perror_return("backup_fd: dup", -1));
 	return (backup);
 }
 
@@ -15,11 +15,11 @@ static uint8_t	restore_fd(int saved_fd, int target_fd)
 	if (dup2(saved_fd, target_fd) == -1)
 	{
 		if (close(saved_fd) == -1)
-			perror_return("-restore_fd: close", EXIT_FAILURE);
-		perror_return("-restore_fd: dup2", EXIT_FAILURE);
+			return (perror_return("restore_fd: close", EXIT_FAILURE));
+		return (perror_return("restore_fd: dup2", EXIT_FAILURE));
 	}
 	if (close(saved_fd) == -1)
-		perror_return("-restore_fd: close", EXIT_FAILURE);
+		return (perror_return("restore_fd: close", EXIT_FAILURE));
 	return (EXIT_SUCCESS);
 }
 

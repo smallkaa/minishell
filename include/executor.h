@@ -1,7 +1,6 @@
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
-
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
 typedef struct s_cmd				t_cmd;
@@ -87,10 +86,10 @@ bool						is_pipeline_limit(int *cmd_count);
 
 // exit utils
 void						child_execve_error(t_cmd *cmd);
-uint8_t						perror_return(char *msg, u_int8_t exit_status);
+int						perror_return(char *msg, int exit_status);
 void						cmd_missing_command_error(t_cmd *cmd);
 void						export_error(t_mshell_var *pair);
 void						unset_error(char *str);
 uint8_t						perror_exit_child(char *msg, u_int8_t exit_status);
-
+int						error_return(char *msg, int exit_status);
 #endif /* EXECUTOR_H */

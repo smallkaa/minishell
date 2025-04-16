@@ -92,12 +92,13 @@ static uint8_t execute_builtin(t_cmd *cmd)
 }
 void update_underscore(t_cmd *cmd, char *binary_path)
 {
-	if (!cmd || !cmd->argv || !cmd->argv[0])
-		return;
+	char	*last_arg;
 
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+		return ;
 	if (is_builtin(cmd))
 	{
-		char *last_arg = get_last_meaningful_arg(cmd);
+		last_arg = get_last_meaningful_arg(cmd);
 		if (last_arg)
 			set_variable(cmd->minishell, "_", last_arg, 1);
 	}
@@ -106,38 +107,40 @@ void update_underscore(t_cmd *cmd, char *binary_path)
 		if (binary_path)
 			set_variable(cmd->minishell, "_", binary_path, 1);
 		else
-			set_variable(cmd->minishell, "_", cmd->argv[0], 1); // fallback
+			set_variable(cmd->minishell, "_", cmd->argv[0], 1);
 	}
 	update_env(cmd->minishell);
 }
 
-bool command_too_long(char **argv)
+bool	command_too_long(char **argv)
 {
-	size_t total_len = 0;
-	int i = 0;
+	size_t	total_len;
+	int		i;
 
+	total_len = 0;
+	i = 0;
 	while (argv[i])
 	{
-		total_len += ft_strlen(argv[i]) + 1; // +1 for space/null separator
+		total_len += ft_strlen(argv[i]) + 1;
 		if (total_len >= CMD_MAX_SIZE)
-			return true;
+			return (true);
 		i++;
 	}
-	return false;
+	return (false);
 }
 
 uint8_t	run_executor(t_cmd *cmd)
 {
-	t_mshell *minishell;
-	uint8_t exit_status;
-	// char *last_arg;
+	t_mshell	*minishell;
+	uint8_t		exit_status;
 
+	if (!cmd)
+		return (error_return("run_executor: no cmd found\n", EXIT_FAILURE));
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
-	{
-		print_error("-run_executor: missing components\n");
-		return (EXIT_FAILURE);
-	}
+		return (error_return("run_executor: no mshell found\n", EXIT_FAILURE));
+
+
 	// test -------------------------------------------------//
 
 	// int j = 0;
@@ -190,24 +193,9 @@ uint8_t	run_executor(t_cmd *cmd)
 
 	// int i;
 
-	// if (cmd && cmd->argv)
-	// {
-	// 	last_arg = get_last_meaningful_arg(cmd);
-	// 	set_variable(minishell, "_", last_arg, 1);
-	// 	update_env(minishell);
-	// }
-	if (cmd)
-	{
-		if (command_too_long(cmd->argv))
-		{
-			print_error("minishell: command too long\n");
-			minishell->exit_status = 2;
-			return (EXIT_FAILURE);
-		}
-	}
-
+	if (command_too_long(cmd->argv))
+		return (error_return("run_executor: command too long\n", 2));
 	update_underscore(cmd, cmd->binary);
-
 	exit_status = apply_heredocs(cmd);
 	if (!is_builtin(cmd) || cmd->next)
 		exit_status = execute_pipeline_or_binary(cmd);

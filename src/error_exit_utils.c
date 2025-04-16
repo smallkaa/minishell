@@ -99,8 +99,17 @@ void	cmd_missing_command_error(t_cmd *cmd)
 	_exit(127);
 }
 
-uint8_t perror_return(char *msg, u_int8_t exit_status)
+int error_return(char *msg, int exit_status)
 {
+	ft_putstr_fd("-minishell: ", STDERR_FILENO);
+	if (msg)
+		print_error(msg);
+	return (exit_status);
+}
+
+int perror_return(char *msg, int exit_status)
+{
+	ft_putstr_fd("-minishell: ", STDERR_FILENO);
 	if (msg)
 		perror(msg);
 	return (exit_status);
