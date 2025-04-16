@@ -35,7 +35,7 @@ typedef enum e_redir_type
  *
  * - type:      The redirection type (input, output, append, heredoc).
  * - filename:  File name for input/output, or delimiter for heredoc.
- * - target_fd: File descriptor to redirect 
+ * - target_fd: File descriptor to redirect
  * (typically STDIN_FILENO or STDOUT_FILENO).
  * - fd:        Runtime file descriptor used (especially for heredoc).
  * - expand:    Indicates whether to perform variable expansion (for heredocs).
@@ -46,7 +46,6 @@ typedef struct s_redir
 	char			*filename;
 	int				target_fd;
 	int				fd;
-	// bool			expand;
 }	t_redir;
 /**
  * @struct s_cmd
@@ -56,7 +55,7 @@ typedef struct s_redir
  * - binary:    Resolved binary path to be executed.
  * - next:      Pointer to the next command in a pipeline.
  * - minishell: Pointer to the main shell state/context.
- * - redirs:    List of redirections associated with 
+ * - redirs:    List of redirections associated with
  * this command (t_list of t_redir*).
  *
  * Example pipeline: `ls -l | grep minishell | wc -l`

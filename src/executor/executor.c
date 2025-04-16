@@ -195,8 +195,13 @@ uint8_t	run_executor(t_cmd *cmd)
 
 	if (command_too_long(cmd->argv))
 		return (error_return("run_executor: command too long\n", 2));
+
 	update_underscore(cmd, cmd->binary);
+
 	exit_status = apply_heredocs(cmd);
+	if (exit_status != EXIT_SUCCESS)
+		return (exit_status);
+		
 	if (!is_builtin(cmd) || cmd->next)
 		exit_status = execute_pipeline_or_binary(cmd);
 	else

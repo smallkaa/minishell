@@ -40,6 +40,7 @@ SRC_DIRS := src \
 			src/executor/builtins/unset \
 			src/executor/pipeline \
 			src/executor/redirections \
+			src/executor/redirections/heredoc \
 			src/executor/pipeline/pipe_creators \
 			src/executor/pipeline/pipe_executors
 

@@ -37,7 +37,7 @@ void						execute_command(t_cmd *cmd);
 void						handle_child_and_track(t_cmd *cmd, t_pipe_info *info);
 uint8_t						wait_for_children(pid_t *pids, int count);
 uint8_t						close_unused_fds(int in_fd, int *pipe_fd);
-uint8_t						close_heredoc_fds(t_cmd *cmd);
+// uint8_t						close_heredoc_fds(t_cmd *cmd);
 void						close_fds_and_prepare_next(int *in_fd, int *pipe_fd);
 void						close_all_heredoc_fds(t_cmd *cmd_list);
 
@@ -76,13 +76,20 @@ t_mshell_var				*create_new_variable(char *key, char *value, int assigned);
 uint8_t						handle_cd(t_cmd *cmd);
 bool						get_directory(char *cwd, t_cmd *cmd);
 
-// redirections <, <<, >, >>
+// redirections <, >, >>
 uint8_t						apply_redirections(t_cmd *cmd);
 uint8_t						apply_heredocs(t_cmd *cmd);
+
+// heredoc <<
+bool	heredoc_exceeds_limit(size_t total_written);
+bool	is_heredoc(t_redir *redirection);
 
 // utils
 t_mshell_var				*split_key_value(char *key_value_pair);
 bool						is_pipeline_limit(int *cmd_count);
+void	safe_close(int *fd);
+void	close_all_heredoc_fds(t_cmd *cmd_list);
+int	write_heredoc_to_pipe(int pipe_fd, const char *delimiter);
 
 // exit utils
 void						child_execve_error(t_cmd *cmd);

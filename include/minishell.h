@@ -32,6 +32,8 @@
 # define HEREDOC_MAX_SIZE 1048576
 # define CMD_MAX_SIZE 1048576
 
+// errors
+# define WRITE_HERED_ERR -2
 /**
  * @struct	s_builtin_dispatch
  * @brief	Maps a builtin command name to its handler function.

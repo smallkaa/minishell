@@ -1,6 +1,6 @@
 /**
  * @file exec_utils.c
- * @brief Utility functions for managing variables, pipeline limits, 
+ * @brief Utility functions for managing variables, pipeline limits,
  * and exit statuses in Minishell.
  */
 #include "minishell.h"
@@ -12,7 +12,7 @@
  * - If no equal sign is present, the value is set to `NULL`.
  *
  * @param kv_pair The string to split.
- * @return A pointer to a newly allocated `t_mshell_var` structure, 
+ * @return A pointer to a newly allocated `t_mshell_var` structure,
  * or NULL on failure.
  */
 t_mshell_var	*split_key_value(char *kv_pair)
@@ -38,4 +38,14 @@ t_mshell_var	*split_key_value(char *kv_pair)
 		mshell_var->value = NULL;
 	}
 	return (mshell_var);
+}
+
+void	safe_close(int *fd)
+{
+	if (fd && *fd >= 0)
+	{
+		if (close(*fd) == -1)
+			return ;
+		*fd = -1;
+	}
 }

@@ -113,7 +113,7 @@ void	handle_word_token(t_mshell *shell, t_list **cmd_list,
 		if (arg_index < MAX_ARGS)
 		{
 			(*current)->argv[arg_index] = ft_strdup(value);
-			(*current)->argv[arg_index + 1] = NULL; 
+			(*current)->argv[arg_index + 1] = NULL;
 		}
 	}
 }
@@ -138,6 +138,7 @@ int	handle_input_redir(t_mshell *shell, t_list **cmd_list,
 	redir = malloc(sizeof(t_redir));
 	if (!redir)
 		return (-1);
+	redir->fd = -1;
 	redir->type = (token->type == TOKEN_REDIRECT_IN) ? R_INPUT : R_HEREDOC;
 	redir->filename = ft_strdup((token + 1)->value);
 	if (!redir->filename)

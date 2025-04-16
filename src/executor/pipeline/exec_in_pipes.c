@@ -48,38 +48,9 @@ void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
 	pipe_fd[0] = -1;
 	pipe_fd[1] = -1;
 }
-int safe_close(int *fd)
-{
-	if (fd && *fd >= 0)
-	{
-		if (close(*fd) == -1)
-			return (0);
-		*fd = -1;
-	}
-	return (1);
-}
 
-void	close_all_heredoc_fds(t_cmd *cmd_list)
-{
-	t_list	*rlist;
-	t_redir	*redirection;
 
-	while (cmd_list)
-	{
-		rlist = cmd_list->redirs;
-		while (rlist)
-		{
-			redirection = rlist->content;
-			if (is_heredoc(redirection))
-			{
-				if (!safe_close(&redirection->fd))
-					perror("close_all_heredoc_fds: close");
-			}
-			rlist = rlist->next;
-		}
-		cmd_list = cmd_list->next;
-	}
-}
+
 
 uint8_t	exec_in_pipes(t_cmd *cmd_list)
 {
@@ -89,6 +60,8 @@ uint8_t	exec_in_pipes(t_cmd *cmd_list)
 	t_pipe_info	info;
 	t_cmd		*cmd;
 
+	if (!cmd_list)
+		return (EXIT_SUCCESS);
 	cmd = cmd_list;
 	pipe_fd[0] = -1;
 	pipe_fd[1] = -1;
