@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_free_arrstrs.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/16 22:56:00 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/02/16 22:57:17 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/16 17:51:49 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,15 @@ void	ft_free_arrstrs(char **arr)
 {
 	int	i;
 
-	i = 0;
 	if (!arr)
 		return ;
+	i = 0;
 	while (arr[i])
 	{
 		free(arr[i]);
+		arr[i] = NULL;
 		i++;
 	}
 	free(arr);
+	arr = NULL;
 }

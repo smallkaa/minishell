@@ -50,71 +50,79 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	return (exit_status);
 }
 
-void free_split(char **array)
-{
-	int	i;
+// uint8_t	run_interactive_mode(t_mshell *mshell)
+// {
+// 	char	*input;
+// 	uint8_t	exit_status;
+// 	t_cmd	*cmd;
+// 	char	**lines;
+// 	int		i;
 
-	i = 0;
-	if (!array)
-		return ;
-	while (array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-	array = NULL;
-}
+// 	lines = NULL;
+// 	while (1)
+// 	{
+// 		input = readline("minishell: ");
+// 		if (!input) // EOF (Ctrl+D)
+// 			return (EXIT_FAILURE);
+// 		if (*input)
+// 			add_history(input);
+// 		lines = ft_split(input, '\n');
+// 		if (!lines)
+// 		{
+// 			free(input);
+// 			continue ;
+// 		}
+
+// 		i = 0;
+// 		while (lines && lines[i])
+// 		{
+// 			// Ignore empty lines
+// 			if (lines[i][0] == '\0')
+// 			{
+// 				i++;
+// 				continue ;
+// 			}
+// 			cmd = run_parser(mshell, lines[i]);
+// 			if (cmd)
+// 			{
+// 				exit_status = run_executor(cmd);
+// 				free_cmd(cmd);
+// 			}
+// 			i++;
+// 		}
+// 		ft_free_arrstrs(lines);
+// 		free(input);
+// 		input = NULL;
+// 	}
+// 	return (exit_status);
+// }
 
 uint8_t	run_interactive_mode(t_mshell *mshell)
 {
 	char	*input;
 	uint8_t	exit_status;
 	t_cmd	*cmd;
-	char	**lines;
-	int		i;
-
-	lines = NULL;
 
 	while (1)
 	{
 		input = readline("minishell: ");
-
-		if (!input) // EOF (Ctrl+D)
+		if (!input)
 			return (EXIT_FAILURE);
 		if (*input)
 			add_history(input);
-		lines = ft_split(input, '\n');
-		if (!lines)
+		cmd = run_parser(mshell, input);
+		if (!cmd)
 		{
 			free(input);
-			continue ;
+			return (EXIT_SUCCESS);
 		}
-
-		i = 0;
-		while (lines && lines[i])
-		{
-			// Ignore empty lines
-			if (lines[i][0] == '\0')
-			{
-				i++;
-				continue ;
-			}
-			cmd = run_parser(mshell, lines[i]);
-			if (cmd)
-			{
-				exit_status = run_executor(cmd);
-				free_cmd(cmd);
-			}
-			i++;
-		}
-		free_split(lines);
+		exit_status = run_executor(cmd);
+		free_cmd(cmd);
 		free(input);
 		input = NULL;
 	}
 	return (exit_status);
 }
-
 int	main(int argc, char **argv, char **envp)
 {
 	t_mshell	*minishell;
