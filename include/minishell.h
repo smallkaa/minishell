@@ -21,6 +21,7 @@
 # include "libft.h"
 # include "executor.h"
 # include "tokenizer.h"
+# include "parser.h"
 # include "signals.h"
 # include "command.h"
 

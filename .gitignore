@@ -58,6 +58,10 @@ dkms.conf
 *.pdf
 
 .vscode/
+.zed/
+.cache/
+minishell_tester/
+compile_commands.json
 
 # tests
 sources_dump.txt
