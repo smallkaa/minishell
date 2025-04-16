@@ -120,7 +120,7 @@ void print_error(const char *msg);
 
 // free memory utils
 void free_minishell(t_mshell *minishell);
-void free_mshell_var(t_mshell_var *var);
 void free_cmd(t_cmd *cmd);
+void free_mshell_var(t_mshell_var *var);
 
 #endif /* MINISHELL_H */

@@ -31,6 +31,7 @@ SRC_DIRS := src \
 			src/mshell \
 			src/mshell/env \
 			src/errors \
+			src/free_memory \
 			src/mshell/varables_hash_table \
 			src/executor/builtins \
 			src/executor/builtins/cd \

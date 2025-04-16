@@ -50,47 +50,6 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	return (exit_status);
 }
 
-// uint8_t	run_interactive_mode(t_mshell *mshell)
-// {
-// 	char	*input;
-// 	uint8_t	exit_status;
-// 	t_cmd	*cmd;
-
-
-// 	while (1)
-// 	{
-
-// 		input = readline("minishell: ");
-
-// 		// check for EOF / Ctrl+D
-// 		if (!input)
-// 			return (EXIT_FAILURE);
-
-// 		// Step 2: add input to history
-// 		if (*input)
-// 			add_history(input);
-
-// 		debug_printf("Return: %s\n", input); // test print statment
-
-// 		// Step 3: process input
-
-// 		cmd = run_parser(mshell, input);
-// 		if (!cmd)
-// 		{
-// 			free(input);
-// 			input = NULL;
-// 			continue ;
-// 		}
-
-// 		exit_status = run_executor(cmd);
-// 		free_cmd(cmd);
-// 		cmd = NULL;
-// 		free(input);
-// 		input = NULL;
-// 	}
-// 	return (exit_status);
-// }
-
 void free_split(char **array)
 {
 	int	i;
@@ -104,6 +63,7 @@ void free_split(char **array)
 		i++;
 	}
 	free(array);
+	array = NULL;
 }
 
 uint8_t	run_interactive_mode(t_mshell *mshell)
@@ -138,11 +98,9 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			if (lines[i][0] == '\0')
 			{
 				i++;
-				continue;
+				continue ;
 			}
-
 			cmd = run_parser(mshell, lines[i]);
-
 			if (cmd)
 			{
 				exit_status = run_executor(cmd);
@@ -152,8 +110,8 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		}
 		free_split(lines);
 		free(input);
+		input = NULL;
 	}
-
 	return (exit_status);
 }
 
