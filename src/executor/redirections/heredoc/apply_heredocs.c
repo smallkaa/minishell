@@ -10,7 +10,7 @@ static int	new_heredoc_fd(const char *delim)
 	{
 		safe_close(&pipe_fd[0]);
 		safe_close(&pipe_fd[1]);
-		return (perror_return("new_heredoc_fd: write", WRITE_HERED_ERR));
+		return (WRITE_HERED_ERR);
 	}
 	safe_close(&pipe_fd[1]);
 	return (pipe_fd[0]);
@@ -47,15 +47,15 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 {
 	t_cmd	*initial_cmd_list;
 
-	initial_cmd_list = cmd;
 	if (!cmd)
 		return (error_return("apply_heredocs: cmd not found\n", EXIT_FAILURE));
+	initial_cmd_list = cmd;
 	while (cmd)
 	{
 		if (!handle_cmd_heredocs(cmd))
 		{
 			close_all_heredoc_fds(initial_cmd_list);
-			return (EXIT_FAILURE);
+			return (error_return("apply_heredocs: failed\n", EXIT_FAILURE));
 		}
 		cmd = cmd->next;
 	}
