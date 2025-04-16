@@ -11,9 +11,9 @@
  * @param idx Pointer to the current index in `new_env`.
  * @return `true` if the entry was added successfully, `false` on failure.
  */
-bool	add_env_entry(t_mshell_var *var, char **new_env, int *idx)
+bool add_env_entry(t_mshell_var *var, char **new_env, int *idx)
 {
-	char	*entry;
+	char *entry;
 
 	entry = create_env_entry(var);
 	if (!entry)
@@ -24,7 +24,7 @@ bool	add_env_entry(t_mshell_var *var, char **new_env, int *idx)
 }
 
 /**
- * @brief Processes a single bucket in the hash table and adds 
+ * @brief Processes a single bucket in the hash table and adds
  * entries to `new_env`.
  *
  * Iterates through all variables in a bucket and adds assigned variables
@@ -33,12 +33,12 @@ bool	add_env_entry(t_mshell_var *var, char **new_env, int *idx)
  * @param bucket The linked list of environment variables in a bucket.
  * @param new_env The array where environment variables are stored.
  * @param idx Pointer to the current index in `new_env`.
- * @return `true` if all entries were added successfully, `false` 
+ * @return `true` if all entries were added successfully, `false`
  * if a failure occurred.
  */
-bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
+bool process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
 {
-	t_mshell_var	*current;
+	t_mshell_var *current;
 
 	current = bucket;
 	while (current)
@@ -63,10 +63,10 @@ bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
  * @param new_env The newly allocated array for storing environment variables.
  * @return `true` if successful, `false` if a memory allocation fails.
  */
-static bool	populate_env_array(t_mshell *mshell, char **new_env)
+static bool populate_env_array(t_mshell *mshell, char **new_env)
 {
-	int	i;
-	int	idx;
+	int i;
+	int idx;
 
 	i = 0;
 	idx = 0;
@@ -88,11 +88,11 @@ static bool	populate_env_array(t_mshell *mshell, char **new_env)
  * @param ht Pointer to the hash table containing environment variables.
  * @return The number of exported environment variables.
  */
-static int	count_exported_vars(t_hash_table *ht)
+static int count_exported_vars(t_hash_tbl *ht)
 {
-	int				i;
-	int				count;
-	t_mshell_var	*curr;
+	int i;
+	int count;
+	t_mshell_var *curr;
 
 	count = 0;
 	i = 0;
@@ -118,24 +118,24 @@ static int	count_exported_vars(t_hash_table *ht)
  *
  * @param mshell Pointer to the Minishell structure.
  */
-void	update_env(t_mshell *mshell)
+void update_env(t_mshell *mshell)
 {
-	int		count;
-	char	**new_env;
-	bool	populated;
+	int count;
+	char **new_env;
+	bool populated;
 
 	count = count_exported_vars(mshell->hash_table);
 	new_env = malloc(sizeof(char *) * (count + 1));
 	if (!new_env)
 	{
 		print_error("malloc failed\n");
-		return ;
+		return;
 	}
 	populated = populate_env_array(mshell, new_env);
 	if (!populated)
 	{
 		free_old_env(new_env);
-		return ;
+		return;
 	}
 	free_old_env(mshell->env);
 	mshell->env = new_env;

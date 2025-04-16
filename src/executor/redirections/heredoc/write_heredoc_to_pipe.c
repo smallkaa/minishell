@@ -22,14 +22,14 @@ static int	read_next_heredoc_line(char **line, const char *delimiter)
 	return (1);
 }
 
-int	write_heredoc_to_pipe(int pipe_fd, const char *delimiter)
+int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
 {
 	char	*line;
 	size_t	total_written;
 
 	line = NULL;
 	total_written = 0;
-	while (read_next_heredoc_line(&line, delimiter))
+	while (read_next_heredoc_line(&line, delim))
 	{
 		total_written += ft_strlen(line) + 1;
 		if (heredoc_exceeds_limit(total_written))

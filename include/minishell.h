@@ -75,12 +75,12 @@ typedef struct s_mshell_var
 typedef struct s_hash_table
 {
 	t_mshell_var *buckets[HASH_SIZE];
-} t_hash_table;
+} t_hash_tbl;
 
 typedef struct s_mshell
 {
 	char **env;
-	t_hash_table *hash_table;
+	t_hash_tbl *hash_table;
 	bool pipe;
 	uint8_t exit_status;
 	uint8_t syntax_exit_status;

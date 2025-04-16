@@ -1,17 +1,18 @@
 #ifndef EXECUTOR_H
-#define EXECUTOR_H
+# define EXECUTOR_H
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
-typedef struct s_cmd t_cmd;
-typedef struct s_mshell t_mshell;
-typedef struct s_mshell_var t_mshell_var;
-typedef struct s_hash_table t_hash_table;
-typedef enum e_redir_type t_redir_type;
-typedef struct s_redir t_redir;
-typedef struct s_builtin_dispatch t_builtin_disp;
+typedef struct s_cmd				t_cmd;
+typedef struct s_mshell				t_mshell;
+typedef struct s_mshell_var			t_mshell_var;
+typedef struct s_hash_table			t_hash_tbl;
+typedef enum e_redir_type			t_redir_type;
+typedef struct s_redir				t_redir;
+typedef struct s_builtin_dispatch	t_builtin_disp;
 
-typedef struct s_exit_info {
+typedef struct s_exit_info
+{
 	const char	*prefix;
 	const char	*arg;
 	const char	*msg;
@@ -21,16 +22,14 @@ typedef struct s_exit_info {
 
 typedef struct s_pipe_info
 {
-	int in_fd;
-	int *pipe_fd;
-	pid_t *pids;
-	int *idx;
-	t_cmd *cmd_list;
-} t_pipe_info;
+	int		in_fd;
+	int		*pipe_fd;
+	pid_t	*pids;
+	int		*idx;
+	t_cmd	*cmd_list;
+}	t_pipe_info;
 
 /*------FUNCTIONS---------------------------------------------------*/
-
-
 
 // parent process
 uint8_t					exec_in_current_process(t_cmd *cmd);
@@ -71,11 +70,11 @@ uint8_t					handle_env(t_cmd *cmd);
 // export
 uint8_t					handle_export(t_cmd *cmd);
 void					handle_sorted_env(t_mshell *mshell);
-void					collect_keys(t_hash_table *ht, char ***keys, int *count);
+void					collect_keys(t_hash_tbl *ht, char ***keys, int *count);
 
 // unset
 uint8_t					handle_unset(t_cmd *cmd);
-t_mshell_var			*create_new_variable(char *key, char *value, int assigned);
+t_mshell_var			*create_new_var(char *key, char *value, int assigned);
 
 // cd
 uint8_t					handle_cd(t_cmd *cmd);
@@ -89,7 +88,7 @@ uint8_t					apply_heredocs(t_cmd *cmd);
 bool					heredoc_exceeds_limit(size_t total_written);
 bool					is_heredoc(t_redir *redirection);
 void					close_all_heredoc_fds(t_cmd *cmd_list);
-int						write_heredoc_to_pipe(int pipe_fd, const char *delimiter);
+int						write_heredoc_to_pipe(int pipe_fd, const char *delim);
 
 // utils
 t_mshell_var			*split_key_value(char *key_value_pair);
@@ -104,13 +103,11 @@ void					unset_error(char *str);
 int						error_return(char *msg, int exit_status);
 
 void					child_execve_error(t_cmd *cmd);
-void	handle_is_directory(t_cmd *cmd);
-void	handle_not_found_or_command(t_cmd *cmd);
-void	handle_permission_denied(t_cmd *cmd);
-void	handle_exec_format_error(t_cmd *cmd);
-void	handle_generic_execve_error(t_cmd *cmd);
-void	print_and_exit(t_exit_info info);
-
-// void	handle_exec_format_error(t_cmd *cmd);
+void					handle_is_directory(t_cmd *cmd);
+void					handle_not_found_or_command(t_cmd *cmd);
+void					handle_permission_denied(t_cmd *cmd);
+void					handle_exec_format_error(t_cmd *cmd);
+void					handle_generic_execve_error(t_cmd *cmd);
+void					print_and_exit(t_exit_info info);
 
 #endif /* EXECUTOR_H */
