@@ -1,5 +1,14 @@
 #include "minishell.h"
 
+void	safe_close(int *fd)
+{
+	if (fd && *fd >= 0)
+	{
+		if (close(*fd) == -1)
+			return ;
+		*fd = -1;
+	}
+}
 bool	heredoc_exceeds_limit(size_t total_written)
 {
 	return (total_written >= HEREDOC_MAX_SIZE);

@@ -1,30 +1,7 @@
 #include "minishell.h"
-/**
- * @brief Frees the dynamically allocated memory for sorted environment
- *        variable keys.
- *
- * This function iterates through an array of dynamically allocated
- * environment variable keys, freeing each key and then freeing the array itself.
- *
- * @param keys Array of allocated strings containing environment variable keys.
- * @param num_keys Number of keys in the array.
- */
 
-static bool	is_valid_varname(const char *key)
-{
-	int	i;
 
-	if (!key || !(ft_isalpha(key[0]) || key[0] == '_'))
-		return (false);
-	i = 1;
-	while (key[i] && key[i] != '=')
-	{
-		if (!(ft_isalnum(key[i]) || key[i] == '_'))
-			return (false);
-		i++;
-	}
-	return (true);
-}
+
 
 /**
  * @brief Processes a single argument for the `export` command.
@@ -37,7 +14,7 @@ static bool	is_valid_varname(const char *key)
  * If the variable name is invalid, an error message is printed.
  *
  * @param cmd Pointer to the command structure containing environment context.
- * @param arg The argument string containing a variable name 
+ * @param arg The argument string containing a variable name
  * (and optional value).
  * @return `EXIT_SUCCESS` (0) if the variable was successfully processed.
  *         `EXIT_FAILURE` (1) if the argument is invalid.
@@ -83,7 +60,7 @@ static void	print_export_usage(char *arg)
 /**
  * @brief Checks if the given argument is an invalid export "option".
  *
- * Since we're not supporting any valid options, anything starting 
+ * Since we're not supporting any valid options, anything starting
  * with '-' is invalid.
  */
 static bool	is_invalid_option(const char *arg)
@@ -96,18 +73,18 @@ static bool	is_invalid_option(const char *arg)
 }
 
 /**
- * @brief Handles the `export` built-in command in Minishell 
+ * @brief Handles the `export` built-in command in Minishell
  * (no options supported).
  *
  * Behavior:
- * - If `export` is called **without arguments**, 
+ * - If `export` is called **without arguments**,
  * it prints the current exported variables.
  * - If called with arguments:
- *   -- If argument starts with '-', print usage & return 
+ *   -- If argument starts with '-', print usage & return
  * 2 immediately (invalid option).
- *   -- Else, validate the variable name. 
+ *   -- Else, validate the variable name.
  * If invalid => not a valid identifier => exit code 1.
- * - If multiple invalid variables appear, the final exit code is 
+ * - If multiple invalid variables appear, the final exit code is
  * 1 if at least one was invalid.
  * - If executed in a pipeline, the process exits with the appropriate status.
  *

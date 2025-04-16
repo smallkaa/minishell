@@ -4,6 +4,24 @@
  */
 #include "minishell.h"
 
+bool	is_builtin(t_cmd *cmd)
+{
+	const t_builtin_disp	*table;
+	size_t					size;
+	size_t					i;
+
+	table = get_builtin_table(&size);
+	i = 0;
+	if (!cmd->argv[0])
+		return (false);
+	while (i < size)
+	{
+		if (ft_strcmp(cmd->argv[0], (char *)table[i].name) == 0)
+			return (true);
+		i++;
+	}
+	return (false);
+}
 const t_builtin_disp *get_builtin_table(size_t *size)
 {
 	static const t_builtin_disp table[] = {

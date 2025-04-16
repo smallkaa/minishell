@@ -47,9 +47,9 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 {
 	t_cmd	*initial_cmd_list;
 
+	initial_cmd_list = cmd;
 	if (!cmd)
 		return (error_return("apply_heredocs: cmd not found\n", EXIT_FAILURE));
-	initial_cmd_list = cmd;
 	while (cmd)
 	{
 		if (!handle_cmd_heredocs(cmd))

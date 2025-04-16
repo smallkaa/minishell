@@ -27,6 +27,7 @@ RM      := rm -rf
 SRC_DIRS := src \
 			src/parser \
 			src/executor \
+			src/executor/executor_helpers \
 			src/mshell \
 			src/mshell/env \
 			src/errors \

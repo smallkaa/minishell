@@ -31,6 +31,13 @@ typedef struct s_pipe_info
 
 /*------FUNCTIONS---------------------------------------------------*/
 
+// executor utils
+bool					is_valid_varname(const char *key);
+bool					is_exit_command(t_cmd *cmd);
+void					cleanup_and_exit(t_cmd *cmd, int exit_status);
+bool					command_too_long(char **argv);
+void					update_underscore(t_cmd *cmd, char *binary_path);
+
 // parent process
 uint8_t					exec_in_current_process(t_cmd *cmd);
 

@@ -72,7 +72,8 @@ void free_cmd(t_cmd *cmd)
 {
 	t_cmd *next;
 	int i;
-
+	if (!cmd)
+		return ;
 	while (cmd)
 	{
 		i = 0;
@@ -93,7 +94,7 @@ void free_cmd(t_cmd *cmd)
 void free_minishell(t_mshell *minishell)
 {
 	if (!minishell)
-		return;
+		return ;
 	if (minishell->env)
 	{
 		free_env(minishell->env);

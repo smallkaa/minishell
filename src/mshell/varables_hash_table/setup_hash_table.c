@@ -4,6 +4,7 @@
  */
 #include "minishell.h"
 
+
 /**
  * @brief Creates a new environment variable structure.
  *

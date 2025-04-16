@@ -1,50 +1,5 @@
 #include "minishell.h"
 
-// static uint8_t	apply_input_redirection(t_redir *redir)
-// {
-// 	int	fd;
-
-// 	if (redir->type == R_HEREDOC)
-// 	{
-// 		if (redir->fd == -1)
-// 		{
-// 			fprintf(stderr, "apply_input_redirection: fd already closed\n");
-// 			return (EXIT_FAILURE);
-// 		}
-// 		if (dup2(redir->fd, STDIN_FILENO) == -1)
-// 		{
-// 			perror("apply_input_redirection: dup2 heredoc");
-// 			return (EXIT_FAILURE);
-// 		}
-// 		if (close(redir->fd) == -1)
-// 		{
-// 			perror("apply_input_redirection: close heredoc");
-// 			return (EXIT_FAILURE);
-// 		}
-// 		redir->fd = -2;
-// 	}
-// 	else if (redir->type == R_INPUT)
-// 	{
-// 		fd = open(redir->filename, O_RDONLY);
-// 		if (fd == -1)
-// 		{
-// 			perror(redir->filename);
-// 			return (EXIT_FAILURE);
-// 		}
-// 		if (dup2(fd, STDIN_FILENO) == -1)
-// 		{
-// 			perror("apply_input_redirection: dup2 input");
-// 			close(fd);
-// 			return (EXIT_FAILURE);
-// 		}
-// 		if (close(fd) == -1)
-// 		{
-// 			perror("apply_input_redirection: close input file");
-// 			return (EXIT_FAILURE);
-// 		}
-// 	}
-// 	return (EXIT_SUCCESS);
-// }
 static uint8_t	handle_heredoc_redirection(t_redir *redir)
 {
 	if (redir->fd == -1)
