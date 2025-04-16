@@ -49,7 +49,7 @@ static void	bubble_sort(char **keys, int count)
 }
 
 /**
- * @brief Prints sorted environment variables in the 
+ * @brief Prints sorted environment variables in the
  * `declare -x key="value"` format.
  *
  * Iterates over the sorted keys, retrieves their values, and prints them in

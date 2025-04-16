@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-static int count_total_keys(t_hash_tbl *ht)
+static int	count_total_keys(t_hash_tbl *ht)
 {
-	int i;
-	int total_keys;
-	t_mshell_var *var;
+	int				i;
+	int				total_keys;
+	t_mshell_var	*var;
 
 	i = 0;
 	total_keys = 0;
@@ -21,7 +21,7 @@ static int count_total_keys(t_hash_tbl *ht)
 	return (total_keys);
 }
 
-static bool allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
+static bool	allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
 {
 	if (!ht || !keys || !count)
 		return (false);
@@ -35,11 +35,11 @@ static bool allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
 	return (true);
 }
 
-static void fill_keys_from_hash(t_hash_tbl *ht, char **keys)
+static void	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 {
-	t_mshell_var *var;
-	int i;
-	int key_index;
+	t_mshell_var	*var;
+	int				i;
+	int				key_index;
 
 	i = 0;
 	key_index = 0;
@@ -55,9 +55,9 @@ static void fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 	}
 }
 
-void collect_keys(t_hash_tbl *ht, char ***keys, int *count)
+void	collect_keys(t_hash_tbl *ht, char ***keys, int *count)
 {
 	if (!allocate_keys_array(ht, keys, count))
-		return;
+		return ;
 	fill_keys_from_hash(ht, *keys);
 }

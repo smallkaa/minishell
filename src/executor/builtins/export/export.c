@@ -1,8 +1,5 @@
 #include "minishell.h"
 
-
-
-
 /**
  * @brief Processes a single argument for the `export` command.
  *
