@@ -126,8 +126,10 @@ uint8_t	handle_cd(t_cmd *cmd)
 {
 	uint8_t	status;
 
-	if (!cmd || !cmd->minishell)
-		return (error_return("cd: invalid command structure\n", EXIT_FAILURE));
+	if (!cmd)
+		return (no_cmd_error("cd"));
+	if (!cmd->argv)
+		return (no_argv_error("cd"));
 	if (!cmd->argv[1] || (cmd->argv[1][0] == '~' && !cmd->argv[1][1]))
 		status = cd_no_args(cmd);
 	else if (cmd->argv[2])
@@ -136,6 +138,5 @@ uint8_t	handle_cd(t_cmd *cmd)
 		return (EXIT_SUCCESS);
 	else
 		status = change_and_update_pwd(cmd);
-	cmd->minishell->exit_status = status;
 	return (status);
 }

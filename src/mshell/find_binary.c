@@ -1,41 +1,5 @@
 #include "minishell.h"
 
-// char	*assign_binary(char *path, t_cmd *cmd)
-// {
-// 	char	*binary;
-// 	char	*temp;
-
-// 	temp = ft_strjoin(path, "/");
-// 	if (!temp)
-// 	{
-// 		print_error("Error (assign_binary): ft_strjoin failed\n");
-// 		return (NULL);
-// 	}
-// 	binary = ft_strjoin(temp, cmd->argv[0]);
-// 	free(temp);
-// 	if (!binary)
-// 	{
-// 		cmd->minishell->exit_status = 127;
-// 		return (NULL);
-// 	}
-// 	if (access(binary, F_OK) != 0)
-// 	{
-// 		free(binary);
-// 		cmd->minishell->exit_status = 127;
-// 		return (NULL);
-// 	}
-// 	if (access(binary, X_OK) != 0)
-// 	{
-// 		free(binary);
-// 		cmd->minishell->exit_status = 126;
-// 		return (NULL);
-// 	}
-// 	if (cmd->binary)
-// 		free(cmd->binary);
-// 	cmd->minishell->exit_status = EXIT_SUCCESS;
-// 	return (binary);
-// }
-
 static char	*handle_direct_path(t_cmd *cmd)
 {
 

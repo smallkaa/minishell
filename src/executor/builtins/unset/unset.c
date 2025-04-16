@@ -112,11 +112,10 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
  */
 uint8_t	handle_unset(t_cmd *cmd)
 {
-	if (!cmd || !cmd->argv)
-	{
-		print_error("minishell: unset: no cmd or minishell instanse\n");
-		return (EXIT_FAILURE);
-	}
+	if (!cmd)
+		return (no_cmd_error("unset"));
+	if (!cmd->argv)
+		return (no_argv_error("unset"));
 	if (!cmd->argv[1])
 		return (EXIT_SUCCESS);
 	return (do_unset_loop(cmd));

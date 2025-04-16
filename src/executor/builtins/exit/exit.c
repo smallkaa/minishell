@@ -92,7 +92,9 @@ static uint8_t	get_exit_status(char *arg)
 uint8_t	handle_exit(t_cmd *cmd)
 {
 	if (!cmd)
-		return (error_return("exit: no cmd\n", EXIT_FAILURE));
+		return (no_cmd_error("exit"));
+	if (!cmd->argv)
+		return (no_argv_error("exit"));
 	if (!cmd->argv[1])
 		return (cmd->minishell->exit_status);
 	if (cmd->argv[1][0] == '\0')

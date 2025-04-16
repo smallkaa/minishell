@@ -100,6 +100,8 @@ uint8_t	handle_echo(t_cmd *cmd)
 	uint8_t	exit_status;
 	int		newline_flag;
 
+	if (!cmd)
+		return (no_cmd_error("echo"));
 	newline_flag = 1;
 	i = handle_echo_flags(cmd, &newline_flag);
 	exit_status = print_content(cmd, i, &newline_flag);

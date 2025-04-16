@@ -108,7 +108,8 @@ void					cmd_missing_command_error(t_cmd *cmd);
 void					export_error(t_mshell_var *pair);
 void					unset_error(char *str);
 int						error_return(char *msg, int exit_status);
-
+uint8_t					no_cmd_error(char *msg);
+uint8_t					no_argv_error(char *msg);
 void					child_execve_error(t_cmd *cmd);
 void					handle_is_directory(t_cmd *cmd);
 void					handle_not_found_or_command(t_cmd *cmd);

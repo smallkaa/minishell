@@ -4,37 +4,6 @@
  */
 #include "minishell.h"
 
-/**
- * @brief Prints all assigned environment variables from a single hash
- * table bucket.
- *
- * Iterates through the linked list of environment variables in the
- * given bucket and prints each assigned variable in the format:
- * ```
- * KEY=VALUE
- * ```
- * If a variable exists but has no assigned value, it is displayed as:
- * ```
- * KEY=
- * ```
- *
- * @param var Pointer to the first variable in the bucket.
- */
-// static void	print_env_bucket(t_mshell_var *var)
-// {
-// 	while (var)
-// 	{
-// 		if (var->val_assigned)
-// 		{
-// 			if (var->value)
-// 				printf("%s=%s\n", var->key, var->value);
-// 			else
-// 				printf("%s=\n", var->key);
-// 		}
-// 		var = var->next;
-// 	}
-// }
-
 void	print_env(t_cmd *cmd)
 {
 	int	i;
@@ -42,7 +11,7 @@ void	print_env(t_cmd *cmd)
 	i = 0;
 	while (cmd->minishell->env[i])
 	{
-		printf("%s\n", cmd->minishell->env[i]);
+		(void)printf("%s\n", cmd->minishell->env[i]);
 		i++;
 	}
 }
@@ -67,6 +36,10 @@ uint8_t	handle_env(t_cmd *cmd)
 {
 	uint8_t	exit_status;
 
+	if (!cmd)
+		return (no_cmd_error("env"));
+	if (!cmd->argv)
+		return (no_argv_error("env"));
 	if (cmd->argv[1])
 	{
 		print_error("env: ‘");

@@ -118,24 +118,24 @@ static int count_exported_vars(t_hash_tbl *ht)
  *
  * @param mshell Pointer to the Minishell structure.
  */
-void update_env(t_mshell *mshell)
+void	update_env(t_mshell *mshell)
 {
-	int count;
-	char **new_env;
-	bool populated;
+	int		count;
+	char	**new_env;
+	bool	populated;
 
 	count = count_exported_vars(mshell->hash_table);
 	new_env = malloc(sizeof(char *) * (count + 1));
 	if (!new_env)
 	{
-		print_error("malloc failed\n");
-		return;
+		print_error("-minishell: update_env: malloc failed\n");
+		return ;
 	}
 	populated = populate_env_array(mshell, new_env);
 	if (!populated)
 	{
 		free_old_env(new_env);
-		return;
+		return ;
 	}
 	free_old_env(mshell->env);
 	mshell->env = new_env;

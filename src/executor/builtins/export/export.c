@@ -94,6 +94,10 @@ uint8_t	handle_export(t_cmd *cmd)
 	int		i;
 	uint8_t	ret;
 
+	if (!cmd)
+		return (no_cmd_error("export"));
+	if (!cmd->argv)
+		return (no_argv_error("export"));
 	exit_status = 0;
 	if (!cmd->argv[1])
 	{
