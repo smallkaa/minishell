@@ -17,11 +17,7 @@ static int	ft_putstr_custom(char *str)
 
 	written = write(STDOUT_FILENO, str, ft_strlen(str));
 	if (written == -1)
-	{
-		if (errno != EPIPE)
-			perror("minishell: write");
-		return (EXIT_FAILURE);
-	}
+		return (perror_return("ft_putstr_custom: write", EXIT_FAILURE));
 	return (EXIT_SUCCESS);
 }
 
@@ -45,10 +41,7 @@ static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 	while (cmd->argv[i])
 	{
 		if (!cmd->argv[i])
-		{
-			print_error("Error: print_content, string == NULL\n");
-			return (EXIT_FAILURE);
-		}
+			return (error_return("print_content: failed\n", EXIT_FAILURE));
 		if (ft_putstr_custom(cmd->argv[i]) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 		if (cmd->argv[i + 1] && ft_putstr_custom(" ") == EXIT_FAILURE)

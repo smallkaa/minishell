@@ -14,8 +14,7 @@
  */
 static uint8_t	cd_too_many_args(void)
 {
-	print_error("minishell: cd: too many arguments\n");
-	return (EXIT_FAILURE);
+	return (error_return("cd: too many arguments\n", EXIT_FAILURE));
 }
 
 /**
@@ -63,17 +62,10 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 	ft_bzero(old_cwd, MS_PATHMAX);
 	home_path = ms_getenv(cmd->minishell, "HOME");
 	if (!home_path)
-	{
-		print_error("minishell: cd: HOME not set\n");
-		return (EXIT_FAILURE);
-	}
+		return (error_return("cd: HOME not set\n", EXIT_FAILURE));
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(home_path) != 0)
-	{
-		print_error("minishell: ");
-		perror(cmd->argv[0]);
-		return (EXIT_FAILURE);
-	}
+		return (perror_return(cmd->argv[0], EXIT_FAILURE));
 	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }
@@ -135,10 +127,7 @@ uint8_t	handle_cd(t_cmd *cmd)
 	uint8_t	status;
 
 	if (!cmd || !cmd->minishell)
-	{
-		print_error("minishell: cd: invalid command structure\n");
-		return (EXIT_FAILURE);
-	}
+		return (error_return("cd: invalid command structure\n", EXIT_FAILURE));
 	if (!cmd->argv[1] || (cmd->argv[1][0] == '~' && !cmd->argv[1][1]))
 		status = cd_no_args(cmd);
 	else if (cmd->argv[2])
