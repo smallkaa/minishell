@@ -1,39 +1,40 @@
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <readline/history.h>
-#include <readline/readline.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <stdint.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include <string.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdbool.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <sys/wait.h>
+# include <fcntl.h>
+# include <string.h>
+# include <signal.h>
+# include <sys/types.h>
+# include <errno.h>
+# include <stdint.h>
+# include <limits.h>
+# include <sys/stat.h>
+# include <string.h>
 
-#include "libft.h"
-#include "executor.h"
-#include "tokenizer.h"
+# include "libft.h"
+# include "executor.h"
+# include "tokenizer.h"
 # include "parser.h"
-#include "signals.h"
-#include "command.h"
+# include "signals.h"
+# include "command.h"
 
 // limits
-#define ERROR_BUF_SIZE 256
-#define MS_PATHMAX 4096
-#define HASH_SIZE 128
-#define HEREDOC_MAX_SIZE 1048576
-#define CMD_MAX_SIZE 1048576
+# define ERROR_BUF_SIZE 256
+# define MS_PATHMAX 4096
+# define HASH_SIZE 128
+# define HEREDOC_MAX_SIZE 1048576
+# define CMD_MAX_SIZE 1048576
 
 // errors
-#define WRITE_HERED_ERR -2
+# define WRITE_HERED_ERR -2
+# define REDIR_ERR -3
 /**
  * @struct	s_builtin_dispatch
  * @brief	Maps a builtin command name to its handler function.

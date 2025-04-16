@@ -9,6 +9,7 @@ void	safe_close(int *fd)
 		*fd = -1;
 	}
 }
+
 bool	heredoc_exceeds_limit(size_t total_written)
 {
 	return (total_written >= HEREDOC_MAX_SIZE);

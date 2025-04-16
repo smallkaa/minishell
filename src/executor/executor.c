@@ -4,10 +4,10 @@
  */
 #include "minishell.h"
 
-static uint8_t execute_pipeline_or_binary(t_cmd *cmd)
+static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 {
-	t_mshell *minishell;
-	uint8_t exit_status;
+	t_mshell	*minishell;
+	uint8_t		exit_status;
 
 	minishell = cmd->minishell;
 	exit_status = exec_in_pipes(cmd);
@@ -17,10 +17,10 @@ static uint8_t execute_pipeline_or_binary(t_cmd *cmd)
 	return (exit_status);
 }
 
-static uint8_t execute_builtin(t_cmd *cmd)
+static uint8_t	execute_builtin(t_cmd *cmd)
 {
-	t_mshell *minishell;
-	uint8_t exit_status;
+	t_mshell	*minishell;
+	uint8_t		exit_status;
 
 	minishell = cmd->minishell;
 	exit_status = exec_in_current_process(cmd);

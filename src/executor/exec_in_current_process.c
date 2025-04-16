@@ -14,12 +14,10 @@ static uint8_t	restore_fd(int saved_fd, int target_fd)
 {
 	if (dup2(saved_fd, target_fd) == -1)
 	{
-		if (close(saved_fd) == -1)
-			return (perror_return("restore_fd: close", EXIT_FAILURE));
+		safe_close(&saved_fd);
 		return (perror_return("restore_fd: dup2", EXIT_FAILURE));
 	}
-	if (close(saved_fd) == -1)
-		return (perror_return("restore_fd: close", EXIT_FAILURE));
+	safe_close(&saved_fd);
 	return (EXIT_SUCCESS);
 }
 

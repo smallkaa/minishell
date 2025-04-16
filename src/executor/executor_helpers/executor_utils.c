@@ -31,8 +31,10 @@ void	cleanup_and_exit(t_cmd *cmd, int exit_status)
 
 bool	is_exit_command(t_cmd *cmd)
 {
-	int i;
+	int	i;
 
+	if (!cmd)
+		return (false);
 	i = 0;
 	if (!cmd->argv[0])
 		return (false);
