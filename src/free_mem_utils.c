@@ -12,12 +12,12 @@
  *
  * @param env The array of environment variables to free.
  */
-void	free_env(char **env)
+void free_env(char **env)
 {
-	int	i;
+	int i;
 
 	if (!env)
-		return ;
+		return;
 	i = 0;
 	while (env[i])
 	{
@@ -30,7 +30,7 @@ void	free_env(char **env)
 void free_mshell_var(t_mshell_var *var)
 {
 	if (!var)
-		return ;
+		return;
 	free(var->key);
 	free(var->value);
 	free(var);
@@ -44,18 +44,17 @@ void free_mshell_var(t_mshell_var *var)
  *
  * @param hash_table The hash table to free.
  */
-void	free_hash_table(t_hash_table *hash_table)
+void free_hash_table(t_hash_tbl *hash_table)
 {
-	int				i;
-	t_mshell_var	*current;
-	t_mshell_var	*temp;
+	int i;
+	t_mshell_var *current;
+	t_mshell_var *temp;
 
 	if (!hash_table)
-		return ;
+		return;
 	i = 0;
 	while (i < HASH_SIZE)
 	{
-
 
 		current = hash_table->buckets[i];
 		while (current)
@@ -69,11 +68,12 @@ void	free_hash_table(t_hash_table *hash_table)
 	free(hash_table);
 }
 
-void	free_cmd(t_cmd *cmd)
+void free_cmd(t_cmd *cmd)
 {
-	t_cmd	*next;
-	int		i;
-
+	t_cmd *next;
+	int i;
+	if (!cmd)
+		return ;
 	while (cmd)
 	{
 		i = 0;
@@ -108,4 +108,3 @@ void free_minishell(t_mshell *minishell)
 	free(minishell);
 	minishell = NULL;
 }
-

@@ -27,8 +27,10 @@ RM      := rm -rf
 SRC_DIRS := src \
 			src/parser \
 			src/executor \
+			src/executor/executor_helpers \
 			src/mshell \
 			src/mshell/env \
+			src/errors \
 			src/mshell/varables_hash_table \
 			src/executor/builtins \
 			src/executor/builtins/cd \
@@ -40,6 +42,7 @@ SRC_DIRS := src \
 			src/executor/builtins/unset \
 			src/executor/pipeline \
 			src/executor/redirections \
+			src/executor/redirections/heredoc \
 			src/executor/pipeline/pipe_creators \
 			src/executor/pipeline/pipe_executors
 
