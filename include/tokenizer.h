@@ -84,13 +84,13 @@ void	append_char_to_result(char c, char **result);
 void	handle_single_quote(const char *input, size_t *i, int *single_q, char **result, int double_q);
 void	handle_double_quote(const char *input, size_t *i, int *double_q, char **result, int single_q);
 void	handle_backslash(const char *input, size_t *i, char **result, int single_q);
-void	handle_tilde(const char *input, size_t *i, char **result, t_mshell *mshell, int single_q, int double_q);
-void	handle_dollar(const char *input, size_t *i, char **result, t_mshell *mshell, int single_q, int double_q);
+void	handle_tilde(const char *input, size_t *i, char **result, t_mshell *mshell, int quote_style);
+void	handle_dollar(const char *input, size_t *i, char **result, t_mshell *mshell, int single_q);
 
 char *get_env_value(const char *var, t_mshell *minishell);
 char *append_to_result(char *result, const char *append);
 char *handle_escape(const char *input, size_t *i, int single_q);
-char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int single_q, int double_q);
+char *expand_tilde(const char *input, size_t *i, t_mshell *mshell, int quote_style);
 char *get_exit_code(t_mshell *minishell);
 bool	is_valid_redir_target(t_TokenArray *tokens, int i);
 t_cmd	*create_empty_command(t_mshell *shell);
