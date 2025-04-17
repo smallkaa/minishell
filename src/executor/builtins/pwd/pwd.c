@@ -97,8 +97,6 @@ uint8_t	handle_pwd(t_cmd *cmd)
 
 	if (!cmd)
 		return (no_cmd_error("pwd"));
-	if (!cmd->argv)
-		return (no_argv_error("pwd"));
 	if (!cmd->argv[1])
 		exit_status = exec_pwd(cmd);
 	else if (cmd->argv[1][0] == '-' && cmd->argv[1][1] != '\0')

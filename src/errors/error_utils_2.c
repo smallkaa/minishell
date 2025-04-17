@@ -19,14 +19,6 @@ uint8_t	no_cmd_error(char *msg)
 {
 	print_error("-minishell: ");
 	print_error(msg);
-	print_error(": no cmd found\n");
-	return (EXIT_FAILURE);
-}
-
-uint8_t	no_argv_error(char *msg)
-{
-	print_error("-minishell: ");
-	print_error(msg);
-	print_error(": no argv found\n");
+	print_error(": no cmd or argv found\n");
 	return (EXIT_FAILURE);
 }

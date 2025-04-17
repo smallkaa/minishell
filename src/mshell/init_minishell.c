@@ -75,7 +75,7 @@ static int	setup_environment(t_mshell	*mshell, char **envp)
  * - Initializing the hash table for variable storage.
  * - Loading built-in commands.
  *
- * If any initialization step fails, the allocated memory is 
+ * If any initialization step fails, the allocated memory is
  * freed and NULL is returned.
  *
  * @param envp The array of environment variables from the system.

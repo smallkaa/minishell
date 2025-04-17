@@ -73,10 +73,7 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
 	while (cmd->argv[i])
 	{
 		if (is_invalid_option(cmd->argv[i]))
-		{
-			unset_error(cmd->argv[i]);
-			return (2);
-		}
+			return (unset_error(cmd->argv[i]));
 		if (is_valid_identifier(cmd->argv[i]))
 			remove_var_from_ht(cmd->minishell, cmd->argv[i]);
 		i++;
@@ -114,8 +111,6 @@ uint8_t	handle_unset(t_cmd *cmd)
 {
 	if (!cmd)
 		return (no_cmd_error("unset"));
-	if (!cmd->argv)
-		return (no_argv_error("unset"));
 	if (!cmd->argv[1])
 		return (EXIT_SUCCESS);
 	return (do_unset_loop(cmd));

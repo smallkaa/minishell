@@ -4,7 +4,6 @@
  */
 #include "minishell.h"
 
-
 /**
  * @brief Creates a new environment variable structure.
  *
@@ -16,9 +15,9 @@
  * @param assigned Flag indicating if the variable is assigned a value.
  * @return A pointer to the newly created variable, or NULL if allocation fails.
  */
-t_mshell_var *create_new_var(char *key, char *value, int assigned)
+t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 {
-	t_mshell_var *new_var;
+	t_mshell_var	*new_var;
 
 	new_var = malloc(sizeof(t_mshell_var));
 	if (!new_var)
@@ -47,11 +46,11 @@ t_mshell_var *create_new_var(char *key, char *value, int assigned)
  * @param value The value of the variable. Can be NULL.
  * @param assigned Flag indicating if the variable is assigned a value.
  */
-void set_variable(t_mshell *mshell, char *key, char *value, int assigned)
+void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
-	unsigned int index;
-	t_mshell_var *curr;
-	t_mshell_var *new_var;
+	unsigned int	index;
+	t_mshell_var	*curr;
+	t_mshell_var	*new_var;
 
 	index = hash_function(key);
 	curr = mshell->hash_table->buckets[index];
@@ -65,13 +64,13 @@ void set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 				curr->value = ft_strdup(value);
 			}
 			curr->val_assigned = assigned;
-			return;
+			return ;
 		}
 		curr = curr->next;
 	}
 	new_var = create_new_var(key, value, assigned);
 	if (!new_var)
-		return;
+		return ;
 	new_var->next = mshell->hash_table->buckets[index];
 	mshell->hash_table->buckets[index] = new_var;
 }
@@ -84,11 +83,11 @@ void set_variable(t_mshell *mshell, char *key, char *value, int assigned)
  *
  * @param mshell Pointer to the Minishell structure.
  */
-static void load_env_into_ht(t_mshell *mshell)
+static void	load_env_into_ht(t_mshell *mshell)
 {
-	t_mshell_var *tmp;
-	int i;
-	char *home;
+	t_mshell_var	*tmp;
+	int				i;
+	char			*home;
 
 	i = 0;
 	while (mshell->env[i])
@@ -107,7 +106,7 @@ static void load_env_into_ht(t_mshell *mshell)
 	if (!home)
 	{
 		print_error("minishell: load_env_into_ht: retrieve home dir failed\n");
-		return;
+		return ;
 	}
 	set_variable(mshell, "OLDPWD", home, 1);
 }
@@ -119,10 +118,10 @@ static void load_env_into_ht(t_mshell *mshell)
  *
  * @return A pointer to the newly created hash table, or NULL on failure.
  */
-static t_hash_tbl *init_hash_tbl(void)
+static t_hash_tbl	*init_hash_tbl(void)
 {
-	t_hash_tbl *ht;
-	int i;
+	t_hash_tbl	*ht;
+	int			i;
 
 	ht = malloc(sizeof(t_hash_tbl));
 	if (!ht)
@@ -148,7 +147,7 @@ static t_hash_tbl *init_hash_tbl(void)
  * @param mshell Pointer to the Minishell structure.
  * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on failure.
  */
-int setup_hash_table(t_mshell *mshell)
+int	setup_hash_table(t_mshell *mshell)
 {
 	mshell->hash_table = init_hash_tbl();
 	if (!mshell->hash_table)

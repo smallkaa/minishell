@@ -49,9 +49,6 @@ static void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
 	pipe_fd[1] = -1;
 }
 
-
-
-
 uint8_t	exec_in_pipes(t_cmd *cmd_list)
 {
 	int			pipe_fd[2];

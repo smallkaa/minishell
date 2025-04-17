@@ -35,7 +35,11 @@ void	execute_command(t_cmd *cmd)
 	if (!cmd->binary)
 	{
 		if (is_builtin(cmd))
+		{
+			if (ft_strcmp(cmd->argv[0], "env") == 0)
+				update_underscore(cmd, cmd->binary);
 			handle_builtin_and_exit(cmd);
+		}
 		else
 			cmd_missing_command_error(cmd);
 	}

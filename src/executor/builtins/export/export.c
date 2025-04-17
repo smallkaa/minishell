@@ -92,13 +92,10 @@ uint8_t	handle_export(t_cmd *cmd)
 {
 	uint8_t	exit_status;
 	int		i;
-	uint8_t	ret;
 
 	if (!cmd)
 		return (no_cmd_error("export"));
-	if (!cmd->argv)
-		return (no_argv_error("export"));
-	exit_status = 0;
+	exit_status = EXIT_SUCCESS;
 	if (!cmd->argv[1])
 	{
 		handle_sorted_env(cmd->minishell);
@@ -112,9 +109,7 @@ uint8_t	handle_export(t_cmd *cmd)
 			print_export_usage(cmd->argv[i]);
 			return (2);
 		}
-		ret = process_export_arg(cmd, cmd->argv[i]);
-		if (ret == EXIT_FAILURE)
-			exit_status = EXIT_FAILURE;
+		exit_status = process_export_arg(cmd, cmd->argv[i]);
 		i++;
 	}
 	update_env(cmd->minishell);

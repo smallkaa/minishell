@@ -23,6 +23,7 @@
 bool	get_directory(char *cwd, t_cmd *cmd)
 {
 	char	*temp_pwd;
+
 	if (getcwd(cwd, MS_PATHMAX))
 		return (true);
 	temp_pwd = ms_getenv(cmd->minishell, "PWD");

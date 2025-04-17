@@ -38,14 +38,13 @@ uint8_t	handle_env(t_cmd *cmd)
 
 	if (!cmd)
 		return (no_cmd_error("env"));
-	if (!cmd->argv)
-		return (no_argv_error("env"));
 	if (cmd->argv[1])
 	{
 		print_error("env: ‘");
 		print_error(cmd->argv[1]);
 		print_error("‘: No such file or directory\n");
-		return (127);
+		exit_status = 127;
+		return (exit_status);
 	}
 	print_env(cmd);
 	exit_status = EXIT_SUCCESS;

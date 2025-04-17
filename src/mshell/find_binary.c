@@ -2,42 +2,9 @@
 
 static char	*handle_direct_path(t_cmd *cmd)
 {
-
-	// printf("DEBUG: handle_direct_path: start func\n");
 	char	*binary;
 
 	binary = ft_strdup(cmd->argv[0]);
-	// if (!binary)
-	// {
-	// 	printf("DEBUG: handle_direct_path: !binary\n");
-
-	// 	if (access(cmd->argv[0], F_OK) != 0)
-	// 	{
-	// 		cmd->minishell->exit_status = 127;
-	// 		return (NULL);
-	// 	}
-	// 	if (access(cmd->argv[0], X_OK) != 0)
-	// 	{
-	// 		cmd->minishell->exit_status = 126;
-	// 		return (NULL);
-	// 	}
-	// 	return (NULL);
-	// }
-	// printf("DEBUG: handle_direct_path: binary found\n");
-	// printf("DEBUG: handle_direct_path: binary is: %s\n", binary);
-
-	if (access(binary, F_OK) != 0)
-	{
-		free(binary);
-		cmd->minishell->exit_status = 127;
-		return (NULL);
-	}
-/*	if (access(binary, X_OK) != 0)
-	{
-		free(binary);
-		cmd->minishell->exit_status = 126;
-		return (NULL);
-	}*/
 	return (binary);
 }
 

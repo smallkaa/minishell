@@ -93,8 +93,6 @@ uint8_t	handle_exit(t_cmd *cmd)
 {
 	if (!cmd)
 		return (no_cmd_error("exit"));
-	if (!cmd->argv)
-		return (no_argv_error("exit"));
 	if (!cmd->argv[1])
 		return (cmd->minishell->exit_status);
 	if (cmd->argv[1][0] == '\0')

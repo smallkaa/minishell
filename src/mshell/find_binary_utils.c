@@ -1,8 +1,7 @@
- #include "minishell.h"
+#include "minishell.h"
 
 static char	*join_path_with_command(const char *path, const char *cmd_name)
 {
-	
 	char	*temp;
 	char	*full_path;
 
@@ -21,7 +20,7 @@ static char	*join_path_with_command(const char *path, const char *cmd_name)
 
 static uint8_t	check_binary_access(char *binary, t_cmd *cmd)
 {
-	// printf("DEBUG: check_binary_access: here\n");
+	(void)cmd;
 	if (access(binary, F_OK) != 0)
 	{
 		free(binary);
@@ -39,8 +38,6 @@ static uint8_t	check_binary_access(char *binary, t_cmd *cmd)
 
 static char	*assign_binary(char *path, t_cmd *cmd)
 {
-	// printf("DEBUG: check_binary_access: here\n");
-
 	char	*binary;
 
 	binary = join_path_with_command(path, cmd->argv[0]);

@@ -2,8 +2,8 @@
 
 bool	command_too_long(char **argv)
 {
-	size_t total_len;
-	int i;
+	size_t	total_len;
+	int		i;
 
 	total_len = 0;
 	i = 0;

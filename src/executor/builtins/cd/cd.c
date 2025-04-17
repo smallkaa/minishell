@@ -124,19 +124,17 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
  */
 uint8_t	handle_cd(t_cmd *cmd)
 {
-	uint8_t	status;
+	uint8_t	exit_status;
 
 	if (!cmd)
 		return (no_cmd_error("cd"));
-	if (!cmd->argv)
-		return (no_argv_error("cd"));
 	if (!cmd->argv[1] || (cmd->argv[1][0] == '~' && !cmd->argv[1][1]))
-		status = cd_no_args(cmd);
+		exit_status = cd_no_args(cmd);
 	else if (cmd->argv[2])
-		status = cd_too_many_args();
+		exit_status = cd_too_many_args();
 	else if (ft_strlen(cmd->argv[1]) == 0)
 		return (EXIT_SUCCESS);
 	else
-		status = change_and_update_pwd(cmd);
-	return (status);
+		exit_status = change_and_update_pwd(cmd);
+	return (exit_status);
 }

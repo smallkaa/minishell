@@ -17,12 +17,13 @@ void	export_error(t_mshell_var *pair)
 	print_error("': not a valid identifier\n");
 }
 
-void	unset_error(char *str)
+u_int8_t	unset_error(char *str)
 {
 	print_error("-minishell: unset: ");
 	(void)write(STDERR_FILENO, str, 2);
 	print_error(": invalid option\n");
 	print_error("unset: usage: unset [name ...]\n");
+	return (2);
 }
 
 void	cmd_missing_command_error(t_cmd *cmd)
