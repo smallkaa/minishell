@@ -85,7 +85,7 @@ static void process_input_char(const char *input, size_t *i, char **result,
         handle_backslash(input, i, result, *single_q);
     else if (input[*i] == '$')
     {
-        handle_dollar(input, i, result, ms, *single_q, *double_q);
+        handle_dollar(input, i, result, ms, *single_q);
     }
     else if (input[*i] == '~')
     {
