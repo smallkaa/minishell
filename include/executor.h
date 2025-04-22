@@ -53,6 +53,7 @@ bool					is_minishell_executable(t_cmd *cmd);
 uint8_t					validate_dots(t_cmd *cmd);
 uint8_t					update_shlvl(t_cmd *cmd);
 void					handle_empty_command(t_cmd *cmd);
+uint8_t					close_unused_fds(int in_fd, int *pipe_fd);
 
 // builtin
 const t_builtin_disp	*get_builtin_table(size_t *size);

@@ -1,24 +1,33 @@
 /**
- * @file handle_cd_utils.c
- * @brief helpers of handle_cd().
+ * @file cd_utils.c
+ * @brief Utility functions used by the `cd` built-in implementation
+ * in Minishell.
+ *
+ * This file provides helper functions that support the core logic in
+ * `handle_cd.c`,
+ * including directory resolution and environment fallbacks.
  */
 #include "minishell.h"
 
 /**
- * @brief Retrieves the current working directory.
+ * @brief Retrieves the current working directory with fallback support.
  *
- * This function attempts to get the current working directory using `getcwd()`.
- * If `getcwd()` fails, it falls back to retrieving the `$PWD` environment
- * variable.
+ * Attempts to obtain the current working directory using `getcwd()`. If it fails
+ * (e.g., due to permission errors or deleted working directory), the function
+ * falls back to retrieving the `$PWD` environment variable from the shell's
+ * internal environment.
  *
- * @param cwd Buffer where the current directory path will be stored.
- * @param cmd Pointer to the command structure used to access environment
- *            variables.
- * @return `true` if `getcwd()` succeeds, `false` if it fails and `$PWD`
- *          is used instead.
+ * The result is stored in the provided buffer `cwd`, which must be at least
+ * `MS_PATHMAX` bytes in size.
  *
- * @note Ensure `cwd` has enough space (`MS_PATHMAX`). The function does not
- *       allocate memory.
+ * @param cwd  Buffer to store the resolved current working directory path.
+ * @param cmd  Pointer to the command structure, used to access shell state
+ * and environment.
+ * @return `true` if `getcwd()` succeeds, `false` if `$PWD` is used as
+ * a fallback.
+ *
+ * @note The function does not allocate memory. Always zero or validate `cwd
+ *  before use.
  */
 bool	get_directory(char *cwd, t_cmd *cmd)
 {

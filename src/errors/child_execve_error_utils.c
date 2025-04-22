@@ -1,5 +1,20 @@
+/**
+ * @file child_execve_error.c
+ * @brief Error handlers for execve failures in child processes.
+ *
+ * Provides functions to handle various `execve`-related errors
+ * such as permission denied, invalid format, or trying to execute a directory.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Handles the case when a directory is executed instead of a file.
+ *
+ * Checks if the command's binary path is a directory and exits with code 126
+ * if true, printing an appropriate error message.
+ *
+ * @param cmd The command structure containing the binary path.
+ */
 void	handle_is_directory(t_cmd *cmd)
 {
 	struct stat	st;
@@ -16,6 +31,15 @@ void	handle_is_directory(t_cmd *cmd)
 	}
 }
 
+/**
+ * @brief Handles "command not found" or "no such file" scenarios.
+ *
+ * - If the command is not found in PATH or doesn't exist at all,
+ *   it prints an appropriate error message and exits with code 127.
+ * - Follows shell behavior for commands with or without slashes.
+ *
+ * @param cmd The command structure containing argv and shell context.
+ */
 void	handle_not_found_or_command(t_cmd *cmd)
 {
 	char	*path;
@@ -32,6 +56,14 @@ void	handle_not_found_or_command(t_cmd *cmd)
 	_exit(127);
 }
 
+/**
+ * @brief Handles the case where the binary is not executable due to permissions.
+ *
+ * If `errno` is set to `EACCES`, it prints a permission denied error
+ * and exits with status 126.
+ *
+ * @param cmd The command structure with execution context.
+ */
 void	handle_permission_denied(t_cmd *cmd)
 {
 	if (errno == EACCES)
@@ -46,6 +78,14 @@ void	handle_permission_denied(t_cmd *cmd)
 	}
 }
 
+/**
+ * @brief Handles the `ENOEXEC` error from `execve`.
+ *
+ * Prints an "Exec format error" message if the binary has an invalid format
+ * and exits with status 126.
+ *
+ * @param cmd The command being executed.
+ */
 void	handle_exec_format_error(t_cmd *cmd)
 {
 	if (errno == ENOEXEC)
@@ -60,6 +100,14 @@ void	handle_exec_format_error(t_cmd *cmd)
 	}
 }
 
+/**
+ * @brief Handles any generic `execve` error not covered by specific cases.
+ *
+ * Prints the strerror output and frees all allocated shell resources
+ * before exiting with `EXIT_FAILURE`.
+ *
+ * @param cmd The command that caused the error.
+ */
 void	handle_generic_execve_error(t_cmd *cmd)
 {
 	print_error("-minishell: execve: ");

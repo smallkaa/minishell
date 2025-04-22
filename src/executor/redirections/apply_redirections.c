@@ -1,5 +1,21 @@
+/**
+ * @file apply_redirections.c
+ * @brief Applies redirections for input/output and heredocs in Minishell.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Applies heredoc (`<<`) redirection by duplicating its file
+ * descriptor to stdin.
+ *
+ * This redirection uses a file descriptor already populated during
+ * heredoc setup.
+ * If the FD is invalid or `dup2` fails, an error is printed and
+ * a redirection error is returned.
+ *
+ * @param redir Pointer to the heredoc redirection.
+ * @return EXIT_SUCCESS on success, REDIR_ERR on failure.
+ */
 static int	handle_heredoc_redirection(t_redir *redir)
 {
 	if (redir->fd == -1)
@@ -10,6 +26,15 @@ static int	handle_heredoc_redirection(t_redir *redir)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Applies input redirection (`<`) from a file.
+ *
+ * Opens the file for reading, duplicates it to stdin, and closes the FD.
+ * Errors are handled and reported if the file can't be opened or redirected.
+ *
+ * @param redir Pointer to the input redirection.
+ * @return EXIT_SUCCESS on success, REDIR_ERR on failure.
+ */
 static int	handle_file_input_redirection(t_redir *redir)
 {
 	int	fd;
@@ -26,6 +51,14 @@ static int	handle_file_input_redirection(t_redir *redir)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Dispatcher for input redirections.
+ *
+ * Handles both heredoc and file input types and routes to the correct handler.
+ *
+ * @param redir The redirection to apply.
+ * @return EXIT_SUCCESS on success, REDIR_ERR on failure.
+ */
 static int	apply_input_redirection(t_redir *redir)
 {
 	if (redir->type == R_HEREDOC)
@@ -35,6 +68,15 @@ static int	apply_input_redirection(t_redir *redir)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Applies output redirection (`>` or `>>`) to a file.
+ *
+ * Opens the file with the appropriate flags (truncate or append),
+ * redirects stdout to the file, and closes the FD.
+ *
+ * @param redir Pointer to the output redirection.
+ * @return EXIT_SUCCESS on success, REDIR_ERR on failure.
+ */
 static int	apply_output_redirection(t_redir *redir)
 {
 	int	fd;
@@ -57,6 +99,17 @@ static int	apply_output_redirection(t_redir *redir)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Applies all redirections for a given command.
+ *
+ * Iterates through the redirection list (`cmd->redirs`) and applies:
+ * - Input redirection: `<` or `<<`
+ * - Output redirection: `>` or `>>`
+ * If any redirection fails, the function returns EXIT_FAILURE.
+ *
+ * @param cmd The command whose redirections should be applied.
+ * @return EXIT_SUCCESS if all redirections succeed, otherwise EXIT_FAILURE.
+ */
 uint8_t	apply_redirections(t_cmd *cmd)
 {
 	t_list	*redir_list;

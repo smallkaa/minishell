@@ -1,5 +1,26 @@
+/**
+ * @file child_execve_error.c
+ * @brief Utilities for handling execve-related errors in child processes.
+ *
+ * Provides structured error reporting and graceful exiting for failed execve
+ * calls, including memory cleanup and exit status handling.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Prints an error message and exits the process with a given code.
+ *
+ * This function combines:
+ * - Optional prefix (e.g., shell name)
+ * - Argument (e.g., command or file)
+ * - Message (e.g., error description)
+ *
+ * It also frees the Minishell context if provided and then exits
+ * with the specified status code.
+ *
+ * @param info A `t_exit_info` struct containing error message parts
+ *             and exit metadata.
+ */
 void	print_and_exit(t_exit_info info)
 {
 	if (info.prefix)
@@ -13,6 +34,21 @@ void	print_and_exit(t_exit_info info)
 	_exit(info.code);
 }
 
+/**
+ * @brief Dispatches all possible execve error handlers.
+ *
+ * Attempts to detect and handle the specific cause of an execve failure by
+ * invoking a series of checks:
+ * - Is the binary a directory?
+ * - Is it missing or not found?
+ * - Does it have permission issues?
+ * - Is it in an invalid format?
+ * - Or a generic error?
+ *
+ * Terminates the process with the corresponding error code.
+ *
+ * @param cmd The command structure passed to execve.
+ */
 void	child_execve_error(t_cmd *cmd)
 {
 	handle_is_directory(cmd);

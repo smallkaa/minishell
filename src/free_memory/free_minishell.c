@@ -1,10 +1,14 @@
+/**
+ * @file free_minishell.c
+ * @brief Functions for freeing Minishell environment and memory resources.
+ */
 #include "minishell.h"
 
 /**
- * @brief Frees the environment variable array.
+ * @brief Frees a null-terminated array of environment variable strings.
  *
- * Iterates through the `env` array, freeing each allocated string,
- * and then frees the array itself.
+ * Iterates over the environment array, frees each individual string,
+ * and finally frees the array itself.
  *
  * @param env The array of environment variables to free.
  */
@@ -23,6 +27,13 @@ static void	free_env(char **env)
 	free(env);
 }
 
+/**
+ * @brief Frees a single `t_mshell_var` variable structure.
+ *
+ * Frees both the key and value strings and the structure itself.
+ *
+ * @param var The environment variable structure to free.
+ */
 void	free_mshell_var(t_mshell_var *var)
 {
 	if (!var)
@@ -32,6 +43,14 @@ void	free_mshell_var(t_mshell_var *var)
 	free(var);
 }
 
+/**
+ * @brief Frees all memory used by the shell’s hash table.
+ *
+ * Iterates over each bucket in the hash table and frees all
+ * linked environment variable structures.
+ *
+ * @param hash_table Pointer to the hash table to free.
+ */
 static void	free_hash_table(t_hash_tbl *hash_table)
 {
 	int				i;
@@ -55,6 +74,16 @@ static void	free_hash_table(t_hash_tbl *hash_table)
 	free(hash_table);
 }
 
+/**
+ * @brief Frees the entire `t_mshell` structure and its resources.
+ *
+ * This includes:
+ * - The environment variable array (`env`)
+ * - The hash table (`hash_table`)
+ * - The structure itself
+ *
+ * @param minishell The Minishell structure to free.
+ */
 void	free_minishell(t_mshell *minishell)
 {
 	if (!minishell)

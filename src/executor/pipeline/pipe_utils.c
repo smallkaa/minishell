@@ -1,10 +1,37 @@
+/**
+ * @file pipe_utils.c
+ * @brief Special-case handling utilities for Minishell command execution.
+ *
+ * This file contains helper functions used during command execution, such as:
+ * - Detecting if Minishell is recursively called.
+ * - Handling empty commands and syntax edge cases.
+ * - Managing the `SHLVL` environment variable.
+ * - Handling built-in error messages for `.` and `..`.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Checks whether the command is a recursive call to `./minishell`.
+ *
+ * Used to update the `SHLVL` environment variable when Minishell
+ * is executed from itself.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return `true` if the command is `./minishell`, otherwise `false`.
+ */
 bool	is_minishell_executable(t_cmd *cmd)
 {
 	return (ft_strcmp(cmd->argv[0], "./minishell") == 0);
 }
 
+/**
+ * @brief Handles an empty command (e.g., when only redirections are given).
+ *
+ * - If no redirections exist, prints an error and exits with status `127`.
+ * - If redirections exist, exits silently with status `0`.
+ *
+ * @param cmd Pointer to the command structure.
+ */
 void	handle_empty_command(t_cmd *cmd)
 {
 	if (!cmd->redirs)
@@ -15,6 +42,16 @@ void	handle_empty_command(t_cmd *cmd)
 	_exit(EXIT_SUCCESS);
 }
 
+/**
+ * @brief Increments the `SHLVL` environment variable.
+ *
+ * Called when Minishell is executed from within itself. Updates the internal
+ * hash table and exported environment.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return `EXIT_SUCCESS` (0) on success, or `EXIT_FAILURE` (1)
+ * if allocation fails.
+ */
 uint8_t	update_shlvl(t_cmd *cmd)
 {
 	char	*str_shlvl;
@@ -35,6 +72,16 @@ uint8_t	update_shlvl(t_cmd *cmd)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Handles special cases for dot (`.`) and dot-dot (`..`) commands.
+ *
+ * - If the command is just `.` with no arguments, prints a usage error.
+ * - If the command is `..` with no arguments, reports "command not found".
+ *
+ * @param cmd Pointer to the command structure.
+ * @return Exit code: `2` for dot usage error, `127` for `..` not found,
+ *         or `EXIT_SUCCESS` (0) otherwise.
+ */
 uint8_t	validate_dots(t_cmd *cmd)
 {
 	if (ft_strcmp(cmd->argv[0], ".") == 0 && !cmd->argv[1])

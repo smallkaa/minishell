@@ -1,9 +1,25 @@
 /**
  * @file executor.c
  * @brief Functions for executing built-in and external commands in Minishell.
+ *
+ * This module determines how to execute parsed commands — either as built-in
+ * shell commands in the current process or as external binaries via pipelines.
+ * It handles heredoc setup, environment management, and proper exit handling
+ * for commands such as `exit`.
  */
 #include "minishell.h"
 
+/**
+ * @brief Executes commands in a pipeline or as external binaries.
+ *
+ * If the command list contains multiple commands, it forks and pipes
+ * each command. If the command is a binary (not a built-in),
+ * it is executed using `execve()` within a child process.
+ * Also handles cleanup if the last command is `exit`.
+ *
+ * @param cmd Pointer to the first command in the pipeline.
+ * @return Exit status of the last command executed.
+ */
 static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 {
 	t_mshell	*minishell;
@@ -17,6 +33,16 @@ static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 	return (exit_status);
 }
 
+/**
+ * @brief Executes a built-in command in the current process.
+ *
+ * This function runs built-in commands (like `cd`, `echo`, `exit`) directly
+ * without forking a child. If the command is `exit`, it performs full
+ * cleanup before exiting.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return Exit status of the built-in command.
+ */
 static uint8_t	execute_builtin(t_cmd *cmd)
 {
 	t_mshell	*minishell;
@@ -30,6 +56,20 @@ static uint8_t	execute_builtin(t_cmd *cmd)
 	return (exit_status);
 }
 
+/**
+ * @brief Main entry point for executing commands in Minishell.
+ *
+ * This function decides how to execute a command:
+ * - Built-ins are run in the current process if not piped.
+ * - Pipelines and binaries are forked and executed externally.
+ * - Heredocs are applied before execution.
+ *
+ * If the command is `exit` and it’s the last command,
+ * it cleans up and exits the shell.
+ *
+ * @param cmd Pointer to the command structure to execute.
+ * @return Exit status of the command execution.
+ */
 uint8_t	run_executor(t_cmd *cmd)
 {
 	t_mshell	*minishell;
@@ -40,59 +80,6 @@ uint8_t	run_executor(t_cmd *cmd)
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
 		return (error_return("run_executor: no mshell found\n", EXIT_FAILURE));
-
-	// test -------------------------------------------------//
-
-	// int j = 0;
-	// while(cmd->argv[j])
-	// {
-	// 	printf("---argv[%d]: {%s}\n", j, cmd->argv[j]);
-	// 	j++;
-	// }
-	// printf("---argv[%d]: {%s}\n", j, cmd->argv[j]);
-	// printf("---binary (%p)\n", cmd->binary);
-
-	// // //-----------------------------------------------
-	// // Printing redirections
-
-	// j = 0;
-	// if (cmd->redirs)
-	// {
-	// 	t_list *current_redir = cmd->redirs;
-	// 	while (current_redir)
-	// 	{
-	// 		t_redir *redir = (t_redir *)current_redir->content;
-
-	// 		printf("---redirection[%d]: ", j);
-	// 		if (redir->type == R_INPUT)
-	// 			printf("'<' ");
-	// 		else if (redir->type == R_OUTPUT)
-	// 			printf("'>' ");
-	// 		else if (redir->type == R_APPEND)
-	// 			printf("'>>' ");
-	// 		else if (redir->type == R_HEREDOC)
-	// 			printf("'<<' ");
-
-	// 		if (redir->filename)
-	// 			printf("\"%s\"\n", redir->filename);
-	// 		else
-	// 			printf("(NULL)\n");
-
-	// 		printf("---expand: %s\n", redir->expand ? "true" : "false");
-
-	// 		current_redir = current_redir->next;
-	// 		j++;
-	// 	}
-	// }
-	// else
-	// {
-	// 	printf("---No redirections found\n");
-	// }
-
-	// end test -----------------------------------------------//
-
-	// int i;
-
 	if (command_too_long(cmd->argv))
 		return (error_return("run_executor: command too long\n", 2));
 	exit_status = apply_heredocs(cmd);
@@ -102,7 +89,7 @@ uint8_t	run_executor(t_cmd *cmd)
 		exit_status = execute_pipeline_or_binary(cmd);
 	else
 		exit_status = execute_builtin(cmd);
-	if (cmd->next == NULL) 
-        update_underscore(cmd, cmd->binary);
+	if (cmd->next == NULL)
+		update_underscore(cmd, cmd->binary);
 	return (exit_status);
 }

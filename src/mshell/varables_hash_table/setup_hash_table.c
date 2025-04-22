@@ -1,19 +1,24 @@
 /**
  * @file setup_hash_table.c
- * @brief Environment variable management for Minishell.
+ * @brief Environment variable management via hash table for Minishell.
+ *
+ * This file contains functions to initialize and populate a hash table with
+ * environment variables, update variables, and manage internal shell state
+ * efficiently.
  */
 #include "minishell.h"
 
 /**
- * @brief Creates a new environment variable structure.
+ * @brief Creates a new key-value variable node for the hash table.
  *
- * Allocates memory for a new `t_mshell_var` structure,
- * initializes it with the given key-value pair, and sets the assignment flag.
+ * This function allocates and initializes a `t_mshell_var` structure
+ * with a given key and value. The `assigned` flag indicates whether
+ * the variable was assigned a value or just declared.
  *
- * @param key The key of the environment variable.
- * @param value The value of the environment variable. Can be NULL.
- * @param assigned Flag indicating if the variable is assigned a value.
- * @return A pointer to the newly created variable, or NULL if allocation fails.
+ * @param key The environment variable name (must not be NULL).
+ * @param value The value of the variable (can be NULL).
+ * @param assigned Whether the variable has a value assigned (1) or not (0).
+ * @return Pointer to the new variable node, or NULL on allocation failure.
  */
 t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 {
@@ -36,15 +41,15 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 }
 
 /**
- * @brief Adds or updates an environment variable in the hash table.
+ * @brief Inserts or updates an environment variable in the hash table.
  *
- * If the variable already exists, its value is updated. Otherwise,
- * a new variable is created and added to the hash table.
+ * If the key already exists, its value and assignment flag are updated.
+ * Otherwise, a new variable node is inserted at the beginning of the bucket.
  *
- * @param mshell Pointer to the Minishell structure.
- * @param key The key of the variable to set.
- * @param value The value of the variable. Can be NULL.
- * @param assigned Flag indicating if the variable is assigned a value.
+ * @param mshell Pointer to the Minishell instance.
+ * @param key The name of the variable to set.
+ * @param value The value to assign (can be NULL).
+ * @param assigned 1 if a value is assigned, 0 if it's just declared.
  */
 void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
@@ -76,10 +81,10 @@ void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 }
 
 /**
- * @brief Loads environment variables into the hash table.
+ * @brief Populates the hash table from the environment array (`mshell->env`).
  *
- * Iterates through the `mshell->env` array, extracts key-value pairs,
- * and adds them to the hash table.
+ * Iterates through `mshell->env`, splits key-value pairs, and adds them
+ * to the hash table. Also ensures `OLDPWD` is initialized using `HOME` if found.
  *
  * @param mshell Pointer to the Minishell structure.
  */
@@ -112,11 +117,11 @@ static void	load_env_into_ht(t_mshell *mshell)
 }
 
 /**
- * @brief Initializes a new hash table for environment variables.
+ * @brief Initializes an empty hash table structure.
  *
- * Allocates memory for the hash table and initializes all buckets to NULL.
+ * Allocates memory and sets all bucket pointers to NULL.
  *
- * @return A pointer to the newly created hash table, or NULL on failure.
+ * @return Pointer to the initialized hash table, or NULL on failure.
  */
 static t_hash_tbl	*init_hash_tbl(void)
 {
@@ -139,13 +144,15 @@ static t_hash_tbl	*init_hash_tbl(void)
 }
 
 /**
- * @brief Sets up the hash table and populates it with environment variables.
+ * @brief Initializes and sets up the Minishell hash table.
  *
- * This function initializes the hash table and loads existing environment
- * variables into it.
+ * This function:
+ * - Allocates the hash table.
+ * - Loads variables from `mshell->env` into it.
+ * - Updates the shell’s environment array from the hash table.
  *
  * @param mshell Pointer to the Minishell structure.
- * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on failure.
+ * @return `EXIT_SUCCESS` if setup is successful, `EXIT_FAILURE` otherwise.
  */
 int	setup_hash_table(t_mshell *mshell)
 {

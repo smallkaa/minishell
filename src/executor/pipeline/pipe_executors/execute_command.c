@@ -1,5 +1,25 @@
+/**
+ * @file execute_command.c
+ * @brief Handles execution of commands (built-in and external) in Minishell.
+ *
+ * Contains logic to:
+ * - Validate and execute built-in commands.
+ * - Execute external binaries using `execve`.
+ * - Handle syntax and shell-specific cases such as `.`/`..`, `env`,
+ * and empty inputs.
+ * - Manage cleanup and exit codes inside child processes.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Executes a built-in command in a child process and exits.
+ *
+ * This function is called in the forked child process when the command
+ * is a built-in with no external binary path. It executes the built-in,
+ * frees the shell context, and exits with the appropriate status code.
+ *
+ * @param cmd Pointer to the command structure.
+ */
 static void	handle_builtin_and_exit(t_cmd *cmd)
 {
 	uint8_t	exit_status;
@@ -9,6 +29,15 @@ static void	handle_builtin_and_exit(t_cmd *cmd)
 	_exit(exit_status);
 }
 
+/**
+ * @brief Executes an external binary command using `execve()`.
+ *
+ * First validates special dot (`.`) and dot-dot (`..`) commands.
+ * If validation passes, it attempts to execute the binary with `execve`.
+ * On failure, it handles and prints an appropriate error message.
+ *
+ * @param cmd Pointer to the command structure.
+ */
 void	exec_cmd(t_cmd *cmd)
 {
 	uint8_t	exit_status;
@@ -20,6 +49,19 @@ void	exec_cmd(t_cmd *cmd)
 	child_execve_error(cmd);
 }
 
+/**
+ * @brief Entry point for executing a command in a child process.
+ *
+ * Handles several cases:
+ * - Skips execution if the command is empty.
+ * - Exits immediately if there was a previous syntax error.
+ * - Updates `SHLVL` if this is a recursive call to `./minishell`.
+ * - Processes empty strings as invalid commands.
+ * - For built-ins without a binary, calls the built-in directly.
+ * - For valid binaries, delegates to `exec_cmd()`.
+ *
+ * @param cmd Pointer to the command structure.
+ */
 void	execute_command(t_cmd *cmd)
 {
 	if (!cmd || !cmd->argv || !cmd->argv[0])

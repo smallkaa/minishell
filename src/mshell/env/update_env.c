@@ -1,3 +1,11 @@
+/**
+ * @file update_env.c
+ * @brief Synchronizes environment variables from hash table to env array.
+ *
+ * This file contains logic for updating the Minishell's `env` array
+ * from its internal hash table representation. It only includes variables
+ * marked as assigned (i.e., exported with a value).
+ */
 #include "minishell.h"
 
 /**

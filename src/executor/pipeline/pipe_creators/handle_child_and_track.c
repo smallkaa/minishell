@@ -1,5 +1,26 @@
+/**
+ * @file handle_child_and_track.c
+ * @brief Handles child process creation and pipe setup for piped
+ * commands in Minishell.
+ *
+ * This file contains logic for:
+ * - Forking a child process in a pipeline.
+ * - Duplicating pipe file descriptors (`dup2`).
+ * - Applying redirections and executing commands.
+ * - Closing unused heredoc file descriptors to avoid leaks.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Closes all heredoc file descriptors in the child process,
+ *        except for the current command's.
+ *
+ * Prevents the child process from inheriting unused heredoc pipes,
+ * which could result in hanging reads or FD leaks.
+ *
+ * @param current The command currently being executed in the child.
+ * @param full_cmd_list The full list of commands in the current pipeline.
+ */
 void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 {
 	t_cmd	*cmd;
@@ -27,6 +48,21 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 	}
 }
 
+/**
+ * @brief Handles the execution logic inside a forked child process.
+ *
+ * Steps:
+ * - Closes unused heredoc file descriptors.
+ * - Duplicates necessary pipe descriptors (`dup2`) for input/output.
+ * - Applies I/O redirections.
+ * - Cleans up unused FDs and then executes the command.
+ * - On failure, exits with `EXIT_FAILURE`.
+ *
+ * @param cmd The command to execute.
+ * @param in_fd Input file descriptor (may be pipe or `STDIN_FILENO`).
+ * @param pipe_fd Pipe file descriptors (read/write).
+ * @param cmd_list Full list of commands in the pipeline.
+ */
 static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
 	close_unused_heredocs_child(cmd, cmd_list);
@@ -51,6 +87,16 @@ static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	execute_command(cmd);
 }
 
+/**
+ * @brief Forks a child process to execute a command in a pipeline.
+ *
+ * - Stores the PID in the pipeline info.
+ * - If in the child process, runs `child_process()`.
+ * - Increments the PID index counter.
+ *
+ * @param cmd The command to be executed in the child.
+ * @param info Pointer to the pipeline information structure.
+ */
 void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 {
 	pid_t	pid;

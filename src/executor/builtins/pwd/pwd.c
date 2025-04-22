@@ -1,19 +1,31 @@
 /**
- * @file handle_pwd.c
- * @brief Functions for handling the `pwd` built-in command in Minishell.
+ * @file pwd.c
+ * @brief Implementation of the `pwd` built-in command in Minishell.
+ *
+ * This file provides logic for the `pwd` command, which prints the current
+ * working directory. It handles valid and invalid arguments and falls back to
+ * the `PWD` environment variable when `getcwd()` fails.
  */
 #include "minishell.h"
 
 /**
- * @brief Prints an error message for invalid options in built-in commands.
+ * @brief Prints an error message for an invalid option passed to
+ * a built-in command.
  *
- * This function constructs an error message when a built-in command receives
- * an invalid option (e.g., `pwd -abc`). Only the first two characters of the
- * invalid option are displayed to match the behavior of standard shells.
+ * Formats the message similarly to Bash when a command receives
+ * an invalid flag.
+ * Shows only the first two characters of the invalid option, and prints
+ * a usage line.
  *
- * @param cmd_name The name of the command that received the invalid option.
- * @param option The invalid option provided by the user.
- * @return Returns an exit status of `2`, following standard shell behavior.
+ * Example:
+ * ```
+ * minishell: pwd: -x: invalid option
+ * minishell: pwd: usage: pwd
+ * ```
+ *
+ * @param cmd_name The name of the command (e.g., `"pwd"`).
+ * @param option The invalid option provided by the user (e.g., `"-x"`).
+ * @return Always returns `2`, the standard exit status for invalid option usage.
  */
 static uint8_t	invalid_opt_exit(const char *cmd_name, const char *option)
 {
@@ -38,18 +50,15 @@ static uint8_t	invalid_opt_exit(const char *cmd_name, const char *option)
 }
 
 /**
- * @brief Executes the `pwd` command to print the current working directory.
+ * @brief Executes the core functionality of the `pwd` command.
  *
- * This function retrieves and prints the current working directory using
- * `getcwd()`.
- * If `getcwd()` fails (e.g., due to the working directory being deleted
- * or inaccessible),
- * it falls back to retrieving the `PWD` environment variable. If `PWD` is
- * also unavailable, an error handler is invoked.
+ * Attempts to retrieve the current working directory using `getcwd()`.
+ * If `getcwd()` fails (e.g., due to directory removal or permission issues),
+ * the function falls back to the `PWD` environment variable.
  *
- * @param cmd Pointer to the command structure containing shell context.
- * @return `EXIT_SUCCESS` (0) if the directory is printed successfully.
- *         `EXIT_FAILURE` (1) if both `getcwd()` and `PWD` retrieval fail.
+ * @param cmd Pointer to the command structure with shell context.
+ * @return `EXIT_SUCCESS` (0) if a valid directory is printed,
+ *         `EXIT_FAILURE` (1) if both `getcwd()` and `PWD` fail.
  */
 static uint8_t	exec_pwd(t_cmd *cmd)
 {
@@ -73,22 +82,19 @@ static uint8_t	exec_pwd(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the `pwd` built-in command in Minishell.
+ * @brief Handles execution of the `pwd` built-in command.
  *
- * The `pwd` command prints the current working directory.
+ * The command prints the absolute path of the current working directory.
  *
  * Behavior:
- * - If no arguments are given, it prints the current directory.
- * - If arguments are provided:
- * - If the first argument is an invalid option (e.g., `pwd -x`), an error
- *  is printed.
- * - Otherwise, it behaves like `pwd` with no arguments.
- * - If executed within a pipeline, the function ensures the process exits
- *   correctly.
+ * - If no arguments are provided: prints the current working directory.
+ * - If an argument starts with `-`: prints an invalid option error and usage.
+ * - Otherwise: behaves like plain `pwd`.
  *
- * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` (0) if the working directory is printed successfully.
- *         `EXIT_FAILURE` (1) if an error occurs (e.g., invalid option).
+ * @param cmd Pointer to the command structure containing arguments
+ * and environment.
+ * @return `EXIT_SUCCESS` (0) on success,
+ *         `EXIT_FAILURE` (1) if directory retrieval fails,
  *         `2` if an invalid option is detected.
  */
 uint8_t	handle_pwd(t_cmd *cmd)

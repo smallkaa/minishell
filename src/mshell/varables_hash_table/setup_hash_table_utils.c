@@ -1,14 +1,25 @@
+/**
+ * @file setup_hash_table_utils.c
+ * @brief Utility functions for parsing environment variable strings
+ *        and computing hash values for environment storage.
+ */
 #include "minishell.h"
 
 /**
  * @brief Splits a `KEY=VALUE` string into a `t_mshell_var` structure.
  *
- * - If an equal sign (`=`) is found, the string is split into a key and a value.
- * - If no equal sign is present, the value is set to `NULL`.
+ * This function is used to convert a string representation of an
+ * environment variable into a structured key-value pair.
  *
- * @param kv_pair The string to split.
+ * Behavior:
+ * - If the input string contains `'='`, it is split at the first occurrence.
+ *   The part before the '=' becomes the key, the part after becomes the value.
+ * - If there is no `'='`, the entire string becomes the key,
+ *   and the value is set to NULL.
+ *
+ * @param kv_pair The string to split (e.g., "HOME=/Users/user").
  * @return A pointer to a newly allocated `t_mshell_var` structure,
- * or NULL on failure.
+ *         or NULL on allocation failure.
  */
 t_mshell_var	*split_key_value(char *kv_pair)
 {

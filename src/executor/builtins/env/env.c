@@ -1,9 +1,23 @@
 /**
- * @file handle_env.c
- * @brief Functions for handling the `env` built-in command in Minishell.
+ * @file env.c
+ * @brief Implementation of the `env` built-in command for Minishell.
+ *
+ * This file provides the logic for handling the `env` command, which
+ * displays all exported environment variables currently stored by Minishell.
+ * It mimics the behavior of the POSIX `env` command.
  */
 #include "minishell.h"
 
+/**
+ * @brief Prints all exported environment variables.
+ *
+ * Iterates through the shell's internal environment array and prints each
+ * variable to standard output. Only variables that are actually present in
+ * the internal `env` list are printed—unset or hidden variables are not shown.
+ *
+ * @param cmd Pointer to the command structure, which contains
+ * the shell environment.
+ */
 void	print_env(t_cmd *cmd)
 {
 	int	i;
@@ -17,20 +31,20 @@ void	print_env(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the `env` built-in command to display environment variables.
+ * @brief Handles the `env` built-in command.
  *
- * The `env` command prints all assigned environment variables stored in
- * the shell’s hash table. Variables that are unset or unassigned are not
- * displayed.
+ * Prints all environment variables currently stored in the shell's internal
+ * environment. If any arguments are passed to the `env` command, it prints
+ * an error message and returns with exit status `127`, mimicking Bash behavior.
  *
  * **Behavior:**
- * - If called **without arguments**, it prints all assigned environment
- *   variables.
- * - If called **with arguments**, an error message is displayed.
+ * - No arguments: prints all exported variables.
+ * - Arguments: prints an error and returns `127`.
  *
- * @param cmd Pointer to the command structure containing execution context.
- * @return `EXIT_SUCCESS` (0) if variables were displayed successfully.
- *         `EXIT_FAILURE` (1) if arguments were provided (invalid usage).
+ * @param cmd Pointer to the command structure containing the shell state
+ * and arguments.
+ * @return `EXIT_SUCCESS` (0) on success,
+ *         `127` if called with arguments (invalid usage).
  */
 uint8_t	handle_env(t_cmd *cmd)
 {

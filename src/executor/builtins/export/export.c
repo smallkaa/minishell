@@ -1,20 +1,27 @@
+/**
+ * @file handle_export.c
+ * @brief Implementation of the `export` built-in command in Minishell.
+ *
+ * This file defines the logic for handling the `export` command, which allows
+ * users to create, update, or list environment variables. The implementation
+ * validates variable names, parses key-value pairs, and supports
+ * Bash-compatible behavior, including error handling and formatted output.
+ */
 #include "minishell.h"
 
 /**
  * @brief Processes a single argument for the `export` command.
  *
- * This function:
- * - Validates whether the argument represents a valid variable name.
- * - If valid, updates or adds the variable in the shell’s environment.
- * - If an `=` is present, assigns the variable a value.
+ * Splits the argument into a key and optional value. Validates the key using
+ * shell variable naming rules. If valid, the variable is set in the shell's
+ * environment.
  *
- * If the variable name is invalid, an error message is printed.
- *
- * @param cmd Pointer to the command structure containing environment context.
- * @param arg The argument string containing a variable name
- * (and optional value).
- * @return `EXIT_SUCCESS` (0) if the variable was successfully processed.
- *         `EXIT_FAILURE` (1) if the argument is invalid.
+ * @param cmd Pointer to the command structure containing
+ * the environment context.
+ * @param arg The argument string containing the variable name and
+ * optional value.
+ * @return `EXIT_SUCCESS` (0) if the variable was successfully processed,
+ *         `EXIT_FAILURE` (1) if the variable name is invalid.
  */
 static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 {
@@ -44,7 +51,13 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 }
 
 /**
- * @brief Prints the bash-like usage message for invalid options.
+ * @brief Prints a usage error message for invalid export options.
+ *
+ * Mimics the format of Bash's error messages when invalid flags are passed
+ * to `export`. This function is triggered when the argument begins with `-`,
+ * which is not supported in this implementation.
+ *
+ * @param arg The invalid option string passed to `export`.
  */
 static void	print_export_usage(char *arg)
 {
@@ -55,10 +68,15 @@ static void	print_export_usage(char *arg)
 }
 
 /**
- * @brief Checks if the given argument is an invalid export "option".
+ * @brief Checks if the given argument is an invalid option for `export`.
  *
- * Since we're not supporting any valid options, anything starting
- * with '-' is invalid.
+ * Minishell's `export` does not support any command-line options
+ * (e.g., `-f`, `-p`).
+ * Therefore, any argument starting with `-` (and not empty) is treated as
+ * invalid.
+ *
+ * @param arg The argument string to evaluate.
+ * @return `true` if the argument is an invalid option, `false` otherwise.
  */
 static bool	is_invalid_option(const char *arg)
 {
@@ -70,23 +88,18 @@ static bool	is_invalid_option(const char *arg)
 }
 
 /**
- * @brief Handles the `export` built-in command in Minishell
- * (no options supported).
+ * @brief Handles the execution of the `export` built-in command.
  *
  * Behavior:
- * - If `export` is called **without arguments**,
- * it prints the current exported variables.
- * - If called with arguments:
- *   -- If argument starts with '-', print usage & return
- * 2 immediately (invalid option).
- *   -- Else, validate the variable name.
- * If invalid => not a valid identifier => exit code 1.
- * - If multiple invalid variables appear, the final exit code is
- * 1 if at least one was invalid.
- * - If executed in a pipeline, the process exits with the appropriate status.
+ * - If called with no arguments, prints all exported variables in sorted order.
+ * - If any argument starts with `-`, prints usage and exits with status `2`.
+ * - If an argument contains an invalid variable name, prints an error and
+ *   returns `1`, but continues processing other arguments.
+ * - If all variables are valid and assigned, updates the environment.
  *
  * @param cmd Pointer to the command structure.
- * @return 0 if all OK, 1 if invalid identifier, 2 if invalid option.
+ * @return `0` if all arguments are valid, `1` if any invalid identifier
+ * was encountered, `2` if an invalid option was used.
  */
 uint8_t	handle_export(t_cmd *cmd)
 {

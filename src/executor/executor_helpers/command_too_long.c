@@ -1,5 +1,22 @@
+/**
+ * @file command_too_long.c
+ * @brief Command length validation for Minishell.
+ *
+ * Contains logic to verify that a given command does not exceed
+ * the maximum allowed buffer size (`CMD_MAX_SIZE`).
+ * Helps prevent buffer overflows or input issues with excessively long commands.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Checks whether a command's total length exceeds the shell limit.
+ *
+ * Calculates the cumulative length of all arguments in `argv`, including spaces,
+ * and compares it against a predefined maximum command size (`CMD_MAX_SIZE`).
+ *
+ * @param argv The array of command arguments (null-terminated).
+ * @return `true` if the total command length is too long, `false` otherwise.
+ */
 bool	command_too_long(char **argv)
 {
 	size_t	total_len;

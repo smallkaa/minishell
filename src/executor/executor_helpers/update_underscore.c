@@ -1,5 +1,23 @@
+/**
+ * @file update_underscore.c
+ * @brief Updates the `_` environment variable in Minishell.
+ *
+ * The special variable `_` is set after each command to the last argument
+ * or the full binary path. This file provides logic to compute and update
+ * that value in the environment hash table, mimicking Bash behavior.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Joins a variable name and value with an `=` in between.
+ *
+ * Used when reconstructing an `export` variable from split arguments
+ * (e.g., `export VAR VALUE` → `VAR=VALUE`).
+ *
+ * @param name The variable name (left-hand side).
+ * @param value The variable value (right-hand side).
+ * @return Newly allocated string in the form `name=value`, or `NULL` on failure.
+ */
 static char	*join_with_equal(char *name, char *value)
 {
 	char	*tmp;
@@ -13,6 +31,18 @@ static char	*join_with_equal(char *name, char *value)
 	return (res);
 }
 
+/**
+ * @brief Determines the value to assign to the `_` variable.
+ *
+ * Behavior:
+ * - For general commands: returns the last argument.
+ * - For `export`, handles special cases where the value may be split
+ * across args.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param need_free Output flag: set to `1` if returned value needs to be freed.
+ * @return Pointer to the argument or combined string to assign to `_`.
+ */
 static char	*get_last_arg(t_cmd *cmd, int *need_free)
 {
 	int	i;
@@ -36,6 +66,20 @@ static char	*get_last_arg(t_cmd *cmd, int *need_free)
 	return (cmd->argv[i - 1]);
 }
 
+/**
+ * @brief Updates the special shell variable `_` with the last
+ * command argument or path.
+ *
+ * Mimics Bash behavior by assigning `_` to:
+ * - The last argument of the command.
+ * - For built-ins like `export`, reconstructs `key=value` if necessary.
+ * - If no argument exists, falls back to the binary path or command name.
+ *
+ * The variable is stored in the shell's hash table and `env` array.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param binary_path The resolved binary path of the command (if applicable).
+ */
 void	update_underscore(t_cmd *cmd, char *binary_path)
 {
 	char	*val;

@@ -1,10 +1,18 @@
+/**
+ * @file env_utils.c
+ * @brief Utility functions for creating and freeing environment variables.
+ *
+ * This file provides helper functions used when managing environment variables
+ * in Minishell, including creation of `KEY=VALUE` formatted strings
+ * and cleanup of dynamically allocated environment arrays.
+ */
 #include "minishell.h"
 
 /**
  * @brief Creates a formatted environment entry string.
  *
- * Constructs a new string in the format `KEY=VALUE` using the provided
- * environment variable structure.
+ * Constructs a new string in the format `KEY=VALUE` using the key and value
+ * from the provided environment variable structure.
  *
  * @param var Pointer to the `t_mshell_var` structure containing key-value data.
  * @return A newly allocated string containing `KEY=VALUE`, or NULL on failure.
@@ -35,10 +43,10 @@ char	*create_env_entry(t_mshell_var *var)
 }
 
 /**
- * @brief Frees the memory allocated for the old environment array.
+ * @brief Frees the memory allocated for an environment variable array.
  *
- * Iterates through the `env` array, freeing each entry, and then
- * frees the array itself.
+ * Iterates through the array, frees each `KEY=VALUE` string,
+ * and then frees the array itself.
  *
  * @param env The environment array to free.
  */

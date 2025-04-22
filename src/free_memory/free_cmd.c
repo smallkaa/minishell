@@ -1,5 +1,17 @@
+/**
+ * @file free_cmd.c
+ * @brief Functions for freeing memory allocated for command structures.
+ */
 #include "minishell.h"
 
+/**
+ * @brief Frees a list of redirection structures.
+ *
+ * Iterates through a linked list of redirection nodes (`t_list`),
+ * freeing each redirection’s filename, structure, and the list node itself.
+ *
+ * @param redirs Pointer to the head of the redirection list.
+ */
 static void	free_redirs(t_list *redirs)
 {
 	t_list	*tmp;
@@ -17,6 +29,19 @@ static void	free_redirs(t_list *redirs)
 	}
 }
 
+/**
+ * @brief Frees a linked list of command structures.
+ *
+ * Frees memory for:
+ * - Arguments (`argv`)
+ * - Binary path
+ * - Redirections (`redirs`)
+ * - The `t_cmd` structure itself
+ *
+ * Iterates through the list, properly freeing nested structures.
+ *
+ * @param cmd Pointer to the head of the command list.
+ */
 void	free_cmd(t_cmd *cmd)
 {
 	t_cmd	*next;

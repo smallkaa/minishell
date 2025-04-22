@@ -1,14 +1,39 @@
 /**
- * @file handle_unset.c
- * @brief Functions for handling the `unset` built-in command in Minishell.
+ * @file unset.c
+ * @brief Implementation of the `unset` built-in command for Minishell.
+ *
+ * This file defines the logic for handling `unset`, which removes one or more
+ * environment variables from the shell’s internal hash table and updates the
+ * environment accordingly. Invalid options and variable names
+ * are gracefully handled.
  */
 #include "minishell.h"
 
+/**
+ * @brief Checks if the given argument is an unsupported option.
+ *
+ * Minishell does not support flags/options for `unset`. Therefore,
+ * any argument starting with `-` and followed by characters is treated as
+ * invalid.
+ *
+ * @param name The argument string to check.
+ * @return `true` if the argument is an invalid option, `false` otherwise.
+ */
 static bool	is_invalid_option(const char *name)
 {
 	return (name && name[0] == '-' && name[1]);
 }
 
+/**
+ * @brief Validates a string as a valid environment variable name.
+ *
+ * A valid identifier must:
+ * - Start with a letter or underscore.
+ * - Contain only alphanumeric characters or underscores.
+ *
+ * @param name The variable name to validate.
+ * @return `true` if valid, `false` otherwise.
+ */
 static bool	is_valid_identifier(const char *name)
 {
 	int	i;
@@ -26,17 +51,15 @@ static bool	is_valid_identifier(const char *name)
 }
 
 /**
- * @brief Removes a variable from the Minishell environment's hash table.
+ * @brief Removes a variable from the shell's environment hash table.
  *
- * This function searches for a variable with the given `key` in the hash
- * table.
- * If found, it removes the variable by unlinking it from the corresponding
- * bucket list and frees its allocated memory. After deletion,
- * `update_env(mshell)` is called to synchronize the shell's environment
- * array.
+ * Looks for a variable with the specified `key` in the hash table and unlinks
+ * it from the corresponding bucket. After successful removal, it updates the
+ * exported environment (`mshell->env`) via `update_env()`.
  *
- * @param mshell Pointer to the Minishell structure containing the hash table.
- * @param key The name of the variable to be removed.
+ * @param mshell Pointer to the shell instance.
+ * @param key The name of the environment variable to remove.
+ * @return Always returns `EXIT_SUCCESS`, even if the key is not found.
  */
 static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 {
@@ -65,6 +88,16 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Iterates over `unset` arguments and processes each one.
+ *
+ * Skips invalid options. Valid identifiers are removed from the environment.
+ * Invalid identifiers (e.g., `1VAR`) are silently ignored per Bash behavior.
+ *
+ * @param cmd Pointer to the command structure containing arguments.
+ * @return `EXIT_SUCCESS` if all arguments are processed.
+ *         `EXIT_FAILURE` if an invalid option is detected.
+ */
 static uint8_t	do_unset_loop(t_cmd *cmd)
 {
 	int	i;
@@ -82,30 +115,15 @@ static uint8_t	do_unset_loop(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the `unset` built-in command in Minishell.
+ * @brief Main handler for the `unset` built-in command.
  *
- * The `unset` command removes one or more environment variables from the
- * shell.
- * - If no arguments are provided, the function returns `EXIT_SUCCESS`.
- * - If the command structure (`cmd`) or Minishell instance is missing, it
- * prints an error.
- * - Otherwise, it loops through the arguments and removes each specified
- * variable.
+ * Removes one or more environment variables from the shell. Handles edge cases:
+ * - No arguments → no operation.
+ * - Missing shell context → prints an error.
  *
- * If `unset` is executed in a subshell (e.g., inside a pipeline), the
- * process may exit
- * after execution, depending on the shell's implementation.
- *
- * **Usage Example:**
- * ```
- * unset VAR1 VAR2 VAR3
- * ```
- *
- * @param cmd Pointer to the command structure (contains argv, minishell
- *			instance, etc.).
- * @return `EXIT_SUCCESS` if all requested variables were removed or no
- *		 arguments were provided.
- *		 `EXIT_FAILURE` if an error occurs (e.g., missing command structure).
+ * @param cmd Pointer to the command structure with arguments and shell context.
+ * @return `EXIT_SUCCESS` if successful or no arguments were given.
+ *         `EXIT_FAILURE` if command context is missing or an error occurs.
  */
 uint8_t	handle_unset(t_cmd *cmd)
 {

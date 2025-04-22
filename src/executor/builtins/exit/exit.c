@@ -1,22 +1,22 @@
 /**
- * @file handle_exit.c
- * @brief Functions for handling the `exit` built-in command in Minishell.
+ * @file exit.c
+ * @brief Implementation of the `exit` built-in command for Minishell.
+ *
+ * This file provides the full logic for handling the `exit` command,
+ * including numeric argument validation, overflow detection, and error handling.
+ * The behavior follows POSIX and Bash conventions for built-in exit behavior.
  */
 #include "minishell.h"
 
 /**
- * exit_numeric_error - Prints an error message for an invalid numeric
- *                      argument in `exit`.
+ * @brief Prints an error for a non-numeric exit argument.
  *
- * Format:
+ * Formats the error as:
  *   minishell: exit: <arg>: numeric argument required
  *
- * Behavior:
- * - Prints a formatted error message to `STDERR_FILENO`.
- * - Used when the `exit` command receives an invalid numeric argument.
- * - Ensures clear and consistent error messaging for non-numeric exit codes.
- *
- * @param arg The invalid argument that caused the error.
+ * @param arg The invalid argument passed to `exit`.
+ * @return Always returns `2`, the standard Bash exit code for invalid
+ * numeric input.
  */
 static uint8_t	exit_numeric_error(char *arg)
 {
@@ -27,13 +27,13 @@ static uint8_t	exit_numeric_error(char *arg)
 }
 
 /**
- * @brief Checks if an exit argument is numeric.
+ * @brief Validates whether an argument is a proper numeric exit code.
  *
- * The function ensures that the argument consists only of digits,
- * with an optional leading `+` or `-` sign.
+ * Accepts strings that contain only digits, optionally prefixed with '+' or '-'.
+ * Rejects any string with non-digit characters after the prefix.
  *
- * @param arg The argument string.
- * @return `true` if numeric, `false` otherwise.
+ * @param arg The argument string to validate.
+ * @return `true` if the argument is numeric, `false` otherwise.
  */
 static bool	is_valid_numeric_exit_arg(const char *arg)
 {
@@ -53,17 +53,31 @@ static bool	is_valid_numeric_exit_arg(const char *arg)
 }
 
 /**
- * @brief Handles cases where too many arguments are passed to `exit`.
+ * @brief Handles the case when `exit` is passed too many arguments.
  *
- * The shell prints an error message and returns an error code.
+ * Mimics Bash behavior: prints an error and returns `1` without exiting
+ * the shell.
  *
- * @return `1` (error exit status).
+ * @return `EXIT_FAILURE` (1), indicating improper usage.
  */
 static uint8_t	handle_too_many_args(void)
 {
 	return (error_return("exit: too many arguments\n", EXIT_FAILURE));
 }
 
+/**
+ * @brief Parses and returns the final exit status from a valid numeric string.
+ *
+ * Uses a safe conversion function that detects overflow. If overflow or
+ * out-of-range
+ * values are detected, it prints an error and returns status `2`.
+ *
+ * The return value is masked to 8 bits to simulate real shell exit behavior.
+ *
+ * @param arg The numeric string representing the exit code.
+ * @return Exit status in the range [0, 255], or `2` on invalid numeric
+ * conversion.
+ */
 static uint8_t	get_exit_status(char *arg)
 {
 	long long	exit_status;
@@ -76,18 +90,18 @@ static uint8_t	get_exit_status(char *arg)
 }
 
 /**
- * @brief Handles the `exit` built-in command in Minishell.
+ * @brief Handles the `exit` built-in command logic.
  *
  * Behavior:
- * - If no arguments are provided, exits with the last command's status.
- * - If one argument is provided, checks if it is numeric:
- *   - If valid, exits with the specified status.
- *   - If invalid, prints an error and returns `EXIT_FAILURE`.
- * - If multiple arguments are provided, prints an error and does not exit.
+ * - No arguments → exits with the last command's status.
+ * - One argument → if numeric, exits with that status; if not, prints an error.
+ * - Two or more arguments → prints a usage error and does not exit.
  *
- * @param cmd The command structure containing execution context.
- * @return `EXIT_SUCCESS` (0) or `EXIT_FAILURE` (1) (not actually used,
- *         as `exit` terminates).
+ * This function does not call `exit()` directly here; instead, the caller is
+ * expected to handle cleanup and exit with the returned status.
+ *
+ * @param cmd The command structure containing arguments and shell state.
+ * @return Exit code to be passed to cleanup and termination logic.
  */
 uint8_t	handle_exit(t_cmd *cmd)
 {

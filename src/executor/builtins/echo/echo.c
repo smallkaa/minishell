@@ -1,14 +1,22 @@
+/**
+ * @file echo.c
+ * @brief Implementation of the `echo` built-in command for Minishell.
+ *
+ * This file provides the full logic for handling the `echo` command, including
+ * support for the `-n` flag (no trailing newline), flag parsing, and
+ * argument printing.
+ * The implementation mimics the behavior of the Bash `echo` built-in.
+ */
 #include "minishell.h"
 
 /**
- * @brief Writes a string to the standard output.
+ * @brief Writes a string to standard output using `write()`.
  *
- * This function uses `write()` to print a string to `STDOUT_FILENO`.
- * If the write operation fails, it calls an error handler and returns
- * `EXIT_FAILURE`.
+ * A wrapper around `write()` that prints the given string to STDOUT
+ * (file descriptor 1).
+ * If writing fails, an error message is printed, and failure is returned.
  *
- * @param cmd Pointer to the command structure for error handling.
- * @param str The string to be printed.
+ * @param str The null-terminated string to print.
  * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on failure.
  */
 static int	ft_putstr_custom(char *str)
@@ -22,17 +30,19 @@ static int	ft_putstr_custom(char *str)
 }
 
 /**
- * @brief Prints the arguments provided to the `echo` command.
+ * @brief Prints the actual content (arguments) of the `echo` command.
  *
- * Iterates over the command arguments, printing each word followed by a space,
- * unless it is the last word. If the `-n` flag is **not** set, a newline
- * is printed at the end.
+ * Iterates through the argument list and prints each token, separated by
+ * a space.
+ * If the `-n` flag was not set, a newline is printed at the end.
+ * If no arguments are present after the command, a newline is printed by
+ * default.
  *
- * @param cmd Pointer to the command structure.
- * @param i Starting index of arguments to print.
- * @param newline_flag Pointer to an integer indicating if a newline
- *                     should be printed (`1` = newline, `0` = no newline).
- * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on failure.
+ * @param cmd Pointer to the current command structure.
+ * @param i Index in `cmd->argv[]` to start printing from.
+ * @param newline_flag Pointer to an int indicating whether to print
+ * a newline (1 = yes).
+ * @return `EXIT_SUCCESS` on successful printing, `EXIT_FAILURE` on write error.
  */
 static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 {
@@ -54,15 +64,17 @@ static uint8_t	print_content(t_cmd *cmd, int i, int *newline_flag)
 }
 
 /**
- * @brief Handles `-n` flags in the `echo` command.
+ * @brief Parses `-n` flags for the `echo` command.
  *
- * Parses arguments that start with `-n`, ensuring they contain only `n`
- * characters.
- * If valid, it **disables** the newline at the end of the output.
+ * Scans and validates consecutive `-n` flags (e.g., `-n`, `-nnn`, etc.)
+ * and disables
+ * the newline if any are found. Flags wrapped in quotes (e.g., `"-n"`)
+ * are not treated
+ * as valid options.
  *
- * @param cmd Pointer to the command structure.
- * @param newline_flag Pointer to an integer (`1` = newline, `0` = no newline).
- * @return The index from where to start printing arguments.
+ * @param cmd Pointer to the current command structure.
+ * @param newline_flag Pointer to an int that will be set to 0 if `-n` is found.
+ * @return Index from which to start printing actual content.
  */
 static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 {
@@ -80,19 +92,20 @@ static int	handle_echo_flags(t_cmd *cmd, int *newline_flag)
 }
 
 /**
- * @brief Handles the `echo` built-in command in Minishell.
+ * @brief Executes the `echo` built-in command.
  *
- * Implements the `echo` functionality, supporting the `-n` flag
- * to suppress the trailing newline. Calls helper functions to parse flags
- * and print content.
+ * Handles parsing of options and printing of arguments for the `echo` command.
+ * Supports the `-n` flag to suppress the trailing newline.
+ * Delegates actual printing
+ * and flag handling to helper functions.
  *
- * **Behavior:**
- * - If `-n` is **present**, `echo` will print without a newline.
- * - If no arguments are given, `echo` prints only a newline.
- * - Otherwise, it prints all arguments separated by spaces.
+ * Behavior Summary:
+ * - With `-n` flag: suppress newline.
+ * - Without arguments: print a newline only.
+ * - Otherwise: print arguments separated by spaces, ending with a newline.
  *
- * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on failure.
+ * @param cmd Pointer to the command structure containing the input arguments.
+ * @return `EXIT_SUCCESS` (0) on success, `EXIT_FAILURE` (1) on write failure.
  */
 uint8_t	handle_echo(t_cmd *cmd)
 {

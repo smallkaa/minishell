@@ -1,6 +1,10 @@
 /**
  * @file init_minishell.c
  * @brief Initialization functions for the Minishell environment.
+ *
+ * This file contains functions responsible for allocating memory and setting up
+ * the main `t_mshell` structure, including environment duplication and
+ * hash table initialization.
  */
 #include "minishell.h"
 
@@ -8,7 +12,7 @@
  * @brief Allocates memory for the Minishell structure.
  *
  * This function dynamically allocates memory for a `t_mshell` structure.
- * If the allocation fails, an error message is printed.
+ * If allocation fails, an error message is printed to `STDERR_FILENO`.
  *
  * @return A pointer to the allocated `t_mshell` structure, or NULL on failure.
  */
@@ -25,11 +29,12 @@ static t_mshell	*allocate_minishell(void)
 /**
  * @brief Initializes the environment variables.
  *
- * This function sets up the shell's environment by duplicating the
- * provided `envp` array. If no environment is provided, an error is printed.
+ * This function duplicates the provided environment (`envp`) array.
+ * If `envp` is NULL or memory allocation fails during duplication, an error
+ * is printed.
  *
- * @param envp The array of environment variables from the system.
- * @return A newly allocated array of environment variables, or NULL on failure.
+ * @param envp The array of environment variables from the parent process.
+ * @return A new environment array (heap-allocated), or NULL on failure.
  */
 static char	**init_env(char **envp)
 {
@@ -47,14 +52,15 @@ static char	**init_env(char **envp)
 }
 
 /**
- * @brief Sets up the shell environment.
+ * @brief Sets up the shell's environment and hash table.
  *
- * This function initializes the shell's environment variables and
- * sets up the hash table for storing environment variables.
+ * This function:
+ * - Duplicates the system environment variables.
+ * - Initializes the shell's hash table from the copied environment.
  *
- * @param minishell Pointer to the `t_mshell` structure.
- * @param envp The array of environment variables from the system.
- * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on failure.
+ * @param mshell Pointer to the `t_mshell` structure to initialize.
+ * @param envp The environment array from the system.
+ * @return `EXIT_SUCCESS` if setup completes, `EXIT_FAILURE` on error.
  */
 static int	setup_environment(t_mshell	*mshell, char **envp)
 {
@@ -67,19 +73,17 @@ static int	setup_environment(t_mshell	*mshell, char **envp)
 }
 
 /**
- * @brief Initializes the Minishell structure.
+ * @brief Initializes the core `t_mshell` structure.
  *
- * This function initializes the shell by:
- * - Allocating memory for the `t_mshell` structure.
- * - Setting up the environment variables.
- * - Initializing the hash table for variable storage.
- * - Loading built-in commands.
+ * This is the main initialization entry point for Minishell:
+ * - Allocates the shell structure.
+ * - Sets up environment variables and hash table.
+ * - Initializes status values.
  *
- * If any initialization step fails, the allocated memory is
- * freed and NULL is returned.
+ * If any of the steps fail, all allocated memory is freed and NULL is returned.
  *
- * @param envp The array of environment variables from the system.
- * @return A pointer to the initialized `t_mshell` structure, or NULL on failure.
+ * @param envp Environment variables passed from the system.
+ * @return Pointer to the initialized `t_mshell`, or NULL on failure.
  */
 t_mshell	*init_mshell(char **envp)
 {

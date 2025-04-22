@@ -1,9 +1,23 @@
 /**
  * @file exec_builtin.c
- * @brief Function for handle built-in commands in Minishell.
+ * @brief Functions for identifying and executing built-in commands in Minishell.
+ *
+ * This file implements the built-in command dispatch system, including:
+ * - Detecting whether a command is built-in.
+ * - Providing a dispatch table of all supported built-ins.
+ * - Executing the correct handler function for the built-in.
  */
 #include "minishell.h"
 
+/**
+ * @brief Checks whether the command is a built-in.
+ *
+ * Compares the first argument of the command (`cmd->argv[0]`) with known
+ * built-in command names stored in a dispatch table.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return `true` if the command is a recognized built-in, `false` otherwise.
+ */
 bool	is_builtin(t_cmd *cmd)
 {
 	const t_builtin_disp	*table;
@@ -23,6 +37,16 @@ bool	is_builtin(t_cmd *cmd)
 	return (false);
 }
 
+/**
+ * @brief Returns the built-in command dispatch table.
+ *
+ * The dispatch table is a static array containing built-in command names
+ * and corresponding handler function pointers. Optionally sets `*size`
+ * to the number of built-ins available.
+ *
+ * @param size Pointer to a size_t that will be filled with the table size.
+ * @return Pointer to the internal static array of built-in command handlers.
+ */
 const t_builtin_disp	*get_builtin_table(size_t *size)
 {
 	static const t_builtin_disp	table[] = {
@@ -40,6 +64,16 @@ const t_builtin_disp	*get_builtin_table(size_t *size)
 	return (table);
 }
 
+/**
+ * @brief Executes a built-in command if it matches one from the dispatch table.
+ *
+ * Looks up the command by name in the built-in table and, if found,
+ * calls the corresponding handler function.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return Return value of the built-in handler if matched,
+ *         `EXIT_FAILURE` (1) if the command is not a built-in.
+ */
 uint8_t	exec_builtins(t_cmd *cmd)
 {
 	size_t					i;
