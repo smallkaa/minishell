@@ -128,12 +128,30 @@ int			handle_output_redir(t_mshell *shell, t_list **cmd_list,
 				t_cmd **current, t_Token *token);
 void	free_list_nodes_only(t_list **lst);
 
-void	append_char_to_result(char c, char **result);
-void	handle_single_quote(const char *input, size_t *i, int *single_q, char **result, int double_q);
-void	handle_double_quote(const char *input, size_t *i, int *double_q, char **result, int single_q);
-void	handle_backslash(const char *input, size_t *i, char **result, int single_q);
-void	handle_tilde(const char *input, size_t *i, char **result, t_mshell *mshell, int quote_style);
-void	handle_dollar(const char *input, size_t *i, char **result, t_mshell *mshell, int single_q);
+// Expansion context for helper functions
+typedef struct s_exp_ctx
+{
+   const char  *input;      // input string being processed
+   size_t      *i;          // current position index in input
+   char        **result;    // pointer to result buffer
+   t_mshell    *mshell;     // shell context (env, status)
+   int         quote_style; // 0 = none, 1 = single, 2 = double
+   int         single_q;    // flag: in single-quote mode
+   int         double_q;    // flag: in double-quote mode
+}   t_exp_ctx;
+
+// Append a single character to the expansion result
+void    append_char(t_exp_ctx *ctx, char c);
+// Handle single-quote characters in expansion
+void    handle_single_quote(t_exp_ctx *ctx);
+// Handle double-quote characters in expansion
+void    handle_double_quote(t_exp_ctx *ctx);
+// Handle backslash escapes in expansion
+void    handle_backslash(t_exp_ctx *ctx);
+// Handle tilde expansion or literal '~'
+void    handle_tilde(t_exp_ctx *ctx);
+// Handle dollar-sign variable expansions
+void    handle_dollar(t_exp_ctx *ctx);
 
 char *get_env_value(const char *var, t_mshell *minishell);
 char *append_to_result(char *result, const char *append);

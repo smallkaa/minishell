@@ -1,19 +1,15 @@
 #include "../include/minishell.h"
+
 // Helper function to print token information
 void	print_token(t_Token token)
 {
+	const char	*token_type_names[] = {[TOKEN_WORD] = "WORD",
+			[TOKEN_PIPE] = "PIPE", [TOKEN_REDIRECT_IN] = "REDIRECT_IN",
+			[TOKEN_REDIRECT_OUT] = "REDIRECT_OUT",
+			[TOKEN_APPEND_OUT] = "APPEND_OUT",
+			[TOKEN_BACKGROUND] = "BACKGROUND", [TOKEN_HEREDOC] = "HEREDOC",
+			[TOKEN_EMPTY] = "EMPTY", [TOKEN_EOF] = "EOF"};
 
-	const char *token_type_names[] = {
-		[TOKEN_WORD] = "WORD",
-		[TOKEN_PIPE] = "PIPE",
-		[TOKEN_REDIRECT_IN] = "REDIRECT_IN",
-		[TOKEN_REDIRECT_OUT] = "REDIRECT_OUT",
-		[TOKEN_APPEND_OUT] = "APPEND_OUT",
-		[TOKEN_BACKGROUND] = "BACKGROUND",
-		[TOKEN_HEREDOC] = "HEREDOC",
-		[TOKEN_EMPTY] = "EMPTY",
-		[TOKEN_EOF] = "EOF"
-	};
 	debug_printf("Token: { type: %s", token_type_names[token.type]);
 	if (token.type == TOKEN_WORD)
 		debug_printf(", value: %s", token.value ? token.value : "(NULL)");
@@ -27,6 +23,7 @@ void	explain_token(t_Token token)
 	int			in_single_quote;
 	int			in_double_quote;
 	size_t		i;
+	char		color_code[10] = "\033[0m";
 
 	str = token.value;
 	in_single_quote = 0;
@@ -41,12 +38,14 @@ void	explain_token(t_Token token)
 		if (str[i] == '\'' && !in_double_quote)
 		{
 			in_single_quote = !in_single_quote;
-			debug_printf("%s'%s", in_single_quote ? "\033[33m" : "\033[0m", in_single_quote ? "\033[33m" : "\033[0m");
+			debug_printf("%s'%s", in_single_quote ? "\033[33m" : "\033[0m",
+				in_single_quote ? "\033[33m" : "\033[0m");
 		}
 		else if (str[i] == '"' && !in_single_quote)
 		{
 			in_double_quote = !in_double_quote;
-			debug_printf("%s\"%s", in_double_quote ? "\033[36m" : "\033[0m", in_double_quote ? "\033[36m" : "\033[0m");
+			debug_printf("%s\"%s", in_double_quote ? "\033[36m" : "\033[0m",
+				in_double_quote ? "\033[36m" : "\033[0m");
 		}
 		else if (str[i] == '$' && (in_double_quote || !in_single_quote))
 		{
@@ -54,9 +53,10 @@ void	explain_token(t_Token token)
 		}
 		else
 		{
-			char color_code[10] = "\033[0m";
-			if (in_single_quote) ft_strcpy(color_code, "\033[33m");
-			else if (in_double_quote) ft_strcpy(color_code, "\033[36m");
+			if (in_single_quote)
+				ft_strcpy(color_code, "\033[33m");
+			else if (in_double_quote)
+				ft_strcpy(color_code, "\033[36m");
 			debug_printf("%s%c\033[0m", color_code, str[i]);
 		}
 		i++;
@@ -65,48 +65,46 @@ void	explain_token(t_Token token)
 	debug_printf("\033[0m");
 }
 
-void debug_print_single_redirection(t_redir *redir)
+void	debug_print_single_redirection(t_redir *redir)
 {
-    if (!redir)
-        return;
-    printf("    Redirection: ");
-    if (redir->type == R_INPUT)
-        printf("< ");
-    else if (redir->type == R_OUTPUT)
-        printf("> ");
-    else if (redir->type == R_APPEND)
-        printf(">> ");
-    else if (redir->type == R_HEREDOC)
-        printf("<< ");
-    else
-        printf("[Unknown Type %d] ", redir->type); // Для отладки неизвестных типов
-
-    printf("\"%s\"", redir->filename ? redir->filename : "(NULL Filename!)");
-    printf("\n");
+	if (!redir)
+		return ;
+	printf("    Redirection: ");
+	if (redir->type == R_INPUT)
+		printf("< ");
+	else if (redir->type == R_OUTPUT)
+		printf("> ");
+	else if (redir->type == R_APPEND)
+		printf(">> ");
+	else if (redir->type == R_HEREDOC)
+		printf("<< ");
+	else
+		printf("[Unknown Type %d] ", redir->type);
+	// Для отладки неизвестных типов
+	printf("\"%s\"", redir->filename ? redir->filename : "(NULL Filename!)");
+	printf("\n");
 }
 
-
-void debug_print_parsed_commands(t_cmd *cmd)
+void	debug_print_parsed_commands(t_cmd *cmd)
 {
-    if (!is_debug_mode())
-         return;
+	int	cmd_count;
 
-    int cmd_count = 1;
-    t_list *redir_node; // Узел для итерации по списку редиректов
-    t_redir *redir;     // Указатель на данные редиректа
-
-    printf("\n==== Parsed Command Structure ====\n");
-    while (cmd)
-    {
-        printf("Command %d:\n", cmd_count);
-        printf("  Executable: %s\n", cmd->binary ? cmd->binary : "(NULL)");
+	if (!is_debug_mode())
+		return ;
+	cmd_count = 1;
+	t_list *redir_node; // Узел для итерации по списку редиректов
+	t_redir *redir;     // Указатель на данные редиректа
+	printf("\n==== Parsed Command Structure ====\n");
+	while (cmd)
+	{
+		printf("Command %d:\n", cmd_count);
+		printf("  Executable: %s\n", cmd->binary ? cmd->binary : "(NULL)");
 		if (cmd->argv)
 		{
 			printf("  Arguments: ");
 			for (int i = 0; i < MAX_ARGS && cmd->argv[i] != NULL; i++)
 			{
 				printf("    RAW argv[%d] = %p\n", i, (void *)cmd->argv[i]);
-
 				if (cmd->argv[i])
 					printf("\"%s\" ", cmd->argv[i]);
 				else
@@ -114,33 +112,33 @@ void debug_print_parsed_commands(t_cmd *cmd)
 			}
 			printf("\n");
 		}
-        // Печать всех редиректов из списка cmd->redirs
-        printf("  Redirections (in order):\n");
-        redir_node = cmd->redirs; // Получаем начало списка редиректов
-        if (!redir_node)
-        {
-            printf("    (None)\n"); // Сообщение, если редиректов нет
-        }
-        while (redir_node)
-        {
-            // Получаем указатель на структуру t_redir из узла списка
-            redir = (t_redir *)redir_node->content;
-            // Печатаем информацию об этом редиректе
-            debug_print_single_redirection(redir);
-            // Переходим к следующему узлу
-            redir_node = redir_node->next;
-        }
-        // Печать информации о пайпе
-        if (cmd->next)
-            printf("  Piped to next command ->\n");
-
-        // Переход к следующей команде
-        cmd = cmd->next;
-        cmd_count++;
-        // Добавляем пустую строку для лучшей читаемости между командами
-        if (cmd) printf("\n");
-    }
-    printf("======================================\n\n");
+		// Печать всех редиректов из списка cmd->redirs
+		printf("  Redirections (in order):\n");
+		redir_node = cmd->redirs; // Получаем начало списка редиректов
+		if (!redir_node)
+		{
+			printf("    (None)\n"); // Сообщение, если редиректов нет
+		}
+		while (redir_node)
+		{
+			// Получаем указатель на структуру t_redir из узла списка
+			redir = (t_redir *)redir_node->content;
+			// Печатаем информацию об этом редиректе
+			debug_print_single_redirection(redir);
+			// Переходим к следующему узлу
+			redir_node = redir_node->next;
+		}
+		// Печать информации о пайпе
+		if (cmd->next)
+			printf("  Piped to next command ->\n");
+		// Переход к следующей команде
+		cmd = cmd->next;
+		cmd_count++;
+		// Добавляем пустую строку для лучшей читаемости между командами
+		if (cmd)
+			printf("\n");
+	}
+	printf("======================================\n\n");
 }
 
 // --- Функции освобождения памяти (исправленные) ---
@@ -196,7 +194,7 @@ void	free_command(t_cmd *cmd)
 	if (cmd->redirs) // [cite: 1]
 	{
 		ft_lstclear(&cmd->redirs, free_redir); // [cite: 1]
-		cmd->redirs = NULL; // Убедимся, что указатель обнулен
+		cmd->redirs = NULL;
 	}
 	// Не освобождаем cmd->minishell, так как он общий
 	// Освобождаем саму структуру команды
@@ -217,9 +215,10 @@ void	free_command_list(t_cmd **head)
 	current = *head;
 	while (current != NULL)
 	{
-		next = current->next; // Сохраняем указатель на следующую команду [cite: 1]
+		next = current->next;
+		// Сохраняем указатель на следующую команду [cite: 1]
 		free_command(current); // Освобождаем текущую команду
-		current = next; // Переходим к следующей
+		current = next;        // Переходим к следующей
 	}
 	*head = NULL; // Устанавливаем голову списка в NULL после очистки
 }

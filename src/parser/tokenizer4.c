@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer4.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 13:19:13 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/22 13:53:48 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file tokenizer4.c
  * @brief Token validation and stripping utility functions.
  */
 
+#include "../include/minishell.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../include/minishell.h"
 
 /**
  * @brief Checks if a string is enclosed in single quotes.
@@ -13,15 +25,16 @@
  * @param str The string to check.
  * @return true if enclosed in single quotes, false otherwise.
  */
-bool is_in_single_quotes(char *str)
+bool	is_in_single_quotes(char *str)
 {
-    size_t len;
-    if (!str || !*str)
-        return (false);
-    len = ft_strlen(str);
-    if (len < 2)
-        return (false);
-    return (str[0] == '\'' && str[len - 1] == '\'');
+	size_t	len;
+
+	if (!str || !*str)
+		return (false);
+	len = ft_strlen(str);
+	if (len < 2)
+		return (false);
+	return (str[0] == '\'' && str[len - 1] == '\'');
 }
 
 /**
@@ -30,15 +43,16 @@ bool is_in_single_quotes(char *str)
  * @param str The string to check.
  * @return true if enclosed in double quotes, false otherwise.
  */
-bool is_in_double_quotes(char *str)
+bool	is_in_double_quotes(char *str)
 {
-    size_t len;
-    if (!str || !*str)
-        return (false);
-    len = ft_strlen(str);
-    if (len < 2)
-        return (false);
-    return (str[0] == '"' && str[len - 1] == '"');
+	size_t	len;
+
+	if (!str || !*str)
+		return (false);
+	len = ft_strlen(str);
+	if (len < 2)
+		return (false);
+	return (str[0] == '"' && str[len - 1] == '"');
 }
 
 /**
@@ -48,33 +62,18 @@ bool is_in_double_quotes(char *str)
  * @param quote_style 1 for single quotes, 2 for double quotes.
  * @return Newly allocated string without outer quotes, or NULL on error.
  */
-static char *strip_quotes_preserving_inner(const char *str, int quote_style)
+static char	*strip_quotes_simple(const char *str, int quote_style)
 {
-    char   *result;
-    size_t len = ft_strlen(str);
-    size_t i = 0, j = 0;
-    bool   in_squote = false, in_dquote = false;
+	size_t	len;
 
-    result = malloc(len + 1);
-    if (!result)
-        return (NULL);
-    while (str[i])
-    {
-        if (str[i] == '\'' && quote_style == 1 && !in_dquote)
-        {
-            in_squote = !in_squote;
-            i++;
-        }
-        else if (str[i] == '"' && quote_style == 2 && !in_squote)
-        {
-            in_dquote = !in_dquote;
-            i++;
-        }
-        else
-            result[j++] = str[i++];
-    }
-    result[j] = '\0';
-    return (result);
+	if (!str)
+		return (NULL);
+	len = ft_strlen(str);
+	if (quote_style == 1 && len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
+		return (ft_substr(str, 1, len - 2));
+	if (quote_style == 2 && len >= 2 && str[0] == '"' && str[len - 1] == '"')
+		return (ft_substr(str, 1, len - 2));
+	return (ft_strdup(str));
 }
 
 /**
@@ -86,33 +85,28 @@ static char *strip_quotes_preserving_inner(const char *str, int quote_style)
  * @param tokens Array of tokens to process.
  * @return 0 on success, -1 on error.
  */
-int strip_words(t_TokenArray *tokens)
+int	strip_words(t_TokenArray *tokens)
 {
-    int   i;
-    char *str;
-    char *result;
+	int		i;
+	char	*new_val;
+	t_Token	*tok;
 
-    if (!tokens || !tokens->tokens)
-        return (-1);
-    i = 0;
-    while (i < tokens->count)
-    {
-        t_Token *tok = &tokens->tokens[i];
-        if (tok->type == TOKEN_WORD && tok->value)
-        {
-            if (tok->in_single_quotes && tok->in_double_quotes)
-            {
-                i++;
-                continue;
-            }
-            str = tok->value;
-            result = strip_quotes_preserving_inner(str, tok->quote_style);
-            if (!result)
-                return (-1);
-            free(str);
-            tok->value = result;
-        }
-        i++;
-    }
-    return (0);
+	if (!tokens || !tokens->tokens)
+		return (-1);
+	i = -1;
+	while (++i < tokens->count)
+	{
+		tok = &tokens->tokens[i];
+		if (tok->type == TOKEN_WORD && tok->value)
+		{
+			if (tok->in_single_quotes && tok->in_double_quotes)
+				continue ;
+			new_val = strip_quotes_simple(tok->value, tok->quote_style);
+			if (!new_val)
+				return (-1);
+			free(tok->value);
+			tok->value = new_val;
+		}
+	}
+	return (0);
 }

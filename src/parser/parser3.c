@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser3.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/22 13:10:59 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
@@ -60,7 +72,6 @@ void	process_pipe_token(t_cmd **current, int *i)
 	(*i)++;
 }
 
-
 int	init_redir_command_if_needed(t_redir_ctx *ctx)
 {
 	*ctx->current = create_empty_command(ctx->shell);
@@ -92,4 +103,3 @@ int	apply_redirection(t_redir_ctx *ctx, t_TokenType type)
 	}
 	return (0);
 }
-

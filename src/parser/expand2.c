@@ -5,6 +5,7 @@
 
 #include "libft.h"
 #include "minishell.h"
+#include "tokenizer.h"
 
 /**
  * @brief Handle escape sequences and return the escaped string.
@@ -13,12 +14,13 @@
  *
  * @param input    Input string containing the backslash.
  * @param i        Pointer to current index in input; will be incremented.
- * @param single_q Non‐zero if inside single quotes (only take literal backslash+char).
+
+	* @param single_q Non‐zero if inside single quotes (only take literal backslash+char).
  * @return Allocated string of the escaped character(s), or NULL on failure.
  */
-char *handle_escape(const char *input, size_t *i, int single_q)
+char	*handle_escape(const char *input, size_t *i, int single_q)
 {
-	char single_char[2];
+	char	single_char[2];
 
 	(*i)++;
 	if (single_q)
@@ -44,25 +46,10 @@ char *handle_escape(const char *input, size_t *i, int single_q)
 	return (ft_strdup(single_char));
 }
 /**
- * @brief Handle escaped dollar sign.
- *
- * Appends a literal '$' to the result and advances the index by two.
- *
- * @param input The input string.
- * @param i Pointer to current index in input; advanced past "\$." 
- * @param result Pointer to current result string.
- */
-static void handle_escaped_dollar(const char *input, size_t *i, char **result)
-{
-    (void)input; /* input is unused */
-    append_char_to_result('$', result);
-    *i += 2;
-}
-
-/**
  * @brief Process a single character or sequence for expansion.
  *
- * Determines the type of the current character (quote, escape, dollar, tilde, or default)
+ * Determines the type of the current character (quote, escape, dollar, tilde,
+	or default)
  * and dispatches to the appropriate handler.
  *
  * @param input The input string.
@@ -72,35 +59,31 @@ static void handle_escaped_dollar(const char *input, size_t *i, char **result)
  * @param single_q Pointer to single-quote mode flag.
  * @param double_q Pointer to double-quote mode flag.
  */
-static void process_input_char(const char *input, size_t *i, char **result,
-    t_mshell *ms, int *single_q, int *double_q)
+static void	process_input_char(t_exp_ctx *ctx)
 {
-    if (input[*i] == '\'')
-        handle_single_quote(input, i, single_q, result, *double_q);
-    else if (input[*i] == '"')
-        handle_double_quote(input, i, double_q, result, *single_q);
-    else if (input[*i] == '\\' && input[*i + 1] == '$')
-        handle_escaped_dollar(input, i, result);
-    else if (input[*i] == '\\')
-        handle_backslash(input, i, result, *single_q);
-    else if (input[*i] == '$')
-    {
-        handle_dollar(input, i, result, ms, *single_q);
-    }
-    else if (input[*i] == '~')
-    {
-        int quote_style = *single_q ? 1 : (*double_q ? 2 : 0);
-        handle_tilde(input, i, result, ms, quote_style);
-    }
-    else
-    {
-        append_char_to_result(input[*i], result);
-        (*i)++;
-    }
+	char	c;
+
+	c = ctx->input[*ctx->i];
+	if (c == '\'')
+		handle_single_quote(ctx);
+	else if (c == '"')
+		handle_double_quote(ctx);
+	else if (c == '\\')
+		handle_backslash(ctx);
+	else if (c == '$')
+		handle_dollar(ctx);
+	else if (c == '~')
+		handle_tilde(ctx);
+	else
+	{
+		append_char(ctx, c);
+		(*ctx->i)++;
+	}
 }
 
 /**
- * @brief Core loop for expanding environment variables, quotes, escapes, and tilde.
+ * @brief Core loop for expanding environment variables, quotes, escapes,
+	and tilde.
  *
  * Walks through the input string and builds the expanded result.
  *
@@ -109,27 +92,29 @@ static void process_input_char(const char *input, size_t *i, char **result,
  * @param quote_style Quote style: 0 (none), 1 (single), 2 (double).
  * @return Allocated expanded string, or NULL on failure.
  */
-static char *expand_env_variables_loop(const char *input,
-    t_mshell *ms, int quote_style)
+static char	*expand_env_variables_loop(const char *input, t_mshell *ms,
+		int quote_style)
 {
-    char *result;
-    size_t i;
-    int single_q;
-    int double_q;
+	char		*result;
+	size_t		i;
+	t_exp_ctx	ctx;
 
-    if (!input)
-        return NULL;
-    result = ft_strdup("");
-    if (!result)
-        return NULL;
-    single_q = (quote_style == 1);
-    double_q = (quote_style == 2);
-    i = 0;
-    while (input[i])
-    {
-        process_input_char(input, &i, &result, ms, &single_q, &double_q);
-    }
-    return result;
+	if (!input)
+		return (NULL);
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	i = 0;
+	ctx.input = input;
+	ctx.i = &i;
+	ctx.result = &result;
+	ctx.mshell = ms;
+	ctx.quote_style = quote_style;
+	ctx.single_q = (quote_style == 1);
+	ctx.double_q = (quote_style == 2);
+	while (input[i])
+		process_input_char(&ctx);
+	return (result);
 }
 
 /**
@@ -142,7 +127,7 @@ static char *expand_env_variables_loop(const char *input,
  * @param quote_style Quote style: 0 (none), 1 (single), 2 (double).
  * @return Allocated expanded string, or NULL on failure.
  */
-char *expand_env_variables(const char *input, t_mshell *ms, int quote_style)
+char	*expand_env_variables(const char *input, t_mshell *ms, int quote_style)
 {
-    return expand_env_variables_loop(input, ms, quote_style);
+	return (expand_env_variables_loop(input, ms, quote_style));
 }

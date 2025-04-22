@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   t1.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 13:12:47 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/22 13:14:05 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file tokenizer1.c
  * @brief Tokenizer creation and destruction functions.
  */
 
+#include "../include/minishell.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../include/minishell.h"
 
 /**
  * @brief Creates a new tokenizer for the given input string.
@@ -13,27 +25,28 @@
  * Allocates and initializes a t_Tokenizer structure.
  *
  * @param input The input string to tokenize.
- * @return Pointer to the newly created tokenizer, or NULL on allocation failure.
+ * @return Pointer to the newly created tokenizer,
+	or NULL on allocation failure.
  */
-t_Tokenizer *tokenizer_create(const char *input)
+t_Tokenizer	*tokenizer_create(const char *input)
 {
-    t_Tokenizer *tokenizer;
-    size_t       len;
+	t_Tokenizer	*tokenizer;
+	size_t		len;
 
-    tokenizer = malloc(sizeof(t_Tokenizer));
-    if (!tokenizer)
-        return (NULL);
-    len = ft_strlen(input);
-    tokenizer->input = input;
-    tokenizer->input_base = input;
-    tokenizer->buffer_size = len + 1;
-    tokenizer->buffer = malloc(tokenizer->buffer_size);
-    if (!tokenizer->buffer)
-    {
-        free(tokenizer);
-        return (NULL);
-    }
-    return (tokenizer);
+	tokenizer = malloc(sizeof(t_Tokenizer));
+	if (!tokenizer)
+		return (NULL);
+	len = ft_strlen(input);
+	tokenizer->input = input;
+	tokenizer->input_base = input;
+	tokenizer->buffer_size = len + 1;
+	tokenizer->buffer = malloc(tokenizer->buffer_size);
+	if (!tokenizer->buffer)
+	{
+		free(tokenizer);
+		return (NULL);
+	}
+	return (tokenizer);
 }
 
 /**
@@ -41,12 +54,12 @@ t_Tokenizer *tokenizer_create(const char *input)
  *
  * @param tokenizer Pointer to the tokenizer to destroy.
  */
-void tokenizer_destroy(t_Tokenizer *tokenizer)
+void	tokenizer_destroy(t_Tokenizer *tokenizer)
 {
-    if (!tokenizer)
-        return;
-    free(tokenizer->buffer);
-    free(tokenizer);
+	if (!tokenizer)
+		return ;
+	free(tokenizer->buffer);
+	free(tokenizer);
 }
 
 /**
@@ -54,11 +67,11 @@ void tokenizer_destroy(t_Tokenizer *tokenizer)
  *
  * @param token Pointer to the token to free.
  */
-void free_token(t_Token *token)
+void	free_token(t_Token *token)
 {
-    if (token && token->value)
-    {
-        free(token->value);
-        token->value = NULL;
-    }
+	if (token && token->value)
+	{
+		free(token->value);
+		token->value = NULL;
+	}
 }

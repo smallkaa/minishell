@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser5.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/22 13:11:30 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 /**
@@ -27,7 +39,6 @@ static t_TokenArray	*tokenize_input(char *input)
 	tokenizer_destroy(tokenizer);
 	return (tokens);
 }
-
 
 /**
  * @brief Checks if the input string matches any unsupported syntax pattern.
