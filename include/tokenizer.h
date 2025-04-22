@@ -1,3 +1,7 @@
+/**
+ * @file tokenizer.h
+ * @brief Tokenizer interface: creation, destruction, token retrieval, and utilities.
+ */
 #ifndef TOKENIZER_H
 # define TOKENIZER_H
 
@@ -51,7 +55,51 @@ typedef struct s_unsupported_cmd
 }	t_unsupported_cmd;
 
 // Get the next token from the input
+// Get the next token from the input
 t_Token	get_next_token(t_Tokenizer *tokenizer);
+
+/**
+ * @brief Parses a dollar-quoted string token ($\"...\").
+ *
+ * @param tokenizer Pointer to the tokenizer.
+ * @param saw_space Indicates if token should be joined to previous.
+ * @return t_Token Parsed token.
+ */
+t_Token	tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer, int saw_space);
+
+/**
+ * @brief Parses a quoted string token (single or double).
+ *
+ * @param tokenizer Pointer to the tokenizer.
+ * @param saw_space Indicates if token should be joined to previous.
+ * @return t_Token Parsed token.
+ */
+t_Token	tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space);
+
+/**
+ * @brief Parses redirection tokens "<<" or ">>".
+ *
+ * @param tokenizer Pointer to the tokenizer.
+ * @return t_Token Parsed token.
+ */
+t_Token	tokenizer_parse_redirection(t_Tokenizer *tokenizer);
+
+/**
+ * @brief Parses single-character operator tokens |, <, >, &.
+ *
+ * @param tokenizer Pointer to the tokenizer.
+ * @return t_Token Parsed token.
+ */
+t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer);
+
+/**
+ * @brief Parses an unquoted word token until special or whitespace.
+ *
+ * @param tokenizer Pointer to the tokenizer.
+ * @param saw_space Indicates if token should be joined to previous.
+ * @return t_Token Parsed token.
+ */
+t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space);
 
 // Free resources used by a token
 void	free_token(t_Token *token);
