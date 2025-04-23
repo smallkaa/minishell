@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 11:54:06 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 12:01:59 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,23 +27,14 @@ void	handle_backslash(t_exp_ctx *ctx)
 		return ;
 	}
 	(*ctx->i)++;
-	if (ctx->single_q)
+	next = ctx->input[*ctx->i];
+	if (ctx->single_q || (next != '$' && next != '\\'
+			&& next != '"' && next != '\''))
 	{
 		append_char(ctx, '\\');
-		append_char(ctx, ctx->input[*ctx->i]);
-		(*ctx->i)++;
-		return ;
-	}
-	next = ctx->input[*ctx->i];
-	if (next == '$' || next == '\\' || next == '"' || next == '\'')
-	{
 		append_char(ctx, next);
-		(*ctx->i)++;
 	}
 	else
-	{
-		append_char(ctx, '\\');
 		append_char(ctx, next);
-		(*ctx->i)++;
-	}
+	(*ctx->i)++;
 }

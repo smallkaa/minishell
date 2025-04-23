@@ -43,27 +43,16 @@ static void	handle_explain_default(char *color_code, int in_single_quote,
 	debug_printf("%s%c\033[0m", color_code, c);
 }
 
-/**
- * @brief Demonstrate how the tokenizer handles quotes for a word token.
- *
- * @param token The TOKEN_WORD to analyze.
- */
-void	explain_token(t_Token token)
+static void	handle_explain_loop(const char *str)
 {
-	const char	*str;
-	int			in_single_quote;
-	int			in_double_quote;
-	size_t		i;
-	char		color_code[10];
+	size_t			i;
+	int				in_single_quote;
+	int				in_double_quote;
+	char			color_code[10];
 
-	if (token.type != TOKEN_WORD || !token.value)
-		return ;
 	ft_strcpy(color_code, "\033[0m");
-	str = token.value;
 	in_single_quote = 0;
 	in_double_quote = 0;
-	debug_printf("  Analysis:\n");
-	debug_printf("    ");
 	i = 0;
 	while (i < ft_strlen(str))
 	{
@@ -74,10 +63,19 @@ void	explain_token(t_Token token)
 		else if (str[i] == '$' && (in_double_quote || !in_single_quote))
 			debug_printf("\033[32m$\033[0m");
 		else
-			handle_explain_default(color_code, in_single_quote, in_double_quote,
-				str[i]);
+			handle_explain_default(color_code,
+				in_single_quote, in_double_quote, str[i]);
 		i++;
 	}
+}
+
+void	explain_token(t_Token token)
+{
+	if (token.type != TOKEN_WORD || !token.value)
+		return ;
+	debug_printf("  Analysis:\n");
+	debug_printf("    ");
+	handle_explain_loop(token.value);
 	debug_printf("\n");
 	debug_printf("\033[0m");
 }

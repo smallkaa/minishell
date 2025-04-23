@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:55:54 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 12:24:36 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static bool	is_quote_char(char c)
  * @param c Character to test.
  * @return true if operator (|, <, >, &), false otherwise.
  */
-static bool	ft_is_special_char(char c)
+bool	ft_is_special_char(char c)
 {
 	return (c == '|' || c == '<' || c == '>' || c == '&');
 }

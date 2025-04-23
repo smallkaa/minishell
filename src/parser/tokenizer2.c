@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:18:10 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:18:32 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 12:25:47 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-/**
- * @brief Checks if a character is a special shell operator.
- *
- * @param c The character to check.
- * @return non-zero if special operator, zero otherwise.
- */
-static int	ft_is_special_char(char c)
-{
-	return (c == '|' || c == '<' || c == '>' || c == '&');
-}
 
 /**
  * @brief Determines if the tokenizer should end tokenization.

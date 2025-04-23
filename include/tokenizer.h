@@ -161,5 +161,6 @@ char *get_exit_code(t_mshell *minishell);
 bool	is_valid_redir_target(t_TokenArray *tokens, int i);
 t_cmd	*create_empty_command(t_mshell *shell);
 int	known_unsupported_cmd(const char *cmd, const char **message);
-
+bool	ft_is_special_char(char c);
+void	classify_token_if_needed(t_Token *token, char *expanded);
 #endif

@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:52:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 11:53:20 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 12:27:05 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,4 +144,18 @@ static char	*expand_env_variables_loop(const char *input, t_mshell *ms,
 char	*expand_env_variables(const char *input, t_mshell *ms, int quote_style)
 {
 	return (expand_env_variables_loop(input, ms, quote_style));
+}
+
+void	classify_token_if_needed(t_Token *token, char *expanded)
+{
+	if (token->in_single_quotes)
+		return ;
+	if (ft_strcmp(expanded, "|") == 0)
+		token->type = TOKEN_PIPE;
+	else if (ft_strcmp(expanded, "<") == 0)
+		token->type = TOKEN_REDIRECT_IN;
+	else if (ft_strcmp(expanded, ">") == 0)
+		token->type = TOKEN_REDIRECT_OUT;
+	else if (ft_strcmp(expanded, ">>") == 0)
+		token->type = TOKEN_APPEND_OUT;
 }
