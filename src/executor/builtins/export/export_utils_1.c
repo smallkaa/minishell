@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_utils_1.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 14:45:29 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/23 14:45:30 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file export_utils_1.c.c
  * @brief Sorting and printing logic for the `export` built-in in Minishell.

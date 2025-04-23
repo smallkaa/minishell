@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 14:46:30 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/23 14:46:31 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file executor_utils.c
  * @brief Utility functions for managing shell state and command validation.

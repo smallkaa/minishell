@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_command.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/23 14:46:53 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file execute_command.c
  * @brief Handles execution of commands (built-in and external) in Minishell.

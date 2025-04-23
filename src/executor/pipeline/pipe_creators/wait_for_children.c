@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wait_for_children.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 14:46:47 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/23 14:46:48 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file wait_for_children.c
  * @brief Waits for all child processes in a pipeline and returns final status.

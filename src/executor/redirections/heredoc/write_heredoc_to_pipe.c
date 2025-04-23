@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/23 15:00:19 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file write_heredoc_to_pipe.c
  * @brief Functions for collecting heredoc input and writing it into a pipe.
  */
 #include "minishell.h"
-#include "signals.h"
-#include <signal.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <stdlib.h>
+// #include "signals.h"
+// #include <signal.h>
+// #include <sys/wait.h>
+// #include <unistd.h>
+// #include <stdlib.h>
 
 /**
  * @brief Writes a single line to the heredoc pipe with a trailing newline.

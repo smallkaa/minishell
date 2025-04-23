@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   update_env_utils.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 14:50:08 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/23 14:50:09 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file env_utils.c
  * @brief Utility functions for creating and freeing environment variables.
@@ -45,9 +57,9 @@ char	*create_env_entry(t_mshell_var *var)
 /**
  * @brief Frees the memory allocated for an environment variable array.
  *
- * Iterates through the array, frees each `KEY=VALUE` string,
  * and then frees the array itself.
  *
+ * Iterates through the array, frees each `KEY=VALUE` string,
  * @param env The environment array to free.
  */
 void	free_old_env(char **env)
