@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:11:30 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 21:15:09 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,19 @@ static t_TokenArray	*tokenize_input(char *input)
 		return (NULL);
 	tokens = token_array_init();
 	if (!tokens)
-		return (NULL);
-	token = get_next_token(tokenizer);
-	while (token.type != TOKEN_EOF)
 	{
-		token_array_add(tokens, token);
-		token = get_next_token(tokenizer);
+		tokenizer_destroy(tokenizer);
+		return (NULL);
 	}
+	while (1)
+	{
+		token = get_next_token(tokenizer);
+		if (token.type == TOKEN_EOF)
+			break ;
+		token_array_add(tokens, token);
+		token.value = NULL;
+	}
+	free_token(&token);
 	tokenizer_destroy(tokenizer);
 	return (tokens);
 }

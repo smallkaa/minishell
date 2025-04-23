@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:10:11 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:47:26 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,21 @@ void	process_word(t_TokenArray *new_tokens,
 	t_TokenArray *old_tokens, int *i, int *j)
 {
 	t_wordinfo	info;
+	int			k;
 
 	init_wordinfo(&info, &old_tokens->tokens[*i]);
 	(*i)++;
 	join_word_tokens(&info, old_tokens, i);
+	k = 0;
+	while (k < *i)
+	{
+		if (old_tokens->tokens[k].type == TOKEN_WORD)
+		{
+			free(old_tokens->tokens[k].value);
+			old_tokens->tokens[k].value = NULL;
+		}
+		k++;
+	}
 	info.new_token = (t_Token){0};
 	info.new_token.type = TOKEN_WORD;
 	info.new_token.value = info.grouped;
