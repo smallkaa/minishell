@@ -3,6 +3,11 @@
  * @brief Functions for collecting heredoc input and writing it into a pipe.
  */
 #include "minishell.h"
+#include "signals.h"
+#include <signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 /**
  * @brief Writes a single line to the heredoc pipe with a trailing newline.
@@ -47,21 +52,33 @@ static int	read_next_heredoc_line(char **line, const char *delimiter)
 }
 
 /**
- * @brief Reads user input and writes heredoc content to a pipe.
- *
- * Loops over input lines using `readline()`, checking against the given
- * delimiter. Writes each line into the write-end of the pipe, with
- * a newline. Prevents overly large input using heredoc size limits.
- *
- * @param pipe_fd The write-end of the pipe.
- * @param delim The heredoc delimiter.
- * @return EXIT_SUCCESS on success, WRITE_HERED_ERR on error.
+ * @brief Handles SIGINT in heredoc (child process).
  */
-int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
+static void	heredoc_sigint_handler(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n", 1);
+	exit(1);
+}
+
+/**
+ * @brief Setup signal handlers inside heredoc child process.
+ */
+static void	setup_heredoc_signals(void)
+{
+	signal(SIGINT, heredoc_sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+/**
+ * @brief Child: Reads user input and writes heredoc content to pipe.
+ */
+static int	run_heredoc_child(int pipe_fd, const char *delim)
 {
 	char	*line;
 	size_t	total_written;
 
+	setup_heredoc_signals();
 	line = NULL;
 	total_written = 0;
 	while (read_next_heredoc_line(&line, delim))
@@ -78,6 +95,44 @@ int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
 			return (WRITE_HERED_ERR);
 		}
 		free(line);
+	}
+	return (EXIT_SUCCESS);
+}
+
+/**
+ * @brief Reads user input and writes heredoc content to a pipe.
+ *
+ * Loops over input lines using `readline()`, checking against the given
+ * delimiter. Writes each line into the write-end of the pipe, with
+ * a newline. Prevents overly large input using heredoc size limits.
+ *
+ * @param pipe_fd The write-end of the pipe.
+ * @param delim The heredoc delimiter.
+ * @return EXIT_SUCCESS on success, WRITE_HERED_ERR on error.
+ */
+int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
+{
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid == -1)
+		return (perror_return("fork", WRITE_HERED_ERR));
+	if (pid == 0)
+	{
+		int ret = run_heredoc_child(pipe_fd, delim);
+		close(pipe_fd);
+		exit(ret == EXIT_SUCCESS ? 0 : 1);
+	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+	{
+		g_signal_flag = 1;
+		return (1);
 	}
 	return (EXIT_SUCCESS);
 }

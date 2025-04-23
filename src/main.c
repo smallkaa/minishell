@@ -32,6 +32,11 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	input = NULL;
 	while ((input = get_next_line(in_fd)) != NULL)
 	{
+		if (g_signal_flag)
+		{
+			mshell->exit_status = 130;
+			g_signal_flag = 0;
+		}
 		cmd = run_parser(mshell, input);
 		if (!cmd)
 		{
@@ -110,19 +115,33 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			return (EXIT_FAILURE);
 		if (*input)
 			add_history(input);
+
 		cmd = run_parser(mshell, input);
 		if (!cmd)
 		{
 			free(input);
-			return (EXIT_SUCCESS);
+			if (g_signal_flag)
+			{
+				mshell->exit_status = 130;
+				g_signal_flag = 0;
+			}
+			continue; // пропустить пустую/невалидную строку
 		}
+
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		free(input);
 		input = NULL;
+
+		if (g_signal_flag)
+		{
+			mshell->exit_status = 130;
+			g_signal_flag = 0;
+		}
 	}
 	return (exit_status);
 }
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_mshell	*minishell;

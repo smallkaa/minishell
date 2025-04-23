@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 13:13:59 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 13:17:02 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:30:06 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,25 @@ rl_on_new_line();
 rl_replace_line("", 0);
 // Redisplay the prompt without printing ^C
 rl_redisplay();*/
-void	handle_sigint(int sig)
+/*void	handle_sigint(int sig)
 {
 	(void)sig;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
+}*/
+
+void	handle_sigint(int sig)
+{
+	(void)sig;
+	g_signal_flag = 1;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
+
 
 // SIGQUIT (Ctrl-\) Handler - does nothing
 void	handle_sigquit(int sig)
@@ -59,6 +70,5 @@ void	setup_signal_handlers(void)
 	sa.sa_flags = SA_RESTART;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, NULL);
-	sa.sa_handler = handle_sigquit;
-	sigaction(SIGQUIT, &sa, NULL);
+	signal(SIGQUIT, SIG_IGN);
 }
