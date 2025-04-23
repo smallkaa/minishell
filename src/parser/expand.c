@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/23 11:52:09 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file   expand.c
  * @brief  Core helper functions for variable/escape/tilde expansion.
@@ -115,10 +127,12 @@ static int	is_literal_tilde(const char *input, size_t *i, int single_q,
 char	*expand_tilde(const char *input, size_t *i, t_mshell *mshell,
 		int quote_style)
 {
-	int single_q = (quote_style == 1);
-	int double_q = (quote_style == 2);
-	char *home;
+	int		single_q;
+	int		double_q;
+	char	*home;
 
+	single_q = (quote_style == 1);
+	double_q = (quote_style == 2);
 	if (is_literal_tilde(input, i, single_q, double_q))
 		return (ft_strdup("~"));
 	home = ms_getenv(mshell, "HOME");

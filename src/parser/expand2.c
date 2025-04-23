@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand2.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 11:52:18 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/23 11:53:20 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /**
  * @file expand2.c
  * @brief Expand environment variables, handle quotes, escapes, and tilde.
@@ -15,7 +27,8 @@
  * @param input    Input string containing the backslash.
  * @param i        Pointer to current index in input; will be incremented.
 
-	* @param single_q Non‐zero if inside single quotes (only take literal backslash+char).
+ * @param single_q Non‐zero if inside single quotes (only take literal \
+    backslash+char).
  * @return Allocated string of the escaped character(s), or NULL on failure.
  */
 char	*handle_escape(const char *input, size_t *i, int single_q)
@@ -45,6 +58,7 @@ char	*handle_escape(const char *input, size_t *i, int single_q)
 	single_char[1] = '\0';
 	return (ft_strdup(single_char));
 }
+
 /**
  * @brief Process a single character or sequence for expansion.
  *

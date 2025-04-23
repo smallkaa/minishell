@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_tokens.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 11:54:54 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/23 11:55:44 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	expand_token_value(t_Token *token, t_mshell *ms)
@@ -6,18 +18,15 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 	size_t	len;
 	char	*content;
 
-	//	printf("TOKEN: value before expand = '%s'\n", token->value);
 	if (!token || !token->value)
 		return ;
-	// Только если полностью в одинарных кавычках (не раскрывать $)
 	if (token->quote_style == 1)
 	{
 		len = ft_strlen(token->value);
 		if (len >= 2 && token->value[0] == '\'' && token->value[len
-			- 1] == '\'')
+				- 1] == '\'')
 			return ;
 	}
-	// $"" → просто обрезаем
 	if (ft_strncmp(token->value, "$\"", 2) == 0)
 	{
 		len = ft_strlen(token->value);
@@ -34,7 +43,6 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 	if (!ft_strchr(token->value, '$') && !ft_strchr(token->value, '~')
 		&& !ft_strchr(token->value, '\\'))
 	{
-		// Нет переменных, нечего раскрывать
 		return ;
 	}
 	expanded = expand_env_variables(token->value, ms, token->quote_style);
@@ -73,7 +81,6 @@ void	expand_tokens(t_TokenArray *tokens, t_mshell *ms)
 	{
 		if (tokens->tokens[i].type == TOKEN_WORD)
 		{
-			// Используем существующую функцию expand_token_value
 			expand_token_value(&tokens->tokens[i], ms);
 		}
 		i++;

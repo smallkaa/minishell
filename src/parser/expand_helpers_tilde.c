@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:10:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 15:10:00 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 11:54:45 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
  */
 void	handle_tilde(t_exp_ctx *ctx)
 {
-	char *home;
+	char	*home;
 
 	if (ctx->single_q || ctx->double_q)
 	{

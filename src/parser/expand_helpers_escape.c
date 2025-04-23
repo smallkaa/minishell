@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 15:05:00 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 11:54:06 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
  */
 void	handle_backslash(t_exp_ctx *ctx)
 {
-	char next;
+	char	next;
 
 	if (!ctx->input[*ctx->i + 1])
 	{
