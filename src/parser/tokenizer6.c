@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 12:24:36 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/23 21:16:21 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,15 +90,24 @@ t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space)
 {
 	t_Token	token;
 	size_t	index;
+	t_Token	next;
 
 	ft_bzero(&token, sizeof(t_Token));
+	if (!tokenizer || !tokenizer->buffer)
+		return ((t_Token){0});
 	token.type = TOKEN_WORD;
 	index = fill_buffer_with_word(tokenizer, tokenizer->buffer,
 			tokenizer->buffer_size);
 	if (index == 0 && is_quote_char(*tokenizer->input))
-		return (get_next_token(tokenizer));
+	{
+		tokenizer->buffer[0] = '\0';
+		next = get_next_token(tokenizer);
+		return (next);
+	}
 	tokenizer->buffer[index] = '\0';
 	token.value = ft_strdup(tokenizer->buffer);
+	if (!token.value)
+		return ((t_Token){0});
 	token.quote_style = 0;
 	token.in_single_quotes = 0;
 	token.in_double_quotes = 0;
