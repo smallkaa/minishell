@@ -1,19 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/23 13:13:59 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/23 13:17:02 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-volatile sig_atomic_t g_signal_flag = 0;  // Global flag for signal handling
+volatile sig_atomic_t	g_signal_flag = 0;
 
-extern void rl_replace_line(const char *, int);  // Explicitly declare it
+extern void	rl_replace_line(const char *a, int b);
 
-
-void disable_echoctl(void)
+void	disable_echoctl(void)
 {
-    struct termios term;
-    if (tcgetattr(STDIN_FILENO, &term) == 0)
-    {
-        term.c_lflag &= ~ECHOCTL; // Disable printing of control characters
-        tcsetattr(STDIN_FILENO, TCSANOW, &term);
-    }
+	struct termios	term;
+
+	if (tcgetattr(STDIN_FILENO, &term) == 0)
+	{
+		term.c_lflag &= ~ECHOCTL;
+		tcsetattr(STDIN_FILENO, TCSANOW, &term);
+	}
 }
+
 /* SIGINT (Ctrl-C) Handler
 // Tell readline that we are on a new line
 rl_on_new_line();
@@ -21,40 +34,31 @@ rl_on_new_line();
 rl_replace_line("", 0);
 // Redisplay the prompt without printing ^C
 rl_redisplay();*/
-void handle_sigint(int sig)
+void	handle_sigint(int sig)
 {
-    (void)sig;
-    // write(STDOUT_FILENO, "^C\n", 3);
-    write(STDOUT_FILENO, "\n", 1);
+	(void)sig;
+	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-    // exit(130);
 }
 
 // SIGQUIT (Ctrl-\) Handler - does nothing
-void handle_sigquit(int sig)
+void	handle_sigquit(int sig)
 {
-    (void)sig;
+	(void)sig;
 }
 
 // Function to setup signal handling
-void setup_signal_handlers()
+void	setup_signal_handlers(void)
 {
-    struct sigaction sa;
+	struct sigaction	sa;
 
-    disable_echoctl();
-    // Handle SIGINT (Ctrl-C)
-    sa.sa_handler = handle_sigint;
-    sa.sa_flags = SA_RESTART;  // Ensures system calls are restarted
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGINT, &sa, NULL);
-
-    // Handle SIGQUIT (Ctrl-\)
-    sa.sa_handler = handle_sigquit;
-    sigaction(SIGQUIT, &sa, NULL);
-
-    // pipes ???
-    // signal(SIGPIPE, SIG_IGN);
-
+	disable_echoctl();
+	sa.sa_handler = handle_sigint;
+	sa.sa_flags = SA_RESTART;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGINT, &sa, NULL);
+	sa.sa_handler = handle_sigquit;
+	sigaction(SIGQUIT, &sa, NULL);
 }
