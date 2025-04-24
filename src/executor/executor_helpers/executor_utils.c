@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:30 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:46:31 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 17:52:06 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ void	cleanup_and_exit(t_cmd *cmd, int exit_status)
 
 	if (!cmd)
 		return ;
+	if (isatty(STDIN_FILENO))
+		ft_putendl_fd("exit", STDERR_FILENO);
 	minishell = cmd->minishell;
 	free_cmd(cmd);
 	free_minishell(minishell);
