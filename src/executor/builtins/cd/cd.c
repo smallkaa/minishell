@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:44:43 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 17:28:38 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,20 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 	if (ft_strcmp(cmd->argv[1], "-") == 0)
 	{
 		old_pwd = ft_strdup(ms_getenv(cmd->minishell, "OLDPWD"));
-		chdir(old_pwd);
+		if (!old_pwd)
+		{
+			print_error("minishell: cd: OLDPWD not set\n");
+			return (EXIT_FAILURE);
+		}
+		if (chdir(old_pwd) != 0)
+		{
+			print_error("minishell: cd: ");
+			perror(old_pwd);
+			free(old_pwd);
+			return (EXIT_FAILURE);
+		}
+		ft_putendl_fd(old_pwd, STDOUT_FILENO);
+		free(old_pwd);
 	}
 	else if (chdir(cmd->argv[1]) != 0)
 	{
