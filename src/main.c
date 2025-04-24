@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
+/*   Updated: 2025/04/24 08:11:38 by pvershin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 uint8_t	run_command_mode(t_mshell *mshell, char *input)
@@ -8,13 +20,11 @@ uint8_t	run_command_mode(t_mshell *mshell, char *input)
 	cmd = run_parser(mshell, input);
 	if (!cmd)
 		return (EXIT_FAILURE);
-
 	exit_status = run_executor(cmd);
 	free_cmd(cmd);
 	cmd = NULL;
 	return (exit_status);
 }
-
 
 uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 {
@@ -47,7 +57,6 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		cmd = NULL;
-
 		free(input);
 		input = NULL;
 	}
@@ -115,7 +124,6 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			return (EXIT_FAILURE);
 		if (*input)
 			add_history(input);
-
 		cmd = run_parser(mshell, input);
 		if (!cmd)
 		{
@@ -125,14 +133,12 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 				mshell->exit_status = 130;
 				g_signal_flag = 0;
 			}
-			continue; // пропустить пустую/невалидную строку
+			continue ;
 		}
-
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		free(input);
 		input = NULL;
-
 		if (g_signal_flag)
 		{
 			mshell->exit_status = 130;
@@ -146,34 +152,32 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_mshell	*minishell;
 	uint8_t		exit_status;
+	char		*line;
+	char		*trimmed;
 
 	setup_signal_handlers(); // Set up signal handlers
 	minishell = init_mshell(envp);
 	if (!minishell)
 		return (EXIT_FAILURE);
-
 	// Handle -c option
 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 		exit_status = run_command_mode(minishell, argv[2]);
-
 	// Handle script mode
 	else if (argc == 2)
 		exit_status = run_script_mode(minishell, argv[1]);
-
 	// Handle interactive mode
-
 // Handle interactive mode
 #ifdef BIGTEST
 	else if (isatty(fileno(stdin)))
 		exit_status = run_interactive_mode(minishell);
 	else
 	{
-		char	*line = get_next_line(fileno(stdin));
+		line = get_next_line(fileno(stdin));
 		if (!line)
 			exit_status = EXIT_FAILURE;
 		else
 		{
-			char	*trimmed = ft_strtrim(line, "\n");
+			trimmed = ft_strtrim(line, "\n");
 			free(line);
 			exit_status = run_command_mode(minishell, trimmed);
 			free(trimmed);
@@ -183,10 +187,7 @@ int	main(int argc, char **argv, char **envp)
 	else
 		exit_status = run_interactive_mode(minishell);
 #endif
-
 	free_minishell(minishell);
 	rl_clear_history();
-
 	return (exit_status);
 }
-

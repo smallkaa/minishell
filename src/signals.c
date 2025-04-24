@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 13:13:59 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 14:30:06 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/24 08:09:20 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	handle_sigint(int sig)
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
-
 
 // SIGQUIT (Ctrl-\) Handler - does nothing
 void	handle_sigquit(int sig)
