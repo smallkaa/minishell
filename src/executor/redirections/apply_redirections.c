@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_redirections.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:19 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:49:20 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 09:37:46 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,15 @@
 static int	handle_heredoc_redirection(t_redir *redir)
 {
 	if (redir->fd == -1)
-		return (error_return("herdoc: fd already closed\n", REDIR_ERR));
+	{
+		return (EXIT_SUCCESS);
+	}
 	if (dup2(redir->fd, STDIN_FILENO) == -1)
 		return (perror_return("herdoc: dup2", REDIR_ERR));
 	safe_close(&redir->fd);
 	return (EXIT_SUCCESS);
 }
+
 
 /**
  * @brief Applies input redirection (`<`) from a file.

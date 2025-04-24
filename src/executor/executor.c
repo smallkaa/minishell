@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:49:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 09:28:44 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,11 @@ uint8_t	run_executor(t_cmd *cmd)
 	exit_status = apply_heredocs(cmd);
 	if (exit_status != EXIT_SUCCESS)
 		return (exit_status);
+	if (g_signal_flag)
+	{
+		g_signal_flag = 0;
+		return (minishell->exit_status = 130);
+	}
 	if (!is_builtin(cmd) || cmd->next)
 		exit_status = execute_pipeline_or_binary(cmd);
 	else

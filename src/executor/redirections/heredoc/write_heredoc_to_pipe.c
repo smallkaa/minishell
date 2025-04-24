@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 15:00:19 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 09:31:16 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
  * @brief Functions for collecting heredoc input and writing it into a pipe.
  */
 #include "minishell.h"
-// #include "signals.h"
+//#include "signals.h"
 // #include <signal.h>
-// #include <sys/wait.h>
+//#include <sys/wait.h>
 // #include <unistd.h>
 // #include <stdlib.h>
 
@@ -91,6 +91,7 @@ static int	run_heredoc_child(int pipe_fd, const char *delim)
 	size_t	total_written;
 
 	setup_heredoc_signals();
+	disable_echoctl();
 	line = NULL;
 	total_written = 0;
 	while (read_next_heredoc_line(&line, delim))
@@ -134,17 +135,25 @@ int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
 	{
 		int ret = run_heredoc_child(pipe_fd, delim);
 		close(pipe_fd);
-		exit(ret == EXIT_SUCCESS ? 0 : 1);
+		exit(ret); // передаём, что вернул heredoc: 0, 1, -1
 	}
+
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
+	close(pipe_fd);
+
 	waitpid(pid, &status, 0);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
-	if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		g_signal_flag = 1;
-		return (1);
+		return (HEREDOC_INTERRUPTED);
 	}
-	return (EXIT_SUCCESS);
+	if (WIFEXITED(status) && WEXITSTATUS(status) == WRITE_HERED_ERR)
+		return (WRITE_HERED_ERR); // ошибка внутри heredoc (write, malloc)
+	return (EXIT_SUCCESS); // heredoc завершён нормально
 }
+
+

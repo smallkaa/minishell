@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/24 08:11:38 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/24 09:45:14 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,14 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 			}
 			continue ;
 		}
+		if (g_signal_flag)
+		{
+			mshell->exit_status = 130;
+			g_signal_flag = 0;
+			free_cmd(cmd);
+			free(input);
+			continue;
+		}
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		free(input);
@@ -152,9 +160,10 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_mshell	*minishell;
 	uint8_t		exit_status;
+#ifdef BIGTEST
 	char		*line;
 	char		*trimmed;
-
+#endif
 	setup_signal_handlers(); // Set up signal handlers
 	minishell = init_mshell(envp);
 	if (!minishell)

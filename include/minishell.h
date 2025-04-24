@@ -35,6 +35,7 @@
 // errors
 # define WRITE_HERED_ERR -2
 # define REDIR_ERR -3
+# define HEREDOC_INTERRUPTED -4
 /**
  * @struct	s_builtin_dispatch
  * @brief	Maps a builtin command name to its handler function.

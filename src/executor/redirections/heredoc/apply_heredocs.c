@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_heredocs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:21 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:47:22 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 09:34:06 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,26 @@
 static int	new_heredoc_fd(const char *delim)
 {
 	int	pipe_fd[2];
+	int	ret;
 
 	if (pipe(pipe_fd) == -1)
 		return (perror_return("new_heredoc_fd: pipe", WRITE_HERED_ERR));
-	if (write_heredoc_to_pipe(pipe_fd[1], delim) == WRITE_HERED_ERR)
+	ret = write_heredoc_to_pipe(pipe_fd[1], delim);
+	safe_close(&pipe_fd[1]);
+	if (ret == WRITE_HERED_ERR)
 	{
 		safe_close(&pipe_fd[0]);
-		safe_close(&pipe_fd[1]);
 		return (WRITE_HERED_ERR);
 	}
-	safe_close(&pipe_fd[1]);
+	if (ret == HEREDOC_INTERRUPTED)
+	{
+		safe_close(&pipe_fd[0]);
+		return (HEREDOC_INTERRUPTED);
+	}
 	return (pipe_fd[0]);
 }
+
+
 
 /**
  * @brief Assigns a heredoc FD to the given redirection.
@@ -54,7 +62,13 @@ static bool	assign_heredoc_fd(t_redir *redirection)
 {
 	redirection->fd = new_heredoc_fd(redirection->filename);
 	if (redirection->fd == WRITE_HERED_ERR)
-		return (false);
+	return (false);
+	if (redirection->fd == HEREDOC_INTERRUPTED)
+	{
+		g_signal_flag = 1;
+		redirection->fd = -1;
+		return (true);
+	}
 	return (true);
 }
 
