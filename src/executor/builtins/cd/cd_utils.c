@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:00 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:44:01 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/24 17:36:49 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,45 @@
  * including directory resolution and environment fallbacks.
  */
 #include "minishell.h"
+
+/**
+ * @brief Reports an error when too many arguments are passed to `cd`.
+ *
+ * The `cd` built-in in Minishell supports only 0 or 1 arguments. If more than
+ * one is detected (e.g., `cd dir1 dir2`), this function is called to print a
+ * descriptive error message.
+ *
+ * @return Always returns `EXIT_FAILURE` (1) to signal argument misuse.
+ */
+uint8_t	cd_too_many_args(void)
+{
+	return (error_return("cd: too many arguments\n", EXIT_FAILURE));
+}
+
+/**
+ * @brief Updates the `PWD` and `OLDPWD` environment variables after a
+ * directory change.
+ *
+ * This function:
+ * - Retrieves the new working directory.
+ * - Sets `OLDPWD` to the previous directory.
+ * - Sets `PWD` to the current directory.
+ * - Triggers a rebuild of the exported environment with `update_env()`.
+ *
+ * @param cmd      Pointer to the current command structure.
+ * @param old_cwd  The previous working directory before the `cd` call.
+ */
+void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
+{
+	char	new_cwd[MS_PATHMAX];
+
+	ft_bzero(new_cwd, MS_PATHMAX);
+	if (!get_directory(new_cwd, cmd))
+		ft_strlcpy(new_cwd, "", MS_PATHMAX);
+	set_variable(cmd->minishell, "OLDPWD", old_cwd, 1);
+	set_variable(cmd->minishell, "PWD", new_cwd, 1);
+	update_env(cmd->minishell);
+}
 
 /**
  * @brief Retrieves the current working directory with fallback support.

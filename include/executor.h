@@ -87,6 +87,8 @@ t_mshell_var			*create_new_var(char *key, char *value, int assigned);
 // cd
 uint8_t					handle_cd(t_cmd *cmd);
 bool					get_directory(char *cwd, t_cmd *cmd);
+void					update_pwd_variables(t_cmd *cmd, char *old_cwd);
+uint8_t					cd_too_many_args(void);
 
 // redirections <, >, >>
 uint8_t					apply_redirections(t_cmd *cmd);
