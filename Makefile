@@ -15,7 +15,7 @@ ifeq ($(UNAME), Darwin)
 	ifneq ($(READLINE_PATH),)
 		LDFLAGS += -L$(READLINE_PATH)/lib
 		CFLAGS  += -I$(READLINE_PATH)/include
-		CFLAGS	+= -Wno-strict-prototypes
+		CFLAGS  += -Wno-strict-prototypes
 	endif
 endif
 
@@ -24,37 +24,89 @@ NAME := minishell
 CC      := cc
 RM      := rm -rf
 
-SRC_DIRS := src \
-			src/parser \
-			src/executor \
-			src/executor/executor_helpers \
-			src/mshell \
-			src/mshell/env \
-			src/errors \
-			src/free_memory \
-			src/mshell/varables_hash_table \
-			src/executor/builtins \
-			src/executor/builtins/cd \
-			src/executor/builtins/echo \
-			src/executor/builtins/env \
-			src/executor/builtins/exit \
-			src/executor/builtins/export \
-			src/executor/builtins/pwd \
-			src/executor/builtins/unset \
-			src/executor/pipeline \
-			src/executor/redirections \
-			src/executor/redirections/heredoc \
-			src/executor/pipeline/pipe_creators \
-			src/executor/pipeline/pipe_executors
+# --- Explicit list of source files ---
+SRC_FILES := \
+	src/free_memory/free_cmd.c \
+	src/free_memory/free_minishell.c \
+	src/parser/parser_helpers2.c \
+	src/parser/tokenizer2.c \
+	src/parser/parser2.c \
+	src/parser/parser_utils_explain.c \
+	src/parser/unsupported_cmd.c \
+	src/parser/tokenizer6.c \
+	src/parser/parser1.c \
+	src/parser/parser_helpers1.c \
+	src/parser/tokenizer1.c \
+	src/parser/tokenizer5.c \
+	src/parser/parser5.c \
+	src/parser/expand2.c \
+	src/parser/expand_helpers_escape.c \
+	src/parser/parser_utils_token.c \
+	src/parser/parser_utils_free.c \
+	src/parser/tokenizer4.c \
+	src/parser/parser_helpers4.c \
+	src/parser/parser4.c \
+	src/parser/tokenizer3.c \
+	src/parser/parser_utils_cmd.c \
+	src/parser/parser_helpers3.c \
+	src/parser/expand_tokens.c \
+	src/parser/parser3.c \
+	src/parser/expand_helpers_tilde.c \
+	src/parser/expand_helpers_dollar.c \
+	src/parser/expand_helpers_quotes.c \
+	src/parser/expand.c \
+	src/utils.c \
+	src/main.c \
+	src/mshell/init_minishell.c \
+	src/mshell/find_binary_utils.c \
+	src/mshell/env/setup_env.c \
+	src/mshell/env/update_env.c \
+	src/mshell/env/update_env_utils.c \
+	src/mshell/find_binary.c \
+	src/mshell/varables_hash_table/setup_hash_table_utils.c \
+	src/mshell/varables_hash_table/setup_hash_table.c \
+	src/executor/executor.c \
+	src/executor/pipeline/pipe_utils.c \
+	src/executor/pipeline/pipe_creators/handle_child_and_track.c \
+	src/executor/pipeline/pipe_creators/wait_for_children.c \
+	src/executor/pipeline/close_unused_fds.c \
+	src/executor/pipeline/pipe_executors/execute_command.c \
+	src/executor/pipeline/exec_in_pipes.c \
+	src/executor/redirections/apply_redirections.c \
+	src/executor/redirections/heredoc/write_heredoc_to_pipe.c \
+	src/executor/redirections/heredoc/apply_heredoc_utilc.c \
+	src/executor/redirections/heredoc/apply_heredocs.c \
+	src/executor/builtins/unset/unset.c \
+	src/executor/builtins/echo/echo_utils.c \
+	src/executor/builtins/echo/echo.c \
+	src/executor/builtins/pwd/pwd.c \
+	src/executor/builtins/exec_builtins.c \
+	src/executor/builtins/env/env.c \
+	src/executor/builtins/builtin_utils.c \
+	src/executor/builtins/exit/exit.c \
+	src/executor/builtins/exit/exit_utils.c \
+	src/executor/builtins/cd/cd_utils.c \
+	src/executor/builtins/cd/cd.c \
+	src/executor/builtins/export/export_utils_1.c \
+	src/executor/builtins/export/export.c \
+	src/executor/builtins/export/export_utils_2.c \
+	src/executor/executor_helpers/command_too_long.c \
+	src/executor/executor_helpers/update_underscore.c \
+	src/executor/executor_helpers/executor_utils.c \
+	src/executor/exec_in_current_process.c \
+	src/errors/child_execve_error_utils.c \
+	src/errors/error_utils_2.c \
+	src/errors/error_utils_1.c \
+	src/errors/child_execve_error.c \
+	src/signals.c
+
+# --- End of explicit list ---
 
 OBJ_DIR  := obj
 LIBFT_DIR := libs/libft
 
-
-# Collect all source files
-SRC_FILES := $(wildcard $(addsuffix /*.c, $(SRC_DIRS)))
-
 # Convert source files to object files, preserving directory structure
+# This patsubst should still work with the explicit list
 OBJ_FILES := $(patsubst src/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
 
 INCLUDES := -Iinclude -I$(LIBFT_DIR)
@@ -73,7 +125,9 @@ $(NAME): $(OBJ_FILES) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -g -o $(NAME) $(LDFLAGS) -lreadline
 	@echo "\033[32m\"$(NAME)\": successfully created!\033[0m"
 	find . -type f \( -name "*.c" -o -name "*.h" -o -name "Makefile" \) -exec awk 'FNR==1{print "File: "FILENAME "\n"}{print}' {} + > sources_dump.txt
+
 # Rule for compiling object files with correct paths
+# This rule creates the necessary subdirectories in obj/
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -120,4 +174,4 @@ dclean:
 	@rm -rf $(DOCS_DIR)
 	@echo "\033[32mDocumentation cleaned.\033[0m"
 
-.PHONY: all clean fclean re docs dclean
+.PHONY: all clean fclean re docs dclean norm
