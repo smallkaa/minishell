@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/25 14:11:21 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/25 14:18:17 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_mshell	*minishell;
 	uint8_t		exit_status;
-	
+
 	if (argc > 1)
 	{
 		print_error("-minishell: Usage without arguments\n");
