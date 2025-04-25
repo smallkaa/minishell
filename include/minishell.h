@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/24 17:45:52 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/25 13:48:21 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,8 @@ uint8_t			run_executor(t_cmd *cmd);
 size_t			ft_arr_size(char **arr);
 char			*ms_getenv(t_mshell *mshell, char *key);
 
-bool										is_debug_mode(void); // delete on production
-void										debug_printf(const char *format, ...); // delete on production
+bool			is_debug_mode(void); // delete on production
+void			debug_printf(const char *format, ...); // delete on production
 void			print_error(const char *msg);
 
 // free memory utils

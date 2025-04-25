@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/24 14:21:15 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/25 13:37:46 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ t_TokenArray	*token_array_init(void);
 void			token_array_add(t_TokenArray *array, t_Token token);
 void			token_array_free(t_TokenArray *array);
 int				group_word_tokens(t_TokenArray *tokens);
-t_cmd			*create_command_from_tokens(t_mshell *shell, t_TokenArray\
-	*tokens);
+t_cmd			*create_command_from_tokens(t_mshell *shell, \
+	t_TokenArray *tokens);
 
 #endif
