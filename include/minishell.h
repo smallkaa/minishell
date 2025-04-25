@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/25 13:48:21 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/25 14:16:05 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,14 @@ typedef struct s_mshell
 	uint8_t		exit_status;
 	uint8_t		syntax_exit_status;
 }	t_mshell;
+// run progrmm
+
+char			*read_user_input(void);
+bool			handle_null_command(t_mshell *mshell, char *input);
+bool			handle_signal_after_parse(t_mshell *mshell,
+					t_cmd *cmd,
+					char *input);
+void			handle_signal_after_exec(t_mshell *mshell);
 
 // init minishell
 t_mshell		*init_mshell(char **envp);
@@ -139,8 +147,9 @@ uint8_t			run_executor(t_cmd *cmd);
 size_t			ft_arr_size(char **arr);
 char			*ms_getenv(t_mshell *mshell, char *key);
 
-bool			is_debug_mode(void); // delete on production
-void			debug_printf(const char *format, ...); // delete on production
+// test
+bool			is_debug_mode(void);
+void			debug_printf(const char *format, ...);
 void			print_error(const char *msg);
 
 // free memory utils

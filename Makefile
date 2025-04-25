@@ -57,6 +57,7 @@ SRC_FILES := \
 	src/parser/expand.c \
 	src/utils.c \
 	src/main.c \
+	src/main_utils.c \
 	src/mshell/init_minishell.c \
 	src/mshell/find_binary_utils.c \
 	src/mshell/env/setup_env.c \
