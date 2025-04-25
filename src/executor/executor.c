@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/24 09:28:44 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/25 12:50:06 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,13 @@ static uint8_t	execute_builtin(t_cmd *cmd)
 	exit_status = exec_in_current_process(cmd);
 	minishell->exit_status = exit_status;
 	if (ft_strcmp(cmd->argv[0], "exit") == 0)
-		cleanup_and_exit(cmd, exit_status);
+	{
+		if (isatty(STDIN_FILENO))
+			ft_putendl_fd("exit", STDERR_FILENO);
+		if (!(cmd->argv[1] && cmd->argv[2]
+				&& is_valid_numeric_exit_arg(cmd->argv[1])))
+			cleanup_and_exit(cmd, exit_status);
+	}	
 	return (exit_status);
 }
 

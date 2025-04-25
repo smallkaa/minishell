@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/24 17:46:43 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/25 12:48:33 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ uint8_t					exec_builtins(t_cmd *cmd);
 // exit
 uint8_t					handle_exit(t_cmd *cmd);
 long long				ft_atoll_exit(const char *str, bool *overflow);
+uint8_t					get_exit_status(char *arg);
+bool					is_valid_numeric_exit_arg(const char *arg);
 
 // echo
 uint8_t					handle_echo(t_cmd *cmd);

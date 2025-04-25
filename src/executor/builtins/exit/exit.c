@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:24 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:45:25 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/25 12:51:02 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static uint8_t	exit_numeric_error(char *arg)
  * @param arg The argument string to validate.
  * @return `true` if the argument is numeric, `false` otherwise.
  */
-static bool	is_valid_numeric_exit_arg(const char *arg)
+bool	is_valid_numeric_exit_arg(const char *arg)
 {
 	if (!arg || *arg == '\0')
 		return (false);
@@ -90,7 +90,7 @@ static uint8_t	handle_too_many_args(void)
  * @return Exit status in the range [0, 255], or `2` on invalid numeric
  * conversion.
  */
-static uint8_t	get_exit_status(char *arg)
+uint8_t	get_exit_status(char *arg)
 {
 	long long	exit_status;
 	bool		overflow;
@@ -117,6 +117,9 @@ static uint8_t	get_exit_status(char *arg)
  */
 uint8_t	handle_exit(t_cmd *cmd)
 {
+	bool	overflow;
+
+	overflow = false;
 	if (!cmd)
 		return (no_cmd_error("exit"));
 	if (!cmd->argv[1])
@@ -124,6 +127,9 @@ uint8_t	handle_exit(t_cmd *cmd)
 	if (cmd->argv[1][0] == '\0')
 		return (exit_numeric_error(cmd->argv[1]));
 	if (!is_valid_numeric_exit_arg(cmd->argv[1]))
+		return (exit_numeric_error(cmd->argv[1]));
+	ft_atoll_exit(cmd->argv[1], &overflow);
+	if (cmd->argv[2] && overflow)
 		return (exit_numeric_error(cmd->argv[1]));
 	if (cmd->argv[2])
 		return (handle_too_many_args());
