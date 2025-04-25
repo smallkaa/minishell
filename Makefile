@@ -74,6 +74,7 @@ SRC_FILES := \
 	src/executor/pipeline/exec_in_pipes.c \
 	src/executor/redirections/apply_redirections.c \
 	src/executor/redirections/heredoc/write_heredoc_to_pipe.c \
+	src/executor/redirections/heredoc/write_heredoc_utils.c \
 	src/executor/redirections/heredoc/apply_heredoc_utilc.c \
 	src/executor/redirections/heredoc/apply_heredocs.c \
 	src/executor/builtins/unset/unset.c \

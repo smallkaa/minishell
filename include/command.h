@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:49 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/24 17:46:50 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/25 14:07:21 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,11 @@ typedef struct s_cmd
 	t_mshell	*minishell;
 	t_list		*redirs;
 }	t_cmd;
+
+void	heredoc_sigint_handler(int sig);
+void	setup_heredoc_signals(void);
+int		run_heredoc_child(int pipe_fd, const char *delim);
+int		write_heredoc_line(int pipe_fd, const char *line);
+int		read_next_heredoc_line(char **line, const char *delimiter);
 
 #endif /* COMMAND_H */

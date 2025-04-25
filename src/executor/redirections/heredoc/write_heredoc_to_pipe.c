@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/24 09:31:16 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/25 14:06:45 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
  * @param line The line to write.
  * @return EXIT_SUCCESS on success, WRITE_HERED_ERR on failure.
  */
-static int	write_heredoc_line(int pipe_fd, const char *line)
+int	write_heredoc_line(int pipe_fd, const char *line)
 {
 	if (write(pipe_fd, line, ft_strlen(line)) == -1
 		|| write(pipe_fd, "\n", 1) == -1)
@@ -51,7 +51,7 @@ static int	write_heredoc_line(int pipe_fd, const char *line)
  * @param delimiter The heredoc end marker.
  * @return 1 if a valid line was read, 0 if EOF or delimiter matched.
  */
-static int	read_next_heredoc_line(char **line, const char *delimiter)
+int	read_next_heredoc_line(char **line, const char *delimiter)
 {
 	*line = readline("> ");
 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
@@ -63,97 +63,52 @@ static int	read_next_heredoc_line(char **line, const char *delimiter)
 	return (1);
 }
 
-/**
- * @brief Handles SIGINT in heredoc (child process).
- */
-static void	heredoc_sigint_handler(int sig)
+static int	handle_heredoc_status(int status)
 {
-	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	exit(1);
-}
-
-/**
- * @brief Setup signal handlers inside heredoc child process.
- */
-static void	setup_heredoc_signals(void)
-{
-	signal(SIGINT, heredoc_sigint_handler);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-/**
- * @brief Child: Reads user input and writes heredoc content to pipe.
- */
-static int	run_heredoc_child(int pipe_fd, const char *delim)
-{
-	char	*line;
-	size_t	total_written;
-
-	setup_heredoc_signals();
-	disable_echoctl();
-	line = NULL;
-	total_written = 0;
-	while (read_next_heredoc_line(&line, delim))
-	{
-		total_written += ft_strlen(line) + 1;
-		if (heredoc_exceeds_limit(total_written))
-		{
-			free(line);
-			return (error_return("heredoc: large input\n", WRITE_HERED_ERR));
-		}
-		if (write_heredoc_line(pipe_fd, line) == WRITE_HERED_ERR)
-		{
-			free(line);
-			return (WRITE_HERED_ERR);
-		}
-		free(line);
-	}
-	return (EXIT_SUCCESS);
-}
-
-/**
- * @brief Reads user input and writes heredoc content to a pipe.
- *
- * Loops over input lines using `readline()`, checking against the given
- * delimiter. Writes each line into the write-end of the pipe, with
- * a newline. Prevents overly large input using heredoc size limits.
- *
- * @param pipe_fd The write-end of the pipe.
- * @param delim The heredoc delimiter.
- * @return EXIT_SUCCESS on success, WRITE_HERED_ERR on error.
- */
-int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
-{
-	pid_t	pid;
-	int		status;
-
-	pid = fork();
-	if (pid == -1)
-		return (perror_return("fork", WRITE_HERED_ERR));
-	if (pid == 0)
-	{
-		int ret = run_heredoc_child(pipe_fd, delim);
-		close(pipe_fd);
-		exit(ret); // передаём, что вернул heredoc: 0, 1, -1
-	}
-
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	close(pipe_fd);
-
-	waitpid(pid, &status, 0);
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
-
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 	{
 		g_signal_flag = 1;
 		return (HEREDOC_INTERRUPTED);
 	}
 	if (WIFEXITED(status) && WEXITSTATUS(status) == WRITE_HERED_ERR)
-		return (WRITE_HERED_ERR); // ошибка внутри heredoc (write, malloc)
-	return (EXIT_SUCCESS); // heredoc завершён нормально
+		return (WRITE_HERED_ERR);
+	return (EXIT_SUCCESS);
 }
 
+/**
+ * @brief Reads user input and writes heredoc content to a pipe.
+ *
+ * Loops over input lines using readline(), checking against the given
+ * delimiter. Writes each line into the write-end of the pipe, with
+ * a newline. Prevents overly large input using heredoc size limits.
+ *
+ * @param pipe_fd The write-end of the pipe.
+ * @param delim The heredoc delimiter.
+ * @return EXIT_SUCCESS on success, WRITE_HERED_ERR on error.
+ * 		return (WRITE_HERED_ERR); // ошибка внутри heredoc (write, malloc)
+	return (EXIT_SUCCESS); // heredoc завершён нормально
 
+ */
+int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
+{
+	pid_t	pid;
+	int		status;
+	int		ret;
+
+	pid = fork();
+	if (pid == -1)
+		return (perror_return("fork", WRITE_HERED_ERR));
+	if (pid == 0)
+	{
+		ret = run_heredoc_child(pipe_fd, delim);
+		close(pipe_fd);
+		exit(ret);
+	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	close(pipe_fd);
+	waitpid(pid, &status, 0);
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+	return (handle_heredoc_status(status));
+}
