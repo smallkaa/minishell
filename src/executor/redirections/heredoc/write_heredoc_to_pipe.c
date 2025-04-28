@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 17:31:14 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 23:16:48 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,27 +36,6 @@ int	write_heredoc_line(int pipe_fd, const char *line)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * @brief Reads the next line from the user for heredoc input.
- *
- * Uses `readline("> ")` to prompt the user.
- * If the user input matches the delimiter, input stops.
- *
- * @param line Pointer to store the allocated line.
- * @param delimiter The heredoc end marker.
- * @return 1 if a valid line was read, 0 if EOF or delimiter matched.
- */
-// int	read_next_heredoc_line(char **line, const char *delimiter)
-// {
-// 	*line = readline("> ");
-// 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
-// 	{
-// 		if (line)
-// 			free(*line);
-// 		return (0);
-// 	}
-// 	return (1);
-// }
 int	read_next_heredoc_line(char **line, const char *delimiter)
 {
 	//*line = readline("> ");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_in_pipes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 18:29:30 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:03:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,12 +141,12 @@ uint8_t	exec_in_pipes(t_cmd *cmd_list)
 		return (EXIT_SUCCESS);
 
 	init_pipe_info(&info, cmd_list, pipe_fd, pids);
-	printf("\n-------------DEBUG: exec_in_pipes() start pid: %d\n", getpid());
+	// printf("\n-------------DEBUG: exec_in_pipes() start pid: %d\n", getpid());
 
 	process_pipeline_commands(&info);
 
-	printf("\n-------------DEBUG: exec_in_pipes() after process_pipeline_commands pid: %d\n", getpid());
-	
+	// printf("\n-------------DEBUG: exec_in_pipes() after process_pipeline_commands pid: %d\n", getpid());
+
 	close_all_heredoc_fds(cmd_list);
 	return (wait_for_children(pids, *info.idx));
 }

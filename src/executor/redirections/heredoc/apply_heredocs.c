@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   apply_heredocs.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/23 14:47:21 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 17:21:32 by imunaev-         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 /**
  * @file apply_heredocs.c
@@ -16,31 +5,62 @@
  */
 #include "minishell.h"
 
-/**
- * @brief Creates a new heredoc pipe and writes user input into it.
- *
- * Opens a pipe and calls `write_heredoc_to_pipe()` to write heredoc content
- * into the write-end of the pipe. Closes the write-end after writing and
- * returns the read-end FD.
- *
- * @param delim The heredoc delimiter.
- * @return Read-end of the pipe on success, or WRITE_HERED_ERR on failure.
- */
-static int	new_heredoc_fd(const char *delim)
+static void	heredoc_child(const char *delim, int w_fd,
+	t_cmd *current, t_cmd *full_list)
 {
-	int	pipe_fd[2];
-	int	ret;
+	signal(SIGINT, heredoc_sigint_handler);
+	close_all_heredoc_fds(current);
+	if (write_heredoc_to_pipe(w_fd, delim) == WRITE_HERED_ERR)
+	{
+		close_all_heredoc_fds(full_list);
+		safe_close(&w_fd);
+		_exit(EXIT_FAILURE);
+	}
+	close_all_heredoc_fds(full_list);
+	safe_close(&w_fd);
+	_exit(EXIT_SUCCESS);
+}
+
+static int	handle_writer_status(int r_fd, int status, t_cmd *full_list)
+{
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		safe_close(&r_fd);
+		close_all_heredoc_fds(full_list);
+		g_signal_flag = 1;
+	return (HEREDOC_INTERRUPTED);
+	}
+	if (WIFEXITED(status) && WEXITSTATUS(status) != EXIT_SUCCESS)
+	{
+		safe_close(&r_fd);
+		close_all_heredoc_fds(full_list);
+		return (WRITE_HERED_ERR);
+	}
+	return (EXIT_SUCCESS);
+}
+
+static int	new_heredoc_fd(const char *delim, t_cmd *current, t_cmd *full_list)
+{
+	int		pipe_fd[2];
+	pid_t	pid;
+	pid_t	status;
 
 	if (pipe(pipe_fd) == -1)
 		return (perror_return("new_heredoc_fd: pipe", WRITE_HERED_ERR));
-	ret = write_heredoc_to_pipe(pipe_fd[1], delim);
-	safe_close(&pipe_fd[1]);
-	if (ret == WRITE_HERED_ERR)
+	pid = fork();
+	if (pid == -1)
 	{
 		safe_close(&pipe_fd[0]);
-		return (WRITE_HERED_ERR);
+		safe_close(&pipe_fd[1]);
+		return (perror_return("new_heredoc_fd: fork", WRITE_HERED_ERR));
 	}
-	if (ret == HEREDOC_INTERRUPTED)
+	if (pid == 0)
+		heredoc_child(delim, pipe_fd[1], current, full_list);
+	safe_close(&pipe_fd[1]);
+	waitpid(pid, &status, 0);
+	if (handle_writer_status(pipe_fd[0], status, full_list) != EXIT_SUCCESS)
+		return (HEREDOC_INTERRUPTED);
+	if (g_signal_flag)
 	{
 		safe_close(&pipe_fd[0]);
 		return (HEREDOC_INTERRUPTED);
@@ -48,18 +68,9 @@ static int	new_heredoc_fd(const char *delim)
 	return (pipe_fd[0]);
 }
 
-/**
- * @brief Assigns a heredoc FD to the given redirection.
- *
- * Creates the heredoc pipe and stores its read-end in `redirection->fd`.
- *
- * @param redirection Pointer to a heredoc-type redirection.
- * @return true on success, false on failure.
- */
-static bool	assign_heredoc_fd(t_redir *redirection)
+static bool	assign_heredoc_fd(t_redir *redirection, t_cmd *current, t_cmd *full_cmd_list)
 {
-	redirection->fd = new_heredoc_fd(redirection->filename);
-	// pipe_fd[0]
+	redirection->fd = new_heredoc_fd(redirection->filename, current, full_cmd_list);
 	if (redirection->fd == WRITE_HERED_ERR)
 		return (false);
 	if (redirection->fd == HEREDOC_INTERRUPTED)
@@ -71,15 +82,7 @@ static bool	assign_heredoc_fd(t_redir *redirection)
 	return (true);
 }
 
-/**
- * @brief Processes all heredoc redirections in a single command.
- *
- * Iterates through the redirection list and assigns FDs for any heredocs found.
- *
- * @param cmd The command whose heredocs will be handled.
- * @return true if all heredocs were handled successfully, false otherwise.
- */
-static bool	handle_cmd_heredocs(t_cmd *cmd)
+static bool	handle_cmd_heredocs(t_cmd *cmd, t_cmd *full_cmd_list)
 {
 	t_list	*redir_list;
 	t_redir	*redirection;
@@ -87,11 +90,10 @@ static bool	handle_cmd_heredocs(t_cmd *cmd)
 	redir_list = cmd->redirs;
 	while (redir_list)
 	{
-		
 		redirection = redir_list->content;
 		if (is_heredoc(redirection))
 		{
-			if (!assign_heredoc_fd(redirection))
+			if (!assign_heredoc_fd(redirection, cmd, full_cmd_list))
 				return (false);
 		}
 		redir_list = redir_list->next;
@@ -99,16 +101,6 @@ static bool	handle_cmd_heredocs(t_cmd *cmd)
 	return (true);
 }
 
-/**
- * @brief Applies heredoc processing for a list of piped commands.
- *
- * For each command in the pipeline:
- * - If a heredoc is found, assigns a pipe FD with the heredoc contents.
- * - On failure, cleans up all opened heredoc FDs and returns failure.
- *
- * @param cmd The head of the command list.
- * @return EXIT_SUCCESS on success, EXIT_FAILURE on failure.
- */
 uint8_t	apply_heredocs(t_cmd *cmd)
 {
 	t_cmd	*initial_cmd_list;
@@ -118,13 +110,12 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 		return (error_return("apply_heredocs: cmd not found\n", EXIT_FAILURE));
 	while (cmd)
 	{
-		if (!handle_cmd_heredocs(cmd))
+		if (!handle_cmd_heredocs(cmd, initial_cmd_list))
 		{
-			printf("\n-------------DEBUG:  apply_heredocs here\n");
 			close_all_heredoc_fds(initial_cmd_list);
 			return (error_return("apply_heredocs: failed\n", EXIT_FAILURE));
 		}
 		cmd = cmd->next;
-	}	
+	}
 	return (EXIT_SUCCESS);
 }

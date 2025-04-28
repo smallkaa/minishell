@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 09:56:41 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 23:18:30 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ uint8_t	handle_export(t_cmd *cmd)
 		return (EXIT_SUCCESS);
 	}
 	i = 1;
-	printf("cmd->argv[i] = {%s}\n", cmd->argv[i]);
 	while (cmd->argv[i])
 	{
 		if (is_invalid_option(cmd->argv[i]))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 18:42:22 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 20:10:52 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,7 @@ static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 	minishell->exit_status = exit_status;
 	if (is_exit_command(cmd))
 	{
-		close_all_heredoc_fds(cmd);
 		cleanup_and_exit(cmd, exit_status);
-
 	}
 	return (exit_status);
 }
@@ -74,11 +72,9 @@ static uint8_t	execute_builtin(t_cmd *cmd)
 		if (!(cmd->argv[1] && cmd->argv[2]
 				&& is_valid_numeric_exit_arg(cmd->argv[1])))
 				{
-					close_all_heredoc_fds(cmd);
 					cleanup_and_exit(cmd, exit_status);
 				}
 	}
-	close_all_heredoc_fds(cmd);
 	return (exit_status);
 }
 
@@ -110,10 +106,14 @@ uint8_t	run_executor(t_cmd *cmd)
 		return (error_return("run_executor: command too long\n", 2));
 	exit_status = apply_heredocs(cmd);
 	if (exit_status != EXIT_SUCCESS)
+	{
+		close_all_heredoc_fds(cmd);
 		return (exit_status);
+	}
 	if (g_signal_flag)
 	{
 		g_signal_flag = 0;
+		close_all_heredoc_fds(cmd);
 		return (minishell->exit_status = 130);
 	}
 	if (!is_builtin(cmd) || cmd->next)
@@ -122,7 +122,8 @@ uint8_t	run_executor(t_cmd *cmd)
 		exit_status = execute_builtin(cmd);
 	if (cmd->next == NULL)
 		update_underscore(cmd, cmd->binary);
+
 	close_all_heredoc_fds(cmd);
-	
+
 	return (exit_status);
 }

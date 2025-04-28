@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_child_and_track.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 18:09:23 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 23:19:09 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 	t_list	*node;
 
 	cmd = full_cmd_list;
-	printf("\n-------------DEBUG: close_unused_heredocs_child START, pid: %d\n", getpid());
 	while (cmd)
 	{
 		if (cmd != current)
@@ -49,13 +48,8 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 			while (node)
 			{
 				redir = (t_redir *)node->content;
-
 				if (redir->type == R_HEREDOC && redir->fd >= 0)
-				{
-					printf("\n-------------DEBUG: close_unused_heredocs_child() pid: %d, FD before: %d\n", getpid(), redir->fd);
 					safe_close(&redir->fd);
-					printf("\n-------------DEBUG: close_unused_heredocs_child() pid: %d, FD after: %d\n", getpid(), redir->fd);
-				}					
 				node = node->next;
 			}
 		}
@@ -93,18 +87,15 @@ static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
 		{
-			close_all_heredoc_fds(cmd_list);
 			perror_exit_child("-exec_in_pipes: dup2 in_fd", EXIT_FAILURE);
 		}
 	}
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 	{
-		close_all_heredoc_fds(cmd_list);
 		if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 			_exit(EXIT_FAILURE);
 		_exit(EXIT_FAILURE);
 	}
-	
 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 		_exit(EXIT_FAILURE);
 	execute_command(cmd);

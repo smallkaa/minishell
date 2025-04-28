@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/25 12:48:33 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 19:55:05 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ bool					heredoc_exceeds_limit(size_t total_written);
 bool					is_heredoc(t_redir *redirection);
 void					close_all_heredoc_fds(t_cmd *cmd_list);
 int						write_heredoc_to_pipe(int pipe_fd, const char *delim);
+void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list);
 
 // utils
 t_mshell_var			*split_key_value(char *key_value_pair);
