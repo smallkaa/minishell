@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_heredoc_utilc.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:15 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:47:16 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/28 18:17:49 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,8 @@ void	close_all_heredoc_fds(t_cmd *cmd_list)
 {
 	t_list	*rlist;
 	t_redir	*redirection;
+	printf("\n-------------DEBUG: close_all_heredoc_fds() start pid: %d\n", getpid());
+
 
 	while (cmd_list)
 	{
@@ -78,7 +80,14 @@ void	close_all_heredoc_fds(t_cmd *cmd_list)
 		{
 			redirection = rlist->content;
 			if (is_heredoc(redirection))
+			{
+				printf("\n-------------DEBUG: close_all_heredoc_fds() pid: %d, FD before: %d\n", getpid(),redirection->fd);
+				
 				safe_close(&redirection->fd);
+				printf("\n-------------DEBUG: close_all_heredoc_fds() pid: %d, ,FD after: %d\n", getpid(),redirection->fd);
+			
+				
+			}
 			rlist = rlist->next;
 		}
 		cmd_list = cmd_list->next;

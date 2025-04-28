@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/24 09:45:14 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/28 18:31:44 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 		free(input);
 		input = NULL;
 	}
-	close(in_fd);
+	safe_close(&in_fd);
 	return (exit_status);
 }
 
@@ -110,6 +110,7 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 // 	}
 // 	return (exit_status);
 // }
+
 
 uint8_t	run_interactive_mode(t_mshell *mshell)
 {

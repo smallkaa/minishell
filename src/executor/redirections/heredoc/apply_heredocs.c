@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:21 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/24 17:48:32 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:21:32 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static int	new_heredoc_fd(const char *delim)
 static bool	assign_heredoc_fd(t_redir *redirection)
 {
 	redirection->fd = new_heredoc_fd(redirection->filename);
+	// pipe_fd[0]
 	if (redirection->fd == WRITE_HERED_ERR)
 		return (false);
 	if (redirection->fd == HEREDOC_INTERRUPTED)
@@ -86,6 +87,7 @@ static bool	handle_cmd_heredocs(t_cmd *cmd)
 	redir_list = cmd->redirs;
 	while (redir_list)
 	{
+		
 		redirection = redir_list->content;
 		if (is_heredoc(redirection))
 		{
@@ -118,10 +120,11 @@ uint8_t	apply_heredocs(t_cmd *cmd)
 	{
 		if (!handle_cmd_heredocs(cmd))
 		{
+			printf("\n-------------DEBUG:  apply_heredocs here\n");
 			close_all_heredoc_fds(initial_cmd_list);
 			return (error_return("apply_heredocs: failed\n", EXIT_FAILURE));
 		}
 		cmd = cmd->next;
-	}
+	}	
 	return (EXIT_SUCCESS);
 }

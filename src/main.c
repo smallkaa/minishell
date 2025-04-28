@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/25 14:18:17 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 18:32:51 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (handle_signal_after_parse(mshell, cmd, input))
 			continue ;
 		exit_status = run_executor(cmd);
+		// close_all_heredoc_fds(cmd);
 		free_cmd(cmd);
 		free(input);
 		handle_signal_after_exec(mshell);

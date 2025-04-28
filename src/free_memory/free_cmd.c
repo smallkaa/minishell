@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:49:36 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/28 17:33:28 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,15 @@ static void	free_redirs(t_list *redirs)
 
 	while (redirs)
 	{
+		
 		tmp = redirs->next;
 		redir = redirs->content;
+
+		
+		if (redir && redir->type == R_HEREDOC && redir->fd >= 0)
+			close(redir->fd);
+
+			
 		if (redir)
 			free(redir->filename);
 		free(redir);

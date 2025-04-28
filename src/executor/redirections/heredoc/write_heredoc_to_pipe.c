@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 14:25:54 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:31:14 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,12 +115,12 @@ int	write_heredoc_to_pipe(int pipe_fd, const char *delim)
 	if (pid == 0)
 	{
 		ret = run_heredoc_child(pipe_fd, delim);
-		close(pipe_fd);
+		safe_close(&pipe_fd);
 		exit(ret);
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	close(pipe_fd);
+	safe_close(&pipe_fd);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);

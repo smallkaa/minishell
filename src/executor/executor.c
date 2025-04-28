@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/25 12:50:06 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 18:42:22 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,11 @@ static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 	exit_status = exec_in_pipes(cmd);
 	minishell->exit_status = exit_status;
 	if (is_exit_command(cmd))
+	{
+		close_all_heredoc_fds(cmd);
 		cleanup_and_exit(cmd, exit_status);
+
+	}
 	return (exit_status);
 }
 
@@ -69,8 +73,12 @@ static uint8_t	execute_builtin(t_cmd *cmd)
 			ft_putendl_fd("exit", STDERR_FILENO);
 		if (!(cmd->argv[1] && cmd->argv[2]
 				&& is_valid_numeric_exit_arg(cmd->argv[1])))
-			cleanup_and_exit(cmd, exit_status);
-	}	
+				{
+					close_all_heredoc_fds(cmd);
+					cleanup_and_exit(cmd, exit_status);
+				}
+	}
+	close_all_heredoc_fds(cmd);
 	return (exit_status);
 }
 
@@ -114,5 +122,7 @@ uint8_t	run_executor(t_cmd *cmd)
 		exit_status = execute_builtin(cmd);
 	if (cmd->next == NULL)
 		update_underscore(cmd, cmd->binary);
+	close_all_heredoc_fds(cmd);
+	
 	return (exit_status);
 }

@@ -29,3 +29,7 @@ https://github.com/zstenger93/42_minishell_tester
 ```bash
 valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
 ```
+
+```bash
+valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --suppressions=readline.supp ./minishell
+``` 
