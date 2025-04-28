@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/25 14:06:45 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:25:54 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,6 @@
  * @brief Functions for collecting heredoc input and writing it into a pipe.
  */
 #include "minishell.h"
-//#include "signals.h"
-// #include <signal.h>
-//#include <sys/wait.h>
-// #include <unistd.h>
-// #include <stdlib.h>
 
 /**
  * @brief Writes a single line to the heredoc pipe with a trailing newline.
@@ -51,9 +46,29 @@ int	write_heredoc_line(int pipe_fd, const char *line)
  * @param delimiter The heredoc end marker.
  * @return 1 if a valid line was read, 0 if EOF or delimiter matched.
  */
+// int	read_next_heredoc_line(char **line, const char *delimiter)
+// {
+// 	*line = readline("> ");
+// 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
+// 	{
+// 		if (line)
+// 			free(*line);
+// 		return (0);
+// 	}
+// 	return (1);
+// }
 int	read_next_heredoc_line(char **line, const char *delimiter)
 {
-	*line = readline("> ");
+	//*line = readline("> ");
+	if (isatty(fileno(stdin)))
+		*line = readline("> ");
+	else
+	{
+		char *line2;
+		line2 = get_next_line(fileno(stdin));
+		*line = ft_strtrim(line2, "\n");
+		free(line2);
+	}
 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
 	{
 		if (line)
@@ -62,7 +77,6 @@ int	read_next_heredoc_line(char **line, const char *delimiter)
 	}
 	return (1);
 }
-
 static int	handle_heredoc_status(int status)
 {
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)

@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/25 14:18:23 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:24:37 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,40 @@
  *
  * @return Pointer to the input string, or NULL if EOF (Ctrl+D) is received.
  */
+// char	*read_user_input(void)
+// {
+// 	char	*input;
+
+// 	input = readline("minishell: ");
+// 	if (!input)
+// 		return (NULL);
+// 	if (*input)
+// 		add_history(input);
+// 	return (input);
+// }
 char	*read_user_input(void)
 {
 	char	*input;
 
-	input = readline("minishell: ");
+	//input = readline("minishell: ");
+	if (isatty(fileno(stdin)))
+		input = readline("minishell: ");
+	else
+	{
+		char *line;
+		line = get_next_line(fileno(stdin));
+		input = ft_strtrim(line, "\n");
+		free(line);
+	}
 	if (!input)
 		return (NULL);
 	if (*input)
 		add_history(input);
+	char *temp = ft_strdup(input);
+	free(input);
+	input = temp;
 	return (input);
 }
-
 /**
  * @brief Handle cleanup when the parser fails to produce a valid command.
  *
