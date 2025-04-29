@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:16 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 22:32:07 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 00:39:01 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,16 @@ void	handle_not_found_or_command(t_cmd *cmd)
 	char	*path;
 
 	if (errno != ENOENT)
-		return ;
+	return ;
 	print_error("-minishell: ");
 	print_error(cmd->argv[0]);
 	path = ms_getenv(cmd->minishell, "PATH");
-
 
 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
 		print_error(": No such file or directory\n");
 	else
 		print_error(": command not found\n");
+	free_minishell(cmd->minishell);
 	_exit(127);
 }
 

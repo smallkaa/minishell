@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:23 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:49:24 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 23:25:09 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,12 @@ static uint8_t	restore_fd(int saved_fd, int target_fd)
  */
 static uint8_t	redirect_and_execute(t_cmd *cmd)
 {
-	uint8_t	exit_status;
+	// uint8_t	exit_status;
 
-	exit_status = apply_redirections(cmd);
-	if (exit_status != EXIT_SUCCESS)
-		return (exit_status);
+	apply_redirections(cmd);
+	// exit_status = apply_redirections(cmd);
+	// if (exit_status != EXIT_SUCCESS)
+	// 	return (exit_status);
 	return (exec_builtins(cmd));
 }
 
