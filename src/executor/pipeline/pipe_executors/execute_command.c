@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 21:26:29 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 22:31:23 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ void	exec_cmd(t_cmd *cmd)
  */
 void	execute_command(t_cmd *cmd)
 {
+
 	uint8_t	exit_status;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])

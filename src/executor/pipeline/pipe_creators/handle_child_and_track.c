@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 21:30:58 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 22:37:43 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,6 @@ static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	}
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 	{
-		printf("-------------------------here\n");
-
-		// free_minishell(cmd->minishell); // must be if redirection failed tested, ?? >> $HOME
 		if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 			_exit(EXIT_FAILURE);
 		_exit(EXIT_FAILURE);

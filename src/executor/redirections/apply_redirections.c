@@ -12,6 +12,7 @@ static int	handle_heredoc_redirection(t_redir *r)
 
 static int	handle_file_input_redirection(t_redir *r)
 {
+
 	int fd = open(r->filename, O_RDONLY);
 	if (fd == -1)
 		return (perror_return(r->filename, REDIR_ERR));
@@ -59,7 +60,10 @@ uint8_t	apply_redirections(t_cmd *cmd)
 			if ((r->type == R_HEREDOC
 				 ? handle_heredoc_redirection(r)
 				 : handle_file_input_redirection(r)) == REDIR_ERR)
+			{
+				free_minishell(cmd->minishell); 
 				return (EXIT_FAILURE);
+			}
 			last_in_fd = r->fd;                         /* r->fd is now −1      */
 		}
 		else if (r->type == R_OUTPUT || r->type == R_APPEND)
