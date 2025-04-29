@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 20:37:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 21:11:13 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,6 @@ void	execute_command(t_cmd *cmd)
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
-		// if (cmd->minishell)
 		// 	free_minishell(cmd->minishell);
 		_exit(EXIT_SUCCESS);
 	}
@@ -149,8 +148,6 @@ void	execute_command(t_cmd *cmd)
 	}
 	if (ft_strcmp(cmd->argv[0], "") == 0)
 		handle_empty_command(cmd);
-
-		// contiue from here
 	if (!cmd->binary)
 	{
 		if (is_builtin(cmd))

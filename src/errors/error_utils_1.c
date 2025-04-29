@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 18:00:49 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 21:09:02 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,23 +87,17 @@ void	cmd_missing_command_error(t_cmd *cmd)
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
 		print_error("-minishell: invalid cmd structure\n");
-		if (cmd->minishell)
-			free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell);
 		_exit(127);
 	}
 	print_error("-minishell: ");
 	print_error(cmd->argv[0]);
 	path = ms_getenv(cmd->minishell, "PATH");
 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
-	{
 		print_error(": No such file or directory\n");
-	}
 	else
-	{
 		print_error(": command not found\n");
-	}
-	// if (cmd->minishell)
-	// 	free_minishell(cmd->minishell);
+	free_minishell(cmd->minishell); // must be here , tested
 	_exit(127);
 }
 
