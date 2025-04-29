@@ -24,8 +24,9 @@ static void	close_old_heredocs(t_cmd *cmd_list, int current_fd)
 	}
 }
 
-static int	new_heredoc_fd(const char *delim, t_cmd *current, t_cmd *full_cmd_list)
+static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *full_cmd_list)
 {
+	(void)cmd;
 	int		pipe_fd[2];
 	pid_t	pid;
 	int		status;
@@ -47,15 +48,17 @@ static int	new_heredoc_fd(const char *delim, t_cmd *current, t_cmd *full_cmd_lis
 		safe_close(&pipe_fd[0]);
 		close_all_heredoc_fds(current);
 
-		if (write_heredoc_to_pipe(pipe_fd[1], delim) == WRITE_HERED_ERR)
+		if (write_heredoc_to_pipe(cmd, pipe_fd[1], delim) == WRITE_HERED_ERR)
 		{
 			close_all_heredoc_fds(full_cmd_list);
 			safe_close(&pipe_fd[1]);
-			exit(EXIT_FAILURE);
+			// free_minishell(cmd->minishell);
+			_exit(EXIT_FAILURE);
 		}
 		close_all_heredoc_fds(full_cmd_list);
 		safe_close(&pipe_fd[1]);
-		exit(EXIT_SUCCESS);
+		// free_minishell(cmd->minishell);
+		_exit(EXIT_SUCCESS);
 	}
 	else
 	{
@@ -66,12 +69,14 @@ static int	new_heredoc_fd(const char *delim, t_cmd *current, t_cmd *full_cmd_lis
 			safe_close(&pipe_fd[0]);
 			close_all_heredoc_fds(full_cmd_list);
 			g_signal_flag = 1;
+			// free_minishell(cmd->minishell);
 			return (HEREDOC_INTERRUPTED);
 		}
 		else if (WEXITSTATUS(status) != EXIT_SUCCESS)
 		{
 			safe_close(&pipe_fd[0]);
 			close_all_heredoc_fds(full_cmd_list);
+			// free_minishell(cmd->minishell);
 			return (WRITE_HERED_ERR);
 		}
 	}
@@ -80,13 +85,13 @@ static int	new_heredoc_fd(const char *delim, t_cmd *current, t_cmd *full_cmd_lis
         safe_close(&pipe_fd[0]);
 		return (HEREDOC_INTERRUPTED);
     }
-
 	return (pipe_fd[0]);
 }
 
-static bool	assign_heredoc_fd(t_redir *redirection, t_cmd *current, t_cmd *full_cmd_list)
+static bool	assign_heredoc_fd(t_cmd *cmd, t_redir *redirection, t_cmd *current, t_cmd *full_cmd_list)
 {
-	redirection->fd = new_heredoc_fd(redirection->filename, current, full_cmd_list);
+	redirection->fd = new_heredoc_fd(cmd, redirection->filename, current, full_cmd_list);
+	// free_minishell(cmd->minishell);  never use it here core dupped
 	if (redirection->fd == WRITE_HERED_ERR)
 		return (false);
 	if (redirection->fd == HEREDOC_INTERRUPTED)
@@ -109,7 +114,7 @@ static bool	handle_cmd_heredocs(t_cmd *cmd, t_cmd *full_cmd_list)
 		redirection = redir_list->content;
 		if (is_heredoc(redirection))
 		{
-			if (!assign_heredoc_fd(redirection, cmd, full_cmd_list))
+			if (!assign_heredoc_fd(cmd, redirection, cmd, full_cmd_list))
 				return (false);
 		}
 		redir_list = redir_list->next;

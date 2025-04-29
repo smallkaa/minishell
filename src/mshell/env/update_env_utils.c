@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:08 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:50:09 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 19:03:11 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ char	*create_env_entry(t_mshell_var *var)
  */
 void	free_old_env(char **env)
 {
+
+	// printf("\n-------------DEBUG: free_old_env() pid=%d\n", getpid());
 	int	i;
 
 	if (!env)

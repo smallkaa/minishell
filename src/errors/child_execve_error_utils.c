@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:16 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:43:17 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 18:04:20 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,9 +122,10 @@ void	handle_exec_format_error(t_cmd *cmd)
  */
 void	handle_generic_execve_error(t_cmd *cmd)
 {
+	(void)cmd;
 	print_error("-minishell: execve: ");
 	print_error(strerror(errno));
 	print_error("\n");
-	free_minishell(cmd->minishell);
+	// free_minishell(cmd->minishell);
 	_exit(EXIT_FAILURE);
 }

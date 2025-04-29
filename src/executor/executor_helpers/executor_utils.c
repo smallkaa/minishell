@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:30 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 09:55:40 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/29 18:03:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,12 @@ void	cleanup_and_exit(t_cmd *cmd, int exit_status)
 
 	if (!cmd)
 		return ;
-	minishell = cmd->minishell;
+	if (cmd->minishell)
+	{
+		minishell = cmd->minishell;
+		free_minishell(minishell);
+	}
 	free_cmd(cmd);
-	free_minishell(minishell);
 	rl_clear_history();
 	exit(exit_status);
 }

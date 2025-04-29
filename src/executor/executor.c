@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 20:10:52 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 14:31:49 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,7 @@ static uint8_t	execute_pipeline_or_binary(t_cmd *cmd)
 	exit_status = exec_in_pipes(cmd);
 	minishell->exit_status = exit_status;
 	if (is_exit_command(cmd))
-	{
 		cleanup_and_exit(cmd, exit_status);
-	}
 	return (exit_status);
 }
 
@@ -122,8 +120,6 @@ uint8_t	run_executor(t_cmd *cmd)
 		exit_status = execute_builtin(cmd);
 	if (cmd->next == NULL)
 		update_underscore(cmd, cmd->binary);
-
 	close_all_heredoc_fds(cmd);
-
 	return (exit_status);
 }

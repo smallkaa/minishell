@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/28 23:18:18 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 19:02:51 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 	while (1)
 	{
+		// printf("\n-------------DEBUG: main() pid=%d\n", getpid());
+
 		input = read_user_input();
 		if (!input)
 			return (EXIT_FAILURE);

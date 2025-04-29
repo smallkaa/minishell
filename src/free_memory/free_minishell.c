@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:49:42 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 19:03:06 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,10 @@ void	free_mshell_var(t_mshell_var *var)
 {
 	if (!var)
 		return ;
-	free(var->key);
-	free(var->value);
+	if (var->key)
+		free(var->key);
+	if (var->value)
+		free(var->value);
 	free(var);
 }
 
@@ -63,7 +65,7 @@ void	free_mshell_var(t_mshell_var *var)
  *
  * @param hash_table Pointer to the hash table to free.
  */
-static void	free_hash_table(t_hash_tbl *hash_table)
+void	free_hash_table(t_hash_tbl *hash_table)
 {
 	int				i;
 	t_mshell_var	*current;
@@ -98,6 +100,8 @@ static void	free_hash_table(t_hash_tbl *hash_table)
  */
 void	free_minishell(t_mshell *minishell)
 {
+	// printf("\n-------------DEBUG: free_minishell() pid=%d\n", getpid());
+
 	if (!minishell)
 		return ;
 	if (minishell->env)
@@ -111,5 +115,4 @@ void	free_minishell(t_mshell *minishell)
 		minishell->hash_table = NULL;
 	}
 	free(minishell);
-	minishell = NULL;
 }

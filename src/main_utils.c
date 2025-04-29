@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/28 14:24:37 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/04/29 14:41:08 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,23 @@ char	*read_user_input(void)
 {
 	char	*input;
 
-	//input = readline("minishell: ");
-	if (isatty(fileno(stdin)))
-		input = readline("minishell: ");
-	else
-	{
-		char *line;
-		line = get_next_line(fileno(stdin));
-		input = ft_strtrim(line, "\n");
-		free(line);
-	}
+	input = readline("minishell: ");
+	// if (isatty(fileno(stdin)))
+	// 	input = readline("minishell: ");
+	// else
+	// {
+	// 	char *line;
+	// 	line = get_next_line(fileno(stdin));
+	// 	input = ft_strtrim(line, "\n");
+	// 	free(line);
+	// }
 	if (!input)
 		return (NULL);
 	if (*input)
 		add_history(input);
-	char *temp = ft_strdup(input);
-	free(input);
-	input = temp;
+	// char *temp = ft_strdup(input);
+	// free(input);
+	// input = temp;
 	return (input);
 }
 /**

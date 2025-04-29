@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 20:03:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 19:02:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,21 @@ static void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
  * @param in_fd Pointer to the input file descriptor to update.
  * @param pipe_fd Array holding the current pipe's file descriptors.
  */
-static void	close_fds_and_prepare_next(int *in_fd, int *pipe_fd)
+static void	close_fds_and_prepare_next(t_cmd *cmd, int *in_fd, int *pipe_fd)
 {
+	(void)cmd;
 	if (pipe_fd[1] >= 0 && close(pipe_fd[1]) == -1)
 	{
 		perror("-exec_in_pipes: close pipe_fd[1]");
+		// if(cmd->minishell)
+			// free_minishell(cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
 	if (*in_fd != STDIN_FILENO && *in_fd > STDIN_FILENO && close(*in_fd) == -1)
 	{
 		perror("-exec_in_pipes: close in_fd");
+		// if(cmd->minishell)
+		// 	free_minishell(cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
 	*in_fd = pipe_fd[0];
@@ -115,9 +120,11 @@ static void	process_pipeline_commands(t_pipe_info *info)
 	cmd = info->cmd_list;
 	while (cmd)
 	{
+		// printf("\n-------------DEBUG: cmd is: %s, pid=%d\n", cmd->argv[0], getpid());
+
 		handle_pipe_creation(cmd, info->pipe_fd);
 		handle_child_and_track(cmd, info);
-		close_fds_and_prepare_next(&info->in_fd, info->pipe_fd);
+		close_fds_and_prepare_next(cmd, &info->in_fd, info->pipe_fd);
 		cmd = cmd->next;
 	}
 }

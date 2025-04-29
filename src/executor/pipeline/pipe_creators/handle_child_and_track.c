@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 23:19:09 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 19:02:58 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,30 +74,35 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
  */
 static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
+	signal(SIGPIPE, SIG_IGN);
 	close_unused_heredocs_child(cmd, cmd_list);
 	if (cmd->next)
 	{
 		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		{
 			close_all_heredoc_fds(cmd_list);
-			perror_exit_child("-exec_in_pipes: dup2 pipe_fd[1]", EXIT_FAILURE);
+			perror_exit_child(cmd, "-exec_in_pipes: dup2 pipe_fd[1]", EXIT_FAILURE);
 		}
 	}
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
 		{
-			perror_exit_child("-exec_in_pipes: dup2 in_fd", EXIT_FAILURE);
+			perror_exit_child(cmd, "-exec_in_pipes: dup2 in_fd", EXIT_FAILURE);
 		}
 	}
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 	{
+		free_minishell(cmd->minishell); // must be if redirection failed tested
 		if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 			_exit(EXIT_FAILURE);
 		_exit(EXIT_FAILURE);
 	}
 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
+	{
+		free_minishell(cmd->minishell); // must be if failed tested
 		_exit(EXIT_FAILURE);
+	}
 	execute_command(cmd);
 }
 
@@ -116,6 +121,9 @@ void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 	pid_t	pid;
 
 	pid = fork();
+
+	// printf("\n-------------DEBUG: fork() pid=%d\n", getpid());
+
 	if (pid == -1)
 	{
 		perror("-exec_in_pipes: fork");
