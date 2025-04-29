@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/29 14:41:08 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 01:14:02 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,40 +20,38 @@
  *
  * @return Pointer to the input string, or NULL if EOF (Ctrl+D) is received.
  */
+char	*read_user_input(void)
+{
+	char	*input;
+
+	input = readline("minishell: ");
+	if (!input)
+		return (NULL);
+	if (*input)
+		add_history(input);
+	return (input);
+}
 // char	*read_user_input(void)
 // {
 // 	char	*input;
+// 	char	*temp;
 
 // 	input = readline("minishell: ");
+// 	// if (isatty(fileno(stdin)))
+// 	// 	input = readline("minishell: ");
+// 	// else
+// 	// {
+// 	// 	char *line;
+// 	// 	line = get_next_line(fileno(stdin));
+// 	// 	input = ft_strtrim(line, "\n");
+// 	// 	free(line);
+// 	// }
 // 	if (!input)
 // 		return (NULL);
 // 	if (*input)
 // 		add_history(input);
 // 	return (input);
 // }
-char	*read_user_input(void)
-{
-	char	*input;
-
-	input = readline("minishell: ");
-	// if (isatty(fileno(stdin)))
-	// 	input = readline("minishell: ");
-	// else
-	// {
-	// 	char *line;
-	// 	line = get_next_line(fileno(stdin));
-	// 	input = ft_strtrim(line, "\n");
-	// 	free(line);
-	// }
-	if (!input)
-		return (NULL);
-	if (*input)
-		add_history(input);
-	// char *temp = ft_strdup(input);
-	// free(input);
-	// input = temp;
-	return (input);
-}
 /**
  * @brief Handle cleanup when the parser fails to produce a valid command.
  *

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 23:23:58 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 01:28:37 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,11 +88,7 @@ char **build_envp(char **env)
  */
 void	exec_cmd(t_cmd *cmd)
 {
-    // char **envp;
 	uint8_t	exit_status;
-
-    // envp = build_envp(cmd->minishell->env);
-	// free_minishell(cmd->minishell);
 
 	exit_status = validate_dots(cmd);
 	if (exit_status != EXIT_SUCCESS)
@@ -100,15 +96,8 @@ void	exec_cmd(t_cmd *cmd)
 		free_minishell(cmd->minishell); // must be here, tested for . and ..
 		_exit(exit_status);
 	}
-
 	signal(SIGPIPE, SIG_DFL);
-
-	// printf("\n-------------DEBUG: exec_cmd() pid=%d\n", getpid());
-	// execve(cmd->binary, cmd->argv, envp);
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	// free_minishell(cmd->minishell);
-
-	// ft_free_arrstrs(envp);
 	child_execve_error(cmd);
 }
 
@@ -132,14 +121,13 @@ void	execute_command(t_cmd *cmd)
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
-		// 	free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell);
 		_exit(EXIT_SUCCESS);
 	}
 	if (cmd->minishell->syntax_exit_status != 0)
 	{
 		exit_status = cmd->minishell->syntax_exit_status;
-		// if (cmd->minishell)
-		// 	free_minishell(cmd->minishell); // tested no need... test again if needed
+		free_minishell(cmd->minishell);
 		_exit(exit_status);
 	}
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)

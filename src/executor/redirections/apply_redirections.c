@@ -99,8 +99,8 @@ uint8_t	apply_redirections(t_cmd *cmd)
 	last_in_fd  = -1;
 	last_out_fd = -1;
 
-	if (!cmd->argv[0])
-		free_minishell(cmd->minishell); // must be here if > file
+	// if (!cmd->argv[0])
+	// 	free_minishell(cmd->minishell); // must be here if > file
 	while (node)
 	{
 		r = node->content;

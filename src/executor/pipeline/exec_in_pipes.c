@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 19:02:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 01:30:36 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,17 @@ static void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
  */
 static void	close_fds_and_prepare_next(t_cmd *cmd, int *in_fd, int *pipe_fd)
 {
-	(void)cmd;
+
 	if (pipe_fd[1] >= 0 && close(pipe_fd[1]) == -1)
 	{
 		perror("-exec_in_pipes: close pipe_fd[1]");
-		// if(cmd->minishell)
-			// free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
 	if (*in_fd != STDIN_FILENO && *in_fd > STDIN_FILENO && close(*in_fd) == -1)
 	{
 		perror("-exec_in_pipes: close in_fd");
-		// if(cmd->minishell)
-		// 	free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
 	*in_fd = pipe_fd[0];

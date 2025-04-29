@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:50:36 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 01:31:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ static char	*join_path_with_command(const char *path, const char *cmd_name)
  */
 static uint8_t	check_binary_access(char *binary, t_cmd *cmd)
 {
-	(void)cmd;
 	if (access(binary, F_OK) != 0)
 	{
 		free(binary);
