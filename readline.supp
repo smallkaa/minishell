@@ -23,3 +23,13 @@
    ...
    obj:/usr/lib/x86_64-linux-gnu/libtinfo.so.*
 }
+
+{
+   LS_LEAKS
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   obj:/usr/bin/ls
+   fun:malloc
+}
+
+

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 19:03:02 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 20:37:30 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,26 +88,27 @@ char **build_envp(char **env)
  */
 void	exec_cmd(t_cmd *cmd)
 {
-    char **envp;
+    // char **envp;
 	uint8_t	exit_status;
 
-    envp = build_envp(cmd->minishell->env);
-	free_minishell(cmd->minishell);
+    // envp = build_envp(cmd->minishell->env);
+	// free_minishell(cmd->minishell);
 
 	exit_status = validate_dots(cmd);
 	if (exit_status != EXIT_SUCCESS)
 	{
-		// if(cmd->minishell)
-		// 	free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell); // must be here, tested for . and ..
 		_exit(exit_status);
 	}
 
 	signal(SIGPIPE, SIG_DFL);
 
 	// printf("\n-------------DEBUG: exec_cmd() pid=%d\n", getpid());
-	execve(cmd->binary, cmd->argv, envp);
-	// execve(cmd->binary, cmd->argv, cmd->minishell->env);
-	ft_free_arrstrs(envp);
+	// execve(cmd->binary, cmd->argv, envp);
+	execve(cmd->binary, cmd->argv, cmd->minishell->env);
+	// free_minishell(cmd->minishell);
+
+	// ft_free_arrstrs(envp);
 	child_execve_error(cmd);
 }
 
@@ -138,17 +139,18 @@ void	execute_command(t_cmd *cmd)
 	{
 		exit_status = cmd->minishell->syntax_exit_status;
 		// if (cmd->minishell)
-		// 	free_minishell(cmd->minishell);
+		// 	free_minishell(cmd->minishell); // tested no need... test again if needed
 		_exit(exit_status);
 	}
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 	{
-		// if (cmd->minishell)
-		// 	free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell); // must be here. tested
 		_exit(EXIT_FAILURE);
 	}
 	if (ft_strcmp(cmd->argv[0], "") == 0)
 		handle_empty_command(cmd);
+
+		// contiue from here
 	if (!cmd->binary)
 	{
 		if (is_builtin(cmd))

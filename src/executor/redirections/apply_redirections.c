@@ -45,7 +45,10 @@ uint8_t	apply_redirections(t_cmd *cmd)
 	t_list	*node = cmd->redirs;
 	int		last_in_fd  = -1;
 	int		last_out_fd = -1;
-
+	if (!cmd->argv[0])
+	{
+		free_minishell(cmd->minishell); // must be here if > file
+	}
 	while (node)
 	{
 		t_redir *r = node->content;
@@ -61,6 +64,7 @@ uint8_t	apply_redirections(t_cmd *cmd)
 		}
 		else if (r->type == R_OUTPUT || r->type == R_APPEND)
 		{
+
 			safe_close(&last_out_fd);                   /* new ► close old stdout */
 			if (handle_output_redirection(r) == REDIR_ERR)
 				return (EXIT_FAILURE);

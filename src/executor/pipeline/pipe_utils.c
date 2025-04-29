@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 18:02:10 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/29 20:32:38 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,10 @@ void	handle_empty_command(t_cmd *cmd)
 	if (!cmd->redirs)
 	{
 		print_error("Command '' not found\n");
-		// if (cmd->minishell)
-		// 	free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell); // must be here tested
 		_exit(127);
 	}
-	// if (cmd->minishell)
-	// 	free_minishell(cmd->minishell);
+	free_minishell(cmd->minishell); // not tested
 	_exit(EXIT_SUCCESS);
 }
 
@@ -85,7 +83,7 @@ uint8_t	update_shlvl(t_cmd *cmd)
 	set_variable(cmd->minishell, "SHLVL", new_shlvl, 1);
 	free(new_shlvl);
 	update_env(cmd->minishell);
-	return (EXIT_SUCCESS);
+	return (EXIT_FAILURE);
 }
 
 /**

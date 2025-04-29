@@ -35,8 +35,8 @@ for COMMANDS_FILE in "$COMMANDS_DIR"/*; do
     while IFS= read -r command; do
         # Skip empty lines and comments
         [[ -z "$command" || "$command" =~ ^# ]] && continue
-
-        echo "Running command: $command"
+        echo ""
+        echo "---------------Running command: $command"
         TEMP_OUTPUT=$(mktemp)
 
         # Run Valgrind with the command piped to minishell and capture the output
