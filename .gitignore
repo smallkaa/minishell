@@ -64,11 +64,9 @@ minishell_tester/
 compile_commands.json
 
 # tests
-sources_dump.txt
 minishell
-heredoc_tmp.txt
-m_tester/
 42_minishell_tester/
 42_minishell_tester_2/
 42_minishell_tester_3/
 script-run-all-mand.sh
+minishell_test_log.txt
