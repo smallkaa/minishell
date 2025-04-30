@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 19:00:34 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 08:56:15 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,26 +36,55 @@ int	write_heredoc_line(int pipe_fd, const char *line)
 	return (EXIT_SUCCESS);
 }
 
+// int	read_next_heredoc_line(char **line, const char *delimiter)
+// {
+// 	// *line = readline("> ");
+// 	if (isatty(fileno(stdin)))
+// 		*line = readline("> ");
+// 	else
+// 	{
+// 		char *line2;
+// 		line2 = get_next_line(fileno(stdin));
+// 		*line = ft_strtrim(line2, "\n");
+// 		free(line2);
+// 	}
+// 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
+// 	{
+// 		if (line)
+// 			free(*line);
+// 		return (0);
+// 	}
+// 	return (1);
+// }
 int	read_next_heredoc_line(char **line, const char *delimiter)
 {
-	*line = readline("> ");
-	// if (isatty(fileno(stdin)))
-	// 	*line = readline("> ");
-	// else
-	// {
-	// 	char *line2;
-	// 	line2 = get_next_line(fileno(stdin));
-	// 	*line = ft_strtrim(line2, "\n");
-	// 	free(line2);
-	// }
+	if (isatty(fileno(stdin)))
+	{
+		*line = readline("> ");
+	}
+	else
+	{
+		char *line2 = get_next_line(fileno(stdin));
+		if (!line2)
+		{
+			*line = NULL;
+			return (0);
+		}
+		*line = ft_strtrim(line2, "\n");
+		free(line2);
+		if (!*line)
+			return (0);
+	}
+
 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
 	{
-		if (line)
-			free(*line);
+		free(*line);
+		*line = NULL;
 		return (0);
 	}
 	return (1);
 }
+
 static int	handle_heredoc_status(int status)
 {
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
