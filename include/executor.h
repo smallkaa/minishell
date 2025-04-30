@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/29 18:53:49 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 12:34:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,11 @@ uint8_t					apply_heredocs(t_cmd *cmd);
 bool					heredoc_exceeds_limit(size_t total_written);
 bool					is_heredoc(t_redir *redirection);
 void					close_all_heredoc_fds(t_cmd *cmd_list);
-int						write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim);
-void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list);
+int						write_heredoc_to_pipe(t_cmd *cmd,
+							int pipe_fd, const char *delim);
+void					close_unused_heredocs_child(t_cmd *current,
+							t_cmd *full_cmd_list);
+int						handle_heredoc_redirection(t_redir *r);
 
 // utils
 t_mshell_var			*split_key_value(char *key_value_pair);
@@ -121,7 +124,8 @@ void					safe_close(int *fd);
 
 // exit utils
 int						perror_return(char *msg, int exit_status);
-uint8_t					perror_exit_child(t_cmd *cmd, char *msg, u_int8_t exit_status);
+uint8_t					perror_exit_child(t_cmd *cmd,
+							char *msg, u_int8_t exit_status);
 void					cmd_missing_command_error(t_cmd *cmd);
 void					export_error(t_mshell_var *pair);
 u_int8_t				unset_error(char *str);

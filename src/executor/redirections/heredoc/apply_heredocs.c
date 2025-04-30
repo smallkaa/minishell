@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   apply_heredocs.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/30 11:58:28 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/04/30 12:01:50 by Ilia Munaev      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 /**
  * @file apply_heredocs.c
@@ -88,10 +99,12 @@ static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 	return (pipe_fd[0]);
 }
 
-static bool	assign_heredoc_fd(t_cmd *cmd, t_redir *redirection, t_cmd *current, t_cmd *full_cmd_list)
+static bool	assign_heredoc_fd(t_cmd *cmd,
+				t_redir *redirection,
+				t_cmd *current,
+				t_cmd *full_cmd_list)
 {
 	redirection->fd = new_heredoc_fd(cmd, redirection->filename, current, full_cmd_list);
-	// free_minishell(cmd->minishell);  never use it here core dupped
 	if (redirection->fd == WRITE_HERED_ERR)
 		return (false);
 	if (redirection->fd == HEREDOC_INTERRUPTED)

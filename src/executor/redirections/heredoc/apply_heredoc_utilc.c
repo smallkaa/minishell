@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:15 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 23:25:40 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 12:34:00 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,14 @@ void	close_all_heredoc_fds(t_cmd *cmd_list)
 		}
 		cmd_list = cmd_list->next;
 	}
+}
+
+int	handle_heredoc_redirection(t_redir *r)
+{
+	if (r->fd == -1)
+		return (EXIT_SUCCESS);
+	if (dup2(r->fd, STDIN_FILENO) == -1)
+		return (perror_return("heredoc dup2", REDIR_ERR));
+	safe_close(&r->fd);
+	return (EXIT_SUCCESS);
 }

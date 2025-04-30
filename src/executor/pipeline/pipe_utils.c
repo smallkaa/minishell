@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 20:32:38 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 12:40:37 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,10 @@ void	handle_empty_command(t_cmd *cmd)
 	if (!cmd->redirs)
 	{
 		print_error("Command '' not found\n");
-		free_minishell(cmd->minishell); // must be here tested
+		free_minishell(cmd->minishell);
 		_exit(127);
 	}
-	free_minishell(cmd->minishell); // not tested
+	free_minishell(cmd->minishell);
 	_exit(EXIT_SUCCESS);
 }
 

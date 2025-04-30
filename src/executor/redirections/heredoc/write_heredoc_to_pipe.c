@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 08:56:15 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 12:14:42 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,7 @@ int	write_heredoc_line(int pipe_fd, const char *line)
 
 // int	read_next_heredoc_line(char **line, const char *delimiter)
 // {
-// 	// *line = readline("> ");
-// 	if (isatty(fileno(stdin)))
-// 		*line = readline("> ");
-// 	else
-// 	{
-// 		char *line2;
-// 		line2 = get_next_line(fileno(stdin));
-// 		*line = ft_strtrim(line2, "\n");
-// 		free(line2);
-// 	}
+// 	*line = readline("> ");
 // 	if (*line == NULL || ft_strcmp(*line, delimiter) == 0)
 // 	{
 // 		if (line)
@@ -124,16 +115,13 @@ int	write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim)
 	{
 		ret = run_heredoc_child(pipe_fd, delim);
 		safe_close(&pipe_fd);
-		free_minishell(cmd->minishell); // must be here clean child, tested
+		free_minishell(cmd->minishell);
 		_exit(ret);
 	}
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	safe_close(&pipe_fd);
-
-	free_minishell(cmd->minishell); // must be here , clean paretn, tested
-
-
+	free_minishell(cmd->minishell);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);

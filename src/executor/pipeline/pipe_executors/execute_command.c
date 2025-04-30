@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 01:28:37 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 12:38:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,46 +37,10 @@ static void	handle_builtin_and_exit(t_cmd *cmd)
 	uint8_t	exit_status;
 
 	exit_status = exec_builtins(cmd);
-	free_minishell(cmd->minishell); /// must be here to free if builtin in pipe
+	free_minishell(cmd->minishell);
 	_exit(exit_status);
 }
-char **build_envp(char **env)
-{
-	int		count;
-	char	**new_env;
-	int		i;
 
-	if (!env)
-		return (NULL);
-
-	// Count number of environment variables
-	count = 0;
-	while (env[count])
-		count++;
-
-	// Allocate array of char* (+1 for NULL terminator)
-	new_env = malloc(sizeof(char *) * (count + 1));
-	if (!new_env)
-		return (NULL);
-
-	// Copy each string
-	i = 0;
-	while (i < count)
-	{
-		new_env[i] = ft_strdup(env[i]);
-		if (!new_env[i])
-		{
-			// Free previously allocated strings if duplication fails
-			while (--i >= 0)
-				free(new_env[i]);
-			free(new_env);
-			return (NULL);
-		}
-		i++;
-	}
-	new_env[i] = NULL;
-	return (new_env);
-}
 /**
  * @brief Executes an external binary command using `execve()`.
  *
@@ -93,7 +57,7 @@ void	exec_cmd(t_cmd *cmd)
 	exit_status = validate_dots(cmd);
 	if (exit_status != EXIT_SUCCESS)
 	{
-		free_minishell(cmd->minishell); // must be here, tested for . and ..
+		free_minishell(cmd->minishell);
 		_exit(exit_status);
 	}
 	signal(SIGPIPE, SIG_DFL);
@@ -101,22 +65,78 @@ void	exec_cmd(t_cmd *cmd)
 	child_execve_error(cmd);
 }
 
-/**
- * @brief Entry point for executing a command in a child process.
- *
- * Handles several cases:
- * - Skips execution if the command is empty.
- * - Exits immediately if there was a previous syntax error.
- * - Updates `SHLVL` if this is a recursive call to `./minishell`.
- * - Processes empty strings as invalid commands.
- * - For built-ins without a binary, calls the built-in directly.
- * - For valid binaries, delegates to `exec_cmd()`.
- *
- * @param cmd Pointer to the command structure.
- */
+// /**
+//  * @brief Entry point for executing a command in a child process.
+//  *
+//  * Handles several cases:
+//  * - Skips execution if the command is empty.
+//  * - Exits immediately if there was a previous syntax error.
+//  * - Updates `SHLVL` if this is a recursive call to `./minishell`.
+//  * - Processes empty strings as invalid commands.
+//  * - For built-ins without a binary, calls the built-in directly.
+//  * - For valid binaries, delegates to `exec_cmd()`.
+//  *
+//  * @param cmd Pointer to the command structure.
+//  */
+// void	execute_command(t_cmd *cmd)
+// {
+
+// 	uint8_t	exit_status;
+
+// 	if (!cmd || !cmd->argv || !cmd->argv[0])
+// 	{
+// 		free_minishell(cmd->minishell);
+// 		_exit(EXIT_SUCCESS);
+// 	}
+// 	if (cmd->minishell->syntax_exit_status != 0)
+// 	{
+// 		exit_status = cmd->minishell->syntax_exit_status;
+// 		free_minishell(cmd->minishell);
+// 		_exit(exit_status);
+// 	}
+// 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
+// 	{
+// 		free_minishell(cmd->minishell);
+// 		_exit(EXIT_FAILURE);
+// 	}
+// 	if (ft_strcmp(cmd->argv[0], "") == 0)
+// 		handle_empty_command(cmd);
+// 	if (!cmd->binary)
+// 	{
+// 		if (is_builtin(cmd))
+// 		{
+// 			if (ft_strcmp(cmd->argv[0], "env") == 0)
+// 				update_underscore(cmd, cmd->binary);
+// 			handle_builtin_and_exit(cmd);
+// 		}
+// 		else
+// 			cmd_missing_command_error(cmd);
+// 	}
+// 	exec_cmd(cmd);
+// }
+void	execute_command_core(t_cmd *cmd)
+{
+	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
+	{
+		free_minishell(cmd->minishell);
+		_exit(EXIT_FAILURE);
+	}
+	if (!cmd->binary)
+	{
+		if (is_builtin(cmd))
+		{
+			if (ft_strcmp(cmd->argv[0], "env") == 0)
+				update_underscore(cmd, cmd->binary);
+			handle_builtin_and_exit(cmd);
+		}
+		else
+			cmd_missing_command_error(cmd);
+	}
+	exec_cmd(cmd);
+}
+
 void	execute_command(t_cmd *cmd)
 {
-
 	uint8_t	exit_status;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
@@ -130,23 +150,7 @@ void	execute_command(t_cmd *cmd)
 		free_minishell(cmd->minishell);
 		_exit(exit_status);
 	}
-	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
-	{
-		free_minishell(cmd->minishell); // must be here. tested
-		_exit(EXIT_FAILURE);
-	}
 	if (ft_strcmp(cmd->argv[0], "") == 0)
 		handle_empty_command(cmd);
-	if (!cmd->binary)
-	{
-		if (is_builtin(cmd))
-		{
-			if (ft_strcmp(cmd->argv[0], "env") == 0)
-				update_underscore(cmd, cmd->binary);
-			handle_builtin_and_exit(cmd);
-		}
-		else
-			cmd_missing_command_error(cmd);
-	}
-	exec_cmd(cmd);
+	execute_command_core(cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 01:30:36 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/04/30 12:45:57 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ static void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
  */
 static void	close_fds_and_prepare_next(t_cmd *cmd, int *in_fd, int *pipe_fd)
 {
-
 	if (pipe_fd[1] >= 0 && close(pipe_fd[1]) == -1)
 	{
 		perror("-exec_in_pipes: close pipe_fd[1]");
@@ -118,8 +117,6 @@ static void	process_pipeline_commands(t_pipe_info *info)
 	cmd = info->cmd_list;
 	while (cmd)
 	{
-		// printf("\n-------------DEBUG: cmd is: %s, pid=%d\n", cmd->argv[0], getpid());
-
 		handle_pipe_creation(cmd, info->pipe_fd);
 		handle_child_and_track(cmd, info);
 		close_fds_and_prepare_next(cmd, &info->in_fd, info->pipe_fd);
@@ -144,14 +141,8 @@ uint8_t	exec_in_pipes(t_cmd *cmd_list)
 
 	if (!cmd_list)
 		return (EXIT_SUCCESS);
-
 	init_pipe_info(&info, cmd_list, pipe_fd, pids);
-	// printf("\n-------------DEBUG: exec_in_pipes() start pid: %d\n", getpid());
-
 	process_pipeline_commands(&info);
-
-	// printf("\n-------------DEBUG: exec_in_pipes() after process_pipeline_commands pid: %d\n", getpid());
-
 	close_all_heredoc_fds(cmd_list);
 	return (wait_for_children(pids, *info.idx));
 }
