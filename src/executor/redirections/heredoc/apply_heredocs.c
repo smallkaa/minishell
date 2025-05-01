@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_heredocs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:58:28 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 12:01:50 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/01 15:34:22 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,9 @@ static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 	else
 	{
 		safe_close(&pipe_fd[1]);
+		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
+		signal(SIGINT, handle_sigint);
 		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
 		{
 			safe_close(&pipe_fd[0]);
