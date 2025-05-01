@@ -1,16 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/29 12:24:40 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/01 14:48:23 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+static bool	is_input_interactive(void)
+{
+	return (isatty(STDIN_FILENO));
+}
 
 uint8_t	run_command_mode(t_mshell *mshell, char *input)
 {
@@ -69,91 +73,98 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 // 	char	*input;
 // 	uint8_t	exit_status;
 // 	t_cmd	*cmd;
-// 	char	**lines;
-// 	int		i;
 
-// 	lines = NULL;
 // 	while (1)
 // 	{
 // 		input = readline("minishell: ");
-// 		if (!input) // EOF (Ctrl+D)
+// 		if (!input)
 // 			return (EXIT_FAILURE);
 // 		if (*input)
 // 			add_history(input);
-// 		lines = ft_split(input, '\n');
-// 		if (!lines)
+// 		cmd = run_parser(mshell, input);
+// 		if (!cmd)
 // 		{
 // 			free(input);
+// 			if (g_signal_flag)
+// 			{
+// 				mshell->exit_status = 130;
+// 				g_signal_flag = 0;
+// 			}
 // 			continue ;
 // 		}
-
-// 		i = 0;
-// 		while (lines && lines[i])
+// 		if (g_signal_flag)
 // 		{
-// 			// Ignore empty lines
-// 			if (lines[i][0] == '\0')
-// 			{
-// 				i++;
-// 				continue ;
-// 			}
-// 			cmd = run_parser(mshell, lines[i]);
-// 			if (cmd)
-// 			{
-// 				exit_status = run_executor(cmd);
-// 				free_cmd(cmd);
-// 			}
-// 			i++;
+// 			mshell->exit_status = 130;
+// 			g_signal_flag = 0;
+// 			free_cmd(cmd);
+// 			free(input);
+// 			continue;
 // 		}
-// 		ft_free_arrstrs(lines);
+// 		exit_status = run_executor(cmd);
+// 		free_cmd(cmd);
 // 		free(input);
 // 		input = NULL;
+// 		if (g_signal_flag)
+// 		{
+// 			mshell->exit_status = 130;
+// 			g_signal_flag = 0;
+// 		}
 // 	}
 // 	return (exit_status);
 // }
 
-
 uint8_t	run_interactive_mode(t_mshell *mshell)
 {
 	char	*input;
-	uint8_t	exit_status;
 	t_cmd	*cmd;
+	uint8_t	exit_status;
 
 	while (1)
 	{
-		input = readline("minishell: ");
+		// printf("\n-------------DEBUG: main() pid=%d\n", getpid());
+
+		input = read_user_input();
 		if (!input)
 			return (EXIT_FAILURE);
-		if (*input)
-			add_history(input);
 		cmd = run_parser(mshell, input);
 		if (!cmd)
 		{
-			free(input);
-			if (g_signal_flag)
-			{
-				mshell->exit_status = 130;
-				g_signal_flag = 0;
-			}
+			if (handle_null_command(mshell, input))
+				continue ;
+		}
+		if (handle_signal_after_parse(mshell, cmd, input))
 			continue ;
-		}
-		if (g_signal_flag)
-		{
-			mshell->exit_status = 130;
-			g_signal_flag = 0;
-			free_cmd(cmd);
-			free(input);
-			continue;
-		}
 		exit_status = run_executor(cmd);
 		free_cmd(cmd);
 		free(input);
-		input = NULL;
-		if (g_signal_flag)
-		{
-			mshell->exit_status = 130;
-			g_signal_flag = 0;
-		}
+		handle_signal_after_exec(mshell);
 	}
+	return (exit_status);
+}
+
+// Читает одну строку из stdin, выполняет ее и возвращает статус.
+// Используется, когда BIGTEST=1 и ввод неинтерактивный.
+static uint8_t	run_non_interactive_command(t_mshell *mshell)
+{
+	char	*line;
+	char	*trimmed_line;
+	uint8_t	exit_status;
+
+	line = get_next_line(STDIN_FILENO); // Предполагается, что get_next_line есть
+	if (!line)
+	{
+		// Можно добавить обработку ошибки или просто вернуть статус
+		return (EXIT_FAILURE);
+	}
+	trimmed_line = ft_strtrim(line, "\n");
+	free(line);
+	if (!trimmed_line)
+	{
+		perror_return("ft_strtrim memory allocation failed", EXIT_FAILURE);
+		return (EXIT_FAILURE);
+	}
+	exit_status = run_command_mode(mshell, trimmed_line);
+	free(trimmed_line);
 	return (exit_status);
 }
 
@@ -177,26 +188,14 @@ int	main(int argc, char **argv, char **envp)
 		exit_status = run_script_mode(minishell, argv[1]);
 	// Handle interactive mode
 // Handle interactive mode
-#ifdef BIGTEST
-	else if (isatty(fileno(stdin)))
-		exit_status = run_interactive_mode(minishell);
-	else
+else // argc == 1 (нет аргументов командной строки)
 	{
-		line = get_next_line(fileno(stdin));
-		if (!line)
-			exit_status = EXIT_FAILURE;
-		else
-		{
-			trimmed = ft_strtrim(line, "\n");
-			free(line);
-			exit_status = run_command_mode(minishell, trimmed);
-			free(trimmed);
-		}
+		// Если BIGTEST=1 и ввод НЕ интерактивный (из pipe/файла)
+		if (BIGTEST == 1 && !is_input_interactive())
+			exit_status = run_non_interactive_command(minishell);
+		else // Иначе (BIGTEST=0 ИЛИ ввод интерактивный)
+			exit_status = run_interactive_mode(minishell);
 	}
-#else
-	else
-		exit_status = run_interactive_mode(minishell);
-#endif
 	free_minishell(minishell);
 	rl_clear_history();
 	return (exit_status);
