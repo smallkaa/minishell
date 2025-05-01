@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/30 08:55:13 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/01 15:13:11 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,4 +122,9 @@ void	handle_signal_after_exec(t_mshell *mshell)
 		mshell->exit_status = 130;
 		g_signal_flag = 0;
 	}
+}
+
+bool	is_input_interactive(void)
+{
+	return (isatty(STDIN_FILENO));
 }

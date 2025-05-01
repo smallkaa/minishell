@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/29 10:26:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/01 15:23:57 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ bool			handle_signal_after_parse(t_mshell *mshell,
 					t_cmd *cmd,
 					char *input);
 void			handle_signal_after_exec(t_mshell *mshell);
+bool			is_input_interactive(void);
+uint8_t			run_script_mode(t_mshell *mshell, const char *file);
 
 // init minishell
 t_mshell		*init_mshell(char **envp);

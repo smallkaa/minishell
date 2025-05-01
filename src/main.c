@@ -6,15 +6,11 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/01 14:58:10 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/01 15:22:32 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-static bool	is_input_interactive(void)
-{
-	return (isatty(STDIN_FILENO));
-}
 
 uint8_t	run_command_mode(t_mshell *mshell, char *input)
 {
@@ -30,89 +26,6 @@ uint8_t	run_command_mode(t_mshell *mshell, char *input)
 	return (exit_status);
 }
 
-uint8_t	run_script_mode(t_mshell *mshell, const char *file)
-{
-	char	*input;
-	uint8_t	exit_status;
-	t_cmd	*cmd;
-	int		in_fd;
-
-	in_fd = open(file, O_RDONLY);
-	if (in_fd < 0)
-	{
-		print_error("minishell: cannot open script file\n");
-		return (EXIT_FAILURE);
-	}
-	input = NULL;
-	while ((input = get_next_line(in_fd)) != NULL)
-	{
-		if (g_signal_flag)
-		{
-			mshell->exit_status = 130;
-			g_signal_flag = 0;
-		}
-		cmd = run_parser(mshell, input);
-		if (!cmd)
-		{
-			free(input);
-			input = NULL;
-			continue ;
-		}
-		exit_status = run_executor(cmd);
-		free_cmd(cmd);
-		cmd = NULL;
-		free(input);
-		input = NULL;
-	}
-	safe_close(&in_fd);
-	return (exit_status);
-}
-
-// uint8_t	run_interactive_mode(t_mshell *mshell)
-// {
-// 	char	*input;
-// 	uint8_t	exit_status;
-// 	t_cmd	*cmd;
-
-// 	while (1)
-// 	{
-// 		input = readline("minishell: ");
-// 		if (!input)
-// 			return (EXIT_FAILURE);
-// 		if (*input)
-// 			add_history(input);
-// 		cmd = run_parser(mshell, input);
-// 		if (!cmd)
-// 		{
-// 			free(input);
-// 			if (g_signal_flag)
-// 			{
-// 				mshell->exit_status = 130;
-// 				g_signal_flag = 0;
-// 			}
-// 			continue ;
-// 		}
-// 		if (g_signal_flag)
-// 		{
-// 			mshell->exit_status = 130;
-// 			g_signal_flag = 0;
-// 			free_cmd(cmd);
-// 			free(input);
-// 			continue;
-// 		}
-// 		exit_status = run_executor(cmd);
-// 		free_cmd(cmd);
-// 		free(input);
-// 		input = NULL;
-// 		if (g_signal_flag)
-// 		{
-// 			mshell->exit_status = 130;
-// 			g_signal_flag = 0;
-// 		}
-// 	}
-// 	return (exit_status);
-// }
-
 uint8_t	run_interactive_mode(t_mshell *mshell)
 {
 	char	*input;
@@ -121,8 +34,6 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 	while (1)
 	{
-		// printf("\n-------------DEBUG: main() pid=%d\n", getpid());
-
 		input = read_user_input();
 		if (!input)
 			return (EXIT_FAILURE);
@@ -150,10 +61,9 @@ static uint8_t	run_non_interactive_command(t_mshell *mshell)
 	char	*trimmed_line;
 	uint8_t	exit_status;
 
-	line = get_next_line(STDIN_FILENO); // Предполагается, что get_next_line есть
+	line = get_next_line(STDIN_FILENO);
 	if (!line)
 	{
-		// Можно добавить обработку ошибки или просто вернуть статус
 		return (EXIT_FAILURE);
 	}
 	trimmed_line = ft_strtrim(line, "\n");
@@ -173,24 +83,19 @@ int	main(int argc, char **argv, char **envp)
 	t_mshell	*minishell;
 	uint8_t		exit_status;
 
-	setup_signal_handlers(); // Set up signal handlers
+	setup_signal_handlers();
 	minishell = init_mshell(envp);
 	if (!minishell)
 		return (EXIT_FAILURE);
-	// Handle -c option
 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
 		exit_status = run_command_mode(minishell, argv[2]);
-	// Handle script mode
 	else if (argc == 2)
 		exit_status = run_script_mode(minishell, argv[1]);
-	// Handle interactive mode
-// Handle interactive mode
-else // argc == 1 (нет аргументов командной строки)
+	else
 	{
-		// Если BIGTEST=1 и ввод НЕ интерактивный (из pipe/файла)
 		if (BIGTEST == 1 && !is_input_interactive())
 			exit_status = run_non_interactive_command(minishell);
-		else // Иначе (BIGTEST=0 ИЛИ ввод интерактивный)
+		else
 			exit_status = run_interactive_mode(minishell);
 	}
 	free_minishell(minishell);
