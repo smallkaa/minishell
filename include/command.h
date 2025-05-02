@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:49 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/25 14:07:21 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:51:51 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_redir
 	char			*filename;
 	int				target_fd;
 	int				fd;
+	int				expand_in_heredoc;
 }	t_redir;
 /**
  * @struct s_cmd
@@ -86,7 +87,7 @@ typedef struct s_cmd
 
 void	heredoc_sigint_handler(int sig);
 void	setup_heredoc_signals(void);
-int		run_heredoc_child(int pipe_fd, const char *delim);
+int		run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell, int expand_flag);
 int		write_heredoc_line(int pipe_fd, const char *line);
 int		read_next_heredoc_line(char **line, const char *delimiter);
 

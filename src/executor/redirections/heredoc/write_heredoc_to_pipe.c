@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 12:14:42 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/02 15:00:56 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,27 @@ static int	handle_heredoc_status(int status)
 	return (EXIT_SUCCESS);
 }
 
+// Вспомогательная функция для поиска t_redir по разделителю
+static t_redir *find_redir_by_delim(t_list *redirs, const char *delim)
+{
+    t_list  *node;
+    t_redir *redir;
+
+    node = redirs;
+    while (node)
+    {
+        redir = (t_redir *)node->content;
+        // Сравниваем filename (который используется как delim для heredoc)
+        // Добавим проверку на NULL для надежности
+        if (redir->type == R_HEREDOC && redir->filename && delim && ft_strcmp(redir->filename, delim) == 0)
+        {
+            return (redir);
+        }
+        node = node->next;
+    }
+    return (NULL); // Не найден
+}
+
 /**
  * @brief Reads user input and writes heredoc content to a pipe.
  *
@@ -107,15 +128,29 @@ int	write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim)
 	pid_t	pid;
 	int		status;
 	int		ret;
+    int     expand_flag;
+    t_redir *heredoc_redir;
 
+    // --- Находим нужный редирект и его флаг ---
+    heredoc_redir = find_redir_by_delim(cmd->redirs, delim);
+    if (heredoc_redir)
+    {
+        expand_flag = heredoc_redir->expand_in_heredoc;
+    }
+    else
+    {
+        // Эта ситуация не должна возникать при корректном парсинге
+        print_error("Internal error: heredoc delimiter not found.\n");
+        expand_flag = 0; // По умолчанию не раскрываем
+    }
 	pid = fork();
 	if (pid == -1)
 		return (perror_return("fork", WRITE_HERED_ERR));
 	if (pid == 0)
 	{
-		ret = run_heredoc_child(pipe_fd, delim);
+		ret = run_heredoc_child(pipe_fd, delim, cmd->minishell , expand_flag);
 		safe_close(&pipe_fd);
-		free_minishell(cmd->minishell);
+		//free_minishell(cmd->minishell);
 		_exit(ret);
 	}
 	signal(SIGINT, SIG_IGN);
