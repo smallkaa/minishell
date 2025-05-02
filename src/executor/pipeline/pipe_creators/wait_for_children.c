@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wait_for_children.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 18:12:40 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/02 12:24:14 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ uint8_t	wait_for_children(pid_t *pids, int count)
 	int		i;
 	int		status;
 	uint8_t	exit_status;
+	int		term_sig;
 
 	i = 0;
 	exit_status = EXIT_SUCCESS;
@@ -52,7 +53,14 @@ uint8_t	wait_for_children(pid_t *pids, int count)
 			if (WIFEXITED(status))
 				exit_status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
-				exit_status = 128 + WTERMSIG(status);
+			{
+				term_sig = WTERMSIG(status);
+				if (term_sig == SIGQUIT)
+				{
+					write(STDERR_FILENO, "Quit: 3\n", 8);
+				}
+				exit_status = 128 + term_sig;
+			}
 			else
 				exit_status = EXIT_FAILURE;
 		}

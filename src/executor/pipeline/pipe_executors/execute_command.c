@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 12:38:55 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/02 12:13:19 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	exec_cmd(t_cmd *cmd)
 		_exit(exit_status);
 	}
 	signal(SIGPIPE, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	child_execve_error(cmd);
 }
