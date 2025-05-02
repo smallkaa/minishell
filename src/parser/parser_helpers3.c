@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 14:20:42 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:12:12 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		free(redir);
 		return (-1);
 	}
+	redir->expand_in_heredoc = (token[1].quote_style == 0);
 	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir));
 	return (0);
 }
