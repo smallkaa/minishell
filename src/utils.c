@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 13:12:32 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 13:13:04 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/02 11:24:48 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ void	debug_printf(const char *format, ...)
 				printf("%s", va_arg(args, char *));
 			else if (*format == 'd')
 				printf("%d", va_arg(args, int));
+			else if (*format == 'p')
+				printf("%p", va_arg(args, void*));
 			else if (*format == '%')
 				printf("%%");
 			else
