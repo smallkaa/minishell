@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/24 17:44:07 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/02 17:52:08 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,14 @@ uint8_t	handle_cd(t_cmd *cmd)
 
 	if (!cmd)
 		return (no_cmd_error("cd"));
-	if (!cmd->argv[1] || (cmd->argv[1][0] == '~' && !cmd->argv[1][1]))
+	if (cmd->argv[1] && ft_strcmp(cmd->argv[1], "--") == 0)
+	{
+		if (cmd->argv[2])
+			exit_status = cd_too_many_args();
+		else
+			exit_status = cd_no_args(cmd);
+	}
+	else if (!cmd->argv[1] || (cmd->argv[1][0] == '~' && !cmd->argv[1][1]))
 		exit_status = cd_no_args(cmd);
 	else if (cmd->argv[2])
 		exit_status = cd_too_many_args();
