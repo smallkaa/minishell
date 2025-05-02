@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/02 12:24:14 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/02 16:00:24 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,32 @@
  * process in the pipeline is used as the final return value.
  */
 #include "minishell.h"
+
+static void print_signal_message(int sig)
+ {
+	const char *msg;
+
+	msg = NULL;
+	if (sig == SIGSEGV)
+		msg = "Segmentation fault";
+	else if (sig == SIGQUIT)
+		msg = "Quit: 3";
+	else if (sig == SIGBUS)
+		msg = "Bus error";
+	else if (sig == SIGABRT)
+		msg = "Aborted";
+	else if (sig == SIGFPE)
+		msg = "Floating point exception";
+	else if (sig == SIGILL)
+		msg = "Illegal instruction";
+	else if (sig == SIGTERM)
+		msg = "Terminated";
+	if (msg)
+	{
+		write(STDERR_FILENO, msg, ft_strlen(msg));
+		write(STDERR_FILENO, "\n", 1);
+	}
+ }
 
 /**
  * @brief Waits for all child processes in a pipeline and returns
@@ -55,9 +81,9 @@ uint8_t	wait_for_children(pid_t *pids, int count)
 			else if (WIFSIGNALED(status))
 			{
 				term_sig = WTERMSIG(status);
-				if (term_sig == SIGQUIT)
+				if (term_sig != SIGINT)
 				{
-					write(STDERR_FILENO, "Quit: 3\n", 8);
+					print_signal_message(term_sig);
 				}
 				exit_status = 128 + term_sig;
 			}
