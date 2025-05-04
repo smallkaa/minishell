@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 21:45:04 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
  *
  * @param msg The message to print.
  */
-void	print_error(const char *msg)
+void print_error(const char *msg)
 {
 	ft_putstr_fd(msg, STDERR_FILENO);
 }
@@ -38,7 +38,7 @@ void	print_error(const char *msg)
  *
  * @param pair A key-value pair representing the invalid export variable.
  */
-void	export_error(t_mshell_var *pair)
+void export_error(t_mshell_var *pair)
 {
 	print_error("-minishell: export: `");
 	print_error(pair->key);
@@ -62,7 +62,7 @@ void	export_error(t_mshell_var *pair)
  * @param str The invalid option string (expected to be 1-2 characters).
  * @return Always returns `2` (invalid option status).
  */
-u_int8_t	unset_error(char *str)
+u_int8_t unset_error(char *str)
 {
 	print_error("-minishell: unset: ");
 	(void)write(STDERR_FILENO, str, 2);
@@ -80,15 +80,15 @@ u_int8_t	unset_error(char *str)
  *
  * @param cmd The command structure.
  */
-void	cmd_missing_command_error(t_cmd *cmd)
+void cmd_missing_command_error(t_cmd *cmd)
 {
-	const char	*path;
+	const char *path;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
 		print_error("-minishell: invalid cmd structure\n");
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(127);
 	}
 	print_error("-minishell: ");
@@ -98,8 +98,8 @@ void	cmd_missing_command_error(t_cmd *cmd)
 		print_error(": No such file or directory\n");
 	else
 		print_error(": command not found\n");
-	free_minishell(cmd->minishell); // must be here , tested
-	free_cmd(cmd);
+	free_minishell(&cmd->minishell); // must be here , tested
+	free_cmd(&cmd);
 	_exit(127);
 }
 
@@ -113,7 +113,7 @@ void	cmd_missing_command_error(t_cmd *cmd)
  * @param exit_status The code to return.
  * @return The same `exit_status` passed in.
  */
-int	error_return(char *msg, int exit_status)
+int error_return(char *msg, int exit_status)
 {
 	ft_putstr_fd("-minishell: ", STDERR_FILENO);
 	if (msg)

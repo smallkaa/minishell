@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 12:51:16 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:41:38 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,8 @@ uint8_t	handle_executor_signal_exit(t_cmd *cmd, t_mshell *minishell, uint8_t exi
 	{
 		g_signal_flag = 0;
 		close_all_heredoc_fds(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		return (minishell->exit_status = 130);
 	}
 	close_all_heredoc_fds(cmd);

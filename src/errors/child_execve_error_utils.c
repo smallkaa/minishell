@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:16 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 21:40:55 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@
  *
  * @param cmd The command structure containing the binary path.
  */
-void	handle_is_directory(t_cmd *cmd)
+void handle_is_directory(t_cmd *cmd)
 {
-	struct stat	st;
+	struct stat st;
 
 	if (stat(cmd->binary, &st) == 0 && S_ISDIR(st.st_mode))
 	{
@@ -39,8 +39,7 @@ void	handle_is_directory(t_cmd *cmd)
 			.msg = ": Is a directory\n",
 			.code = 126,
 			.mshell = cmd->minishell,
-			.cmd = cmd
-		});
+			.cmd = cmd});
 	}
 }
 
@@ -53,12 +52,12 @@ void	handle_is_directory(t_cmd *cmd)
  *
  * @param cmd The command structure containing argv and shell context.
  */
-void	handle_not_found_or_command(t_cmd *cmd)
+void handle_not_found_or_command(t_cmd *cmd)
 {
-	char	*path;
+	char *path;
 
 	if (errno != ENOENT)
-	return ;
+		return;
 	print_error("-minishell: ");
 	print_error(cmd->argv[0]);
 	path = ms_getenv(cmd->minishell, "PATH");
@@ -67,8 +66,8 @@ void	handle_not_found_or_command(t_cmd *cmd)
 		print_error(": No such file or directory\n");
 	else
 		print_error(": command not found\n");
-	free_minishell(cmd->minishell);
-	free_cmd(cmd);
+	free_minishell(&cmd->minishell);
+	free_cmd(&cmd);
 	_exit(127);
 }
 
@@ -80,7 +79,7 @@ void	handle_not_found_or_command(t_cmd *cmd)
  *
  * @param cmd The command structure with execution context.
  */
-void	handle_permission_denied(t_cmd *cmd)
+void handle_permission_denied(t_cmd *cmd)
 {
 	if (errno == EACCES)
 	{
@@ -90,8 +89,7 @@ void	handle_permission_denied(t_cmd *cmd)
 			.msg = ": Permission denied\n",
 			.code = 126,
 			.mshell = cmd->minishell,
-			.cmd = cmd
-		});
+			.cmd = cmd});
 	}
 }
 
@@ -103,7 +101,7 @@ void	handle_permission_denied(t_cmd *cmd)
  *
  * @param cmd The command being executed.
  */
-void	handle_exec_format_error(t_cmd *cmd)
+void handle_exec_format_error(t_cmd *cmd)
 {
 	if (errno == ENOEXEC)
 	{
@@ -113,8 +111,7 @@ void	handle_exec_format_error(t_cmd *cmd)
 			.msg = ": Exec format error\n",
 			.code = 126,
 			.mshell = cmd->minishell,
-			.cmd = cmd
-		});
+			.cmd = cmd});
 	}
 }
 
@@ -126,12 +123,12 @@ void	handle_exec_format_error(t_cmd *cmd)
  *
  * @param cmd The command that caused the error.
  */
-void	handle_generic_execve_error(t_cmd *cmd)
+void handle_generic_execve_error(t_cmd *cmd)
 {
 	print_error("-minishell: execve: ");
 	print_error(strerror(errno));
 	print_error("\n");
-	free_minishell(cmd->minishell);
-	free_cmd(cmd);
+	free_minishell(&cmd->minishell);
+	free_cmd(&cmd);
 	_exit(EXIT_FAILURE);
 }

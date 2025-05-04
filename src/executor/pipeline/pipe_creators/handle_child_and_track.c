@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 22:11:12 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 01:01:41 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@
  * @param current The command currently being executed in the child.
  * @param full_cmd_list The full list of commands in the current pipeline.
  */
-void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
+void close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 {
-	t_cmd	*cmd;
-	t_redir	*redir;
-	t_list	*node;
+	t_cmd *cmd;
+	t_redir *redir;
+	t_list *node;
 
 	cmd = full_cmd_list;
 	while (cmd)
@@ -93,19 +93,19 @@ void	close_unused_heredocs_child(t_cmd *current, t_cmd *full_cmd_list)
 // 	}
 // 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 // 	{
-// 		free_minishell(cmd->minishell);
+// 		free_minishell(&cmd->minishell);
 // 		if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 // 			_exit(EXIT_FAILURE);
 // 		_exit(EXIT_FAILURE);
 // 	}
 // 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 // 	{
-// 		free_minishell(cmd->minishell);
+// 		free_minishell(&cmd->minishell);
 // 		_exit(EXIT_FAILURE);
 // 	}
 // 	execute_command(cmd);
 // }
-static bool	setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
+static bool setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
 	if (cmd->next)
 	{
@@ -127,27 +127,27 @@ static bool	setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	return (true);
 }
 
-static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
+static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
 	signal(SIGPIPE, SIG_IGN);
 	close_unused_heredocs_child(cmd, cmd_list);
 	if (!setup_child_io(cmd, in_fd, pipe_fd, cmd_list))
 	{
-		free_cmd(cmd);
-		free_minishell(cmd->minishell);
+		free_cmd(&cmd);
+		free_minishell(&cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 	{
-		free_minishell(cmd->minishell);
 		close_unused_fds(in_fd, pipe_fd);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(EXIT_FAILURE);
 	}
 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 	{
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(EXIT_FAILURE);
 	}
 	execute_command(cmd);
@@ -163,16 +163,16 @@ static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
  * @param cmd The command to be executed in the child.
  * @param info Pointer to the pipeline information structure.
  */
-void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
+void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 {
-	pid_t	pid;
+	pid_t pid;
 
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("-exec_in_pipes: fork");
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		exit(EXIT_FAILURE);
 	}
 	info->pids[*info->idx] = pid;

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 22:15:02 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@
  *
  * @param cmd Pointer to the command structure.
  */
-static void	handle_builtin_and_exit(t_cmd *cmd)
+static void handle_builtin_and_exit(t_cmd *cmd)
 {
-	uint8_t	exit_status;
+	uint8_t exit_status;
 
 	exit_status = exec_builtins(cmd);
-	free_minishell(cmd->minishell);
-	free_cmd(cmd);
+	free_minishell(&cmd->minishell);
+	free_cmd(&cmd);
 	_exit(exit_status);
 }
 
@@ -51,15 +51,15 @@ static void	handle_builtin_and_exit(t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure.
  */
-void	exec_cmd(t_cmd *cmd)
+void exec_cmd(t_cmd *cmd)
 {
-	uint8_t	exit_status;
+	uint8_t exit_status;
 
 	exit_status = validate_dots(cmd);
 	if (exit_status != EXIT_SUCCESS)
 	{
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(exit_status);
 	}
 	signal(SIGPIPE, SIG_DFL);
@@ -88,18 +88,18 @@ void	exec_cmd(t_cmd *cmd)
 
 // 	if (!cmd || !cmd->argv || !cmd->argv[0])
 // 	{
-// 		free_minishell(cmd->minishell);
+// 		free_minishell(&cmd->minishell);
 // 		_exit(EXIT_SUCCESS);
 // 	}
 // 	if (cmd->minishell->syntax_exit_status != 0)
 // 	{
 // 		exit_status = cmd->minishell->syntax_exit_status;
-// 		free_minishell(cmd->minishell);
+// 		free_minishell(&cmd->minishell);
 // 		_exit(exit_status);
 // 	}
 // 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 // 	{
-// 		free_minishell(cmd->minishell);
+// 		free_minishell(&cmd->minishell);
 // 		_exit(EXIT_FAILURE);
 // 	}
 // 	if (ft_strcmp(cmd->argv[0], "") == 0)
@@ -117,12 +117,12 @@ void	exec_cmd(t_cmd *cmd)
 // 	}
 // 	exec_cmd(cmd);
 // }
-void	execute_command_core(t_cmd *cmd)
+void execute_command_core(t_cmd *cmd)
 {
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 	{
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(EXIT_FAILURE);
 	}
 	if (!cmd->binary)
@@ -139,21 +139,21 @@ void	execute_command_core(t_cmd *cmd)
 	exec_cmd(cmd);
 }
 
-void	execute_command(t_cmd *cmd)
+void execute_command(t_cmd *cmd)
 {
-	uint8_t	exit_status;
+	uint8_t exit_status;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(EXIT_SUCCESS);
 	}
 	if (cmd->minishell->syntax_exit_status != 0)
 	{
 		exit_status = cmd->minishell->syntax_exit_status;
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(exit_status);
 	}
 	if (ft_strcmp(cmd->argv[0], "") == 0)

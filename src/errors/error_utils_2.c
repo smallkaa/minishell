@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:50 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 22:11:52 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
  * @param exit_status Exit code to return.
  * @return The same `exit_status` passed in.
  */
-int	perror_return(char *msg, int exit_status)
+int perror_return(char *msg, int exit_status)
 {
 	ft_putstr_fd("-minishell: ", STDERR_FILENO);
 	if (msg)
@@ -49,13 +49,13 @@ int	perror_return(char *msg, int exit_status)
  * @param exit_status Status code to exit the process with.
  * @return Never returns, always exits.
  */
-uint8_t	perror_exit_child(t_cmd *cmd, char *msg, u_int8_t exit_status)
+uint8_t perror_exit_child(t_cmd *cmd, char *msg, u_int8_t exit_status)
 {
 	if (msg)
 		perror(msg);
 	if (cmd->minishell)
-		free_minishell(cmd->minishell);
-	free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+	free_cmd(&cmd);
 	_exit(exit_status);
 }
 
@@ -69,7 +69,7 @@ uint8_t	perror_exit_child(t_cmd *cmd, char *msg, u_int8_t exit_status)
  * @param msg A custom string for context (e.g., the command name).
  * @return Always returns `EXIT_FAILURE` (1).
  */
-uint8_t	no_cmd_error(char *msg)
+uint8_t no_cmd_error(char *msg)
 {
 	print_error("-minishell: ");
 	print_error(msg);

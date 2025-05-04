@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_script_mode.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 15:22:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/01 15:22:05 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/04 23:34:53 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 // Открывает файл скрипта для чтения.
 // Возвращает файловый дескриптор или -1 в случае ошибки.
-static int	open_script_file(const char *file)
+static int open_script_file(const char *file)
 {
-	int	fd;
+	int fd;
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
@@ -30,10 +30,10 @@ static int	open_script_file(const char *file)
 
 // Обрабатывает одну строку из скрипта: парсит и выполняет.
 // Возвращает статус выполнения команды в этой строке.
-static uint8_t	process_script_line(t_mshell *mshell, char *line)
+static uint8_t process_script_line(t_mshell *mshell, char *line)
 {
-	t_cmd	*cmd;
-	uint8_t	status;
+	t_cmd *cmd;
+	uint8_t status;
 
 	if (g_signal_flag)
 	{
@@ -48,15 +48,15 @@ static uint8_t	process_script_line(t_mshell *mshell, char *line)
 	}
 	status = run_executor(cmd);
 	mshell->exit_status = status;
-	free_cmd(cmd);
+	free_cmd(&cmd);
 	return (status);
 }
 
-uint8_t	run_script_mode(t_mshell *mshell, const char *file)
+uint8_t run_script_mode(t_mshell *mshell, const char *file)
 {
-	char	*line;
-	int		in_fd;
-	uint8_t	last_line_status;
+	char *line;
+	int in_fd;
+	uint8_t last_line_status;
 
 	in_fd = open_script_file(file);
 	if (in_fd < 0)
@@ -66,7 +66,7 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 	{
 		line = get_next_line(in_fd);
 		if (!line)
-			break ;
+			break;
 		last_line_status = process_script_line(mshell, line);
 		free(line);
 		line = NULL;

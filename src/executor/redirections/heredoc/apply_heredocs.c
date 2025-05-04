@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:58:28 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 22:15:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 00:34:20 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,13 @@
  */
 #include "minishell.h"
 
-static void	close_old_heredocs(t_cmd *cmd_list, int current_fd)
+static void close_old_heredocs(t_cmd *cmd_list, int current_fd)
 {
 	t_list *redir_list;
 	t_redir *redir;
 
+	if (!cmd_list)
+		return ;
 	while (cmd_list)
 	{
 		redir_list = cmd_list->redirs;
@@ -35,12 +37,12 @@ static void	close_old_heredocs(t_cmd *cmd_list, int current_fd)
 	}
 }
 
-static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *full_cmd_list)
+static int new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *full_cmd_list)
 {
-	(void)cmd;
-	int		pipe_fd[2];
-	pid_t	pid;
-	int		status;
+	// (void)cmd;
+	int pipe_fd[2];
+	pid_t pid;
+	int status;
 
 	if (pipe(pipe_fd) == -1)
 		return (perror_return("new_heredoc_fd: pipe", WRITE_HERED_ERR));
@@ -51,7 +53,6 @@ static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 		safe_close(&pipe_fd[1]);
 		return (perror_return("new_heredoc_fd: fork", WRITE_HERED_ERR));
 	}
-
 	else if (pid == 0)
 	{
 		signal(SIGINT, heredoc_sigint_handler);
@@ -63,14 +64,14 @@ static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 		{
 			close_all_heredoc_fds(full_cmd_list);
 			safe_close(&pipe_fd[1]);
-			free_minishell(cmd->minishell);
-			free_cmd(cmd);
+			free_minishell(&cmd->minishell);
+			free_cmd(&cmd);
 			_exit(EXIT_FAILURE);
 		}
 		close_all_heredoc_fds(full_cmd_list);
 		safe_close(&pipe_fd[1]);
-		free_minishell(cmd->minishell);
-		free_cmd(cmd);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
 		_exit(EXIT_SUCCESS);
 	}
 	else
@@ -84,29 +85,29 @@ static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 			safe_close(&pipe_fd[0]);
 			close_all_heredoc_fds(full_cmd_list);
 			g_signal_flag = 1;
-			// free_minishell(cmd->minishell);
+			// free_minishell(&cmd->minishell);
 			return (HEREDOC_INTERRUPTED);
 		}
 		else if (WEXITSTATUS(status) != EXIT_SUCCESS)
 		{
 			safe_close(&pipe_fd[0]);
 			close_all_heredoc_fds(full_cmd_list);
-			// free_minishell(cmd->minishell);
+			// free_minishell(&cmd->minishell);
 			return (WRITE_HERED_ERR);
 		}
 	}
 	if (g_signal_flag)
 	{
-        safe_close(&pipe_fd[0]);
+		safe_close(&pipe_fd[0]);
 		return (HEREDOC_INTERRUPTED);
-    }
+	}
 	return (pipe_fd[0]);
 }
 
-static bool	assign_heredoc_fd(t_cmd *cmd,
-				t_redir *redirection,
-				t_cmd *current,
-				t_cmd *full_cmd_list)
+static bool assign_heredoc_fd(t_cmd *cmd,
+							  t_redir *redirection,
+							  t_cmd *current,
+							  t_cmd *full_cmd_list)
 {
 	redirection->fd = new_heredoc_fd(cmd, redirection->filename, current, full_cmd_list);
 	if (redirection->fd == WRITE_HERED_ERR)
@@ -120,10 +121,10 @@ static bool	assign_heredoc_fd(t_cmd *cmd,
 	return (true);
 }
 
-static bool	handle_cmd_heredocs(t_cmd *cmd, t_cmd *full_cmd_list)
+static bool handle_cmd_heredocs(t_cmd *cmd, t_cmd *full_cmd_list)
 {
-	t_list	*redir_list;
-	t_redir	*redirection;
+	t_list *redir_list;
+	t_redir *redirection;
 
 	redir_list = cmd->redirs;
 	while (redir_list)
@@ -139,9 +140,9 @@ static bool	handle_cmd_heredocs(t_cmd *cmd, t_cmd *full_cmd_list)
 	return (true);
 }
 
-uint8_t	apply_heredocs(t_cmd *cmd)
+uint8_t apply_heredocs(t_cmd *cmd)
 {
-	t_cmd	*initial_cmd_list;
+	t_cmd *initial_cmd_list;
 
 	initial_cmd_list = cmd;
 	if (!cmd)

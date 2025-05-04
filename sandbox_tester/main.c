@@ -3,35 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/28 18:31:44 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-uint8_t	run_command_mode(t_mshell *mshell, char *input)
+uint8_t run_command_mode(t_mshell *mshell, char *input)
 {
-	t_cmd	*cmd;
-	uint8_t	exit_status;
+	t_cmd *cmd;
+	uint8_t exit_status;
 
 	cmd = run_parser(mshell, input);
 	if (!cmd)
 		return (EXIT_FAILURE);
 	exit_status = run_executor(cmd);
-	free_cmd(cmd);
+	free_cmd(&cmd);
 	cmd = NULL;
 	return (exit_status);
 }
 
-uint8_t	run_script_mode(t_mshell *mshell, const char *file)
+uint8_t run_script_mode(t_mshell *mshell, const char *file)
 {
-	char	*input;
-	uint8_t	exit_status;
-	t_cmd	*cmd;
-	int		in_fd;
+	char *input;
+	uint8_t exit_status;
+	t_cmd *cmd;
+	int in_fd;
 
 	in_fd = open(file, O_RDONLY);
 	if (in_fd < 0)
@@ -52,10 +52,10 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 		{
 			free(input);
 			input = NULL;
-			continue ;
+			continue;
 		}
 		exit_status = run_executor(cmd);
-		free_cmd(cmd);
+		free_cmd(&cmd);
 		cmd = NULL;
 		free(input);
 		input = NULL;
@@ -100,7 +100,7 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 // 			if (cmd)
 // 			{
 // 				exit_status = run_executor(cmd);
-// 				free_cmd(cmd);
+// 				free_cmd(&cmd);
 // 			}
 // 			i++;
 // 		}
@@ -111,12 +111,11 @@ uint8_t	run_script_mode(t_mshell *mshell, const char *file)
 // 	return (exit_status);
 // }
 
-
-uint8_t	run_interactive_mode(t_mshell *mshell)
+uint8_t run_interactive_mode(t_mshell *mshell)
 {
-	char	*input;
-	uint8_t	exit_status;
-	t_cmd	*cmd;
+	char *input;
+	uint8_t exit_status;
+	t_cmd *cmd;
 
 	while (1)
 	{
@@ -134,18 +133,18 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 				mshell->exit_status = 130;
 				g_signal_flag = 0;
 			}
-			continue ;
+			continue;
 		}
 		if (g_signal_flag)
 		{
 			mshell->exit_status = 130;
 			g_signal_flag = 0;
-			free_cmd(cmd);
+			free_cmd(&cmd);
 			free(input);
 			continue;
 		}
 		exit_status = run_executor(cmd);
-		free_cmd(cmd);
+		free_cmd(&cmd);
 		free(input);
 		input = NULL;
 		if (g_signal_flag)
@@ -157,13 +156,13 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 	return (exit_status);
 }
 
-int	main(int argc, char **argv, char **envp)
+int main(int argc, char **argv, char **envp)
 {
-	t_mshell	*minishell;
-	uint8_t		exit_status;
+	t_mshell *minishell;
+	uint8_t exit_status;
 #ifdef BIGTEST
-	char		*line;
-	char		*trimmed;
+	char *line;
+	char *trimmed;
 #endif
 	setup_signal_handlers(); // Set up signal handlers
 	minishell = init_mshell(envp);
@@ -197,7 +196,7 @@ int	main(int argc, char **argv, char **envp)
 	else
 		exit_status = run_interactive_mode(minishell);
 #endif
-	free_minishell(minishell);
+	free_minishell(&minishell);
 	rl_clear_history();
 	return (exit_status);
 }

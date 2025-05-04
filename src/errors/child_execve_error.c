@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:26 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 21:40:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:35:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
  * @param info A `t_exit_info` struct containing error message parts
  *             and exit metadata.
  */
-void	print_and_exit(t_exit_info info)
+void print_and_exit(t_exit_info info)
 {
 	if (info.prefix)
 		print_error(info.prefix);
@@ -42,8 +42,8 @@ void	print_and_exit(t_exit_info info)
 	if (info.msg)
 		print_error(info.msg);
 	if (info.mshell)
-		free_minishell(info.mshell);
-	if(info.cmd)
+		free_minishell(&info.mshell);
+	if (info.cmd)
 		free(info.cmd);
 	_exit(info.code);
 }
@@ -63,7 +63,7 @@ void	print_and_exit(t_exit_info info)
  *
  * @param cmd The command structure passed to execve.
  */
-void	child_execve_error(t_cmd *cmd)
+void child_execve_error(t_cmd *cmd)
 {
 	handle_is_directory(cmd);
 	handle_not_found_or_command(cmd);

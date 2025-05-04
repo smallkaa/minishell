@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 19:03:06 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 23:29:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,29 @@ void	free_hash_table(t_hash_tbl *hash_table)
  *
  * @param minishell The Minishell structure to free.
  */
-void	free_minishell(t_mshell *minishell)
+// void	free_minishell(t_mshell *minishell)
+// {
+// 	if (!minishell)
+// 		return ;
+// 	if (minishell->env)
+// 	{
+// 		free_env(minishell->env);
+// 		minishell->env = NULL;
+// 	}
+// 	if (minishell->hash_table)
+// 	{
+// 		free_hash_table(minishell->hash_table);
+// 		minishell->hash_table = NULL;
+// 	}
+// 	free(minishell);
+// }
+void	free_minishell(t_mshell **minishell_ptr)
 {
-	// printf("\n-------------DEBUG: free_minishell() pid=%d\n", getpid());
+	t_mshell	*minishell;
 
-	if (!minishell)
+	if (!minishell_ptr || !*minishell_ptr)
 		return ;
+	minishell = *minishell_ptr;
 	if (minishell->env)
 	{
 		free_env(minishell->env);
@@ -115,4 +132,5 @@ void	free_minishell(t_mshell *minishell)
 		minishell->hash_table = NULL;
 	}
 	free(minishell);
+	*minishell_ptr = NULL;
 }

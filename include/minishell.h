@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/01 15:23:57 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/04 23:33:07 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,8 @@ void			debug_printf(const char *format, ...);
 void			print_error(const char *msg);
 
 // free memory utils
-void			free_minishell(t_mshell *minishell);
-void			free_cmd(t_cmd *cmd);
+void			free_minishell(t_mshell **minishell);
+void			free_cmd(t_cmd **cmd);
 void			free_mshell_var(t_mshell_var *var);
 
 #endif /* MINISHELL_H */
