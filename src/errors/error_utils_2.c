@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:50 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 11:44:51 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 22:11:52 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ uint8_t	perror_exit_child(t_cmd *cmd, char *msg, u_int8_t exit_status)
 		perror(msg);
 	if (cmd->minishell)
 		free_minishell(cmd->minishell);
+	free_cmd(cmd);
 	_exit(exit_status);
 }
 

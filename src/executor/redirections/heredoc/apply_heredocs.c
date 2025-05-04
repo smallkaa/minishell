@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_heredocs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:58:28 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/01 15:34:22 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/04 22:15:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,14 @@ static int	new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 		{
 			close_all_heredoc_fds(full_cmd_list);
 			safe_close(&pipe_fd[1]);
-			// free_minishell(cmd->minishell);
+			free_minishell(cmd->minishell);
+			free_cmd(cmd);
 			_exit(EXIT_FAILURE);
 		}
 		close_all_heredoc_fds(full_cmd_list);
 		safe_close(&pipe_fd[1]);
-		// free_minishell(cmd->minishell);
+		free_minishell(cmd->minishell);
+		free_cmd(cmd);
 		_exit(EXIT_SUCCESS);
 	}
 	else

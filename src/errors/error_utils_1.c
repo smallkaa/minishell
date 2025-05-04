@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 01:27:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 21:45:04 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void	cmd_missing_command_error(t_cmd *cmd)
 	{
 		print_error("-minishell: invalid cmd structure\n");
 		free_minishell(cmd->minishell);
+		free_cmd(cmd);
 		_exit(127);
 	}
 	print_error("-minishell: ");
@@ -98,6 +99,7 @@ void	cmd_missing_command_error(t_cmd *cmd)
 	else
 		print_error(": command not found\n");
 	free_minishell(cmd->minishell); // must be here , tested
+	free_cmd(cmd);
 	_exit(127);
 }
 

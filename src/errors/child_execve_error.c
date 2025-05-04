@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:26 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 21:25:16 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 21:40:30 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void	print_and_exit(t_exit_info info)
 		print_error(info.msg);
 	if (info.mshell)
 		free_minishell(info.mshell);
+	if(info.cmd)
+		free(info.cmd);
 	_exit(info.code);
 }
 

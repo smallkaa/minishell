@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:16 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 01:29:34 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 21:40:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ void	handle_is_directory(t_cmd *cmd)
 			.arg = cmd->binary,
 			.msg = ": Is a directory\n",
 			.code = 126,
-			.mshell = cmd->minishell
+			.mshell = cmd->minishell,
+			.cmd = cmd
 		});
 	}
 }
@@ -67,6 +68,7 @@ void	handle_not_found_or_command(t_cmd *cmd)
 	else
 		print_error(": command not found\n");
 	free_minishell(cmd->minishell);
+	free_cmd(cmd);
 	_exit(127);
 }
 
@@ -87,7 +89,8 @@ void	handle_permission_denied(t_cmd *cmd)
 			.arg = cmd->binary,
 			.msg = ": Permission denied\n",
 			.code = 126,
-			.mshell = cmd->minishell
+			.mshell = cmd->minishell,
+			.cmd = cmd
 		});
 	}
 }
@@ -109,7 +112,8 @@ void	handle_exec_format_error(t_cmd *cmd)
 			.arg = cmd->binary,
 			.msg = ": Exec format error\n",
 			.code = 126,
-			.mshell = cmd->minishell
+			.mshell = cmd->minishell,
+			.cmd = cmd
 		});
 	}
 }
@@ -128,5 +132,6 @@ void	handle_generic_execve_error(t_cmd *cmd)
 	print_error(strerror(errno));
 	print_error("\n");
 	free_minishell(cmd->minishell);
+	free_cmd(cmd);
 	_exit(EXIT_FAILURE);
 }

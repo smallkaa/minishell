@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/30 12:45:05 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 22:11:12 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,16 +132,22 @@ static void	child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	signal(SIGPIPE, SIG_IGN);
 	close_unused_heredocs_child(cmd, cmd_list);
 	if (!setup_child_io(cmd, in_fd, pipe_fd, cmd_list))
+	{
+		free_cmd(cmd);
+		free_minishell(cmd->minishell);
 		_exit(EXIT_FAILURE);
+	}
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 	{
 		free_minishell(cmd->minishell);
 		close_unused_fds(in_fd, pipe_fd);
+		free_cmd(cmd);
 		_exit(EXIT_FAILURE);
 	}
 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 	{
 		free_minishell(cmd->minishell);
+		free_cmd(cmd);
 		_exit(EXIT_FAILURE);
 	}
 	execute_command(cmd);
@@ -165,6 +171,8 @@ void	handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 	if (pid == -1)
 	{
 		perror("-exec_in_pipes: fork");
+		free_minishell(cmd->minishell);
+		free_cmd(cmd);
 		exit(EXIT_FAILURE);
 	}
 	info->pids[*info->idx] = pid;

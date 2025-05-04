@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/04/30 12:34:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/04 21:37:38 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ typedef struct s_exit_info
 	const char	*msg;
 	int			code;
 	t_mshell	*mshell;
+	t_cmd		*cmd;
 }	t_exit_info;
 
 typedef struct s_pipe_info
