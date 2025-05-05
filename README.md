@@ -32,4 +32,14 @@ valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./
 
 ```bash
 valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --suppressions=readline.supp ./minishell
-``` 
+```
+
+ break run_parser
+break run_executor
+break free_cmd
+break execute_command
+
+set follow-fork-mode child
+
+run
+

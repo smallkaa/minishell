@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 08:51:08 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ uint8_t run_interactive_mode(t_mshell *mshell)
 		if (!cmd)
 		{
 			free(input);
+			input = NULL;
 			if (g_signal_flag)
 			{
 				mshell->exit_status = 130;
@@ -141,6 +142,7 @@ uint8_t run_interactive_mode(t_mshell *mshell)
 			g_signal_flag = 0;
 			free_cmd(&cmd);
 			free(input);
+			input = NULL;
 			continue;
 		}
 		exit_status = run_executor(cmd);

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 01:01:41 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 09:04:59 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ static bool setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 
 static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
-	signal(SIGPIPE, SIG_IGN);
 	close_unused_heredocs_child(cmd, cmd_list);
 	if (!setup_child_io(cmd, in_fd, pipe_fd, cmd_list))
 	{
@@ -177,6 +176,12 @@ void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 	}
 	info->pids[*info->idx] = pid;
 	if (pid == 0)
+	{
+		signal(SIGPIPE, SIG_IGN);
+
 		child_process(cmd, info->in_fd, info->pipe_fd, info->cmd_list);
+		free_minishell(&cmd->minishell);
+		free_cmd(&cmd);
+	}
 	(*info->idx)++;
 }
