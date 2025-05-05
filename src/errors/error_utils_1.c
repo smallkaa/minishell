@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_utils_1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 16:28:41 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ u_int8_t unset_error(char *str)
 void cmd_missing_command_error(t_cmd *cmd)
 {
 	const char *path;
+	t_cmd		*head;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
@@ -97,9 +98,24 @@ void cmd_missing_command_error(t_cmd *cmd)
 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
 		print_error(": No such file or directory\n");
 	else
+	{
+		// fprintf(stderr, "[DEBUG]: here\n");
 		print_error(": command not found\n");
-	free_minishell(&cmd->minishell); // must be here , tested
-	free_cmd(&cmd);
+	}
+	free_minishell(&cmd->minishell);
+	
+	// t_cmd	*head;
+	// if (cmd->orig_head)
+	// 	head = cmd->orig_head;
+	// else
+	// 	head = cmd;
+		
+	// free_cmd(&head);
+	// free_cmd(&cmd);
+	head = get_cmd_head(cmd);
+	free_cmd(&head);
+
+
 	_exit(127);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 23:34:53 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 16:24:40 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@
  * - Handling built-in error messages for `.` and `..`.
  */
 #include "minishell.h"
+
+t_cmd	*get_cmd_head(t_cmd *cmd)
+{
+	if (cmd->orig_head)
+		return cmd->orig_head;
+	return cmd;
+}
+
 
 /**
  * @brief Checks whether the command is a recursive call to `./minishell`.

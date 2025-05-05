@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/05 12:45:35 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:25:36 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,5 +140,6 @@ void					handle_permission_denied(t_cmd *cmd);
 void					handle_exec_format_error(t_cmd *cmd);
 void					handle_generic_execve_error(t_cmd *cmd);
 void					print_and_exit(t_exit_info info);
+t_cmd					*get_cmd_head(t_cmd *cmd);
 
 #endif /* EXECUTOR_H */
