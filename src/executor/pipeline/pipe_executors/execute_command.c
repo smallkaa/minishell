@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 09:07:38 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 12:52:35 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,9 @@ static void handle_builtin_and_exit(t_cmd *cmd)
 	uint8_t exit_status;
 
 	exit_status = exec_builtins(cmd);
+	fprintf(stderr,"\nhandle_builtin_and_exit pid=%d\n", getpid());
 	free_minishell(&cmd->minishell);
-	free_cmd(&cmd);
+	free_cmd(&(cmd->orig_head));
 	_exit(exit_status);
 }
 
@@ -62,7 +63,7 @@ void exec_cmd(t_cmd *cmd)
 		free_cmd(&cmd);
 		_exit(exit_status);
 	}
-	// signal(SIGPIPE, SIG_DFL);if (ret == -1 &&
+	// signal(SIGPIPE, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	child_execve_error(cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/04 21:37:38 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 12:45:35 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ uint8_t					exec_in_current_process(t_cmd *cmd);
 // pipes
 uint8_t					exec_in_pipes(t_cmd *cmd);
 void					execute_command(t_cmd *cmd);
+// void					handle_child_and_track(t_cmd *cmd, t_pipe_info *info, int level);
 void					handle_child_and_track(t_cmd *cmd, t_pipe_info *info);
 uint8_t					wait_for_children(pid_t *pids, int count);
 uint8_t					close_unused_fds(int in_fd, int *pipe_fd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_in_pipes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 01:28:59 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 12:46:07 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,14 +113,18 @@ static void init_pipe_info(t_pipe_info *info, t_cmd *cmd_list,
 static void process_pipeline_commands(t_pipe_info *info)
 {
 	t_cmd *cmd;
+	// int level;
 
+	// level = 0;
 	cmd = info->cmd_list;
 	while (cmd)
 	{
 		handle_pipe_creation(cmd, info->pipe_fd);
 		handle_child_and_track(cmd, info);
+		// handle_child_and_track(cmd, info, level);
 		close_fds_and_prepare_next(cmd, &info->in_fd, info->pipe_fd);
 		cmd = cmd->next;
+		// level++;
 	}
 }
 
