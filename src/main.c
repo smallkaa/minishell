@@ -3,34 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 13:58:54 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 23:20:01 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-uint8_t run_command_mode(t_mshell *mshell, char *input)
+uint8_t	run_command_mode(t_mshell *mshell, char *input)
 {
-	t_cmd *cmd;
-	uint8_t exit_status;
+	t_cmd	*cmd;
+	uint8_t	exit_status;
 
 	cmd = run_parser(mshell, input);
 	if (!cmd)
 		return (EXIT_FAILURE);
 	exit_status = run_executor(cmd);
 	free_cmd(&cmd);
-	cmd = NULL;
 	return (exit_status);
 }
 
-uint8_t run_interactive_mode(t_mshell *mshell)
+uint8_t	run_interactive_mode(t_mshell *mshell)
 {
-	char *input;
-	t_cmd *cmd;
-	uint8_t exit_status;
+	char	*input;
+	t_cmd	*cmd;
+	uint8_t	exit_status;
 
 	while (1)
 	{
@@ -41,10 +40,10 @@ uint8_t run_interactive_mode(t_mshell *mshell)
 		if (!cmd)
 		{
 			if (handle_null_command(mshell, input))
-				continue;
+				continue ;
 		}
 		if (handle_signal_after_parse(mshell, cmd, input))
-			continue;
+			continue ;
 		exit_status = run_executor(cmd);
 		free_cmd(&cmd);
 		free(input);
@@ -56,11 +55,11 @@ uint8_t run_interactive_mode(t_mshell *mshell)
 
 // Читает одну строку из stdin, выполняет ее и возвращает статус.
 // Используется, когда BIGTEST=1 и ввод неинтерактивный.
-static uint8_t run_non_interactive_command(t_mshell *mshell)
+static uint8_t	run_non_interactive_command(t_mshell *mshell)
 {
-	char *line;
-	char *trimmed_line;
-	uint8_t exit_status;
+	char	*line;
+	char	*trimmed_line;
+	uint8_t	exit_status;
 
 	line = get_next_line(STDIN_FILENO);
 	if (!line)
@@ -79,10 +78,10 @@ static uint8_t run_non_interactive_command(t_mshell *mshell)
 	return (exit_status);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	t_mshell *minishell;
-	uint8_t exit_status;
+	t_mshell	*minishell;
+	uint8_t		exit_status;
 
 	setup_signal_handlers();
 	minishell = init_mshell(envp);

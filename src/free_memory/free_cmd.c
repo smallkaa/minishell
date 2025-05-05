@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 22:46:18 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 23:11:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@
 #include "minishell.h"
 
 /**
- * @brief Frees a list of redirection structures.
+ * @brief Frees a list of redirection structures (`t_list` of `t_redir`).
  *
- * Iterates through a linked list of redirection nodes (`t_list`),
- * freeing each redirection’s filename, structure, and the list node itself.
+ * Iterates through a linked list of redirection nodes, freeing each:
+ * - Closes file descriptors for heredocs
+ * - Frees filenames and `t_redir` structures
+ * - Frees the list node itself
  *
  * @param redirs Pointer to the head of the redirection list.
  */
@@ -44,57 +46,16 @@ static void	free_redirs(t_list *redirs)
 }
 
 /**
- * @brief Frees a linked list of command structures.
+ * @brief Frees the contents of a single `t_cmd` node.
  *
- * Frees memory for:
- * - Arguments (`argv`)
- * - Binary path
- * - Redirections (`redirs`)
- * - The `t_cmd` structure itself
+ * Frees:
+ * - The `argv` array and its strings
+ * - The binary path string
+ * - The list of redirections
  *
- * Iterates through the list, properly freeing nested structures.
+ * Does not free the `t_cmd` struct itself. Intended for use by `free_cmd()`.
  *
- * @param cmd Pointer to the head of the command list.
- */
-// void	free_cmd(t_cmd **cmd_ptr)
-// {
-// 	t_cmd	*cmd;
-// 	t_cmd	*next;
-// 	int		i;
-
-// 	if (!cmd_ptr || !*cmd_ptr)
-// 		return ;
-// 	cmd = *cmd_ptr;
-// 	while (cmd)
-// 	{
-// 		i = 0;
-// 		if (cmd->argv)
-// 		{
-// 			while (cmd->argv[i])
-// 				free(cmd->argv[i++]);
-// 			free(cmd->argv);
-// 			cmd->argv = NULL;
-// 		}
-// 		if (cmd->binary)
-// 		{
-// 			free(cmd->binary);
-// 			cmd->binary = NULL;
-// 		}
-// 		if (cmd->redirs)
-// 		{
-// 			free_redirs(cmd->redirs);
-// 			cmd->redirs = NULL;
-// 		}
-// 		next = cmd->next;
-// 		free(cmd);
-// 		cmd = next;
-// 	}
-// 	*cmd_ptr = NULL;
-// }
-/**
- * @brief Frees the contents of a single `t_cmd` node (argv, binary, redirs).
- *
- * @param cmd The command node to free.
+ * @param cmd The command node whose contents are to be freed.
  */
 static void	free_single_cmd(t_cmd *cmd)
 {
@@ -123,9 +84,13 @@ static void	free_single_cmd(t_cmd *cmd)
 }
 
 /**
- * @brief Frees a linked list of `t_cmd` nodes, including their contents.
+ * @brief Frees a linked list of `t_cmd` nodes and their contents.
  *
- * @param cmd_ptr Pointer to the head of the list.
+ * Iterates through the list, freeing each node’s internal resources via
+ * `free_single_cmd()`, then frees the node itself.
+ * Sets the original pointer to NULL on completion.
+ *
+ * @param cmd_ptr Address of the pointer to the head of the list.
  */
 void	free_cmd(t_cmd **cmd_ptr)
 {

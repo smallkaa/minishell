@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:46 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 23:35:15 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 23:09:47 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@
  *
  * @return A pointer to the allocated `t_mshell` structure, or NULL on failure.
  */
-static t_mshell *allocate_minishell(void)
+static t_mshell	*allocate_minishell(void)
 {
-	t_mshell *mshell;
+	t_mshell	*mshell;
 
 	mshell = malloc(sizeof(t_mshell));
 	if (!mshell)
@@ -48,9 +48,9 @@ static t_mshell *allocate_minishell(void)
  * @param envp The array of environment variables from the parent process.
  * @return A new environment array (heap-allocated), or NULL on failure.
  */
-static char **init_env(char **envp)
+static char	**init_env(char **envp)
 {
-	char **env;
+	char	**env;
 
 	if (!envp)
 	{
@@ -74,7 +74,7 @@ static char **init_env(char **envp)
  * @param envp The environment array from the system.
  * @return `EXIT_SUCCESS` if setup completes, `EXIT_FAILURE` on error.
  */
-static int setup_environment(t_mshell *mshell, char **envp)
+static int	setup_environment(t_mshell *mshell, char **envp)
 {
 	mshell->env = init_env(envp);
 	if (!mshell->env)
@@ -97,9 +97,9 @@ static int setup_environment(t_mshell *mshell, char **envp)
  * @param envp Environment variables passed from the system.
  * @return Pointer to the initialized `t_mshell`, or NULL on failure.
  */
-t_mshell *init_mshell(char **envp)
+t_mshell	*init_mshell(char **envp)
 {
-	t_mshell *mshell;
+	t_mshell	*mshell;
 
 	mshell = allocate_minishell();
 	if (!mshell)

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/04 23:34:53 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 23:22:08 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,10 @@
  *
  * @return Pointer to the input string, or NULL if EOF (Ctrl+D) is received.
  */
-// char	*read_user_input(void)
-// {
-// 	char	*input;
-
-// 	input = readline("minishell: ");
-// 	if (!input)
-// 		return (NULL);
-// 	if (*input)
-// 		add_history(input);
-// 	return (input);
-// }
-char *read_user_input(void)
+char	*read_user_input(void)
 {
-	char *input;
-	// char	*temp;
+	char	*input;
+	char	*line;
 
 	if (isatty(fileno(stdin)))
 	{
@@ -46,7 +35,7 @@ char *read_user_input(void)
 	}
 	else
 	{
-		char *line = get_next_line(fileno(stdin));
+		line = get_next_line(fileno(stdin));
 		if (!line)
 			return (NULL);
 		input = ft_strtrim(line, "\n");
@@ -54,7 +43,6 @@ char *read_user_input(void)
 		if (!input)
 			return (NULL);
 	}
-
 	return (input);
 }
 
@@ -68,7 +56,7 @@ char *read_user_input(void)
  * @param input Pointer to the user's input string to be freed.
  * @return true to indicate continuation of the interactive loop.
  */
-bool handle_null_command(t_mshell *mshell, char *input)
+bool	handle_null_command(t_mshell *mshell, char *input)
 {
 	if (input)
 		free(input);
@@ -92,7 +80,7 @@ bool handle_null_command(t_mshell *mshell, char *input)
  * @param input Original user input to be freed.
  * @return true if a signal was handled, false otherwise.
  */
-bool handle_signal_after_parse(t_mshell *mshell, t_cmd *cmd, char *input)
+bool	handle_signal_after_parse(t_mshell *mshell, t_cmd *cmd, char *input)
 {
 	if (g_signal_flag)
 	{
@@ -115,7 +103,7 @@ bool handle_signal_after_parse(t_mshell *mshell, t_cmd *cmd, char *input)
  *
  * @param mshell Pointer to the shell state.
  */
-void handle_signal_after_exec(t_mshell *mshell)
+void	handle_signal_after_exec(t_mshell *mshell)
 {
 	if (g_signal_flag)
 	{
@@ -124,7 +112,7 @@ void handle_signal_after_exec(t_mshell *mshell)
 	}
 }
 
-bool is_input_interactive(void)
+bool	is_input_interactive(void)
 {
 	return (isatty(STDIN_FILENO));
 }
