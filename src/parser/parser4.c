@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 15:21:11 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:31:32 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static void	finalize_commands(t_cmd *head)
 		
 		//fprintf(stderr, "[DEBUG] finalize_commands: head = %p\n", (void *)head);
 
-		cmd_ptr->orig_head = head; ///
+		cmd_ptr->origin_head = head; ///
 		cmd_ptr = cmd_ptr->next; 
 
 	}

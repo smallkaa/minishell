@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:00:16 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/04 23:33:20 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 17:08:53 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	free_cmd_list(t_list **cmd_list)
 	t_list	*current;
 	t_list	*next;
 	t_cmd	*cmd;
+	t_cmd	*head;
 
 	if (!cmd_list || !*cmd_list)
 		return ;
@@ -28,7 +29,8 @@ void	free_cmd_list(t_list **cmd_list)
 		cmd = (t_cmd *)current->content;
 		if (cmd)
 		{
-			free_cmd(&cmd);
+			head = get_cmd_head(cmd);
+			free_cmd(&head);
 		}
 		free(current);
 		current = next;

@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/05 16:25:36 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:31:32 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_exit_info
 	int			code;
 	t_mshell	*mshell;
 	t_cmd		*cmd;
+	t_cmd		*origin_head;
 }	t_exit_info;
 
 typedef struct s_pipe_info

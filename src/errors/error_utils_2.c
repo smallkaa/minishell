@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_utils_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:50 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 23:34:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 16:42:00 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,15 @@ int perror_return(char *msg, int exit_status)
  */
 uint8_t perror_exit_child(t_cmd *cmd, char *msg, u_int8_t exit_status)
 {
+	t_cmd	*head;
+	
 	if (msg)
 		perror(msg);
 	if (cmd->minishell)
 		free_minishell(&cmd->minishell);
-	free_cmd(&cmd);
+	head = get_cmd_head(cmd);
+	free_cmd(&head);
+	// free_cmd(&cmd);
 	_exit(exit_status);
 }
 

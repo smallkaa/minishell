@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 15:21:11 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:49:15 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,18 @@ static void handle_builtin_and_exit(t_cmd *cmd)
 
 	exit_status = exec_builtins(cmd);
 	
-	if (cmd->orig_head)
-		head = cmd->orig_head;
-	else
-		head = cmd;
+	// if (cmd->origin_head)
+	// 	head = cmd->origin_head;
+	// else
+	// 	head = cmd;
 
-	//fprintf(stderr, "[DEBUG] handle_builtin_and_exit START: pid=%d, head = %p\n", getpid(), (void *)cmd->orig_head);
+	//fprintf(stderr, "[DEBUG] handle_builtin_and_exit START: pid=%d, head = %p\n", getpid(), (void *)cmd->origin_head);
 
 
 	free_minishell(&cmd->minishell);
 	// free_cmd(&cmd);
+
+	head = get_cmd_head(cmd);
 
 	free_cmd(&head);
 	_exit(exit_status);
@@ -66,12 +68,14 @@ static void handle_builtin_and_exit(t_cmd *cmd)
 void exec_cmd(t_cmd *cmd)
 {
 	uint8_t exit_status;
+	t_cmd	*head;
 
 	exit_status = validate_dots(cmd);
+	head = get_cmd_head(cmd);
 	if (exit_status != EXIT_SUCCESS)
 	{
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(exit_status);
 	}
 	// signal(SIGPIPE, SIG_DFL);
@@ -82,10 +86,13 @@ void exec_cmd(t_cmd *cmd)
 
 void execute_command_core(t_cmd *cmd)
 {
+	t_cmd	*head;
+
+	head = get_cmd_head(cmd);
 	if (is_minishell_executable(cmd) && update_shlvl(cmd) == EXIT_FAILURE)
 	{
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(EXIT_FAILURE);
 	}
 	if (!cmd->binary)
@@ -105,18 +112,20 @@ void execute_command_core(t_cmd *cmd)
 void execute_command(t_cmd *cmd)
 {
 	uint8_t exit_status;
+	t_cmd	*head;
 
+	head = get_cmd_head(cmd);
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(EXIT_SUCCESS);
 	}
 	if (cmd->minishell->syntax_exit_status != 0)
 	{
 		exit_status = cmd->minishell->syntax_exit_status;
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(exit_status);
 	}
 	if (ft_strcmp(cmd->argv[0], "") == 0)

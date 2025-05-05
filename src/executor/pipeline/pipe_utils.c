@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 16:24:40 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:45:33 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,11 @@
 
 t_cmd	*get_cmd_head(t_cmd *cmd)
 {
-	if (cmd->orig_head)
-		return cmd->orig_head;
-	return cmd;
+	if (!cmd)
+		return NULL;
+	if (cmd->origin_head)
+		return cmd->origin_head;
+	return (cmd);
 }
 
 
@@ -54,15 +56,18 @@ bool is_minishell_executable(t_cmd *cmd)
  */
 void handle_empty_command(t_cmd *cmd)
 {
+	t_cmd	*head;
+	
+	head = get_cmd_head(cmd);
 	if (!cmd->redirs)
 	{
 		print_error("Command '' not found\n");
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(127);
 	}
 	free_minishell(&cmd->minishell);
-	free_cmd(&cmd);
+	free_cmd(&head);
 	_exit(EXIT_SUCCESS);
 }
 

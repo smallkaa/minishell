@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 15:21:11 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:47:11 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,10 +137,13 @@ static bool setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 
 static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 {
+	t_cmd	*head;
+
+	head = get_cmd_head(cmd);
 	close_unused_heredocs_child(cmd, cmd_list);
 	if (!setup_child_io(cmd, in_fd, pipe_fd, cmd_list))
 	{
-		free_cmd(&cmd);
+		free_cmd(&head);
 		free_minishell(&cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
@@ -149,7 +152,7 @@ static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	{
 		close_unused_fds(in_fd, pipe_fd);
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(EXIT_FAILURE);
 	}
 	// //fprintf(stderr, "\nafter apply #%d\n", getpid());
@@ -157,7 +160,7 @@ static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 	{
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(EXIT_FAILURE);
 	}
 	// //fprintf(stderr, "\nchild_process #%d\n", getpid());
@@ -190,13 +193,15 @@ static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 {
 	pid_t pid;
+	t_cmd	*head;
 
+	head = get_cmd_head(cmd);
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("-exec_in_pipes: fork");
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		exit(EXIT_FAILURE);
 	}
 	info->pids[*info->idx] = pid;
@@ -207,7 +212,7 @@ void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 		// child_process(getCmdByNumber(cmd, level), info->in_fd, info->pipe_fd, info->cmd_list);
 		child_process(cmd, info->in_fd, info->pipe_fd, info->cmd_list);
 		// free_minishell(&cmd->minishell);
-		free_cmd(&(cmd->orig_head));
+		free_cmd(&head);
 	}
 	(*info->idx)++;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:30 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 01:30:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 17:07:22 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,17 @@ bool is_valid_varname(const char *key)
 void cleanup_and_exit(t_cmd *cmd, int exit_status)
 {
 	t_mshell *minishell;
+	t_cmd	*head;
 
 	if (!cmd)
 		return;
+	head = get_cmd_head(cmd);
 	if (cmd->minishell)
 	{
 		minishell = cmd->minishell;
 		free_minishell(&minishell);
 	}
-	free_cmd(&cmd);
+	free_cmd(&head);
 	rl_clear_history();
 	exit(exit_status);
 }

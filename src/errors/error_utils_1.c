@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 16:28:41 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:42:50 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,12 +84,13 @@ void cmd_missing_command_error(t_cmd *cmd)
 {
 	const char *path;
 	t_cmd		*head;
-
+	
+	head = get_cmd_head(cmd);
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
 		print_error("-minishell: invalid cmd structure\n");
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(127);
 	}
 	print_error("-minishell: ");
@@ -105,14 +106,13 @@ void cmd_missing_command_error(t_cmd *cmd)
 	free_minishell(&cmd->minishell);
 	
 	// t_cmd	*head;
-	// if (cmd->orig_head)
-	// 	head = cmd->orig_head;
+	// if (cmd->origin_head)
+	// 	head = cmd->origin_head;
 	// else
 	// 	head = cmd;
 		
 	// free_cmd(&head);
 	// free_cmd(&cmd);
-	head = get_cmd_head(cmd);
 	free_cmd(&head);
 
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_heredocs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:58:28 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 00:34:20 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 16:50:03 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ static int new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 	int pipe_fd[2];
 	pid_t pid;
 	int status;
+	t_cmd	*head;
+
+	head = get_cmd_head(cmd);
 
 	if (pipe(pipe_fd) == -1)
 		return (perror_return("new_heredoc_fd: pipe", WRITE_HERED_ERR));
@@ -65,13 +68,13 @@ static int new_heredoc_fd(t_cmd *cmd, const char *delim, t_cmd *current, t_cmd *
 			close_all_heredoc_fds(full_cmd_list);
 			safe_close(&pipe_fd[1]);
 			free_minishell(&cmd->minishell);
-			free_cmd(&cmd);
+			free_cmd(&head);
 			_exit(EXIT_FAILURE);
 		}
 		close_all_heredoc_fds(full_cmd_list);
 		safe_close(&pipe_fd[1]);
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(EXIT_SUCCESS);
 	}
 	else

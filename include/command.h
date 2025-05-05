@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:49 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/05 12:39:39 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 16:31:32 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ typedef struct s_cmd
 	t_cmd		*next;
 	t_mshell	*minishell;
 	t_list		*redirs;
-	t_cmd		*orig_head;
+	t_cmd		*origin_head;
 }	t_cmd;
 
 void	heredoc_sigint_handler(int sig);

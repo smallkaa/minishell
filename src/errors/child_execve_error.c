@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_execve_error.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:26 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 23:35:44 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 16:38:21 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@
  */
 void print_and_exit(t_exit_info info)
 {
+	t_cmd	*head;
+	t_cmd	*temp_cmd;
+	
 	if (info.prefix)
 		print_error(info.prefix);
 	if (info.arg)
@@ -44,7 +47,16 @@ void print_and_exit(t_exit_info info)
 	if (info.mshell)
 		free_minishell(&info.mshell);
 	if (info.cmd)
-		free(info.cmd);
+	{
+		temp_cmd = info.cmd;
+		free_cmd(&info.cmd);
+	}
+	if (info.origin_head)
+	{
+		head = get_cmd_head(temp_cmd);
+		free_cmd(&head);		
+		
+	}
 	_exit(info.code);
 }
 

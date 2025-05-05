@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 00:29:43 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 17:06:13 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ int write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim)
 	int ret;
 	int expand_flag;
 	t_redir *heredoc_redir;
+	t_cmd	*head;
 
 	// --- Находим нужный редирект и его флаг ---
 	heredoc_redir = find_redir_by_delim(cmd->redirs, delim);
@@ -142,6 +143,7 @@ int write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim)
 		print_error("Internal error: heredoc delimiter not found.\n");
 		expand_flag = 0; // По умолчанию не раскрываем
 	}
+	head = get_cmd_head(cmd);
 	pid = fork();
 	if (pid == -1)
 		return (perror_return("fork", WRITE_HERED_ERR));
@@ -150,7 +152,7 @@ int write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim)
 		ret = run_heredoc_child(pipe_fd, delim, cmd->minishell, expand_flag);
 		safe_close(&pipe_fd);
 		free_minishell(&cmd->minishell);
-		free_cmd(&cmd);
+		free_cmd(&head);
 		_exit(ret);
 	}
 	signal(SIGINT, SIG_IGN);
