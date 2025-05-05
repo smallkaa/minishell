@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_execve_error_utils.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:16 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 16:40:50 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 21:54:08 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@
  *
  * @param cmd The command structure containing the binary path.
  */
-void handle_is_directory(t_cmd *cmd)
+void	handle_is_directory(t_cmd *cmd)
 {
-	struct stat st;
+	struct stat	st;
 
 	if (stat(cmd->binary, &st) == 0 && S_ISDIR(st.st_mode))
 	{
@@ -53,23 +53,44 @@ void handle_is_directory(t_cmd *cmd)
  *
  * @param cmd The command structure containing argv and shell context.
  */
-void handle_not_found_or_command(t_cmd *cmd)
+// void	handle_not_found_or_command(t_cmd *cmd)
+// {
+// 	char	*path;
+// 	t_cmd	*head;
+
+// 	if (errno != ENOENT)
+// 		return ;
+// 	print_error("-minishell: ");
+// 	print_error(cmd->argv[0]);
+// 	path = ms_getenv(cmd->minishell, "PATH");
+// 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
+// 		print_error(": No such file or directory\n");
+// 	else
+// 		print_error(": command not found\n");
+// 	free_minishell(&cmd->minishell);
+// 	head = get_cmd_head(cmd);
+// 	free_cmd(&head);
+// 	_exit(127);
+// }
+
+void	handle_not_found_or_command(t_cmd *cmd)
 {
+	char	error_buf[ERROR_BUF_SIZE];
 	char	*path;
 	t_cmd	*head;
 
 	if (errno != ENOENT)
-		return;
-	print_error("-minishell: ");
-	print_error(cmd->argv[0]);
+		return ;
+	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
 	path = ms_getenv(cmd->minishell, "PATH");
-
 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
-		print_error(": No such file or directory\n");
+		ft_strlcat(error_buf, ": No such file or directory\n", ERROR_BUF_SIZE);
 	else
-		print_error(": command not found\n");
+		ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
+	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
 	free_minishell(&cmd->minishell);
-	// free_cmd(&cmd);
 	head = get_cmd_head(cmd);
 	free_cmd(&head);
 	_exit(127);
@@ -83,7 +104,7 @@ void handle_not_found_or_command(t_cmd *cmd)
  *
  * @param cmd The command structure with execution context.
  */
-void handle_permission_denied(t_cmd *cmd)
+void	handle_permission_denied(t_cmd *cmd)
 {
 	if (errno == EACCES)
 	{
@@ -106,7 +127,7 @@ void handle_permission_denied(t_cmd *cmd)
  *
  * @param cmd The command being executed.
  */
-void handle_exec_format_error(t_cmd *cmd)
+void	handle_exec_format_error(t_cmd *cmd)
 {
 	if (errno == ENOEXEC)
 	{
@@ -129,13 +150,29 @@ void handle_exec_format_error(t_cmd *cmd)
  *
  * @param cmd The command that caused the error.
  */
-void handle_generic_execve_error(t_cmd *cmd)
+// void	handle_generic_execve_error(t_cmd *cmd)
+// {
+// 	t_cmd	*head;
+
+// 	print_error("-minishell: execve: ");
+// 	print_error(strerror(errno));
+// 	print_error("\n");
+// 	free_minishell(&cmd->minishell);
+// 	head = get_cmd_head(cmd);
+// 	free_cmd(&head);
+// 	_exit(EXIT_FAILURE);
+// }
+void	handle_generic_execve_error(t_cmd *cmd)
 {
+	char	error_buf[ERROR_BUF_SIZE];
 	t_cmd	*head;
-	
-	print_error("-minishell: execve: ");
-	print_error(strerror(errno));
-	print_error("\n");
+
+	error_buf[0] = '\0';
+	ft_strlcpy(error_buf, "minishell: execve: ", ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, strerror(errno), ERROR_BUF_SIZE);
+	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
+	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
 	free_minishell(&cmd->minishell);
 	head = get_cmd_head(cmd);
 	free_cmd(&head);

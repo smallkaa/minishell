@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 19:46:04 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 21:58:54 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,17 +110,40 @@ uint8_t	update_shlvl(t_cmd *cmd)
  * @return Exit code: `2` for dot usage error, `127` for `..` not found,
  *         or `EXIT_SUCCESS` (0) otherwise.
  */
+// uint8_t	validate_dots(t_cmd *cmd)
+// {
+// 	if (ft_strcmp(cmd->argv[0], ".") == 0 && !cmd->argv[1])
+// 	{
+// 		print_error("minishell: .: filename argument required\n");
+// 		print_error(".: usage: . filename [arguments]\n");
+// 		return (2);
+// 	}
+// 	if (ft_strcmp(cmd->argv[0], "..") == 0 && !cmd->argv[1])
+// 	{
+// 		print_error("..: command not found\n");
+// 		return (127);
+// 	}
+// 	return (EXIT_SUCCESS);
+// }
 uint8_t	validate_dots(t_cmd *cmd)
 {
+	char	error_buf[ERROR_BUF_SIZE];
+
 	if (ft_strcmp(cmd->argv[0], ".") == 0 && !cmd->argv[1])
 	{
-		print_error("minishell: .: filename argument required\n");
-		print_error(".: usage: . filename [arguments]\n");
+		error_buf[0] = '\0';
+		ft_strlcpy(error_buf, "minishell: .: filename argument required\n", ERROR_BUF_SIZE);
+		ft_strlcat(error_buf, ".: usage: . filename [arguments]\n", ERROR_BUF_SIZE);
+		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+			write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
 		return (2);
 	}
 	if (ft_strcmp(cmd->argv[0], "..") == 0 && !cmd->argv[1])
 	{
-		print_error("..: command not found\n");
+		error_buf[0] = '\0';
+		ft_strlcpy(error_buf, "..: command not found\n", ERROR_BUF_SIZE);
+		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
+			write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
 		return (127);
 	}
 	return (EXIT_SUCCESS);

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:56:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 19:25:04 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 21:47:47 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ t_cmd	*create_empty_command(t_mshell *shell)
 	if (!cmd)
 		return (NULL);
 	cmd->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *));
-	// cmd->argv = calloc(MAX_ARGS + 1, sizeof(char *));
 	if (!cmd->argv)
 	{
 		free(cmd);
