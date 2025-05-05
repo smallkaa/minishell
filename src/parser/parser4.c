@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 12:50:42 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 13:43:22 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,11 @@ static void	finalize_commands(t_cmd *head)
 				cmd_ptr->argv[j++] = NULL;
 		}
 		cmd_ptr->binary = find_binary(cmd_ptr);
+		
+		fprintf(stderr, "[DEBUG] finalize_commands: head = %p\n", (void *)head);
+
 		cmd_ptr->orig_head = head; ///
-		cmd_ptr = cmd_ptr->next;
+		cmd_ptr = cmd_ptr->next; 
 
 	}
 }

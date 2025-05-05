@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 12:55:24 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:34:03 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ static bool setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 
 	if (cmd->next)
 	{
-		fprintf(stderr, "\nafter if cmd->next %d\n", getpid());
+		// fprintf(stderr, "\nafter if cmd->next %d\n", getpid());
 
 		if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
 		{
@@ -120,7 +120,7 @@ static bool setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 			return (false);
 		}
 	}
-	fprintf(stderr, "\nafter if dup2 %d\n", getpid());
+	// fprintf(stderr, "\nafter if dup2 %d\n", getpid());
 	if (in_fd != STDIN_FILENO)
 	{
 		if (dup2(in_fd, STDIN_FILENO) == -1)
@@ -131,7 +131,7 @@ static bool setup_child_io(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 			return (false);
 		}
 	}
-	fprintf(stderr, "\nNo error in %d\n", getpid());
+	// fprintf(stderr, "\nNo error in %d\n", getpid());
 	return (true);
 }
 
@@ -144,7 +144,7 @@ static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 		free_minishell(&cmd->minishell);
 		_exit(EXIT_FAILURE);
 	}
-	fprintf(stderr, "\nafter setup #%d\n", getpid());
+	// fprintf(stderr, "\nafter setup #%d\n", getpid());
 	if (apply_redirections(cmd) != EXIT_SUCCESS)
 	{
 		close_unused_fds(in_fd, pipe_fd);
@@ -152,7 +152,7 @@ static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 		free_cmd(&cmd);
 		_exit(EXIT_FAILURE);
 	}
-	fprintf(stderr, "\nafter apply #%d\n", getpid());
+	// fprintf(stderr, "\nafter apply #%d\n", getpid());
 
 	if (close_unused_fds(in_fd, pipe_fd) != EXIT_SUCCESS)
 	{
@@ -160,7 +160,7 @@ static void child_process(t_cmd *cmd, int in_fd, int *pipe_fd, t_cmd *cmd_list)
 		free_cmd(&cmd);
 		_exit(EXIT_FAILURE);
 	}
-	fprintf(stderr, "\nchild_process #%d\n", getpid());
+	// fprintf(stderr, "\nchild_process #%d\n", getpid());
 	execute_command(cmd);
 }
 
@@ -203,10 +203,10 @@ void handle_child_and_track(t_cmd *cmd, t_pipe_info *info)
 	if (pid == 0)
 	{
 		signal(SIGPIPE, SIG_IGN);
-		printf("\nchild %d born\n", getpid());
+		printf("[DEBUG] child born pid = %d \n", getpid());
 		// child_process(getCmdByNumber(cmd, level), info->in_fd, info->pipe_fd, info->cmd_list);
 		child_process(cmd, info->in_fd, info->pipe_fd, info->cmd_list);
-		free_minishell(&cmd->minishell);
+		// free_minishell(&cmd->minishell);
 		free_cmd(&(cmd->orig_head));
 	}
 	(*info->idx)++;

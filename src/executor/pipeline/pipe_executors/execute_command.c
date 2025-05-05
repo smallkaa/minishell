@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 12:52:35 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:49:15 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,15 @@ static void handle_builtin_and_exit(t_cmd *cmd)
 	uint8_t exit_status;
 
 	exit_status = exec_builtins(cmd);
-	fprintf(stderr,"\nhandle_builtin_and_exit pid=%d\n", getpid());
+
+	fprintf(stderr, "[DEBUG] handle_builtin_and_exit START: pid=%d, head = %p\n", getpid(), (void *)cmd->orig_head);
+
+
 	free_minishell(&cmd->minishell);
-	free_cmd(&(cmd->orig_head));
+	free_cmd(&cmd);
+	// free_cmd(&(cmd->orig_head));
+	// if (cmd->orig_head && &cmd->orig_head != &cmd)
+	// 	free(cmd->orig_head);
 	_exit(exit_status);
 }
 

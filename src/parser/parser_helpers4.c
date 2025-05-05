@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers4.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:20:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 14:23:57 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:11:32 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,11 @@ static void	append_word_argument(t_cmd *current, char *value)
 	if (i < MAX_ARGS)
 	{
 		current->argv[i] = ft_strdup(value);
+		fprintf(stderr, "[DEBUG] append_word_argument, argv[%d] = \"%s\" at %p\n", i, current->argv[i], (void *)current->argv[i]);
 		current->argv[i + 1] = NULL;
 	}
+	fprintf(stderr, "[DEBUG] append_word_argument, argv[%d] = \"%s\" at %p\n", i, current->argv[i], (void *)current->argv[i]);
+
 }
 
 /**

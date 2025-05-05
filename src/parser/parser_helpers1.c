@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:56:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 14:19:09 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/05 13:40:40 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ t_cmd	*create_empty_command(t_mshell *shell)
 	cmd = ft_calloc(sizeof (t_cmd), 1);
 	if (!cmd)
 		return (NULL);
-	cmd->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *));
+	// cmd->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *));
+	cmd->argv = calloc(MAX_ARGS + 1, sizeof(char *));
 	if (!cmd->argv)
 	{
 		free(cmd);

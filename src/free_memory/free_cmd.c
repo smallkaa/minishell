@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 00:04:00 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 14:27:48 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,13 +91,21 @@ void	free_cmd(t_cmd **cmd_ptr)
 	if (!cmd_ptr || !*cmd_ptr)
 		return ;
 	cmd = *cmd_ptr;
-	while (cmd)
+	
+	// for (int i = 0; i < MAX_ARGS && cmd->argv[i]; ++i)
+    // 	fprintf(stderr, "\n[FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
+	
+		while (cmd)
 	{
 		i = 0;
 		if (cmd->argv)
 		{
 			while (cmd->argv[i])
+			{
+				fprintf(stderr, "\n[FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
 				free(cmd->argv[i++]);
+
+			}
 			free(cmd->argv);
 			cmd->argv = NULL;
 		}
