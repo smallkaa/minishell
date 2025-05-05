@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 15:21:11 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 22:46:18 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ static void	free_redirs(t_list *redirs)
 
 	while (redirs)
 	{
-
 		tmp = redirs->next;
 		redir = redirs->content;
 		if (redir && redir->type == R_HEREDOC && redir->fd >= 0)
@@ -57,13 +56,15 @@ static void	free_redirs(t_list *redirs)
  *
  * @param cmd Pointer to the head of the command list.
  */
-// void	free_cmd(t_cmd *cmd)
+// void	free_cmd(t_cmd **cmd_ptr)
 // {
+// 	t_cmd	*cmd;
 // 	t_cmd	*next;
 // 	int		i;
 
-// 	if (!cmd)
+// 	if (!cmd_ptr || !*cmd_ptr)
 // 		return ;
+// 	cmd = *cmd_ptr;
 // 	while (cmd)
 // 	{
 // 		i = 0;
@@ -72,54 +73,72 @@ static void	free_redirs(t_list *redirs)
 // 			while (cmd->argv[i])
 // 				free(cmd->argv[i++]);
 // 			free(cmd->argv);
+// 			cmd->argv = NULL;
 // 		}
 // 		if (cmd->binary)
+// 		{
 // 			free(cmd->binary);
+// 			cmd->binary = NULL;
+// 		}
 // 		if (cmd->redirs)
+// 		{
 // 			free_redirs(cmd->redirs);
+// 			cmd->redirs = NULL;
+// 		}
 // 		next = cmd->next;
 // 		free(cmd);
 // 		cmd = next;
 // 	}
+// 	*cmd_ptr = NULL;
 // }
+/**
+ * @brief Frees the contents of a single `t_cmd` node (argv, binary, redirs).
+ *
+ * @param cmd The command node to free.
+ */
+static void	free_single_cmd(t_cmd *cmd)
+{
+	int	i;
+
+	i = 0;
+	if (!cmd)
+		return ;
+	if (cmd->argv)
+	{
+		while (cmd->argv[i])
+			free(cmd->argv[i++]);
+		free(cmd->argv);
+		cmd->argv = NULL;
+	}
+	if (cmd->binary)
+	{
+		free(cmd->binary);
+		cmd->binary = NULL;
+	}
+	if (cmd->redirs)
+	{
+		free_redirs(cmd->redirs);
+		cmd->redirs = NULL;
+	}
+}
+
+/**
+ * @brief Frees a linked list of `t_cmd` nodes, including their contents.
+ *
+ * @param cmd_ptr Pointer to the head of the list.
+ */
 void	free_cmd(t_cmd **cmd_ptr)
 {
 	t_cmd	*cmd;
 	t_cmd	*next;
-	int		i;
 
 	if (!cmd_ptr || !*cmd_ptr)
 		return ;
 	cmd = *cmd_ptr;
-	
-	// for (int i = 0; i < MAX_ARGS && cmd->argv[i]; ++i)
-    // 	//fprintf(stderr, "\n[DEBUG] [FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
-	
 	while (cmd)
 	{
-		i = 0;
-		if (cmd->argv)
-		{
-			while (cmd->argv[i])
-			{
-				//fprintf(stderr, "\n[DEBUG] [FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
-				free(cmd->argv[i++]);
-
-			}
-			free(cmd->argv);
-			cmd->argv = NULL;
-		}
-		if (cmd->binary)
-		{
-			free(cmd->binary);
-			cmd->binary = NULL;
-		}
-		if (cmd->redirs)
-		{
-			free_redirs(cmd->redirs);
-			cmd->redirs = NULL;
-		}
 		next = cmd->next;
+		free_single_cmd(cmd);
 		free(cmd);
 		cmd = next;
 	}
