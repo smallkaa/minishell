@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 14:27:48 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 15:21:11 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,16 @@ void	free_cmd(t_cmd **cmd_ptr)
 	cmd = *cmd_ptr;
 	
 	// for (int i = 0; i < MAX_ARGS && cmd->argv[i]; ++i)
-    // 	fprintf(stderr, "\n[FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
+    // 	//fprintf(stderr, "\n[DEBUG] [FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
 	
-		while (cmd)
+	while (cmd)
 	{
 		i = 0;
 		if (cmd->argv)
 		{
 			while (cmd->argv[i])
 			{
-				fprintf(stderr, "\n[FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
+				//fprintf(stderr, "\n[DEBUG] [FREE] free_cmd, child: %d, argv[%d] = \"%s\" at %p\n", getpid(), i, cmd->argv[i], (void *)cmd->argv[i]);
 				free(cmd->argv[i++]);
 
 			}
