@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_command.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:52 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 16:49:15 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 19:40:09 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,26 +32,14 @@
  *
  * @param cmd Pointer to the command structure.
  */
-static void handle_builtin_and_exit(t_cmd *cmd)
+static void	handle_builtin_and_exit(t_cmd *cmd)
 {
-	uint8_t exit_status;
+	uint8_t	exit_status;
 	t_cmd	*head;
 
 	exit_status = exec_builtins(cmd);
-	
-	// if (cmd->origin_head)
-	// 	head = cmd->origin_head;
-	// else
-	// 	head = cmd;
-
-	//fprintf(stderr, "[DEBUG] handle_builtin_and_exit START: pid=%d, head = %p\n", getpid(), (void *)cmd->origin_head);
-
-
 	free_minishell(&cmd->minishell);
-	// free_cmd(&cmd);
-
 	head = get_cmd_head(cmd);
-
 	free_cmd(&head);
 	_exit(exit_status);
 }
@@ -65,9 +53,9 @@ static void handle_builtin_and_exit(t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure.
  */
-void exec_cmd(t_cmd *cmd)
+void	exec_cmd(t_cmd *cmd)
 {
-	uint8_t exit_status;
+	uint8_t	exit_status;
 	t_cmd	*head;
 
 	exit_status = validate_dots(cmd);
@@ -78,13 +66,12 @@ void exec_cmd(t_cmd *cmd)
 		free_cmd(&head);
 		_exit(exit_status);
 	}
-	// signal(SIGPIPE, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	execve(cmd->binary, cmd->argv, cmd->minishell->env);
 	child_execve_error(cmd);
 }
 
-void execute_command_core(t_cmd *cmd)
+void	execute_command_core(t_cmd *cmd)
 {
 	t_cmd	*head;
 
@@ -109,9 +96,9 @@ void execute_command_core(t_cmd *cmd)
 	exec_cmd(cmd);
 }
 
-void execute_command(t_cmd *cmd)
+void	execute_command(t_cmd *cmd)
 {
-	uint8_t exit_status;
+	uint8_t	exit_status;
 	t_cmd	*head;
 
 	head = get_cmd_head(cmd);

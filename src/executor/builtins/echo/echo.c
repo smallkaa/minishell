@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:51 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 16:44:23 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 19:47:48 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,8 @@ static int	ft_putstr_custom(t_cmd *cmd, char *str)
 		return (EXIT_FAILURE);
 	head = get_cmd_head(cmd);
 	written = write(STDOUT_FILENO, str, ft_strlen(str));
-	
-	//fprintf(stderr, "[DEBUG] ft_putstr_custom written BEFORE: %ld errno=%d pid=%d\n", written, errno, getpid());
-
 	if (written == -1 && errno == EPIPE)
 	{
-		//fprintf(stderr, "[DEBUG] ft_putstr_custom written: %ld\n", written);
 		free_minishell(&cmd->minishell);
 		free_cmd(&head);
 		return (perror_return("ft_putstr_custom: write", EXIT_FAILURE));

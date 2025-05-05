@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wait_for_children.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/02 16:00:24 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/05 19:41:45 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
  */
 #include "minishell.h"
 
-static void print_signal_message(int sig)
- {
-	const char *msg;
+static void	print_signal_message(int sig)
+{
+	const char	*msg;
 
 	msg = NULL;
 	if (sig == SIGSEGV)
@@ -44,7 +44,7 @@ static void print_signal_message(int sig)
 		write(STDERR_FILENO, msg, ft_strlen(msg));
 		write(STDERR_FILENO, "\n", 1);
 	}
- }
+}
 
 /**
  * @brief Waits for all child processes in a pipeline and returns
@@ -61,7 +61,6 @@ static void print_signal_message(int sig)
  * @param count Number of child processes to wait for.
  * @return The normalized exit status of the **last** command in the pipeline.
  */
-
 uint8_t	wait_for_children(pid_t *pids, int count)
 {
 	int		i;

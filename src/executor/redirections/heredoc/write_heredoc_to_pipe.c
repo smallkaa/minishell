@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 17:06:13 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 19:32:37 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,6 @@ int write_heredoc_to_pipe(t_cmd *cmd, int pipe_fd, const char *delim)
 	signal(SIGQUIT, SIG_IGN);
 	safe_close(&pipe_fd);
 	free_minishell(&cmd->minishell);
-	// free_cmd(&cmd);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);

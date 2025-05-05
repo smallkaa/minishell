@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_in_pipes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 13:59:28 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 19:47:16 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
  * @param cmd Pointer to the current command.
  * @param pipe_fd Array to hold read and write pipe descriptors.
  */
-static void handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
+static void	handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
 {
 	if (cmd->next)
 	{
@@ -52,7 +52,7 @@ static void handle_pipe_creation(t_cmd *cmd, int *pipe_fd)
  * @param in_fd Pointer to the input file descriptor to update.
  * @param pipe_fd Array holding the current pipe's file descriptors.
  */
-static void close_fds_and_prepare_next(t_cmd *cmd, int *in_fd, int *pipe_fd)
+static void	close_fds_and_prepare_next(t_cmd *cmd, int *in_fd, int *pipe_fd)
 {
 	if (pipe_fd[1] >= 0 && close(pipe_fd[1]) == -1)
 	{
@@ -84,10 +84,10 @@ static void close_fds_and_prepare_next(t_cmd *cmd, int *in_fd, int *pipe_fd)
  * @param pipe_fd Array to hold the pipe descriptors.
  * @param pids Array to store child process IDs.
  */
-static void init_pipe_info(t_pipe_info *info, t_cmd *cmd_list,
-						   int pipe_fd[2], pid_t pids[MAX_CMDS])
+static void	init_pipe_info(t_pipe_info *info, t_cmd *cmd_list,
+						int pipe_fd[2], pid_t pids[MAX_CMDS])
 {
-	static int idx;
+	static int	idx;
 
 	info->in_fd = STDIN_FILENO;
 	info->pipe_fd = pipe_fd;
@@ -110,21 +110,17 @@ static void init_pipe_info(t_pipe_info *info, t_cmd *cmd_list,
  *
  * @param info Pointer to the pipeline info context.
  */
-static void process_pipeline_commands(t_pipe_info *info)
+static void	process_pipeline_commands(t_pipe_info *info)
 {
-	t_cmd *cmd;
-	// int level;
+	t_cmd	*cmd;
 
-	// level = 0;
 	cmd = info->cmd_list;
 	while (cmd)
 	{
 		handle_pipe_creation(cmd, info->pipe_fd);
 		handle_child_and_track(cmd, info);
-		// handle_child_and_track(cmd, info, level);
 		close_fds_and_prepare_next(cmd, &info->in_fd, info->pipe_fd);
 		cmd = cmd->next;
-		// level++;
 	}
 }
 
@@ -137,12 +133,12 @@ static void process_pipeline_commands(t_pipe_info *info)
  * @param cmd_list Head of the command list forming the pipeline.
  * @return Exit status of the last command in the pipeline.
  */
-uint8_t exec_in_pipes(t_cmd *cmd_list)
+uint8_t	exec_in_pipes(t_cmd *cmd_list)
 {
-	t_pipe_info info;
-	pid_t pids[MAX_CMDS];
-	int pipe_fd[2];
-	uint8_t exit_status;
+	t_pipe_info	info;
+	pid_t		pids[MAX_CMDS];
+	int			pipe_fd[2];
+	uint8_t		exit_status;
 
 	if (!cmd_list)
 		return (EXIT_SUCCESS);
@@ -150,6 +146,5 @@ uint8_t exec_in_pipes(t_cmd *cmd_list)
 	process_pipeline_commands(&info);
 	close_all_heredoc_fds(cmd_list);
 	exit_status = wait_for_children(pids, *info.idx);
-	// free_cmd(&cmd_list);
 	return (exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:15 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/04 23:57:56 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 19:31:42 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	close_all_heredoc_fds(t_cmd *cmd_list)
 	t_list	*rlist;
 	t_redir	*redirection;
 
-	if (!cmd_list) // this is new.... to be tested
+	if (!cmd_list)
 		return ;
 	while (cmd_list)
 	{

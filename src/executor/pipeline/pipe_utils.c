@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 16:45:33 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/05 19:46:04 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,11 @@
 t_cmd	*get_cmd_head(t_cmd *cmd)
 {
 	if (!cmd)
-		return NULL;
+		return (NULL);
 	if (cmd->origin_head)
-		return cmd->origin_head;
+		return (cmd->origin_head);
 	return (cmd);
 }
-
 
 /**
  * @brief Checks whether the command is a recursive call to `./minishell`.
@@ -41,7 +40,7 @@ t_cmd	*get_cmd_head(t_cmd *cmd)
  * @param cmd Pointer to the command structure.
  * @return `true` if the command is `./minishell`, otherwise `false`.
  */
-bool is_minishell_executable(t_cmd *cmd)
+bool	is_minishell_executable(t_cmd *cmd)
 {
 	return (ft_strcmp(cmd->argv[0], "./minishell") == 0);
 }
@@ -54,10 +53,10 @@ bool is_minishell_executable(t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure.
  */
-void handle_empty_command(t_cmd *cmd)
+void	handle_empty_command(t_cmd *cmd)
 {
 	t_cmd	*head;
-	
+
 	head = get_cmd_head(cmd);
 	if (!cmd->redirs)
 	{
@@ -81,11 +80,11 @@ void handle_empty_command(t_cmd *cmd)
  * @return `EXIT_SUCCESS` (0) on success, or `EXIT_FAILURE` (1)
  * if allocation fails.
  */
-uint8_t update_shlvl(t_cmd *cmd)
+uint8_t	update_shlvl(t_cmd *cmd)
 {
-	char *str_shlvl;
-	int shlvl;
-	char *new_shlvl;
+	char	*str_shlvl;
+	int		shlvl;
+	char	*new_shlvl;
 
 	str_shlvl = ms_getenv(cmd->minishell, "SHLVL");
 	if (str_shlvl != NULL)
@@ -111,7 +110,7 @@ uint8_t update_shlvl(t_cmd *cmd)
  * @return Exit code: `2` for dot usage error, `127` for `..` not found,
  *         or `EXIT_SUCCESS` (0) otherwise.
  */
-uint8_t validate_dots(t_cmd *cmd)
+uint8_t	validate_dots(t_cmd *cmd)
 {
 	if (ft_strcmp(cmd->argv[0], ".") == 0 && !cmd->argv[1])
 	{

@@ -1,3 +1,83 @@
+
+{
+    bash_reachable
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    obj:/usr/bin/bash
+}
+
+{
+    grep_definite
+    Memcheck:Leak
+    match-leak-kinds: definite
+    fun:malloc
+    obj:/usr/bin/grep
+}
+
+{
+    grep_indirect
+    Memcheck:Leak
+    match-leak-kinds: indirect
+    fun:malloc
+    obj:/usr/bin/grep
+}
+
+{
+    grep_reachable
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    obj:/usr/bin/grep
+}
+
+{
+    sort_definite
+    Memcheck:Leak
+    match-leak-kinds: definite
+    fun:malloc
+    obj:/usr/bin/sort
+}
+
+{
+    sort_indirect
+    Memcheck:Leak
+    match-leak-kinds: indirect
+    fun:malloc
+    obj:/usr/bin/sort
+}
+
+{
+    sort_reachable
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    obj:/usr/bin/sort
+}
+
+{
+    env_reachable
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    obj:/usr/bin/env
+}
+
+{
+    cc1_reachable
+    Memcheck:Leak
+    match-leak-kinds: reachable
+    fun:malloc
+    obj:*cc1
+}
+#-- bash known reachable --
+{
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:cmd_init
+   fun:main
+}
 ### === Readline & Tinfo Suppressions ===
 
 {
