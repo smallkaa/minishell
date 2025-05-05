@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 22:05:55 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 22:37:17 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,75 +22,27 @@
 #include "minishell.h"
 
 /**
- * @brief Writes an error message to `STDERR_FILENO`.
+ * @brief Prints an error message for an invalid `unset` option.
  *
- * @param msg The message to print.
- */
-void print_error(const char *msg)
-{
-	ft_putstr_fd(msg, STDERR_FILENO);
-}
-
-/**
- * @brief Prints a formatted error message for invalid `export` arguments.
- *
- * Format: `-minishell: export: \`KEY=VALUE\`: not a valid identifier`
- *
- * @param pair A key-value pair representing the invalid export variable.
- */
-// void export_error(t_mshell_var *pair)
-// {
-// 	print_error("-minishell: export: `");
-// 	print_error(pair->key);
-// 	if (pair->value)
-// 	{
-// 		print_error("=");
-// 		print_error(pair->value);
-// 	}
-// 	print_error("': not a valid identifier\n");
-// }
-void	export_error(t_mshell_var *pair)
-{
-	char	error_buf[ERROR_BUF_SIZE];
-
-	error_buf[0] = '\0';
-	ft_strlcpy(error_buf, "minishell: export: `", ERROR_BUF_SIZE);
-	if (pair->key)
-		ft_strlcat(error_buf, pair->key, ERROR_BUF_SIZE);
-	if (pair->value)
-	{
-		ft_strlcat(error_buf, "=", ERROR_BUF_SIZE);
-		ft_strlcat(error_buf, pair->value, ERROR_BUF_SIZE);
-	}
-	ft_strlcat(error_buf, "': not a valid identifier\n", ERROR_BUF_SIZE);
-
-	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-}
-/**
- * @brief Prints an error message for invalid `unset` options.
- *
- * Format:
+ * This function is called when an illegal option
+ * (e.g., `-x`) is passed to `unset`.
+ * The message format is:
  * ```
- * -minishell: unset: <str>: invalid option
+ * minishell: unset: <str>: invalid option
  * unset: usage: unset [name ...]
  * ```
  *
- * @param str The invalid option string (expected to be 1-2 characters).
- * @return Always returns `2` (invalid option status).
+ * If writing to `STDERR` fails, a fallback message is printed instead.
+ *
+ * @param str The invalid option string (e.g., "-x").
+ * @return Always returns `2`, indicating invalid usage.
  */
-// u_int8_t unset_error(char *str)
-// {
-// 	print_error("-minishell: unset: ");
-// 	(void)write(STDERR_FILENO, str, 2);
-// 	print_error(": invalid option\n");
-// 	print_error("unset: usage: unset [name ...]\n");
-// 	return (2);
-// }
 uint8_t	unset_error(const char *str)
 {
-	char	error_buf[ERROR_BUF_SIZE];
+	char				error_buf[ERROR_BUF_SIZE];
+	static const char	*fallback_msg;
 
+	fallback_msg = "minishell: error: failed to print error\n";
 	error_buf[0] = '\0';
 	ft_strlcpy(error_buf, "minishell: unset: ", ERROR_BUF_SIZE);
 	if (str)
@@ -99,101 +51,119 @@ uint8_t	unset_error(const char *str)
 		ft_strlcat(error_buf, ": invalid option\n", ERROR_BUF_SIZE);
 	}
 	ft_strlcat(error_buf, "unset: usage: unset [name ...]\n", ERROR_BUF_SIZE);
-
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-
+		write(STDERR_FILENO, fallback_msg, ft_strlen(fallback_msg));
 	return (2);
 }
+
+/**
+ * @brief Writes an error buffer to STDERR or falls back on failure.
+ *
+ * This function attempts to write the provided error buffer to `STDERR_FILENO`.
+ * If the write fails, it prints a fallback error message.
+ *
+ * @param buf The error message buffer to write.
+ */
+static void	write_error_or_fallback(const char *buf)
+{
+	static const char	*fallback_msg;
+
+	fallback_msg = "minishell: error: failed to print error\n";
+	if (write(STDERR_FILENO, buf, ft_strlen(buf)) < 0)
+		write(STDERR_FILENO, fallback_msg, ft_strlen(fallback_msg));
+}
+
+/**
+ * @brief Constructs an error message for a missing or unknown command.
+ *
+ * Builds an error message like:
+ * ```
+ * minishell: <cmd>: command not found
+ * ```
+ * or, if the command contains a `/` or `PATH` is unset/empty:
+ * ```
+ * minishell: <cmd>: No such file or directory
+ * ```
+ *
+ * @param buf The buffer to populate with the error message.
+ * @param cmd The command structure containing `argv[0]`.
+ */
+static void	build_missing_command_error(char *buf, t_cmd *cmd)
+{
+	const char	*path;
+
+	buf[0] = '\0';
+	ft_strlcpy(buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcat(buf, cmd->argv[0], ERROR_BUF_SIZE);
+	path = ms_getenv(cmd->minishell, "PATH");
+	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
+		ft_strlcat(buf, ": No such file or directory\n", ERROR_BUF_SIZE);
+	else
+		ft_strlcat(buf, ": command not found\n", ERROR_BUF_SIZE);
+}
+
 /**
  * @brief Handles and prints an error for a missing or invalid command.
  *
- * Behavior:
- * - If the command is not found or executable, an error is printed.
- * - Exits the shell with status `127`.
+ * This function checks if the command structure or its arguments are invalid.
+ * If so, it prints an appropriate error message and
+ * exits the process with status `127`.
  *
- * @param cmd The command structure.
+ * - If `cmd` or `cmd->argv[0]` is NULL, prints "minishell: invalid cmd".
+ * - Otherwise, checks for missing PATH, slashes, etc., and prints either
+ *   "No such file or directory" or "command not found".
+ *
+ * Frees the shell context and command list before exiting.
+ *
+ * @param cmd The command structure to inspect.
  */
-// void cmd_missing_command_error(t_cmd *cmd)
-// {
-// 	const char *path;
-// 	t_cmd		*head;
-
-// 	head = get_cmd_head(cmd);
-// 	if (!cmd || !cmd->argv || !cmd->argv[0])
-// 	{
-// 		print_error("-minishell: invalid cmd structure\n");
-// 		free_minishell(&cmd->minishell);
-// 		free_cmd(&head);
-// 		_exit(127);
-// 	}
-// 	print_error("-minishell: ");
-// 	print_error(cmd->argv[0]);
-// 	path = ms_getenv(cmd->minishell, "PATH");
-// 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
-// 		print_error(": No such file or directory\n");
-// 	else
-// 		print_error(": command not found\n");
-// 	free_minishell(&cmd->minishell);
-// 	free_cmd(&head);
-// 	_exit(127);
-// }
 void	cmd_missing_command_error(t_cmd *cmd)
 {
-	char		error_buf[ERROR_BUF_SIZE];
-	const char	*path;
-	t_cmd		*head;
+	char	error_buf[ERROR_BUF_SIZE];
+	t_cmd	*head;
 
 	head = get_cmd_head(cmd);
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 	{
-		ft_strlcpy(error_buf, "minishell: invalid cmd structure\n", ERROR_BUF_SIZE);
-		write(STDERR_FILENO, error_buf, ft_strlen(error_buf));
+		ft_strlcpy(error_buf, "minishell: invalid cmd\n", ERROR_BUF_SIZE);
+		write_error_or_fallback(error_buf);
 		free_minishell(&cmd->minishell);
 		free_cmd(&head);
 		_exit(127);
 	}
-	error_buf[0] = '\0';
-	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
-	ft_strlcat(error_buf, cmd->argv[0], ERROR_BUF_SIZE);
-	path = ms_getenv(cmd->minishell, "PATH");
-	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
-		ft_strlcat(error_buf, ": No such file or directory\n", ERROR_BUF_SIZE);
-	else
-		ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
-	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+	build_missing_command_error(error_buf, cmd);
+	write_error_or_fallback(error_buf);
 	free_minishell(&cmd->minishell);
 	free_cmd(&head);
 	_exit(127);
 }
+
 /**
- * @brief Prints an error message and returns an exit status.
+ * @brief Prints an error message and returns the given exit status.
  *
- * Used as a shortcut for reporting an error and returning the
- * associated error code.
+ * Constructs an error in the format:
+ * ```
+ * minishell: <msg>
+ * ```
+ * and prints it to `STDERR_FILENO`. If the write fails,
+ * prints a fallback error message.
  *
- * @param msg The message to print.
- * @param exit_status The code to return.
+ * @param msg The error message to print (may be NULL).
+ * @param exit_status The exit status to return.
  * @return The same `exit_status` passed in.
  */
-// int error_return(char *msg, int exit_status)
-// {
-// 	ft_putstr_fd("-minishell: ", STDERR_FILENO);
-// 	if (msg)
-// 		print_error(msg);
-// 	return (exit_status);
-// }
 int	error_return(const char *msg, int exit_status)
 {
-	char	error_buf[ERROR_BUF_SIZE];
+	char				error_buf[ERROR_BUF_SIZE];
+	static const char	*fallback_msg;
 
+	fallback_msg = "minishell: error: failed to print error\n";
 	error_buf[0] = '\0';
 	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
 	if (msg)
 		ft_strlcat(error_buf, msg, ERROR_BUF_SIZE);
 	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+		write(STDERR_FILENO, fallback_msg, ft_strlen(fallback_msg));
 	return (exit_status);
 }

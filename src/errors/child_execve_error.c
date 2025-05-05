@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:26 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 21:53:24 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 22:15:12 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,63 +20,69 @@
 #include "minishell.h"
 
 /**
- * @brief Prints an error message and exits the process with a given code.
+ * @brief Builds an error message string into a buffer.
  *
- * This function combines:
- * - Optional prefix (e.g., shell name)
- * - Argument (e.g., command or file)
- * - Message (e.g., error description)
+ * This function concatenates a prefix, argument, and message (if provided)
+ * into a single buffer. Used for building a complete error
+ * message before output.
  *
- * It also frees the Minishell context if provided and then exits
- * with the specified status code.
- *
- * @param info A `t_exit_info` struct containing error message parts
- *             and exit metadata.
+ * @param buf The target buffer to store the message.
+ * @param prefix The prefix string (e.g., "minishell: ").
+ * @param arg The argument string (e.g., the command or filename).
+ * @param msg The message string (e.g., ": command not found\n").
  */
-// void	print_and_exit(t_exit_info info)
-// {
-// 	t_cmd	*head;
-// 	t_cmd	*temp_cmd;
+static void	build_error_message(char *buf,
+	const char *prefix,
+	const char *arg,
+	const char *msg)
+{
+	buf[0] = '\0';
+	if (prefix)
+		ft_strlcpy(buf, prefix, ERROR_BUF_SIZE);
+	if (arg)
+		ft_strlcat(buf, arg, ERROR_BUF_SIZE);
+	if (msg)
+		ft_strlcat(buf, msg, ERROR_BUF_SIZE);
+}
 
-// 	if (info.prefix)
-// 		print_error(info.prefix);
-// 	if (info.arg)
-// 		print_error(info.arg);
-// 	if (info.msg)
-// 		print_error(info.msg);
-// 	if (info.mshell)
-// 		free_minishell(&info.mshell);
-// 	if (info.cmd)
-// 	{
-// 		temp_cmd = info.cmd;
-// 		free_cmd(&info.cmd);
-// 	}
-// 	if (info.origin_head)
-// 	{
-// 		head = get_cmd_head(temp_cmd);
-// 		free_cmd(&head);
-// 	}
-// 	_exit(info.code);
-// }
+/**
+ * @brief Writes an error message buffer to STDERR.
+ *
+ * Attempts to write a constructed error message to standard error. If the
+ * write fails, prints a fallback internal error.
+ *
+ * @param buf The buffer containing the error message to print.
+ */
+static void	write_error_buffer(const char *buf)
+{
+	static const char	*msg;
 
+	msg = "-minishell: failed to print error\n";
+	if (buf[0] != '\0')
+	{
+		if (write(STDERR_FILENO, buf, ft_strlen(buf)) < 0)
+			write(STDERR_FILENO, msg, ft_strlen(msg));
+	}
+}
+
+/**
+ * @brief Builds and prints an error message, frees resources, and exits.
+ *
+ * Constructs an error message from an optional prefix, argument, and message,
+ * then writes it to STDERR. Frees the `minishell` context, command list, and
+ * optionally the full command head before exiting the process.
+ *
+ * @param info A `t_exit_info` structure containing the message parts, resources
+ *             to free, and the exit code.
+ */
 void	print_and_exit(t_exit_info info)
 {
 	char	error_buf[ERROR_BUF_SIZE];
 	t_cmd	*head;
 	t_cmd	*temp_cmd;
 
-	error_buf[0] = '\0';
-	if (info.prefix)
-		ft_strlcpy(error_buf, info.prefix, ERROR_BUF_SIZE);
-	if (info.arg)
-		ft_strlcat(error_buf, info.arg, ERROR_BUF_SIZE);
-	if (info.msg)
-		ft_strlcat(error_buf, info.msg, ERROR_BUF_SIZE);
-	if (error_buf[0] != '\0')
-	{
-		if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-			write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
-	}
+	build_error_message(error_buf, info.prefix, info.arg, info.msg);
+	write_error_buffer(error_buf);
 	if (info.mshell)
 		free_minishell(&info.mshell);
 	if (info.cmd)
@@ -93,19 +99,19 @@ void	print_and_exit(t_exit_info info)
 }
 
 /**
- * @brief Dispatches all possible execve error handlers.
+ * @brief Handles execve-related errors in a child process.
  *
- * Attempts to detect and handle the specific cause of an execve failure by
- * invoking a series of checks:
- * - Is the binary a directory?
- * - Is it missing or not found?
- * - Does it have permission issues?
- * - Is it in an invalid format?
- * - Or a generic error?
+ * This function delegates to specific error handlers depending on the
+ * nature of the `execve` failure, such as:
+ * - Directory execution attempts
+ * - Permission denied
+ * - Command not found
+ * - Format errors
+ * - Other generic failures
  *
- * Terminates the process with the corresponding error code.
+ * This function does not return; one of the handlers will call `_exit()`.
  *
- * @param cmd The command structure passed to execve.
+ * @param cmd The command structure causing the error.
  */
 void	child_execve_error(t_cmd *cmd)
 {

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:16 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 21:54:08 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/05 22:41:42 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,15 @@
 /**
  * @brief Handles the case when a directory is executed instead of a file.
  *
- * Checks if the command's binary path is a directory and exits with code 126
- * if true, printing an appropriate error message.
+ * Checks if `cmd->binary` refers to a directory using `stat()`.
+ * If it is a directory,
+ * prints an error message:
+ * ```
+ * minishell: <binary>: Is a directory
+ * ```
+ * then frees resources and exits with status code `126`.
  *
- * @param cmd The command structure containing the binary path.
+ * @param cmd The command structure containing the binary path and shell context.
  */
 void	handle_is_directory(t_cmd *cmd)
 {
@@ -45,40 +50,34 @@ void	handle_is_directory(t_cmd *cmd)
 }
 
 /**
- * @brief Handles "command not found" or "no such file" scenarios.
+ * @brief Handles "command not found" or "no such file or directory" scenarios.
  *
- * - If the command is not found in PATH or doesn't exist at all,
- *   it prints an appropriate error message and exits with code 127.
- * - Follows shell behavior for commands with or without slashes.
+ * If `errno` is `ENOENT`, this function prints an error message based on whether
+ * the command has a slash or whether `PATH` is defined.
+ * It then frees resources and exits.
  *
- * @param cmd The command structure containing argv and shell context.
+ * Format:
+ * - With `/` or missing PATH:
+ *   ```
+ *   minishell: <cmd>: No such file or directory
+ *   ```
+ * - Otherwise:
+ *   ```
+ *   minishell: <cmd>: command not found
+ *   ```
+ *
+ * Exits with status `127` (command not found).
+ *
+ * @param cmd The command structure containing argv, shell context, and binary.
  */
-// void	handle_not_found_or_command(t_cmd *cmd)
-// {
-// 	char	*path;
-// 	t_cmd	*head;
-
-// 	if (errno != ENOENT)
-// 		return ;
-// 	print_error("-minishell: ");
-// 	print_error(cmd->argv[0]);
-// 	path = ms_getenv(cmd->minishell, "PATH");
-// 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')
-// 		print_error(": No such file or directory\n");
-// 	else
-// 		print_error(": command not found\n");
-// 	free_minishell(&cmd->minishell);
-// 	head = get_cmd_head(cmd);
-// 	free_cmd(&head);
-// 	_exit(127);
-// }
-
 void	handle_not_found_or_command(t_cmd *cmd)
 {
-	char	error_buf[ERROR_BUF_SIZE];
-	char	*path;
-	t_cmd	*head;
+	char				error_buf[ERROR_BUF_SIZE];
+	char				*path;
+	t_cmd				*head;
+	static const char	*fallback_msg;
 
+	fallback_msg = "minishell: failed to print error\n";
 	if (errno != ENOENT)
 		return ;
 	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
@@ -89,7 +88,7 @@ void	handle_not_found_or_command(t_cmd *cmd)
 	else
 		ft_strlcat(error_buf, ": command not found\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+		write(STDERR_FILENO, fallback_msg, ft_strlen(fallback_msg));
 	free_minishell(&cmd->minishell);
 	head = get_cmd_head(cmd);
 	free_cmd(&head);
@@ -97,12 +96,15 @@ void	handle_not_found_or_command(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the case where the binary is not executable due to permissions.
+ * @brief Handles execution permission errors (`EACCES`) from `execve()`.
  *
- * If `errno` is set to `EACCES`, it prints a permission denied error
- * and exits with status 126.
+ * If `errno` is `EACCES`, this function prints a permission denied message:
+ * ```
+ * minishell: <binary>: Permission denied
+ * ```
+ * then frees all resources and exits with status `126`.
  *
- * @param cmd The command structure with execution context.
+ * @param cmd The command structure containing the binary and execution context.
  */
 void	handle_permission_denied(t_cmd *cmd)
 {
@@ -120,12 +122,15 @@ void	handle_permission_denied(t_cmd *cmd)
 }
 
 /**
- * @brief Handles the `ENOEXEC` error from `execve`.
+ * @brief Handles `ENOEXEC` errors when executing a binary.
  *
- * Prints an "Exec format error" message if the binary has an invalid format
- * and exits with status 126.
+ * If `errno` is `ENOEXEC`, this function prints:
+ * ```
+ * minishell: <binary>: Exec format error
+ * ```
+ * then cleans up and exits with status code `126`.
  *
- * @param cmd The command being executed.
+ * @param cmd The command that triggered the error.
  */
 void	handle_exec_format_error(t_cmd *cmd)
 {
@@ -143,36 +148,33 @@ void	handle_exec_format_error(t_cmd *cmd)
 }
 
 /**
- * @brief Handles any generic `execve` error not covered by specific cases.
+ * @brief Handles any `execve()` error not covered by specific handlers.
  *
- * Prints the strerror output and frees all allocated shell resources
- * before exiting with `EXIT_FAILURE`.
+ * Prints a general error using `strerror(errno)` and exits with `EXIT_FAILURE`.
+ * Used as a final fallback when no other error condition matches.
  *
- * @param cmd The command that caused the error.
+ * Format:
+ * ```
+ * minishell: execve: <strerror message>
+ * ```
+ *
+ * Frees shell context and command list before exiting.
+ *
+ * @param cmd The command structure that caused the error.
  */
-// void	handle_generic_execve_error(t_cmd *cmd)
-// {
-// 	t_cmd	*head;
-
-// 	print_error("-minishell: execve: ");
-// 	print_error(strerror(errno));
-// 	print_error("\n");
-// 	free_minishell(&cmd->minishell);
-// 	head = get_cmd_head(cmd);
-// 	free_cmd(&head);
-// 	_exit(EXIT_FAILURE);
-// }
 void	handle_generic_execve_error(t_cmd *cmd)
 {
-	char	error_buf[ERROR_BUF_SIZE];
-	t_cmd	*head;
+	char				error_buf[ERROR_BUF_SIZE];
+	t_cmd				*head;
+	static const char	*fallback_msg;
 
+	fallback_msg = "minishell: failed to print error\n";
 	error_buf[0] = '\0';
 	ft_strlcpy(error_buf, "minishell: execve: ", ERROR_BUF_SIZE);
 	ft_strlcat(error_buf, strerror(errno), ERROR_BUF_SIZE);
 	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
-		write(STDERR_FILENO, "minishell: error: failed to print error\n", 40);
+		write(STDERR_FILENO, fallback_msg, ft_strlen(fallback_msg));
 	free_minishell(&cmd->minishell);
 	head = get_cmd_head(cmd);
 	free_cmd(&head);
