@@ -41,8 +41,10 @@ for COMMANDS_FILE in "$COMMANDS_DIR"/*; do
         TEMP_OUTPUT=$(mktemp)
 
         # Run Valgrind with the command piped to minishell and capture the output
+        # valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all \
+        #    --track-fds=yes --suppressions=readline.supp "$MINISHELL_PATH" <<< "$command" &> "$TEMP_OUTPUT"
         valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all \
-           --track-fds=yes --suppressions=readline.supp "$MINISHELL_PATH" <<< "$command" &> "$TEMP_OUTPUT"
+           --track-fds=yes "$MINISHELL_PATH" <<< "$command" &> "$TEMP_OUTPUT"
 
         # Check the output for signs of memory leaks
         if grep -Eq "definitely lost: [1-9]|indirectly lost: [1-9]|possibly lost: [1-9]|still reachable: [1-9]" "$TEMP_OUTPUT"; then
