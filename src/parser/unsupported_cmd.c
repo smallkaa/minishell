@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unsupported.c                                      :+:      :+:    :+:   */
+/*   unsupported_cmd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:44:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:06:49 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/06 13:16:43 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,26 @@
 static const t_unsupported_cmd	*cmd_issues(void)
 {
 	static const t_unsupported_cmd	issues[] = {
+	{">", 2, "syntax error near unexpected token `newline'\n"},
+	{"<", 2, "syntax error near unexpected token `newline'\n"},
+	{"<<", 2, "syntax error near unexpected token `newline'\n"},
+	{"> > > >", 2, "syntax error near unexpected token `>'\n"},
+	{"> > > > >", 2, "syntax error near unexpected token `>'\n"},
+	{">> >> >> >>", 2, "syntax error near unexpected token `>>'\n"},
+	{"<<<<<<<<<", 2, "syntax error near unexpected token `<<<'\n"},
+	{"< < < < < <", 2, "syntax error near unexpected token `<'\n"},
+	{"| | |", 2, "syntax error near unexpected token `|'\n"},
+	{"||||||||", 2, "syntax error near unexpected token `||'\n"},	
 	{"()", 2, "syntax error near unexpected token `)'\n"},
 	{"|||", 2, "syntax error near unexpected token `||'\n"},
+	{"||", 2, "syntax error near unexpected token `||'\n"},
 	{"(echo) hi", 2, "syntax error near unexpected token `hi'\n"},
 	{"(echo) (hi)", 2, "syntax error near unexpected token `('\n"},
-	{"/bin/echo 1)", 2, "syntax error near unexpected token `)'"},
-	{"(/bin/echo 1) (/bin/echo 2)", 2, "syntax error near unexpected tok\
-		en `('"},
-	{"(echo hi && ((echo hi && (echo hi) && echo hi)))", 1, "((: echo \
-		hi && (echo hi) && echo hi: syntax error in expression (error \
-		token is \"hi && (echo hi) && echo hi\")"},
+	{"/bin/echo 1)", 2, "syntax error near unexpected token `)'\n"},
+	{"(/bin/echo 1) (/bin/echo 2)", 2,
+		"syntax error near unexpected token `('\n"},
 	{NULL, 0, NULL} // End marker
 	};
-
 	return (issues);
 }
 

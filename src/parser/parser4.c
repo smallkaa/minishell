@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 16:31:32 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/06 12:45:23 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static int	process_redir_token(t_redir_ctx *ctx)
 	type = ctx->tokens->tokens[*ctx->i].type;
 	if (!is_valid_redir_target(ctx->tokens, *ctx->i))
 	{
-		print_error("syntax error near unexpected token `newline'\n");
+		print_error("syntax error near unexpected token\n");
 		free_cmd_list(ctx->cmd_list);
-		return (-1);
+		return (ERROR_UNEXPECTED_TOKEN);
 	}
 	if (!*ctx->current)
 	{
@@ -109,6 +109,7 @@ static void	finalize_commands(t_cmd *head)
  */
 static int	parse_tokens(t_parse_ctx *ctx)
 {
+	int	status;
 	while (ctx->tokens && ctx->i < ctx->tokens->count)
 	{
 		if (ctx->tokens->tokens[ctx->i].type == TOKEN_PIPE)
@@ -116,7 +117,10 @@ static int	parse_tokens(t_parse_ctx *ctx)
 		else if (is_input_redir(ctx->tokens->tokens[ctx->i].type)
 			|| is_output_redir(ctx->tokens->tokens[ctx->i].type))
 		{
-			if (process_redir_token(&ctx->redir) < 0)
+			status = process_redir_token(&ctx->redir);
+			if (status == ERROR_UNEXPECTED_TOKEN)
+				return (ERROR_UNEXPECTED_TOKEN);
+			else if (status < 0)
 				return (-1);
 		}
 		else if (ctx->tokens->tokens[ctx->i].type == TOKEN_WORD)
@@ -151,6 +155,7 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 	t_cmd		*current;
 	t_cmd		*head;
 	t_parse_ctx	ctx;
+	int			parse_status;
 
 	cmd_list = NULL;
 	current = NULL;
@@ -164,7 +169,13 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 	ctx.redir.cmd_list = &cmd_list;
 	ctx.redir.current = &current;
 	ctx.redir.i = &ctx.i;
-	if (parse_tokens(&ctx) < 0)
+	parse_status = parse_tokens(&ctx);
+	if (parse_status == ERROR_UNEXPECTED_TOKEN)
+	{
+		shell->exit_status = 2;		
+		return (NULL);
+	}
+	else if (parse_status < 0)
 		return (NULL);
 	head = finalize_cmd_list(&cmd_list);
 	finalize_commands(head);

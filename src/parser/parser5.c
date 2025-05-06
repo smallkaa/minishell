@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser5.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 21:15:09 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/06 13:45:00 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static int	check_for_unsupported_syntax(t_mshell *shell, char *input)
 	if (!input || ft_strlen(input) == 0)
 		return (0);
 	code = known_unsupported_cmd(input, &err_msg);
-	shell->syntax_exit_status = code;
+	shell->exit_status = code;
 	if (code)
 	{
 		if (err_msg)
@@ -109,7 +109,11 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	if (!tokens)
 		return (NULL);
 	expand_tokens(tokens, minishell);
-	check_for_unsupported_syntax(minishell, input);
+	if (check_for_unsupported_syntax(minishell, input) != EXIT_SUCCESS)
+	{
+		token_array_free(tokens);
+		return (NULL);
+	}
 	group_word_tokens(tokens);
 	strip_words(tokens);
 	cmd = create_command_from_tokens(minishell, tokens);
