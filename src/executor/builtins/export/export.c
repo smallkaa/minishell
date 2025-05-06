@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/28 23:18:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/06 14:56:59 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ static void	print_export_usage(char *arg)
 {
 	print_error("minishell: export: ");
 	print_error(arg);
-	print_error(": invalid option\n" \
-		"export: usage: export [-fn] [name[=value] ...] or export -p\n");
+	print_error(": invalid option\n"\
+"export: usage: export [name[=value] ...]\n");
 }
 
 /**

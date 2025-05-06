@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:44:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 13:16:43 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:59:26 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static const t_unsupported_cmd	*cmd_issues(void)
 		"syntax error near unexpected token `('\n"},
 	{NULL, 0, NULL} // End marker
 	};
+
 	return (issues);
 }
 

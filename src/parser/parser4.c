@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 12:45:23 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:01:28 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,8 @@ static void	finalize_commands(t_cmd *head)
 				cmd_ptr->argv[j++] = NULL;
 		}
 		cmd_ptr->binary = find_binary(cmd_ptr);
-		
-		//fprintf(stderr, "[DEBUG] finalize_commands: head = %p\n", (void *)head);
-
-		cmd_ptr->origin_head = head; ///
-		cmd_ptr = cmd_ptr->next; 
-
+		cmd_ptr->origin_head = head;
+		cmd_ptr = cmd_ptr->next;
 	}
 }
 
@@ -110,6 +106,7 @@ static void	finalize_commands(t_cmd *head)
 static int	parse_tokens(t_parse_ctx *ctx)
 {
 	int	status;
+
 	while (ctx->tokens && ctx->i < ctx->tokens->count)
 	{
 		if (ctx->tokens->tokens[ctx->i].type == TOKEN_PIPE)
@@ -172,7 +169,7 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 	parse_status = parse_tokens(&ctx);
 	if (parse_status == ERROR_UNEXPECTED_TOKEN)
 	{
-		shell->exit_status = 2;		
+		shell->exit_status = 2;
 		return (NULL);
 	}
 	else if (parse_status < 0)

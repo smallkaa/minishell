@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:00:09 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/02 15:36:31 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/06 14:58:19 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
