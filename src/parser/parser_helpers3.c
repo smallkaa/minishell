@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers3.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/02 13:12:12 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:13:38 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /**
  * @brief Ensure current command exists in list, add if missing.
  */
-static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list, \
+static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
 	t_cmd	**current)
 {
 	if (!*current)
@@ -63,7 +63,7 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 /**
  * @brief Handle input redirection tokens.
  */
-int	handle_input_redir(t_mshell *shell, t_list **cmd_list, \
+int	handle_input_redir(t_mshell *shell, t_list **cmd_list,
 	t_cmd **current, t_Token *token)
 {
 	if (ensure_current_cmd(shell, cmd_list, current) < 0)
@@ -103,7 +103,7 @@ static int	apply_output_redir(t_cmd **current, t_Token *token)
 /**
  * @brief Handle output redirection tokens.
  */
-int	handle_output_redir(t_mshell *shell, t_list **cmd_list, \
+int	handle_output_redir(t_mshell *shell, t_list **cmd_list,
 	t_cmd **current, t_Token *token)
 {
 	if (ensure_current_cmd(shell, cmd_list, current) < 0)

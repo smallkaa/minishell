@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_tokens.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:54:54 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 12:27:34 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:12:32 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ static int	handle_special_dollar_quote(t_Token *token)
 
 static int	needs_expansion(char *value)
 {
-	if (!ft_strchr(value, '$') && !ft_strchr(value, '~') && \
-	!ft_strchr(value, '\\'))
+	if (!ft_strchr(value, '$') && !ft_strchr(value, '~')
+		&& !ft_strchr(value, '\\'))
 		return (0);
 	return (1);
 }

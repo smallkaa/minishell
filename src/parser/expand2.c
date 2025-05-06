@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:52:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 12:27:05 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:11:21 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
  * @param input    Input string containing the backslash.
  * @param i        Pointer to current index in input; will be incremented.
 
- * @param single_q Non‐zero if inside single quotes (only take literal \
-    backslash+char).
+ * @param single_q Non‐zero if inside single quotes (only take 
+ * literal backslash+char).
  * @return Allocated string of the escaped character(s), or NULL on failure.
  */
 char	*handle_escape(const char *input, size_t *i, int single_q)
