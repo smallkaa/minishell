@@ -80,20 +80,7 @@
 }
 ### === Readline & Tinfo Suppressions ===
 
-{
-   3
-   Memcheck:Leak
-   match-leak-kinds: reachable
-   fun:malloc
-   fun:ft_calloc
-   fun:create_empty_command
-   fun:process_word_token
-   fun:parse_tokens
-   fun:create_command_from_tokens
-   fun:run_parser
-   fun:run_interactive_mode
-   fun:main
-}
+
 {
    <3>
    Memcheck:Leak

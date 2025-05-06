@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:26 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 22:15:12 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/06 08:51:52 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,18 @@ void	print_and_exit(t_exit_info info)
 {
 	char	error_buf[ERROR_BUF_SIZE];
 	t_cmd	*head;
-	t_cmd	*temp_cmd;
 
 	build_error_message(error_buf, info.prefix, info.arg, info.msg);
 	write_error_buffer(error_buf);
 	if (info.mshell)
 		free_minishell(&info.mshell);
 	if (info.cmd)
-	{
-		temp_cmd = info.cmd;
 		free_cmd(&info.cmd);
-	}
 	if (info.origin_head)
 	{
-		head = get_cmd_head(temp_cmd);
-		free_cmd(&head);
+		head = get_cmd_head(info.cmd);
+		if (head && head != info.cmd)
+			free_cmd(&head);
 	}
 	_exit(info.code);
 }
