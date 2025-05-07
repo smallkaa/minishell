@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:34 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:45:35 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 16:55:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static bool	allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
 	if (!ht || !keys || !count)
 		return (false);
 	*count = count_total_keys(ht);
-	*keys = malloc(sizeof(char *) * (*count));
+	*keys = malloc(sizeof(char *) * (*count)); // tested
 	if (!(*keys))
 	{
 		print_error("minishell: export: key memory allocation failed\n");

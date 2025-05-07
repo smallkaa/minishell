@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:49:48 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 17:12:16 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	**setup_env(char **envp)
 	int		envp_len;
 	char	**env;
 
-	envp_len = ft_arr_size(envp);
+	envp_len = ft_arr_size(envp);rror (init_env): failed to setup envir
 	env = malloc((envp_len + 1) * sizeof(char *));
 	if (!env)
 	{
