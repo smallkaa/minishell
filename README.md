@@ -27,22 +27,16 @@ https://github.com/zstenger93/42_minishell_tester
 
 ## Use supression file to avoid readline() leaks
 ```bash
-valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline.supp ./minishell
+valgrind --leak-check=full --show-leak-kinds=all --suppressions=mshell.supp ./minishell
 ```
 
+all erros + supp
 ```bash
-valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --suppressions=readline.supp ./minishell
+valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes  --error-limit=no --suppressions=mshell.supp ./minishell
 ```
 
+all errors
 ```bash
-valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes ./minishell
+valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --error-limit=no  ./minishell
 ```
- break run_parser
-break run_executor
-break free_cmd
-break execute_command
-
-set follow-fork-mode child
-
-run
 
