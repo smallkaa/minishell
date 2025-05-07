@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/06 14:56:59 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 18:46:53 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,11 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 	int				assigned;
 	t_mshell_var	*pair;
 
+	if (!arg)
+		error_return("process_export_arg: no arg\n", EXIT_FAILURE);
 	pair = split_key_value(arg);
+	if (!pair)
+		return (error_return("export: memory allocation failed\n", EXIT_FAILURE));
 	if (!is_valid_varname(pair->key))
 	{
 		export_error(pair);

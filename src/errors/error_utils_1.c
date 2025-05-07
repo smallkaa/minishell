@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 22:37:17 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 18:54:21 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ int	error_return(const char *msg, int exit_status)
 	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
 	if (msg)
 		ft_strlcat(error_buf, msg, ERROR_BUF_SIZE);
-	ft_strlcat(error_buf, "\n", ERROR_BUF_SIZE);
 	if (write(STDERR_FILENO, error_buf, ft_strlen(error_buf)) < 0)
 		write(STDERR_FILENO, fallback_msg, ft_strlen(fallback_msg));
 	return (exit_status);
