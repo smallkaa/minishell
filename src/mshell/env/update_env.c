@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/29 12:48:59 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 18:18:29 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,7 @@ void	update_env(t_mshell *mshell)
 		print_error("-minishell: update_env: malloc failed\n");
 		return ;
 	}
+	ft_memset(new_env, 0, sizeof(char *) * (count + 1));
 	populated = populate_env_array(mshell, new_env);
 	if (!populated)
 	{
