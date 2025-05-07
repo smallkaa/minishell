@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:00:09 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/07 12:21:58 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/07 12:36:20 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	heredoc_sigint_handler(int sig)
 	rl_done = 1; 
 	//write(STDOUT_FILENO, "\n", 1);
 	//_exit(1);
-	write(STDOUT_FILENO, "\n", 1);
+	//write(STDOUT_FILENO, "\n", 1);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
