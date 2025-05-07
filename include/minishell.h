@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/06 12:36:03 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 20:34:41 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,5 +159,7 @@ void			print_error(const char *msg);
 void			free_minishell(t_mshell **minishell);
 void			free_cmd(t_cmd **cmd);
 void			free_mshell_var(t_mshell_var *var);
+
+int readline_interrupt_hook(void);
 
 #endif /* MINISHELL_H */

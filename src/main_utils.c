@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/05 23:22:08 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 20:08:15 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@ char	*read_user_input(void)
 
 	if (isatty(fileno(stdin)))
 	{
+		debug_printf(">>> read_user_input: calling readline()\n");
 		input = readline("minishell: ");
+		debug_printf("<<< read_user_input: readline() returned [%s]\n", input ? input : "NULL");
 		if (!input)
 			return (NULL);
 		if (*input)
