@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:34 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:45:35 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:07:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,13 @@ static bool	allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
 	if (!ht || !keys || !count)
 		return (false);
 	*count = count_total_keys(ht);
-	*keys = malloc(sizeof(char *) * (*count));
+	*keys = malloc(sizeof(char *) * (*count)); // tested
 	if (!(*keys))
 	{
 		print_error("minishell: export: key memory allocation failed\n");
 		return (false);
 	}
+	ft_memset(*keys, 0, sizeof(char *) * (*count));
 	return (true);
 }
 
@@ -86,7 +87,7 @@ static bool	allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
  * @param ht Pointer to the hash table.
  * @param keys Pre-allocated array where copied keys will be stored.
  */
-static void	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
+static int	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 {
 	t_mshell_var	*var;
 	int				i;
@@ -99,11 +100,12 @@ static void	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 		var = ht->buckets[i];
 		while (var)
 		{
-			keys[key_index++] = ft_strdup(var->key);
+			keys[key_index++] = ft_strdup(var->key); // tested
 			var = var->next;
 		}
 		i++;
 	}
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -117,9 +119,22 @@ static void	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
  * @param keys Output parameter: pointer to the array of collected keys.
  * @param count Output parameter: number of collected keys.
  */
-void	collect_keys(t_hash_tbl *ht, char ***keys, int *count)
+int	collect_keys(t_hash_tbl *ht, char ***keys, int *count)
 {
+	int	i;
 	if (!allocate_keys_array(ht, keys, count))
-		return ;
-	fill_keys_from_hash(ht, *keys);
+		return (EXIT_FAILURE);
+	if (fill_keys_from_hash(ht, *keys) != EXIT_SUCCESS)
+	{
+		i = 0;
+		while(i < *count)
+		{
+			free((*keys)[i]);
+			i++;
+		}
+		free(*keys);
+		*keys = NULL;
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }

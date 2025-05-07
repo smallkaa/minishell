@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 23:14:42 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 22:09:59 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,15 @@ uint8_t	update_shlvl(t_cmd *cmd)
 	new_shlvl = ft_itoa(shlvl);
 	if (!new_shlvl)
 		return (EXIT_FAILURE);
-	set_variable(cmd->minishell, "SHLVL", new_shlvl, 1);
+	if (set_variable(cmd->minishell, "SHLVL", new_shlvl, 1) != EXIT_SUCCESS)
+	{
+		print_error("-minishell: update_shlvl, set_variable failed\n");
+		return (EXIT_SUCCESS);
+	}
 	free(new_shlvl);
-	update_env(cmd->minishell);
-	return (EXIT_FAILURE);
+	if (update_env(cmd->minishell) != EXIT_SUCCESS)
+		perror_return("update_shlvl, update_env failed\n", EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 /**

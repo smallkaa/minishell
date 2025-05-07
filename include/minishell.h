@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 21:33:07 by Pavel Versh      ###   ########.fr       */
+/*   Created: Invalid Date        by              +#+  #+#    #+#             */
+/*   Updated: 2025/05/07 22:28:31 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -130,7 +131,7 @@ bool			add_env_entry(t_mshell_var *current,
 bool			process_env_bucket(t_mshell_var *bucket,
 					char **new_env,
 					int *index);
-void			set_variable(t_mshell *mshell,
+int			set_variable(t_mshell *mshell,
 					char *key,
 					char *value,
 					int assigned);
@@ -139,7 +140,7 @@ void			update_existing_variable(t_mshell_var *current,
 					int val_assigned,
 					t_mshell *mshell);
 unsigned int	hash_function(const char *key);
-void			update_env(t_mshell *mshell);
+int			update_env(t_mshell *mshell);
 char			*search_paths(char **paths, t_cmd *cmd);
 
 // parser

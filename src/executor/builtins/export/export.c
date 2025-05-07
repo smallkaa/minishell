@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/06 14:56:59 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 21:59:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,11 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 	int				assigned;
 	t_mshell_var	*pair;
 
+	if (!arg)
+		error_return("process_export_arg: no arg\n", EXIT_FAILURE);
 	pair = split_key_value(arg);
+	if (!pair)
+		return (error_return("export: memory allocation failed\n", EXIT_FAILURE));
 	if (!is_valid_varname(pair->key))
 	{
 		export_error(pair);
@@ -55,7 +59,14 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 		assigned = 1;
 	else
 		assigned = 0;
-	set_variable(cmd->minishell, pair->key, pair->value, assigned);
+	if(set_variable(cmd->minishell, pair->key, pair->value, assigned) != EXIT_SUCCESS)
+	{
+
+		free(pair->key);
+		free(pair->value);
+		free(pair);
+		return (error_return("export: set_variable failed\n", EXIT_FAILURE));
+	}
 	free(pair->key);
 	free(pair->value);
 	free(pair);
@@ -122,10 +133,7 @@ uint8_t	handle_export(t_cmd *cmd)
 		return (no_cmd_error("export"));
 	exit_status = EXIT_SUCCESS;
 	if (!cmd->argv[1])
-	{
-		handle_sorted_env(cmd->minishell);
-		return (EXIT_SUCCESS);
-	}
+		return (handle_sorted_env(cmd->minishell));
 	i = 1;
 	while (cmd->argv[i])
 	{
@@ -137,6 +145,7 @@ uint8_t	handle_export(t_cmd *cmd)
 		exit_status = process_export_arg(cmd, cmd->argv[i]);
 		i++;
 	}
-	update_env(cmd->minishell);
+	if (update_env(cmd->minishell) != EXIT_SUCCESS)
+		perror_return("handle_export, update_env failed\n", EXIT_FAILURE);
 	return (exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:45:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 20:36:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,27 @@
  * @param keys Array of strings to free.
  * @param num_kyes Number of elements in the `keys` array.
  */
-static void	free_keys(char **keys, int num_kyes)
+void	free_keys(char ***keys_ptr, int num_keys)
 {
-	int	i;
+	char	**keys;
+	int		i;
 
-	if (!keys)
+	if (!keys_ptr || !*keys_ptr)
 		return ;
-	i = 0;
-	while (i < num_kyes)
+
+	keys = *keys_ptr;
+	for (i = 0; i < num_keys; i++)
 	{
-		free(keys[i]);
-		i++;
+		if (keys[i])
+		{
+			free(keys[i]);
+			keys[i] = NULL;
+		}
 	}
 	free(keys);
+	*keys_ptr = NULL;
 }
+
 
 /**
  * @brief Sorts an array of strings alphabetically using bubble sort.
@@ -128,7 +135,7 @@ static void	print_sorted_env(t_mshell *mshell, char **keys, int count)
  *
  * @param mshell Pointer to the Minishell shell state structure.
  */
-void	handle_sorted_env(t_mshell *mshell)
+int	handle_sorted_env(t_mshell *mshell)
 {
 	char		**keys;
 	int			count;
@@ -136,15 +143,17 @@ void	handle_sorted_env(t_mshell *mshell)
 	if (!mshell || !mshell->hash_table)
 	{
 		print_error("minishell: export: no mshell or hash_table found\n");
-		return ;
+		return (EXIT_FAILURE);
 	}
-	collect_keys(mshell->hash_table, &keys, &count);
+	if (collect_keys(mshell->hash_table, &keys, &count) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
 	if (!keys)
 	{
 		print_error("minishell: export: keys memory allocation failed\n");
-		return ;
+		return (EXIT_FAILURE);
 	}
 	bubble_sort(keys, count);
 	print_sorted_env(mshell, keys, count);
-	free_keys(keys, count);
+	free_keys(&keys, count);
+	return (EXIT_SUCCESS);
 }

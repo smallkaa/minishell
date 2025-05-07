@@ -37,6 +37,6 @@ valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-le
 
 all errors
 ```bash
-valgrind --leak-check=full --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --error-limit=no  ./minishell
+valgrind --leak-check=full  --track-origins=yes  --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --error-limit=no  ./minishell
 ```
 
