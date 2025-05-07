@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 19:28:25 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 19:48:47 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,10 +126,7 @@ uint8_t	handle_export(t_cmd *cmd)
 		return (no_cmd_error("export"));
 	exit_status = EXIT_SUCCESS;
 	if (!cmd->argv[1])
-	{
-		handle_sorted_env(cmd->minishell);
-		return (EXIT_SUCCESS);
-	}
+		return (handle_sorted_env(cmd->minishell));
 	i = 1;
 	while (cmd->argv[i])
 	{

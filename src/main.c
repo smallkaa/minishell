@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/07 15:08:40 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/07 19:54:21 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ static uint8_t	run_non_interactive_command(t_mshell *mshell)
 	free(line);
 	if (!trimmed_line)
 	{
-		perror_return("ft_strtrim memory allocation failed", EXIT_FAILURE);
+		print_error("ft_strtrim memory allocation failed");
 		return (EXIT_FAILURE);
 	}
 	exit_status = run_command_mode(mshell, trimmed_line);

@@ -11625,3 +11625,9 @@
    fun:run_interactive_mode
    fun:main
 }
+{
+  readline_stuff
+  Memcheck:Leak
+  fun:malloc
+  obj:/lib*/libreadline*.so*
+}
