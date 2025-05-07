@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:39 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:50:40 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 20:54:11 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static char	*handle_direct_path(t_cmd *cmd)
 {
 	char	*binary;
 
-	binary = ft_strdup(cmd->argv[0]);
+	binary = ft_strdup(cmd->argv[0]); // tested
 	return (binary);
 }
 
@@ -104,7 +104,7 @@ char	*find_binary(t_cmd *cmd)
 	if (!path_env || path_env[0] == '\0')
 	{
 		if (access(cmd->argv[0], F_OK) == 0)
-			return (ft_strdup(cmd->argv[0]));
+			return (ft_strdup(cmd->argv[0])); // tested
 		else
 			return (NULL);
 	}

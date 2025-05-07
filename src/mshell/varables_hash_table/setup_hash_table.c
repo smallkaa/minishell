@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 19:25:34 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:43:45 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,22 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 		print_error("Error: new_var malloc failed\n");
 		return (NULL);
 	}
-	new_var->key = ft_strdup(key);
+	new_var->key = ft_strdup(key); // tested
+	if (!new_var->key)
+	{
+		free(new_var);
+		return (NULL);
+	}
 	if (value)
-		new_var->value = ft_strdup(value);
+	{
+		new_var->value = ft_strdup(value); // tested
+		if (!new_var->value)
+		{
+			free(new_var->key);
+			free(new_var);
+			return (NULL);
+		}
+	}
 	else
 		new_var->value = NULL;
 	new_var->val_assigned = assigned;
@@ -63,12 +76,17 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
  * @param value The value to assign (can be NULL).
  * @param assigned 1 if a value is assigned, 0 if it's just declared.
  */
-void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
+int	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
 	unsigned int	index;
 	t_mshell_var	*curr;
 	t_mshell_var	*new_var;
 
+	if (!mshell || !key)
+	{
+		print_error("-minishell: set_variable: null pointer argument\n");
+		return (EXIT_FAILURE);
+	}
 	curr = NULL;
 	new_var = NULL;
 	index = hash_function(key);
@@ -83,15 +101,16 @@ void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 				curr->value = ft_strdup(value);
 			}
 			curr->val_assigned = assigned;
-			return ;
+			return (EXIT_SUCCESS);
 		}
 		curr = curr->next;
 	}
 	new_var = create_new_var(key, value, assigned);
 	if (!new_var)
-		return ;
+		return (EXIT_FAILURE);
 	new_var->next = mshell->hash_table->buckets[index];
 	mshell->hash_table->buckets[index] = new_var;
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -102,7 +121,7 @@ void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
  *
  * @param mshell Pointer to the Minishell structure.
  */
-static void	load_env_into_ht(t_mshell *mshell)
+static int	load_env_into_ht(t_mshell *mshell)
 {
 	t_mshell_var	*tmp;
 	int				i;
@@ -125,9 +144,10 @@ static void	load_env_into_ht(t_mshell *mshell)
 	if (!home)
 	{
 		print_error("minishell: load_env_into_ht: retrieve home dir failed\n");
-		return ;
+		return (EXIT_FAILURE);
 	}
 	set_variable(mshell, "OLDPWD", home, 1);
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -173,7 +193,8 @@ int	setup_hash_table(t_mshell *mshell)
 	mshell->hash_table = init_hash_tbl();
 	if (!mshell->hash_table)
 		return (EXIT_FAILURE);
-	load_env_into_ht(mshell);
+	if (load_env_into_ht(mshell) != EXIT_SUCCESS)
+		return (EXIT_FAILURE);
 	if (update_env(mshell) != EXIT_SUCCESS)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

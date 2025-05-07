@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 19:25:57 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:27:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ bool			add_env_entry(t_mshell_var *current,
 bool			process_env_bucket(t_mshell_var *bucket,
 					char **new_env,
 					int *index);
-void			set_variable(t_mshell *mshell,
+int			set_variable(t_mshell *mshell,
 					char *key,
 					char *value,
 					int assigned);
@@ -159,5 +159,6 @@ void			print_error(const char *msg);
 void			free_minishell(t_mshell **minishell);
 void			free_cmd(t_cmd **cmd);
 void			free_mshell_var(t_mshell_var *var);
+void			free_hash_table(t_hash_tbl *hash_table);
 
 #endif /* MINISHELL_H */

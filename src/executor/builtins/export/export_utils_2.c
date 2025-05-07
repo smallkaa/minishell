@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:34 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 20:48:42 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:07:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,15 +100,7 @@ static int	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 		var = ht->buckets[i];
 		while (var)
 		{
-			keys[key_index++] = ft_strdup(var->key); // tested 
-			if (!keys[key_index])
-			{
-				while (key_index > 0)
-					free(keys[--key_index]);
-				print_error("-minishell: fill_keys_from_hash failed\n");
-				return (EXIT_FAILURE);
-
-			}
+			keys[key_index++] = ft_strdup(var->key); // tested
 			var = var->next;
 		}
 		i++;

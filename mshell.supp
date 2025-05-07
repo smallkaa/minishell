@@ -11631,3 +11631,15 @@
   fun:malloc
   obj:/lib*/libreadline*.so*
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:alloc_history_entry
+   fun:add_history
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
