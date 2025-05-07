@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 11:57:09 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/07 14:29:22 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (!input)
 		{
 			printf("exit\n");
-			return (127);
+			return (0);
 		}
 		cmd = run_parser(mshell, input);
 		if (!cmd)
