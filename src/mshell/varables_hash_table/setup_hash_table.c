@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:50:28 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 18:34:41 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 {
 	t_mshell_var	*new_var;
 
-	new_var = malloc(sizeof(t_mshell_var));
+	new_var = malloc(sizeof(t_mshell_var)); //tested
 	if (!new_var)
 	{
 		print_error("Error: new_var malloc failed\n");
@@ -69,6 +69,8 @@ void	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 	t_mshell_var	*curr;
 	t_mshell_var	*new_var;
 
+	curr = NULL;
+	new_var = NULL;
 	index = hash_function(key);
 	curr = mshell->hash_table->buckets[index];
 	while (curr)
@@ -140,10 +142,10 @@ static t_hash_tbl	*init_hash_tbl(void)
 	t_hash_tbl	*ht;
 	int			i;
 
-	ht = malloc(sizeof(t_hash_tbl));
+	ht = malloc(sizeof(t_hash_tbl)); // tested
 	if (!ht)
 	{
-		(void)print_error("hash_table malloc failed\n");
+		print_error("-minishell: hash_table malloc failed\n");
 		return (NULL);
 	}
 	i = 0;

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:50:19 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 18:35:17 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,16 @@ t_mshell_var	*split_key_value(char *kv_pair)
 	{
 		mshell_var->key = ft_strdup(kv_pair);
 		mshell_var->value = NULL;
+	}
+	if (!mshell_var->key || (equal_sign && !mshell_var->value))
+	{
+		if (mshell_var->key)
+			free(mshell_var->key);
+		if (mshell_var->value)
+			free(mshell_var->value);
+		free(mshell_var);
+		print_error("Error (split_key_value): strdup/substr failed\n");
+		return (NULL);
 	}
 	return (mshell_var);
 }
