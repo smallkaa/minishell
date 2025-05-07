@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 23:45:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 14:38:45 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void	print_signal_message(int sig)
 	if (sig == SIGSEGV)
 		msg = "Segmentation fault (core dumped)";
 	else if (sig == SIGQUIT)
-		msg = "Quit: 3";
+		msg = "Quit: 3 (core dumped)";
 	else if (sig == SIGBUS)
 		msg = "Bus error";
 	else if (sig == SIGABRT)
