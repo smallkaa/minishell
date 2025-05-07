@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/07 14:29:22 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 15:08:40 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,20 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		free(input);
 		input = NULL;
 		handle_signal_after_exec(mshell);
+		if (mshell->exit_status == (128 + SIGINT)) { // Если дочерний процесс был прерван SIGINT
+			if (isatty(STDOUT_FILENO)) {
+				//write(STDOUT_FILENO, "\n", 1); // Вывести новую строку в stdout
+				rl_on_new_line(); // Сообщить readline, что мы на новой строке.
+								   // Это может быть полезно для более чистого сброса состояния readline,
+								   // хотя вывод \n часто достаточен.
+			}
+		} else if (mshell->exit_status == (128 + SIGQUIT)) {
+			 // print_signal_message для SIGQUIT уже выводит \n,
+			 // но rl_on_new_line() все еще может быть полезен для readline.
+			 if (isatty(STDOUT_FILENO)) {
+			     rl_on_new_line();
+			  }
+		}
 	}
 	return (exit_status);
 }

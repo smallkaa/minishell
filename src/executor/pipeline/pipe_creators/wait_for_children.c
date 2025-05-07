@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wait_for_children.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 14:38:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 15:18:23 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,14 @@ static uint8_t	process_child_status(int status)
 	else if (WIFSIGNALED(status))
 	{
 		term_sig = WTERMSIG(status);
-		if (term_sig != SIGINT)
-			print_signal_message(term_sig);
-		return (128 + term_sig);
+        if (term_sig == SIGINT) {
+            if (isatty(STDERR_FILENO)) { // Проверка, что вывод идет на терминал
+                write(STDERR_FILENO, "^C", 2); // Вывод ^C без новой строки
+            }
+        } else if (term_sig != 0) { // Для других сигналов, например SIGQUIT
+            print_signal_message(term_sig); // Эта функция уже выводит сообщение и \n 
+        }
+        return (128 + term_sig);
 	}
 	return (EXIT_FAILURE);
 }

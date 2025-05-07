@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_in_pipes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:01 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 19:47:16 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 15:04:38 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,12 +139,28 @@ uint8_t	exec_in_pipes(t_cmd *cmd_list)
 	pid_t		pids[MAX_CMDS];
 	int			pipe_fd[2];
 	uint8_t		exit_status;
+    struct sigaction sa_int_original, sa_int_ignore; // Для управления SIGINT
 
 	if (!cmd_list)
 		return (EXIT_SUCCESS);
+    // Настроить sa_int_ignore для игнорирования SIGINT
+    sa_int_ignore.sa_handler = SIG_IGN;
+    sigemptyset(&sa_int_ignore.sa_mask);
+    sa_int_ignore.sa_flags = 0;
+    // Игнорировать SIGINT в родителе и сохранить текущий обработчик
+    sigaction(SIGINT, &sa_int_ignore, &sa_int_original);
 	init_pipe_info(&info, cmd_list, pipe_fd, pids);
 	process_pipeline_commands(&info);
 	close_all_heredoc_fds(cmd_list);
 	exit_status = wait_for_children(pids, *info.idx);
+    // Восстановить оригинальный обработчик SIGINT для minishell
+    sigaction(SIGINT, &sa_int_original, NULL);
+    // Если дочерний процесс был прерван SIGINT
+    if (exit_status == (128 + SIGINT)) {
+        if (isatty(STDOUT_FILENO)) {
+            // Терминал должен был вывести ^C. Теперь мы выводим новую строку.
+            write(STDOUT_FILENO, "\n", 1);
+        }
+    }
 	return (exit_status);
 }
