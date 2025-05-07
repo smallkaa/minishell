@@ -857,3 +857,20 @@
    fun:run_interactive_mode
    fun:main
 }
+{
+   ReadlineInternalLeakViaXmalloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+}
+
+{
+   ReadlineInternalLeakViaXrealloc
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:xrealloc
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+}

@@ -6,11 +6,25 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:00:09 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/07 11:17:19 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/07 12:21:58 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+
+int check_heredoc_interrupt_hook(void) {
+    if (g_signal_flag) {
+        // Можно попробовать сначала это, если rl_done из обработчика не сработало
+        rl_replace_line("", 0); // Очистить строку
+        rl_done = 1;            // Завершить readline
+
+        // Альтернативно или в дополнение, можно попытаться "протолкнуть" ввод,
+        // чтобы readline вышел из ожидания. Это более "хакерский" способ.
+        // rl_stuff_char('\n'); // Эмулировать нажатие Enter (может быть нежелательно)
+    }
+    return 0; // Возвращаем 0, чтобы readline продолжал нормально, если нет флага
+}
 
 /**
  * @brief Handles SIGINT in heredoc (child process).
@@ -19,8 +33,14 @@ void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal_flag = 1; // nothing else only setting global flag 
+//	rl_replace_line("", 1); // Очищаем буфер readline
+	rl_done = 1; 
 	//write(STDOUT_FILENO, "\n", 1);
 	//_exit(1);
+	write(STDOUT_FILENO, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }
 
 /**
@@ -57,6 +77,8 @@ int	run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell, int expa
 	line = NULL;
 	total_written = 0;
 	write_status = EXIT_SUCCESS;
+    rl_event_hook = check_heredoc_interrupt_hook; // Устанавливаем хук
+
 	while (1)
 	{
 		// Проверяем флаг перед чтением строки
@@ -110,6 +132,7 @@ int	run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell, int expa
                 return (WRITE_HERED_ERR);
         }
 	}
+	rl_event_hook = NULL;
 	if (line)
 		free(line);
 	if (g_signal_flag) {
