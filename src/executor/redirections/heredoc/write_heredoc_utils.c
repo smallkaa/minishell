@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:00:09 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 14:58:19 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 11:17:19 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
-	_exit(1);
+	g_signal_flag = 1; // nothing else only setting global flag 
+	//write(STDOUT_FILENO, "\n", 1);
+	//_exit(1);
 }
 
 /**
@@ -56,8 +57,27 @@ int	run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell, int expa
 	line = NULL;
 	total_written = 0;
 	write_status = EXIT_SUCCESS;
-	while (read_next_heredoc_line(&line, delim))
+	while (1)
 	{
+		// Проверяем флаг перед чтением строки
+		if (g_signal_flag) {
+			break;
+		}
+
+		if (!read_next_heredoc_line(&line, delim)) {
+			// EOF (Ctrl+D) или найден разделитель.
+			// readline вернет NULL при Ctrl+C, если обработчик сигнала не выходит,
+			// что приведет к выходу из read_next_heredoc_line с возвратом 0.
+			break;
+		}
+
+		// Еще одна проверка флага после readline, на случай если сигнал пришел во время его выполнения
+		if (g_signal_flag) {
+			if (line) free(line); // Освобождаем line, если readline успел его выделить
+			line = NULL;
+			break;
+		}
+		
 		total_written += ft_strlen(line) + 1;
 		if (heredoc_exceeds_limit(total_written))
 		{
@@ -92,5 +112,11 @@ int	run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell, int expa
 	}
 	if (line)
 		free(line);
+	if (g_signal_flag) {
+		// Дочерний процесс завершается из-за сигнала.
+		// Родительский процесс (new_heredoc_fd или write_heredoc_to_pipe)
+		// должен корректно обработать этот код выхода.
+		return (HEREDOC_INTERRUPTED);
+	}
 	return (EXIT_SUCCESS);
 }

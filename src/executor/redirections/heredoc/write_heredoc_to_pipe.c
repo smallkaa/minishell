@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/06 15:15:05 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 11:19:22 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,42 @@ int read_next_heredoc_line(char **line, const char *delimiter)
 	return (1);
 }
 
-static int handle_heredoc_status(int status)
+// static int handle_heredoc_status(int status)
+// {
+// 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+// 	{
+// 		g_signal_flag = 1;
+// 		return (HEREDOC_INTERRUPTED);
+// 	}
+// 	if (WIFEXITED(status) && WEXITSTATUS(status) == WRITE_HERED_ERR)
+// 		return (WRITE_HERED_ERR);
+// 	return (EXIT_SUCCESS);
+// }
+
+static int handle_heredoc_status(int status) // status от Child 2 (run_heredoc_child)
 {
-	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-	{
-		g_signal_flag = 1;
-		return (HEREDOC_INTERRUPTED);
-	}
-	if (WIFEXITED(status) && WEXITSTATUS(status) == WRITE_HERED_ERR)
-		return (WRITE_HERED_ERR);
-	return (EXIT_SUCCESS);
+    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+    {
+        g_signal_flag = 1; // В контексте Child 1
+        return (HEREDOC_INTERRUPTED);
+    }
+    if (WIFEXITED(status))
+    {
+        if (WEXITSTATUS(status) == HEREDOC_INTERRUPTED) { // Child 2 вышел с этим кодом
+            g_signal_flag = 1; // В контексте Child 1
+            return (HEREDOC_INTERRUPTED);
+        }
+        if (WEXITSTATUS(status) == WRITE_HERED_ERR) {
+            return (WRITE_HERED_ERR);
+        }
+        if (WEXITSTATUS(status) == EXIT_SUCCESS) {
+             return (EXIT_SUCCESS);
+        }
+        // Если Child 2 вышел с каким-то другим кодом, можно его пробросить или вернуть общую ошибку
+        // return WEXITSTATUS(status); // или
+        // return SOME_OTHER_ERROR;
+    }
+    return (EXIT_SUCCESS); // По умолчанию
 }
 
 // Вспомогательная функция для поиска t_redir по разделителю

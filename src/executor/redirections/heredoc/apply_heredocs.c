@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   apply_heredocs.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:58:28 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 19:37:08 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 11:26:35 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,23 +61,28 @@ static int	new_heredoc_fd(t_cmd *cmd,
 	}
 	else if (pid == 0)
 	{
+		int write_pipe_result;
 		signal(SIGINT, heredoc_sigint_handler);
 		close_old_heredocs(full_cmd_list, pipe_fd[0]);
 		safe_close(&pipe_fd[0]);
 		close_all_heredoc_fds(current);
-		if (write_heredoc_to_pipe(cmd, pipe_fd[1], delim) == WRITE_HERED_ERR)
-		{
-			close_all_heredoc_fds(full_cmd_list);
-			safe_close(&pipe_fd[1]);
-			free_minishell(&cmd->minishell);
-			free_cmd(&head);
-			_exit(EXIT_FAILURE);
-		}
+		write_pipe_result = write_heredoc_to_pipe(cmd, pipe_fd[1], delim);
 		close_all_heredoc_fds(full_cmd_list);
 		safe_close(&pipe_fd[1]);
 		free_minishell(&cmd->minishell);
 		free_cmd(&head);
-		_exit(EXIT_SUCCESS);
+
+		if (write_pipe_result == WRITE_HERED_ERR)
+		{
+			_exit(EXIT_FAILURE); // Или какой-то специфичный код для ошибки записи
+		}
+		else if (write_pipe_result == HEREDOC_INTERRUPTED)
+		{
+			// Child 1 должен выйти с кодом HEREDOC_INTERRUPTED, чтобы родитель (new_heredoc_fd) это увидел
+			_exit(HEREDOC_INTERRUPTED);
+		}
+		// Иначе, если write_pipe_result == EXIT_SUCCESS (или что-то еще)
+		_exit(EXIT_SUCCESS);	
 	}
 	else
 	{
@@ -85,18 +90,31 @@ static int	new_heredoc_fd(t_cmd *cmd,
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
 		signal(SIGINT, handle_sigint);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+		if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) // Если Child 1 был убит SIGINT
 		{
 			safe_close(&pipe_fd[0]);
 			close_all_heredoc_fds(full_cmd_list);
 			g_signal_flag = 1;
 			return (HEREDOC_INTERRUPTED);
 		}
-		else if (WEXITSTATUS(status) != EXIT_SUCCESS)
+		else if (WIFEXITED(status)) // Если Child 1 завершился нормально
 		{
-			safe_close(&pipe_fd[0]);
-			close_all_heredoc_fds(full_cmd_list);
-			return (WRITE_HERED_ERR);
+			if (WEXITSTATUS(status) == HEREDOC_INTERRUPTED) // Child 1 вышел с кодом HEREDOC_INTERRUPTED
+			{
+				safe_close(&pipe_fd[0]);
+				close_all_heredoc_fds(full_cmd_list);
+				g_signal_flag = 1; // Устанавливаем флаг в главном процессе
+				return (HEREDOC_INTERRUPTED); // Возвращаем внутренний статус прерывания
+			}
+			else if (WEXITSTATUS(status) != EXIT_SUCCESS) // Другие ошибки от Child 1
+			{
+				safe_close(&pipe_fd[0]);
+				close_all_heredoc_fds(full_cmd_list);
+				// Здесь можно проверить, был ли WEXITSTATUS(status) равен EXIT_FAILURE (если Child 1 так вышел при WRITE_HERED_ERR)
+				// и вернуть WRITE_HERED_ERR
+				return (WRITE_HERED_ERR); // Или более специфичный код ошибки, если WEXITSTATUS(status) это позволяет
+			}
+			// Если WEXITSTATUS(status) == EXIT_SUCCESS, то все прошло хорошо
 		}
 	}
 	if (g_signal_flag)
