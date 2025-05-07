@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 20:34:41 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:33:07 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,10 @@ typedef struct s_mshell
 // run progrmm
 
 char			*read_user_input(void);
-bool			handle_null_command(t_mshell *mshell, char *input);
+bool			handle_null_command(t_mshell *mshell, char **input);
 bool			handle_signal_after_parse(t_mshell *mshell,
-					t_cmd *cmd,
-					char *input);
+					t_cmd **cmd,
+					char **input);
 void			handle_signal_after_exec(t_mshell *mshell);
 bool			is_input_interactive(void);
 uint8_t			run_script_mode(t_mshell *mshell, const char *file);
@@ -160,6 +160,7 @@ void			free_minishell(t_mshell **minishell);
 void			free_cmd(t_cmd **cmd);
 void			free_mshell_var(t_mshell_var *var);
 
-int readline_interrupt_hook(void);
+int				readline_interrupt_hook(void);
+void			free_ptr(void **ptr);
 
 #endif /* MINISHELL_H */

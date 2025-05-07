@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 20:08:15 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:30:17 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,7 @@ char	*read_user_input(void)
 
 	if (isatty(fileno(stdin)))
 	{
-		debug_printf(">>> read_user_input: calling readline()\n");
 		input = readline("minishell: ");
-		debug_printf("<<< read_user_input: readline() returned [%s]\n", input ? input : "NULL");
 		if (!input)
 			return (NULL);
 		if (*input)
@@ -58,8 +56,11 @@ char	*read_user_input(void)
  * @param input Pointer to the user's input string to be freed.
  * @return true to indicate continuation of the interactive loop.
  */
-bool	handle_null_command(t_mshell *mshell, char *input)
+bool	handle_null_command(t_mshell *mshell, char **input_ptr)
 {
+	char *input;
+	
+	input = *input_ptr;
 	if (input)
 		free(input);
 	if (g_signal_flag)
@@ -67,6 +68,7 @@ bool	handle_null_command(t_mshell *mshell, char *input)
 		mshell->exit_status = 130;
 		g_signal_flag = 0;
 	}
+	*input_ptr = NULL;
 	return (true);
 }
 
@@ -82,16 +84,27 @@ bool	handle_null_command(t_mshell *mshell, char *input)
  * @param input Original user input to be freed.
  * @return true if a signal was handled, false otherwise.
  */
-bool	handle_signal_after_parse(t_mshell *mshell, t_cmd *cmd, char *input)
+bool	handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd_ptr, char **input_ptr)
 {
+	t_cmd *cmd;
+	char *input;
+
+	cmd = *cmd_ptr;
+	input = *input_ptr;
 	if (g_signal_flag)
 	{
 		mshell->exit_status = 130;
 		g_signal_flag = 0;
 		if (cmd)
+		{
 			free_cmd(&cmd);
+			*cmd_ptr = NULL;
+		}
 		if (input)
+		{
 			free(input);
+			*input_ptr = NULL;
+		}
 		return (true);
 	}
 	return (false);
