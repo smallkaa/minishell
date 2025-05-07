@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:45:51 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/06 12:36:03 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 19:25:57 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void			update_existing_variable(t_mshell_var *current,
 					int val_assigned,
 					t_mshell *mshell);
 unsigned int	hash_function(const char *key);
-void			update_env(t_mshell *mshell);
+int			update_env(t_mshell *mshell);
 char			*search_paths(char **paths, t_cmd *cmd);
 
 // parser

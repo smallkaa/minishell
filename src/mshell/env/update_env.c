@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 18:34:31 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 19:24:30 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ static int	count_exported_vars(t_hash_tbl *ht)
  *
  * @param mshell Pointer to the Minishell structure.
  */
-void	update_env(t_mshell *mshell)
+int	update_env(t_mshell *mshell)
 {
 	int		count;
 	char	**new_env;
@@ -149,15 +149,16 @@ void	update_env(t_mshell *mshell)
 	if (!new_env)
 	{
 		print_error("-minishell: update_env: malloc failed\n");
-		return ;
+		return (EXIT_FAILURE);
 	}
 	ft_memset(new_env, 0, sizeof(char *) * (count + 1));
 	populated = populate_env_array(mshell, new_env);
-	if (!populated)
+	if (populated == false)
 	{
 		free_old_env(new_env);
-		return ;
+		return (EXIT_FAILURE);
 	}
 	free_old_env(mshell->env);
 	mshell->env = new_env;
+	return (EXIT_SUCCESS);
 }

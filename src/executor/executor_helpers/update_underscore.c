@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:46:36 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 19:30:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,9 @@ void	update_underscore(t_cmd *cmd, char *binary_path)
 		set_variable(cmd->minishell, "_", val, 1);
 	if (to_free && val)
 		free(val);
-	update_env(cmd->minishell);
+	if (update_env(cmd->minishell) != EXIT_SUCCESS)
+	{
+		print_error("-minishell: update_underscore, update_env failed\n");
+		return ;
+	}
 }

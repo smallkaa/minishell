@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 18:46:53 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 19:28:25 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,7 @@ uint8_t	handle_export(t_cmd *cmd)
 		exit_status = process_export_arg(cmd, cmd->argv[i]);
 		i++;
 	}
-	update_env(cmd->minishell);
+	if (update_env(cmd->minishell) != EXIT_SUCCESS)
+		perror_return("handle_export, update_env failed\n", EXIT_FAILURE);
 	return (exit_status);
 }

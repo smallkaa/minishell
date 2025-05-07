@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:00 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/24 17:36:49 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/07 19:34:11 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,11 @@ void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
 		ft_strlcpy(new_cwd, "", MS_PATHMAX);
 	set_variable(cmd->minishell, "OLDPWD", old_cwd, 1);
 	set_variable(cmd->minishell, "PWD", new_cwd, 1);
-	update_env(cmd->minishell);
+	if (update_env(cmd->minishell) != EXIT_SUCCESS)
+	{
+		print_error("-minishell: update_pwd_variables, update_env failed\n");
+		return ;
+	}
 }
 
 /**
