@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 19:48:47 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 21:59:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,14 @@ static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
 		assigned = 1;
 	else
 		assigned = 0;
-	set_variable(cmd->minishell, pair->key, pair->value, assigned);
+	if(set_variable(cmd->minishell, pair->key, pair->value, assigned) != EXIT_SUCCESS)
+	{
+
+		free(pair->key);
+		free(pair->value);
+		free(pair);
+		return (error_return("export: set_variable failed\n", EXIT_FAILURE));
+	}
 	free(pair->key);
 	free(pair->value);
 	free(pair);

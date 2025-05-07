@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 21:43:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/07 22:11:30 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@
  * @param assigned Whether the variable has a value assigned (1) or not (0).
  * @return Pointer to the new variable node, or NULL on allocation failure.
  */
-t_mshell_var	*create_new_var(char *key, char *value, int assigned)
+t_mshell_var *create_new_var(char *key, char *value, int assigned)
 {
-	t_mshell_var	*new_var;
+	t_mshell_var *new_var;
 
-	new_var = malloc(sizeof(t_mshell_var)); //tested
+	new_var = malloc(sizeof(t_mshell_var)); // tested
 	if (!new_var)
 	{
 		print_error("Error: new_var malloc failed\n");
@@ -76,11 +76,11 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
  * @param value The value to assign (can be NULL).
  * @param assigned 1 if a value is assigned, 0 if it's just declared.
  */
-int	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
+int set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
-	unsigned int	index;
-	t_mshell_var	*curr;
-	t_mshell_var	*new_var;
+	unsigned int index;
+	t_mshell_var *curr;
+	t_mshell_var *new_var;
 
 	if (!mshell || !key)
 	{
@@ -99,6 +99,8 @@ int	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 			{
 				free(curr->value);
 				curr->value = ft_strdup(value);
+				if (!curr->value)
+					return (EXIT_FAILURE);
 			}
 			curr->val_assigned = assigned;
 			return (EXIT_SUCCESS);
@@ -121,11 +123,11 @@ int	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
  *
  * @param mshell Pointer to the Minishell structure.
  */
-static int	load_env_into_ht(t_mshell *mshell)
+static int load_env_into_ht(t_mshell *mshell)
 {
-	t_mshell_var	*tmp;
-	int				i;
-	char			*home;
+	t_mshell_var *tmp;
+	int i;
+	char *home;
 
 	i = 0;
 	while (mshell->env[i])
@@ -133,7 +135,7 @@ static int	load_env_into_ht(t_mshell *mshell)
 		tmp = split_key_value(mshell->env[i]);
 		if (tmp)
 		{
-			set_variable(mshell, tmp->key, tmp->value, 1);
+			(void)set_variable(mshell, tmp->key, tmp->value, 1);
 			free(tmp->key);
 			free(tmp->value);
 			free(tmp);
@@ -146,7 +148,11 @@ static int	load_env_into_ht(t_mshell *mshell)
 		print_error("minishell: load_env_into_ht: retrieve home dir failed\n");
 		return (EXIT_FAILURE);
 	}
-	set_variable(mshell, "OLDPWD", home, 1);
+	if (set_variable(mshell, "OLDPWD", home, 1) != EXIT_SUCCESS)
+	{
+		print_error("-minishell: load_env_into_ht, set_variable failed\n");
+		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
@@ -157,10 +163,10 @@ static int	load_env_into_ht(t_mshell *mshell)
  *
  * @return Pointer to the initialized hash table, or NULL on failure.
  */
-static t_hash_tbl	*init_hash_tbl(void)
+static t_hash_tbl *init_hash_tbl(void)
 {
-	t_hash_tbl	*ht;
-	int			i;
+	t_hash_tbl *ht;
+	int i;
 
 	ht = malloc(sizeof(t_hash_tbl)); // tested
 	if (!ht)
@@ -188,7 +194,7 @@ static t_hash_tbl	*init_hash_tbl(void)
  * @param mshell Pointer to the Minishell structure.
  * @return `EXIT_SUCCESS` if setup is successful, `EXIT_FAILURE` otherwise.
  */
-int	setup_hash_table(t_mshell *mshell)
+int setup_hash_table(t_mshell *mshell)
 {
 	mshell->hash_table = init_hash_tbl();
 	if (!mshell->hash_table)
