@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 22:08:39 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:06:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,18 +79,36 @@ static char	*get_last_arg(t_cmd *cmd, int *need_free)
 }
 
 /**
- * @brief Updates the special shell variable `_` with the last
- * command argument or path.
+ * @brief Determines the underscore variable value based on the command.
  *
- * Mimics Bash behavior by assigning `_` to:
- * - The last argument of the command.
- * - For built-ins like `export`, reconstructs `key=value` if necessary.
- * - If no argument exists, falls back to the binary path or command name.
+ * Logic varies depending on whether the command is a built-in or external.
+ * Falls back to binary path or command name if no argument is available.
  *
- * The variable is stored in the shell's hash table and `env` array.
+ * @param cmd Pointer to the command.
+ * @param binary_path Optional binary path.
+ * @param to_free Pointer to int for tracking ownership of returned value.
+ * @return Resolved string for underscore variable.
+ */
+static char	*resolve_underscore_value(t_cmd *cmd, char *binary_path,
+		int *to_free)
+{
+	if (is_builtin(cmd))
+		return (get_last_arg(cmd, to_free));
+	if (cmd->argv[1])
+		return (get_last_arg(cmd, to_free));
+	if (binary_path)
+		return (binary_path);
+	return (cmd->argv[0]);
+}
+
+/**
+ * @brief Updates the special shell variable `_` with the last command argument.
+ *
+ * Mimics Bash behavior. Resolves what `_` should be set to and assigns it
+ * to the environment. Also updates `env` array after setting the variable.
  *
  * @param cmd Pointer to the command structure.
- * @param binary_path The resolved binary path of the command (if applicable).
+ * @param binary_path The resolved binary path of the command.
  */
 void	update_underscore(t_cmd *cmd, char *binary_path)
 {
@@ -100,31 +118,14 @@ void	update_underscore(t_cmd *cmd, char *binary_path)
 	if (!cmd || !cmd->argv || !cmd->argv[0])
 		return ;
 	to_free = 0;
-	if (is_builtin(cmd))
-		val = get_last_arg(cmd, &to_free);
-	else
+	val = resolve_underscore_value(cmd, binary_path, &to_free);
+	if (val && set_variable(cmd->minishell, "_", val, 1) != EXIT_SUCCESS)
 	{
-		if (cmd->argv[1])
-			val = get_last_arg(cmd, &to_free);
-		else
-		{
-			if (binary_path)
-				val = binary_path;
-			else
-				val = cmd->argv[0];
-		}
+		print_error("-minishell: update_underscore, set_variable failed");
+		return ;
 	}
-	if (val)
-		if(set_variable(cmd->minishell, "_", val, 1) != EXIT_SUCCESS)
-		{
-			print_error("-minishell: update_underscore, set_variable failed\n");
-			return ;
-		}
 	if (to_free && val)
 		free(val);
 	if (update_env(cmd->minishell) != EXIT_SUCCESS)
-	{
-		print_error("-minishell: update_underscore, update_env failed\n");
-		return ;
-	}
+		print_error("-minishell: update_underscore, update_env failed");
 }
