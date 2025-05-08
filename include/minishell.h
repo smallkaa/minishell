@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 09:51:36 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/08 10:10:25 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:36:32 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ bool					handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd,
 void					handle_signal_after_exec(t_mshell *mshell);
 bool					is_input_interactive(void);
 uint8_t					run_script_mode(t_mshell *mshell, const char *file);
+uint8_t					run_interactive_mode(t_mshell *mshell);
 
 // init minishell
 t_mshell				*init_mshell(char **envp);
