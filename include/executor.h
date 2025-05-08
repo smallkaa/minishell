@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 19:49:03 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 09:45:50 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,8 @@ uint8_t					handle_env(t_cmd *cmd);
 
 // export
 uint8_t					handle_export(t_cmd *cmd);
-int					handle_sorted_env(t_mshell *mshell);
-int					collect_keys(t_hash_tbl *ht, char ***keys, int *count);
+int						handle_sorted_env(t_mshell *mshell);
+int						collect_keys(t_hash_tbl *ht, char ***keys, int *count);
 
 // unset
 uint8_t					handle_unset(t_cmd *cmd);

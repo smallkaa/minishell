@@ -63,7 +63,8 @@ SRC_FILES := \
 	src/mshell/env/update_env.c \
 	src/mshell/env/update_env_utils.c \
 	src/mshell/find_binary.c \
-	src/mshell/varables_hash_table/setup_hash_table_utils.c \
+	src/mshell/varables_hash_table/setup_hash_table_utils_1.c \
+	src/mshell/varables_hash_table/setup_hash_table_utils_2.c \
 	src/mshell/varables_hash_table/setup_hash_table.c \
 	src/executor/executor.c \
 	src/executor/pipeline/pipe_utils.c \
