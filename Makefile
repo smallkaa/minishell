@@ -75,6 +75,7 @@ SRC_FILES := \
 	src/executor/pipeline/close_unused_fds.c \
 	src/executor/pipeline/pipe_executors/execute_command.c \
 	src/executor/pipeline/exec_in_pipes.c \
+	src/executor/pipeline/exec_in_pipes1.c \
 	src/executor/redirections/apply_redirections.c \
 	src/executor/redirections/heredoc/write_heredoc_to_pipe.c \
 	src/executor/redirections/heredoc/write_heredoc_utils.c \

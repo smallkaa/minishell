@@ -6,12 +6,15 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 12:48:34 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 14:32:55 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
+
+// Maximum number of commands in a pipeline.
+# define MAX_CMDS 1000
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
@@ -61,7 +64,6 @@ typedef struct s_heredoc_exec_ctx
 	int			*pipe_fd;
 }	t_heredoc_exec_ctx;
 
-
 /*------FUNCTIONS---------------------------------------------------*/
 
 // executor utils
@@ -89,6 +91,11 @@ uint8_t					validate_dots(t_cmd *cmd);
 uint8_t					update_shlvl(t_cmd *cmd);
 void					handle_empty_command(t_cmd *cmd);
 uint8_t					close_unused_fds(int in_fd, int *pipe_fd);
+void					handle_pipe_creation(t_cmd *cmd, int *pipe_fd);
+void					close_fds_and_prepare_next(t_cmd *cmd, int *in_fd,
+							int *pipe_fd);
+void					init_pipe_info(t_pipe_info *info, t_cmd *cmd_list,
+							int pipe_fd[2], pid_t pids[MAX_CMDS]);
 
 // builtin
 const t_builtin_disp	*get_builtin_table(size_t *size);

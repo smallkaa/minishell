@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:49 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 09:55:29 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 14:32:48 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,6 @@
 
 // Maximum number of arguments per command.
 # define MAX_ARGS 64
-
-// Maximum number of commands in a pipeline.
-# define MAX_CMDS 1000
 
 /*------FORWARD DECLARATIONS-----------------------------------------*/
 
