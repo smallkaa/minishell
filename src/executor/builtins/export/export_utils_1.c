@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 20:36:32 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:14:35 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,20 @@ void	free_keys(char ***keys_ptr, int num_keys)
 
 	if (!keys_ptr || !*keys_ptr)
 		return ;
-
 	keys = *keys_ptr;
-	for (i = 0; i < num_keys; i++)
+	i = 0;
+	while (i < num_keys)
 	{
 		if (keys[i])
 		{
 			free(keys[i]);
 			keys[i] = NULL;
 		}
+		i++;
 	}
 	free(keys);
 	*keys_ptr = NULL;
 }
-
 
 /**
  * @brief Sorts an array of strings alphabetically using bubble sort.

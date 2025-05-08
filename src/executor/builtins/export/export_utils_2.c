@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:34 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 21:07:44 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:19:01 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static bool	allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
 	if (!ht || !keys || !count)
 		return (false);
 	*count = count_total_keys(ht);
-	*keys = malloc(sizeof(char *) * (*count)); // tested
+	*keys = malloc(sizeof(char *) * (*count));
 	if (!(*keys))
 	{
 		print_error("minishell: export: key memory allocation failed\n");
@@ -100,7 +100,7 @@ static int	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 		var = ht->buckets[i];
 		while (var)
 		{
-			keys[key_index++] = ft_strdup(var->key); // tested
+			keys[key_index++] = ft_strdup(var->key);
 			var = var->next;
 		}
 		i++;
@@ -122,12 +122,13 @@ static int	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 int	collect_keys(t_hash_tbl *ht, char ***keys, int *count)
 {
 	int	i;
+
 	if (!allocate_keys_array(ht, keys, count))
 		return (EXIT_FAILURE);
 	if (fill_keys_from_hash(ht, *keys) != EXIT_SUCCESS)
 	{
 		i = 0;
-		while(i < *count)
+		while (i < *count)
 		{
 			free((*keys)[i]);
 			i++;

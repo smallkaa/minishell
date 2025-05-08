@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:00 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 22:07:51 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:19:26 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,12 @@ void	update_pwd_variables(t_cmd *cmd, char *old_cwd)
 		ft_strlcpy(new_cwd, "", MS_PATHMAX);
 	if (set_variable(cmd->minishell, "OLDPWD", old_cwd, 1) != EXIT_SUCCESS)
 	{
-		print_error("-minishell: update_pwd_variables, set_variable OLDPWD failed\n");
+		print_error("-minishell: update_pwd_variables, OLDPWD failed\n");
 		return ;
 	}
 	if (set_variable(cmd->minishell, "PWD", new_cwd, 1) != EXIT_SUCCESS)
 	{
-		print_error("-minishell: update_pwd_variables, set_variable OLDPWD failed\n");
+		print_error("-minishell: update_pwd_variables, OLDPWD failed\n");
 		return ;
 	}
 	if (update_env(cmd->minishell) != EXIT_SUCCESS)

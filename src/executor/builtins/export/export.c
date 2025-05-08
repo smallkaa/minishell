@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 21:59:55 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:18:23 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,50 +22,66 @@
 #include "minishell.h"
 
 /**
- * @brief Processes a single argument for the `export` command.
+ * @brief Validates and prepares a variable pair for export.
  *
- * Splits the argument into a key and optional value. Validates the key using
- * shell variable naming rules. If valid, the variable is set in the shell's
- * environment.
+ * Verifies the input and splits it into key-value. Also validates
+ * that the key conforms to shell naming rules.
  *
- * @param cmd Pointer to the command structure containing
- * the environment context.
- * @param arg The argument string containing the variable name and
- * optional value.
- * @return `EXIT_SUCCESS` (0) if the variable was successfully processed,
- *         `EXIT_FAILURE` (1) if the variable name is invalid.
+ * @param arg The export argument string.
+ * @return Pointer to t_mshell_var on success, NULL on error.
  */
-static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
+static t_mshell_var	*validate_export_pair(char *arg)
 {
-	char			*eq;
-	int				assigned;
 	t_mshell_var	*pair;
 
 	if (!arg)
-		error_return("process_export_arg: no arg\n", EXIT_FAILURE);
+	{
+		print_error("-minishell: process_export_arg: no arg");
+		return (NULL);
+	}
 	pair = split_key_value(arg);
 	if (!pair)
-		return (error_return("export: memory allocation failed\n", EXIT_FAILURE));
+	{
+		print_error("-minishell: export: memory allocation failed");
+		return (NULL);
+	}
 	if (!is_valid_varname(pair->key))
 	{
 		export_error(pair);
 		free(pair->key);
 		free(pair->value);
 		free(pair);
-		return (EXIT_FAILURE);
+		return (NULL);
 	}
-	eq = ft_strchr(arg, '=');
-	if (eq != NULL || !pair->value)
-		assigned = 1;
-	else
-		assigned = 0;
-	if(set_variable(cmd->minishell, pair->key, pair->value, assigned) != EXIT_SUCCESS)
-	{
+	return (pair);
+}
 
+/**
+ * @brief Processes a single argument for the `export` command.
+ *
+ * Sets the validated variable in the shell environment, determining
+ * whether it is assigned or declared. Handles memory cleanup.
+ *
+ * @param cmd Pointer to the command structure.
+ * @param arg Argument string containing the variable.
+ * @return EXIT_SUCCESS or EXIT_FAILURE.
+ */
+static uint8_t	process_export_arg(t_cmd *cmd, char *arg)
+{
+	t_mshell_var	*pair;
+	int				assigned;
+
+	pair = validate_export_pair(arg);
+	if (!pair)
+		return (EXIT_FAILURE);
+	assigned = (ft_strchr(arg, '=') != NULL || !pair->value);
+	if (set_variable(cmd->minishell, pair->key,
+			pair->value, assigned) != EXIT_SUCCESS)
+	{
 		free(pair->key);
 		free(pair->value);
 		free(pair);
-		return (error_return("export: set_variable failed\n", EXIT_FAILURE));
+		return (error_return("export: set_variable failed", EXIT_FAILURE));
 	}
 	free(pair->key);
 	free(pair->value);

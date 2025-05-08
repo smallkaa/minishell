@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 19:37:40 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:19:37 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static uint8_t	handle_cd_dash(t_cmd *cmd)
 {
 	char	*old_pwd;
 
-	old_pwd = ft_strdup(ms_getenv(cmd->minishell, "OLDPWD")); // tested
+	old_pwd = ft_strdup(ms_getenv(cmd->minishell, "OLDPWD"));
 	if (!old_pwd)
 		return (error_return("cd: OLDPWD not set\n", EXIT_FAILURE));
 	if (chdir(old_pwd) != 0)
