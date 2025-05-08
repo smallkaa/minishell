@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 19:24:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 09:33:05 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ int	update_env(t_mshell *mshell)
 	bool	populated;
 
 	count = count_exported_vars(mshell->hash_table);
-	new_env = malloc(sizeof(char *) * (count + 1)); // tested
+	new_env = malloc(sizeof(char *) * (count + 1));
 	if (!new_env)
 	{
 		print_error("-minishell: update_env: malloc failed\n");
