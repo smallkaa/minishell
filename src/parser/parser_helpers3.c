@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/07 22:17:39 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 11:44:08 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		redir->type = R_INPUT;
 	else
 		redir->type = R_HEREDOC;
-	redir->filename = ft_strdup(token[1].value); // mem leak
+	redir->filename = ft_strdup(token[1].value);
 	if (!redir->filename)
 	{
 		free(redir);

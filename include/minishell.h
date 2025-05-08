@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid Date        by              +#+  #+#    #+#             */
-/*   Updated: 2025/05/08 10:52:11 by Ilia Munaev      ###   ########.fr       */
+/*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
+/*   Updated: 2025/05/08 11:58:18 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,22 +104,22 @@ typedef struct s_mshell
 }						t_mshell;
 // run progrmm
 
-char					*read_user_input(void);
-bool					handle_null_command(t_mshell *mshell, char **input);
-bool					handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd,
-							char **input);
-void					handle_signal_after_exec(t_mshell *mshell);
-bool					is_input_interactive(void);
-uint8_t					run_script_mode(t_mshell *mshell, const char *file);
-uint8_t					run_interactive_mode(t_mshell *mshell);
+char			*read_user_input(void);
+bool			handle_null_command(t_mshell *mshell, char **input);
+bool			handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd,
+					char **input);
+void			handle_signal_after_exec(t_mshell *mshell);
+bool			is_input_interactive(void);
+uint8_t			run_script_mode(t_mshell *mshell, const char *file);
+uint8_t			run_interactive_mode(t_mshell *mshell);
 
 // init minishell
-t_mshell				*init_mshell(char **envp);
-char					**setup_env(char **envp);
-char					**setup_builtin(void);
-char					*find_binary(t_cmd *cmd);
-char					*create_env_entry(t_mshell_var *var);
-void					free_old_env(char **env);
+t_mshell		*init_mshell(char **envp);
+char			**setup_env(char **envp);
+char			**setup_builtin(void);
+char			*find_binary(t_cmd *cmd);
+char			*create_env_entry(t_mshell_var *var);
+void			free_old_env(char **env);
 
 // setup hash table
 int				setup_hash_table(t_mshell *mshell);
@@ -129,7 +129,7 @@ bool			add_env_entry(t_mshell_var *current,
 bool			process_env_bucket(t_mshell_var *bucket,
 					char **new_env,
 					int *index);
-int			set_variable(t_mshell *mshell,
+int				set_variable(t_mshell *mshell,
 					char *key,
 					char *value,
 					int assigned);
@@ -138,35 +138,38 @@ void			update_existing_variable(t_mshell_var *current,
 					int val_assigned,
 					t_mshell *mshell);
 unsigned int	hash_function(const char *key);
-int			update_env(t_mshell *mshell);
+int				update_env(t_mshell *mshell);
 char			*search_paths(char **paths, t_cmd *cmd);
-void		free_pair_and_return_null(t_mshell_var *pair);
+void			free_pair_and_return_null(t_mshell_var *pair);
 t_mshell_var	*create_new_var(char *key, char *value, int assigned);
-int			update_existing_var(t_mshell_var *var, char *value, int assigned);
-int	update_existing_var(t_mshell_var *var, char *value, int assigned);
-int	insert_new_var(t_mshell *mshell, char *key,
-	char *value, int assigned);
-int	set_variable(t_mshell *mshell, char *key, char *value, int assigned);
+int				update_existing_var(t_mshell_var *var, char
+					*value, int assigned);
+int				update_existing_var(t_mshell_var *var,
+					char *value, int assigned);
+int				insert_new_var(t_mshell *mshell, char *key,
+					char *value, int assigned);
+int				set_variable(t_mshell *mshell, char *key,
+					char *value, int assigned);
 
 // parser
-t_cmd					*run_parser(t_mshell *shell, char *input);
+t_cmd			*run_parser(t_mshell *shell, char *input);
 
 // executor
-uint8_t					run_executor(t_cmd *cmd);
-size_t					ft_arr_size(char **arr);
-char					*ms_getenv(t_mshell *mshell, char *key);
+uint8_t			run_executor(t_cmd *cmd);
+size_t			ft_arr_size(char **arr);
+char			*ms_getenv(t_mshell *mshell, char *key);
 
 // test
-bool					is_debug_mode(void);
-void					debug_printf(const char *format, ...);
-void					print_error(const char *msg);
+bool			is_debug_mode(void);
+void			debug_printf(const char *format, ...);
+void			print_error(const char *msg);
 
 // free memory utils
-void					free_minishell(t_mshell **minishell);
-void					free_cmd(t_cmd **cmd);
-void					free_mshell_var(t_mshell_var *var);
+void			free_minishell(t_mshell **minishell);
+void			free_cmd(t_cmd **cmd);
+void			free_mshell_var(t_mshell_var *var);
 
-int						readline_interrupt_hook(void);
-void					free_ptr(void **ptr);
+int				readline_interrupt_hook(void);
+void			free_ptr(void **ptr);
 
 #endif /* MINISHELL_H */
