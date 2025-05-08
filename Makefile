@@ -44,6 +44,7 @@ SRC_FILES := \
 	src/parser/tokenizer4.c \
 	src/parser/parser_helpers4.c \
 	src/parser/parser4.c \
+	src/parser/parser6.c \
 	src/parser/tokenizer3.c \
 	src/parser/parser_utils_cmd.c \
 	src/parser/parser_helpers3.c \

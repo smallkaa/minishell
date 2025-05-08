@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 09:49:37 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 14:17:15 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,6 @@ void				token_array_free(t_TokenArray *array);
 int					group_word_tokens(t_TokenArray *tokens);
 t_cmd				*create_command_from_tokens(t_mshell *shell,
 						t_TokenArray *tokens);
+int					handle_redir(t_parse_ctx *ctx);
 
 #endif
