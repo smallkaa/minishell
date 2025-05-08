@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 08:10:49 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/07 22:31:41 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:35:09 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,58 +22,6 @@ uint8_t	run_command_mode(t_mshell *mshell, char *input)
 		return (EXIT_FAILURE);
 	exit_status = run_executor(cmd);
 	free_cmd(&cmd);
-	return (exit_status);
-}
-
-uint8_t	run_interactive_mode(t_mshell *mshell)
-{
-	char	*input;
-	t_cmd	*cmd;
-	uint8_t	exit_status;
-
-    exit_status = mshell->exit_status;
-    rl_event_hook = readline_interrupt_hook;
-	while (1)
-	{
-		if (g_signal_flag)
-		{
-			mshell->exit_status = 130;
-			g_signal_flag = 0;
-			continue;
-		}
-		input = read_user_input();
-		if (g_signal_flag)
-		{
-			mshell->exit_status = 130;
-			g_signal_flag = 0;
-			if (input)
-				free_ptr((void **)&input);
-			continue;
-		}
-		if (!input)
-		{
-			printf("exit\n");
-			exit_status = mshell->exit_status;
-			break;
-		}
-		if (ft_strlen(input) > 0)
-		{
-			cmd = run_parser(mshell, input);
-			if (!cmd && handle_null_command(mshell, &input))
-				continue;
-			if (handle_signal_after_parse(mshell, &cmd, &input))
-				continue;
-			exit_status = run_executor(cmd);
-			mshell->exit_status = exit_status;
-			free_cmd(&cmd);
-		}
-		if (input)
-			free_ptr((void **)&input);
-		handle_signal_after_exec(mshell);
-		if (mshell->exit_status == (128 + SIGINT) || mshell->exit_status == (128 + SIGQUIT))
-			rl_on_new_line();
-	}
-    rl_event_hook = NULL;
 	return (exit_status);
 }
 

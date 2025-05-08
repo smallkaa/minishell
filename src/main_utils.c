@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 21:30:17 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:39:27 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ char	*read_user_input(void)
  */
 bool	handle_null_command(t_mshell *mshell, char **input_ptr)
 {
-	char *input;
-	
+	char	*input;
+
 	input = *input_ptr;
 	if (input)
 		free(input);
@@ -84,10 +84,11 @@ bool	handle_null_command(t_mshell *mshell, char **input_ptr)
  * @param input Original user input to be freed.
  * @return true if a signal was handled, false otherwise.
  */
-bool	handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd_ptr, char **input_ptr)
+bool	handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd_ptr,
+			char **input_ptr)
 {
-	t_cmd *cmd;
-	char *input;
+	t_cmd	*cmd;
+	char	*input;
 
 	cmd = *cmd_ptr;
 	input = *input_ptr;
