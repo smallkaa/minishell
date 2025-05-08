@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/07 19:49:03 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 09:54:34 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ uint8_t					exec_in_current_process(t_cmd *cmd);
 // pipes
 uint8_t					exec_in_pipes(t_cmd *cmd);
 void					execute_command(t_cmd *cmd);
-// void					handle_child_and_track(t_cmd *cmd, t_pipe_info *info, int level);
+// void					handle_child_and_track(t_cmd *cmd, 
+//t_pipe_info *info, int level);
 void					handle_child_and_track(t_cmd *cmd, t_pipe_info *info);
 uint8_t					wait_for_children(pid_t *pids, int count);
 uint8_t					close_unused_fds(int in_fd, int *pipe_fd);
@@ -94,8 +95,8 @@ uint8_t					handle_env(t_cmd *cmd);
 
 // export
 uint8_t					handle_export(t_cmd *cmd);
-int					handle_sorted_env(t_mshell *mshell);
-int					collect_keys(t_hash_tbl *ht, char ***keys, int *count);
+int						handle_sorted_env(t_mshell *mshell);
+int						collect_keys(t_hash_tbl *ht, char ***keys, int *count);
 
 // unset
 uint8_t					handle_unset(t_cmd *cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:49 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/05 16:31:32 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/08 09:55:29 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef enum e_redir_type
 	R_OUTPUT,
 	R_APPEND,
 	R_HEREDOC
-}	t_redir_type;
+}						t_redir_type;
 
 /**
  * @struct s_redir
@@ -54,12 +54,12 @@ typedef enum e_redir_type
  */
 typedef struct s_redir
 {
-	t_redir_type	type;
-	char			*filename;
-	int				target_fd;
-	int				fd;
-	int				expand_in_heredoc;
-}	t_redir;
+	t_redir_type		type;
+	char				*filename;
+	int					target_fd;
+	int					fd;
+	int					expand_in_heredoc;
+}						t_redir;
 /**
  * @struct s_cmd
  * @brief Represents a command node in a pipeline.
@@ -78,18 +78,20 @@ typedef struct s_redir
  */
 typedef struct s_cmd
 {
-	char		**argv;
-	char		*binary;
-	t_cmd		*next;
-	t_mshell	*minishell;
-	t_list		*redirs;
-	t_cmd		*origin_head;
-}	t_cmd;
+	char				**argv;
+	char				*binary;
+	t_cmd				*next;
+	t_mshell			*minishell;
+	t_list				*redirs;
+	t_cmd				*origin_head;
+}						t_cmd;
 
-void	heredoc_sigint_handler(int sig);
-void	setup_heredoc_signals(void);
-int		run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell, int expand_flag);
-int		write_heredoc_line(int pipe_fd, const char *line);
-int		read_next_heredoc_line(char **line, const char *delimiter);
+void					heredoc_sigint_handler(int sig);
+void					setup_heredoc_signals(void);
+int						run_heredoc_child(int pipe_fd, const char *delim,
+							t_mshell *mshell, int expand_flag);
+int						write_heredoc_line(int pipe_fd, const char *line);
+int						read_next_heredoc_line(char **line,
+							const char *delimiter);
 
 #endif /* COMMAND_H */
