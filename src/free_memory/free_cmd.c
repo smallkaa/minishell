@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:35 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 21:14:04 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:00:40 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,15 @@ void	free_cmd(t_cmd **cmd_ptr)
 	}
 	*cmd_ptr = NULL;
 }
+
+/**
+ * @brief Frees and nullifies a pointer.
+ *
+ * Checks if the pointer and its contents are non-null,
+ * then frees the memory and sets the pointer to NULL.
+ *
+ * @param ptr A double pointer to the memory to free.
+ */
 void	free_ptr(void **ptr)
 {
 	if (ptr && *ptr)

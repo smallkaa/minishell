@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 22:34:24 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 10:02:07 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@
  *
  * @param env The array of environment variables to free.
  */
-static void free_env(char **env)
+static void	free_env(char **env)
 {
-	int i;
+	int	i;
 
 	if (!env)
-		return;
+		return ;
 	i = 0;
 	while (env[i])
 	{
@@ -46,10 +46,10 @@ static void free_env(char **env)
  *
  * @param var The environment variable structure to free.
  */
-void free_mshell_var(t_mshell_var *var)
+void	free_mshell_var(t_mshell_var *var)
 {
 	if (!var)
-		return;
+		return ;
 	if (var->key)
 		free(var->key);
 	if (var->value)
@@ -65,14 +65,14 @@ void free_mshell_var(t_mshell_var *var)
  *
  * @param hash_table Pointer to the hash table to free.
  */
-void free_hash_table(t_hash_tbl *hash_table)
+void	free_hash_table(t_hash_tbl *hash_table)
 {
-	int i;
-	t_mshell_var *current;
-	t_mshell_var *temp;
+	int				i;
+	t_mshell_var	*current;
+	t_mshell_var	*temp;
 
 	if (!hash_table)
-		return;
+		return ;
 	i = 0;
 	while (i < HASH_SIZE)
 	{
@@ -98,12 +98,12 @@ void free_hash_table(t_hash_tbl *hash_table)
  *
  * @param minishell The Minishell structure to free.
  */
-void free_minishell(t_mshell **minishell_ptr)
+void	free_minishell(t_mshell **minishell_ptr)
 {
-	t_mshell *minishell;
+	t_mshell	*minishell;
 
 	if (!minishell_ptr || !*minishell_ptr)
-		return;
+		return ;
 	minishell = *minishell_ptr;
 	if (minishell->env)
 	{
