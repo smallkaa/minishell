@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 10:39:27 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 18:19:33 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*read_user_input(void)
 	char	*input;
 	char	*line;
 
-	if (isatty(fileno(stdin)))
+	if (isatty(STDIN_FILENO))
 	{
 		input = readline("minishell: ");
 		if (!input)
@@ -35,7 +35,7 @@ char	*read_user_input(void)
 	}
 	else
 	{
-		line = get_next_line(fileno(stdin));
+		line = get_next_line(STDIN_FILENO);
 		if (!line)
 			return (NULL);
 		input = ft_strtrim(line, "\n");

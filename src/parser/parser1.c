@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:09:26 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 11:43:26 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 18:13:51 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,27 @@ t_TokenArray	*token_array_init(void)
 // Add a token to the array
 void	token_array_add(t_TokenArray *array, t_Token token)
 {
+	int		old_capacity;
+	size_t	old_size;
+	int		new_capacity;
+	size_t	new_size;
+	t_Token	*new_tokens_ptr;
+
 	if (array->count >= array->capacity)
 	{
-		array->capacity *= 2;
-		array->tokens = (t_Token *)realloc(array->tokens, sizeof(t_Token)
-				* array->capacity);
-		if (!array->tokens)
-		{
-			print_error("Failed to reallocate tokens buffer\n");
-			exit(1);
-		}
+		old_capacity = array->capacity;
+		old_size = (size_t)old_capacity * sizeof(t_Token);
+		new_capacity = old_capacity * 2;
+		if (new_capacity < old_capacity)
+			new_capacity = INT_MAX;
+		new_size = (size_t)new_capacity * sizeof(t_Token);
+		new_tokens_ptr = (t_Token *)ft_realloc(array->tokens, old_size,
+				new_size);
+		array->tokens = new_tokens_ptr;
+		array->capacity = new_capacity;
 	}
-	array->tokens[array->count++] = token;
+	array->tokens[array->count] = token;
+	array->count++;
 }
 
 // Free token array resources

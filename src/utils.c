@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 13:12:32 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 11:49:31 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 17:40:56 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	debug_printf(const char *format, ...)
 			print_debug_specifier(format, args);
 		}
 		else
-			putchar(*format);
+			printf("%c",*format);
 		format++;
 	}
 	va_end(args);

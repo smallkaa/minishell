@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:33:12 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/08 12:01:43 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 18:19:41 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,11 +66,11 @@ int	read_next_heredoc_line(char **line, const char *delimiter)
 {
 	char	*line2;
 
-	if (isatty(fileno(stdin)))
+	if (isatty(STDIN_FILENO))
 		*line = readline("> ");
 	else
 	{
-		line2 = get_next_line(fileno(stdin));
+		line2 = get_next_line(STDIN_FILENO);
 		if (!line2)
 			return (free_ptr((void **)line), 0);
 		*line = ft_strtrim(line2, "\n");
