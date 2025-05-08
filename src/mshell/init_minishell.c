@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:46 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 17:11:05 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 09:31:31 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ static t_mshell	*allocate_minishell(void)
 {
 	t_mshell	*mshell;
 
-	mshell = malloc(sizeof(t_mshell)); // tested
+	mshell = malloc(sizeof(t_mshell));
 	if (!mshell)
 		print_error("Error (allocate_minishell): minishell malloc failed\n");
 	ft_memset(mshell, 0, sizeof(t_mshell));
-		return (mshell);
+	return (mshell);
 }
 
 /**
