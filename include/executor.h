@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 10:49:34 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/08 11:35:11 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ int						write_heredoc_to_pipe(t_cmd *cmd,
 void					close_unused_heredocs_child(t_cmd *current,
 							t_cmd *full_cmd_list);
 int						handle_heredoc_redirection(t_redir *r);
+t_redir					*find_redir_by_delim(t_list *redirs,
+							const char *delim);
 
 // utils
 t_mshell_var			*split_key_value(char *key_value_pair);

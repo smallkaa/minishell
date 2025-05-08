@@ -60,8 +60,10 @@ dkms.conf
 .vscode/
 .zed/
 .cache/
+venv310/
 minishell_tester/
 compile_commands.json
+sources_dump.txt
 
 # tests
 minishell
