@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 11:35:11 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 11:59:22 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,15 @@ typedef struct s_pipe_info
 	int		*idx;
 	t_cmd	*cmd_list;
 }	t_pipe_info;
+
+typedef struct s_heredoc_ctx
+{
+	int			pipe_fd;
+	const char	*delim;
+	t_mshell	*mshell;
+	int			expand;
+	size_t		*total;
+}	t_heredoc_ctx;
 
 /*------FUNCTIONS---------------------------------------------------*/
 

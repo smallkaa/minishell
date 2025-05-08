@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:33:12 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/08 11:38:42 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 12:01:43 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,20 @@ int	read_next_heredoc_line(char **line, const char *delimiter)
 	if (!*line || ft_strcmp(*line, delimiter) == 0)
 		return (free_ptr((void **)line), 0);
 	return (1);
+}
+
+/**
+ * @brief Setup signal handlers inside heredoc child process.
+ */
+void	setup_heredoc_signals(void)
+{
+	struct sigaction	sa;
+
+	ft_memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = heredoc_sigint_handler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGINT, &sa, NULL) == -1)
+		perror("sigaction(SIGINT) error in heredoc child");
+	signal(SIGQUIT, SIG_IGN);
 }
