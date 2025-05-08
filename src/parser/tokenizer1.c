@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer1.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:12:47 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 21:13:54 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/08 08:52:16 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

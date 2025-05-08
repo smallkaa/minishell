@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer5.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:19 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:54:21 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/08 09:03:17 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer)
 	else if (*tokenizer->input == '&')
 		token.type = TOKEN_BACKGROUND;
 	token.value = malloc(2);
+	if (!token.value) // I added it to privent segfault, no clean properly !
+		exit(1);
 	token.value[0] = *tokenizer->input++;
 	token.value[1] = '\0';
 	return (token);

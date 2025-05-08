@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:09:26 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:09:33 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/08 08:50:08 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_TokenArray	*token_array_init(void)
 {
 	t_TokenArray	*array;
 
-	array = (t_TokenArray *)malloc(sizeof(t_TokenArray));
+	array = (t_TokenArray *)malloc(sizeof(t_TokenArray)); // memory leak
 	if (!array)
 	{
 		print_error("Failed to allocate token array\n");
