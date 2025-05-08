@@ -79,6 +79,7 @@ SRC_FILES := \
 	src/executor/redirections/heredoc/write_heredoc_utils.c \
 	src/executor/redirections/heredoc/write_heredoc_utils1.c \
 	src/executor/redirections/heredoc/apply_heredoc_utilc.c \
+	src/executor/redirections/heredoc/apply_heredoc_utils1.c \
 	src/executor/redirections/heredoc/apply_heredocs.c \
 	src/executor/builtins/unset/unset.c \
 	src/executor/builtins/echo/echo_utils.c \

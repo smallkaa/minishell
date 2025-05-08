@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 11:59:22 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/08 12:48:34 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,16 @@ typedef struct s_heredoc_ctx
 	int			expand;
 	size_t		*total;
 }	t_heredoc_ctx;
+
+typedef struct s_heredoc_exec_ctx
+{
+	t_cmd		*cmd;
+	const char	*delim;
+	t_cmd		*current;
+	t_cmd		*full_cmd_list;
+	int			*pipe_fd;
+}	t_heredoc_exec_ctx;
+
 
 /*------FUNCTIONS---------------------------------------------------*/
 
@@ -132,6 +142,9 @@ void					close_unused_heredocs_child(t_cmd *current,
 int						handle_heredoc_redirection(t_redir *r);
 t_redir					*find_redir_by_delim(t_list *redirs,
 							const char *delim);
+int						handle_heredoc_parent(pid_t pid, int *pipe_fd,
+							t_cmd *full_cmd_list);
+void					handle_heredoc_child(t_heredoc_exec_ctx ctx);
 
 // utils
 t_mshell_var			*split_key_value(char *key_value_pair);
