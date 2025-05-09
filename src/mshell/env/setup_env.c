@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 02:48:37 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 02:51:52 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	**setup_env(char **envp)
 	char	**env;
 
 	envp_len = ft_arr_size(envp);
-	env = malloc((envp_len + 1) * sizeof(char *)); // tested 
+	env = malloc((envp_len + 1) * sizeof(char *)); // tested
 	if (!env)
 	{
 		print_error("-minishell: setup_envp, env malloc failed\n");
@@ -69,7 +69,15 @@ char	**setup_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		env[i] = ft_strdup(envp[i]);
+		env[i] = ft_strdup(envp[i]); // tested
+		if (!env[i])
+		{
+			print_error("-minishell: setup_env, strdup failed\n");
+			while (--i >= 0)
+				free(env[i]);
+			free(env);
+			return (NULL);
+		}
 		i++;
 	}
 	env[i] = NULL;
