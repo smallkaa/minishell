@@ -24,8 +24,8 @@ RM      := rm -rf
 
 # --- Explicit list of source files ---
 SRC_FILES := \
-	src/free_memory/free_cmd.c \
-	src/free_memory/free_minishell.c \
+	src/memory_management/free_cmd.c \
+	src/memory_management/free_minishell.c \
 	src/parser/parser_helpers2.c \
 	src/parser/tokenizer2.c \
 	src/parser/parser2.c \
