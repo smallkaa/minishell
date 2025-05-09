@@ -4,7 +4,7 @@ BIGTEST ?= 0
 
 # Default flags
 LDFLAGS :=
-CFLAGS  := -g -O0 -Wall -Wextra -Werror -Wuninitialized
+CFLAGS  := -g -Wall -Wextra -Werror
 CFLAGS  += -DBIGTEST=$(BIGTEST)
 
 # macOS-specific flags for Readline (2DO: fix extern void rl_replace_line(const char *, int) in signals.c)
