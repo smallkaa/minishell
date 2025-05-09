@@ -11643,3 +11643,85 @@
    fun:run_interactive_mode
    fun:main
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_make_bare_keymap
+   fun:rl_generic_bind
+   fun:rl_parse_and_bind
+   obj:/usr/lib/x86_64-linux-gnu/libreadline.so.8.1
+   fun:rl_read_init_file
+   fun:rl_initialize
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   obj:/usr/lib/x86_64-linux-gnu/libreadline.so.8.1
+   fun:rl_read_init_file
+   fun:rl_initialize
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:xrealloc
+   obj:/usr/lib/x86_64-linux-gnu/libreadline.so.8.1
+   fun:rl_expand_prompt
+   fun:rl_set_prompt
+   fun:readline
+   fun:read_next_heredoc_line
+   fun:process_heredoc_line
+   fun:run_heredoc_child
+   fun:write_heredoc_to_pipe
+   fun:handle_heredoc_child
+   fun:new_heredoc_fd
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   obj:/usr/lib/x86_64-linux-gnu/libreadline.so.8.1
+   fun:rl_expand_prompt
+   fun:rl_set_prompt
+   fun:readline
+   fun:read_next_heredoc_line
+   fun:process_heredoc_line
+   fun:run_heredoc_child
+   fun:write_heredoc_to_pipe
+   fun:handle_heredoc_child
+   fun:new_heredoc_fd
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:xmalloc
+   fun:rl_set_prompt
+   fun:readline
+   fun:read_next_heredoc_line
+   fun:process_heredoc_line
+   fun:run_heredoc_child
+   fun:write_heredoc_to_pipe
+   fun:handle_heredoc_child
+   fun:new_heredoc_fd
+   fun:assign_heredoc_fd
+   fun:handle_cmd_heredocs
+}

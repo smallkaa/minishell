@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 11:58:18 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/09 11:11:06 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 // errors
 # define WRITE_HERED_ERR -2
 # define REDIR_ERR -3
-# define HEREDOC_INTERRUPTED -4
+# define HEREDOC_INTERRUPTED 130
 # define ERROR_UNEXPECTED_TOKEN -5
 /**
  * @struct	s_builtin_dispatch
