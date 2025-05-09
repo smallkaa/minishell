@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:09 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 22:09:59 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 02:27:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ uint8_t	update_shlvl(t_cmd *cmd)
 	if (set_variable(cmd->minishell, "SHLVL", new_shlvl, 1) != EXIT_SUCCESS)
 	{
 		print_error("-minishell: update_shlvl, set_variable failed\n");
-		return (EXIT_SUCCESS);
+		return (EXIT_FAILURE);
 	}
 	free(new_shlvl);
 	if (update_env(cmd->minishell) != EXIT_SUCCESS)

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 09:50:48 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 02:36:47 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,31 @@ static void	insert_env_var(t_mshell *mshell, char *entry)
 	tmp = split_key_value(entry);
 	if (!tmp)
 		return ;
-	(void)set_variable(mshell, tmp->key, tmp->value, 1);
+	if (set_variable(mshell, tmp->key, tmp->value, 1) != EXIT_SUCCESS)
+		print_error("-minishell: failed to insert env var\n");
 	free_pair_and_return_null(tmp);
+}
+
+/**
+ * @brief Initializes SHLVL to 1 if not already present in the environment.
+ *
+ * @param minishell Shell instance.
+ * @return EXIT_SUCCESS or EXIT_FAILURE.
+ */
+uint8_t	update_shlvl_setup_no_env(t_mshell *minishell)
+{
+	char	*str_shlvl;
+
+	str_shlvl = ms_getenv(minishell, "SHLVL");
+	if (str_shlvl == NULL)
+	{
+		if (set_variable(minishell, "SHLVL", "1", 1) != EXIT_SUCCESS)
+		{
+			print_error("-minishell: update_shlvl, set_variable failed\n");
+			return (EXIT_FAILURE);
+		}
+	}
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -38,12 +61,21 @@ static void	insert_env_var(t_mshell *mshell, char *entry)
 static int	add_oldpwd_from_home(t_mshell *mshell)
 {
 	char	*home;
+	char	working_dir[MS_PATHMAX];
 
 	home = ms_getenv(mshell, "HOME");
 	if (!home)
 	{
-		print_error("minishell: load_env_into_ht: get home dir failed\n");
-		return (EXIT_FAILURE);
+		print_error("-minishell: env: No such file or directory\n");
+		home = getcwd(working_dir, MS_PATHMAX);
+		if (!home)
+		{
+			print_error("-minishell: getcwd, ger working_dir failed\n");
+			return (EXIT_FAILURE);
+		}
+		set_variable(mshell, "PWD", home, 1);
+		update_shlvl_setup_no_env(mshell);
+		return (EXIT_SUCCESS);
 	}
 	if (set_variable(mshell, "OLDPWD", home, 1) != EXIT_SUCCESS)
 	{
