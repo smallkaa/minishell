@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:46 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 09:31:31 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 02:45:12 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,12 @@ static t_mshell	*allocate_minishell(void)
 {
 	t_mshell	*mshell;
 
-	mshell = malloc(sizeof(t_mshell));
+	mshell = malloc(sizeof(t_mshell)); // tested
 	if (!mshell)
-		print_error("Error (allocate_minishell): minishell malloc failed\n");
+	{
+		print_error("-minishell: minishell malloc failed\n");
+		return (NULL);
+	}
 	ft_memset(mshell, 0, sizeof(t_mshell));
 	return (mshell);
 }
@@ -55,13 +58,13 @@ static char	**init_env(char **envp)
 
 	if (!envp)
 	{
-		print_error("Error (init_env): no environ found\n");
+		print_error("-minishell: init_env, no environ found\n");
 		return (NULL);
 	}
 	env = setup_env(envp);
 	if (!env)
 	{
-		print_error("Error (init_env): failed to setup environment\n");
+		print_error("-minishell: init_env, failed to setup environment\n");
 		return (NULL);
 	}
 	return (env);
