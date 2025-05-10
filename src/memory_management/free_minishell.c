@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 06:35:30 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 15:30:56 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,30 @@
  *
  * @param env The array of environment variables to free.
  */
-static void	free_env(char **env)
-{
-	int	i;
+// void	free_env(char **env)
+// {
+// 	size_t	i;
 
-	if (!env)
+// 	if (!env)
+// 		return ;
+// 	i = 0;
+// 	while (env[i])
+// 	{
+// 		free(env[i]);
+// 		env[i] = NULL;
+// 		i++;
+// 	}
+// 	free(env);
+// }
+
+void	free_env(char ***env_ptr)
+{
+	char	**env;
+	int		i;
+
+	if (!env_ptr || !*env_ptr)
 		return ;
+	env = *env_ptr;
 	i = 0;
 	while (env[i])
 	{
@@ -37,6 +55,7 @@ static void	free_env(char **env)
 		i++;
 	}
 	free(env);
+	*env_ptr = NULL;
 }
 
 /**
@@ -107,7 +126,7 @@ void	free_minishell(t_mshell **minishell_ptr)
 	minishell = *minishell_ptr;
 	if (minishell->env)
 	{
-		free_env(minishell->env);
+		free_env(&minishell->env);
 		minishell->env = NULL;
 	}
 	if (minishell->hash_table)

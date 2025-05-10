@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 06:39:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 15:45:48 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,8 +168,10 @@ void			free_minishell(t_mshell **minishell);
 void			free_cmd(t_cmd **cmd);
 void			free_mshell_var(t_mshell_var *var);
 void			free_hash_table(t_hash_tbl *hash_table);
+void			free_env(char ***env);
+void			free_ptr(void **ptr);
+void			free_str_array_range(char **arr, size_t count);
 
 int				readline_interrupt_hook(void);
-void			free_ptr(void **ptr);
 
 #endif /* MINISHELL_H */

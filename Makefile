@@ -26,6 +26,7 @@ RM      := rm -rf
 SRC_FILES := \
 	src/memory_management/free_cmd.c \
 	src/memory_management/free_minishell.c \
+	src/memory_management/free_utils.c \
 	src/parser/parser_helpers2.c \
 	src/parser/tokenizer2.c \
 	src/parser/parser2.c \
