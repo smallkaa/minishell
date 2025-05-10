@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 03:00:28 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:11:02 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,20 @@
  * @param mshell Shell instance.
  * @param entry Key=value environment string.
  */
-static void	insert_env_var(t_mshell *mshell, char *entry)
+static int	insert_env_var(t_mshell *mshell, char *entry)
 {
 	t_mshell_var	*tmp;
 
 	tmp = split_key_value(entry);
 	if (!tmp)
-		return ;
+		return (EXIT_FAILURE);
 	if (set_variable(mshell, tmp->key, tmp->value, 1) != EXIT_SUCCESS)
+	{
 		print_error("-minishell: failed to insert env var\n");
+		return (EXIT_FAILURE);
+	}
 	free_pair_and_return_null(tmp);
+	return (EXIT_SUCCESS);
 }
 
 /**
@@ -99,7 +103,11 @@ static int	load_env_into_ht(t_mshell *mshell)
 
 	i = 0;
 	while (mshell->env[i])
-		insert_env_var(mshell, mshell->env[i++]);
+	{
+		if (insert_env_var(mshell, mshell->env[i]) != EXIT_SUCCESS)
+			return (EXIT_FAILURE);
+		i++;
+	}
 	return (add_oldpwd_from_home(mshell));
 }
 
@@ -115,7 +123,7 @@ static t_hash_tbl	*init_hash_tbl(void)
 	t_hash_tbl	*ht;
 	int			i;
 
-	ht = malloc(sizeof(t_hash_tbl)); // tested 
+	ht = malloc(sizeof(t_hash_tbl)); // tested
 	if (!ht)
 	{
 		print_error("-minishell: hash_table malloc failed\n");

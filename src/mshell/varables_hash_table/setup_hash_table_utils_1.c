@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 09:58:06 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:14:11 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,12 @@ static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 	t_mshell_var	*mshell_var;
 	char			*equal_sign;
 
-	mshell_var = malloc(sizeof(t_mshell_var));
+	mshell_var = malloc(sizeof(t_mshell_var)); // tested 
 	if (!mshell_var)
-		return (print_error("minishell: mshell_var malloc failed\n"), NULL);
+	{
+		print_error("minishell: mshell_var malloc failed\n");
+		return (NULL);
+	}
 	equal_sign = ft_strchr(kv_pair, '=');
 	if (equal_sign)
 	{
