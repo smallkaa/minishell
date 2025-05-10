@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/09 11:46:48 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/10 16:01:38 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,12 +108,21 @@ uint8_t	run_executor(t_cmd *cmd)
 	uint8_t		exit_status;
 
 	if (!cmd)
-		return (error_return("run_executor: no cmd found\n", EXIT_FAILURE));
+	{
+		print_error("-minishell: run_executor, no cmd found\n");
+		return (EXIT_FAILURE);
+	}
 	minishell = cmd->minishell;
 	if (!minishell || !minishell->env || !minishell->hash_table)
-		return (error_return("run_executor: no mshell found\n", EXIT_FAILURE));
+	{
+		print_error("-minishell: run_executor, no mshell found\n");
+		return (EXIT_FAILURE);
+	}
 	if (command_too_long(cmd->argv))
-		return (error_return("run_executor: command too long\n", 2));
+	{
+		print_error("-minishell: run_executor, command too long\n");
+		return (EXIT_FAILURE);
+	}
 	exit_status = apply_heredocs(cmd);
 	if (exit_status != EXIT_SUCCESS || g_signal_flag)
 		return (handle_executor_signal_exit(cmd, exit_status));

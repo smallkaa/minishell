@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:50 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/05 22:35:43 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 16:07:16 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	perror_return(const char *msg, int exit_status)
 
 	fallback_msg = "minishell: error: failed to print error\n";
 	error_buf[0] = '\0';
-	ft_strlcpy(error_buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcpy(error_buf, "-minishell: ", ERROR_BUF_SIZE);
 	if (msg)
 	{
 		ft_strlcat(error_buf, msg, ERROR_BUF_SIZE);

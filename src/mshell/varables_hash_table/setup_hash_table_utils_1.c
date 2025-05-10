@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 06:54:59 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 17:06:48 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,11 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 	return (var);
 }
 
+/**
+ * @brief Frees a t_mshell_var and sets its pointer to NULL.
+ *
+ * @param pair Double pointer to the variable structure.
+ */
 void	free_pair(t_mshell_var **pair)
 {
 	if (!pair || !*pair)
@@ -91,26 +96,37 @@ void	free_pair(t_mshell_var **pair)
 }
 
 /**
+ * @brief Allocates and zero-initializes a t_mshell_var.
+ *
+ * @return Pointer to new variable, or NULL on failure.
+ */
+static t_mshell_var	*allocate_env_var(void)
+{
+	t_mshell_var	*mshell_var;
+
+	mshell_var = malloc(sizeof(t_mshell_var)); // tested FINAL
+	if (!mshell_var)
+	{
+		print_error("-minishell: mshell_var malloc failed\n");
+		return (NULL);
+	}
+	ft_memset(mshell_var, 0, sizeof(t_mshell_var));
+	return (mshell_var);
+}
+
+/**
  * @brief Handles splitting and allocation when '=' is absent.
  *
  * @param kv_pair The input string to duplicate as key.
  * @return A pointer to t_mshell_var or NULL on failure.
  */
-static t_mshell_var	*split_without_equal(char *kv_pair)
+static t_mshell_var	*split_without_equal(char *kv_pair, t_mshell_var *mshell_var)
 {
-	t_mshell_var	*mshell_var;
-
-	mshell_var = malloc(sizeof(t_mshell_var)); // tested
-	if (!mshell_var)
-	{
-		print_error("- minishell: mshell_var malloc failed\n");
-		return (NULL);
-	}
-	mshell_var->key = ft_strdup(kv_pair); // tested
+	mshell_var->key = ft_strdup(kv_pair); // tested FINAL
 	if (!mshell_var->key)
 	{
 		print_error("-minishell: mshell_var->key ft_strdup failed\n");
-		free(mshell_var);
+		free_pair(&mshell_var);
 		return (NULL);
 	}
 	mshell_var->value = NULL;
@@ -124,29 +140,20 @@ static t_mshell_var	*split_without_equal(char *kv_pair)
  * @param equal_sign Pointer to '=' inside kv_pair.
  * @return A pointer to t_mshell_var or NULL on failure.
  */
-static t_mshell_var	*split_with_equal(char *kv_pair, char *equal_sign)
+static t_mshell_var	*split_with_equal(char *kv_pair, char *equal_sign, t_mshell_var *mshell_var)
 {
-	t_mshell_var	*mshell_var;
-
-	mshell_var = malloc(sizeof(t_mshell_var)); // tested
-	if (!mshell_var)
-	{
-		print_error("-minishell: mshell_var malloc failed\n");
-		return (NULL);
-	}
-	mshell_var->key = ft_substr(kv_pair, 0, equal_sign - kv_pair); // tested
+	mshell_var->key = ft_substr(kv_pair, 0, equal_sign - kv_pair); // tested FINAL
 	if (!mshell_var->key)
 	{
 		print_error("-minishell: mshell_var->key ft_substr failed\n");
-		free(mshell_var);
+		free_ptr((void **)&mshell_var);
 		return (NULL);
 	}
-	mshell_var->value = ft_strdup(equal_sign + 1); // tested
+	mshell_var->value = ft_strdup(equal_sign + 1); // tested FINAL
 	if (!mshell_var->value)
 	{
 		print_error("-minishell: mshell_var->value ft_strdup failed\n");
-		free(mshell_var->key);
-		free(mshell_var);
+		free_pair(&mshell_var);
 		return (NULL);
 	}
 	return (mshell_var);
@@ -163,12 +170,16 @@ static t_mshell_var	*split_with_equal(char *kv_pair, char *equal_sign)
 static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 {
 	char			*equal_sign;
+	t_mshell_var	*mshell_var;
 
+	mshell_var = allocate_env_var();
+	if (!mshell_var)
+		return (NULL);
 	equal_sign = ft_strchr(kv_pair, '=');
 	if (equal_sign)
-		return (split_with_equal(kv_pair, equal_sign));
+		return (split_with_equal(kv_pair, equal_sign, mshell_var));
 	else
-		return (split_without_equal(kv_pair));
+		return (split_without_equal(kv_pair, mshell_var));
 }
 
 /**
@@ -176,7 +187,7 @@ static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
  *
  * Frees allocated memory and prints error if key/value allocation fails.
  *
- * @param kv_pair The input string to split.
+ * @param kv_pair Key=value environment string to split.
  * @return A valid t_mshell_var pointer or NULL on failure.
  */
 t_mshell_var	*split_key_value(char *kv_pair)

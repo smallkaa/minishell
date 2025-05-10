@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 07:21:18 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 17:23:26 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,16 +129,16 @@ static int load_env_into_ht(t_mshell *mshell)
  */
 static t_hash_tbl *init_hash_tbl(void)
 {
-	t_hash_tbl *ht;
-	int i;
+	t_hash_tbl	*ht;
+	int			i;
 
-	ht = malloc(sizeof(t_hash_tbl)); // tested
+	ht = malloc(sizeof(t_hash_tbl)); // tested FINAL
 	if (!ht)
 	{
 		print_error("-minishell: hash_table malloc failed\n");
 		return (NULL);
 	}
-	memset(ht, 0, sizeof(t_hash_tbl));
+	ft_memset(ht, 0, sizeof(t_hash_tbl));
 	i = 0;
 	while (i < HASH_SIZE)
 		ht->buckets[i++] = NULL;

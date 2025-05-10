@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_heredoc_to_pipe.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:47:38 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 11:35:45 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/10 16:08:01 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ static int	handle_heredoc_status(int status)
  * @param pipe_fd The write-end of the pipe.
  * @param delim The heredoc delimiter.
  * @return EXIT_SUCCESS on success, WRITE_HERED_ERR on error.
- * 		return (WRITE_HERED_ERR); // ошибка внутри heredoc (write, malloc)
-	return (EXIT_SUCCESS); // heredoc завершён нормально
+ * 		return (WRITE_HERED_ERR);
+	return (EXIT_SUCCESS);
 
  */
 static int	get_expand_flag(t_cmd *cmd, const char *delim)
