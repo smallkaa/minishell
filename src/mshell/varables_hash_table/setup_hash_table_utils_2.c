@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 09:49:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 17:42:00 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 21:59:09 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ int insert_new_var(t_mshell *mshell, char *key,
 		return (EXIT_FAILURE);
 	index = hash_function(key);
 	new_var->next = mshell->hash_table->buckets[index];
+	// if (mshell->hash_table->buckets[index])
+	// 	free(mshell->hash_table->buckets[index]);
 	mshell->hash_table->buckets[index] = new_var;
 	return (EXIT_SUCCESS);
 }

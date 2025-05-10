@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 18:41:04 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 22:04:59 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ uint8_t update_shlvl_setup_no_env(t_mshell *minishell)
 	return (EXIT_SUCCESS);
 }
 
-static int	set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
+static int set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
 {
 	if (set_variable(mshell, "PWD", working_dir, 1) != EXIT_SUCCESS)
 	{
@@ -72,10 +72,10 @@ static int	set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
 	return (EXIT_SUCCESS);
 }
 
-static int	add_oldpwd_from_home(t_mshell *mshell)
+static int add_oldpwd_from_home(t_mshell *mshell)
 {
-	char	*home;
-	char	working_dir[MS_PATHMAX];
+	char *home;
+	char working_dir[MS_PATHMAX];
 
 	if (!mshell)
 		return (EXIT_FAILURE);
@@ -130,8 +130,8 @@ static int load_env_into_ht(t_mshell *mshell)
  */
 static t_hash_tbl *init_hash_tbl(void)
 {
-	t_hash_tbl	*ht;
-	int			i;
+	t_hash_tbl *ht;
+	int i;
 
 	ht = malloc(sizeof(t_hash_tbl)); // tested FINAL
 	if (!ht)

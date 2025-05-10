@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 17:55:57 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 22:06:34 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 static t_mshell_var	*alloc_var_struct(char *key)
 {
 	t_mshell_var	*var;
+	char			*dup;
 
 	var = malloc(sizeof(t_mshell_var)); // tested FINAL
 	if (!var)
@@ -34,13 +35,15 @@ static t_mshell_var	*alloc_var_struct(char *key)
 		return (NULL);
 	}
 	ft_memset(var, 0, sizeof(t_mshell_var));
-	var->key = ft_strdup(key); // tested FINAL
-	if (!var->key)
+	dup = ft_strdup(key);
+	if (!dup)
 	{
 		print_error("-minishell: new_var->key ft_strdup failed\n");
 		free_ptr((void **)&var);
 		return (NULL);
 	}
+	free(var->key);
+	var->key = dup;
 	return (var);
 }
 
@@ -56,25 +59,26 @@ static t_mshell_var	*alloc_var_struct(char *key)
 t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 {
 	t_mshell_var	*mshell_var;
+	char			*dup;
 
-	mshell_var = alloc_var_struct(key);
+	mshell_var = alloc_var_struct(key); // tested FINAL
 	if (!mshell_var)
 		return (NULL);
 	if (value)
 	{
-		mshell_var->value = ft_strdup(value); // tested FINAL
-		if (!mshell_var->value)
+		dup = ft_strdup(value); //
+		if (!dup)
 		{
 			print_error("-minishell: new_var->value ft_strdup failed\n");
 			free_pair(&mshell_var);
 			return (NULL);
 		}
+		free(mshell_var->value);
+		mshell_var->value = dup;
 	}
 	mshell_var->val_assigned = assigned;
 	return (mshell_var);
 }
-
-
 
 /**
  * @brief Allocates and zero-initializes a t_mshell_var.

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:46 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 18:41:51 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 21:18:58 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,10 @@ static int	setup_environment(t_mshell *mshell, char **envp)
 	if (!mshell->env)
 		return (EXIT_FAILURE);
 	if (setup_hash_table(mshell) == EXIT_FAILURE)
+	{
+		// free_env(&mshell->env);
 		return (EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 

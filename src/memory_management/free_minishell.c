@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 15:30:56 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 22:06:16 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,6 @@
  * @brief Functions for freeing Minishell environment and memory resources.
  */
 #include "minishell.h"
-
-/**
- * @brief Frees a null-terminated array of environment variable strings.
- *
- * Iterates over the environment array, frees each individual string,
- * and finally frees the array itself.
- *
- * @param env The array of environment variables to free.
- */
-// void	free_env(char **env)
-// {
-// 	size_t	i;
-
-// 	if (!env)
-// 		return ;
-// 	i = 0;
-// 	while (env[i])
-// 	{
-// 		free(env[i]);
-// 		env[i] = NULL;
-// 		i++;
-// 	}
-// 	free(env);
-// }
 
 void	free_env(char ***env_ptr)
 {
@@ -67,8 +43,9 @@ void	free_env(char ***env_ptr)
  */
 void	free_mshell_var(t_mshell_var *var)
 {
+
 	if (!var)
-		return ;
+	return ;
 	if (var->key)
 		free(var->key);
 	if (var->value)
