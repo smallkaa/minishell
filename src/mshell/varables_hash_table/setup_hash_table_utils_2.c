@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 09:49:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 04:46:17 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:56:12 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,12 @@ int	update_existing_var(t_mshell_var *var, char *value, int assigned)
 	if (value)
 	{
 		free(var->value);
-		var->value = ft_strdup(value);
+		var->value = ft_strdup(value); // tested
 		if (!var->value)
+		{
+			print_error("-minishell: update_existing_var, ft_strdup faild\n");
 			return (EXIT_FAILURE);
+		}
 	}
 	var->val_assigned = assigned;
 	return (EXIT_SUCCESS);

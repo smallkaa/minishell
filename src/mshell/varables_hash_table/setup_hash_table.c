@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 04:50:50 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 05:03:10 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,16 @@ static int add_oldpwd_from_home(t_mshell *mshell)
 			print_error("-minishell: getcwd, get working_dir failed\n");
 			return (EXIT_FAILURE);
 		}
-		set_variable(mshell, "PWD", home, 1);
-		update_shlvl_setup_no_env(mshell);
+		if (set_variable(mshell, "PWD", home, 1) != EXIT_SUCCESS)
+		{
+			print_error("-minishell: set PWD failed\n");
+			return (EXIT_FAILURE);
+		}
+		if (update_shlvl_setup_no_env(mshell) != EXIT_SUCCESS)
+		{
+			print_error("-minishell: update_shlvl_setup_no_env() failed\n");
+			return (EXIT_FAILURE);
+		}
 		return (EXIT_SUCCESS);
 	}
 	if (set_variable(mshell, "OLDPWD", home, 1) != EXIT_SUCCESS)

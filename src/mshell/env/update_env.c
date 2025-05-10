@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 09:33:05 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 05:12:25 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ bool	add_env_entry(t_mshell_var *var, char **new_env, int *idx)
 {
 	char	*entry;
 
+	if (!var || !new_env || !idx)
+		return (false);
 	entry = create_env_entry(var);
 	if (!entry)
 		return (false);
@@ -60,6 +62,8 @@ bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
 {
 	t_mshell_var	*current;
 
+	if (!new_env || !idx)
+		return (false);
 	current = bucket;
 	while (current)
 	{
@@ -88,6 +92,8 @@ static bool	populate_env_array(t_mshell *mshell, char **new_env)
 	int	i;
 	int	idx;
 
+	if (!mshell || !mshell->hash_table || !new_env)
+		return (false);
 	i = 0;
 	idx = 0;
 	while (i < HASH_SIZE)
@@ -145,7 +151,7 @@ int	update_env(t_mshell *mshell)
 	bool	populated;
 
 	count = count_exported_vars(mshell->hash_table);
-	new_env = malloc(sizeof(char *) * (count + 1));
+	new_env = malloc(sizeof(char *) * (count + 1)); // tested
 	if (!new_env)
 	{
 		print_error("-minishell: update_env: malloc failed\n");

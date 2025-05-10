@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:08 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 09:33:32 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 05:18:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ char	*create_env_entry(t_mshell_var *var)
 	int		len_key;
 	int		len_val;
 
+	if (!var || !var->key)
+		return (NULL);
 	if (var->value)
 		val = var->value;
 	else
@@ -44,7 +46,7 @@ char	*create_env_entry(t_mshell_var *var)
 	len_key = ft_strlen(var->key);
 	len_val = ft_strlen(val);
 	total_len = len_key + len_val + 2;
-	entry = malloc(total_len);
+	entry = malloc(total_len * sizeof(char)); // tested
 	if (!entry)
 	{
 		print_error("-minishell: create_env_entry, malloc failed\n");
