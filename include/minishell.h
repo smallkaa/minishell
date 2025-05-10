@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 02:55:47 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:50:26 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ void			update_existing_variable(t_mshell_var *current,
 unsigned int	hash_function(const char *key);
 int				update_env(t_mshell *mshell);
 char			*search_paths(char **paths, t_cmd *cmd);
-void			free_pair_and_return_null(t_mshell_var *pair);
+void			free_pair(t_mshell_var **pair);
 t_mshell_var	*create_new_var(char *key, char *value, int assigned);
 int				update_existing_var(t_mshell_var *var, char
 					*value, int assigned);

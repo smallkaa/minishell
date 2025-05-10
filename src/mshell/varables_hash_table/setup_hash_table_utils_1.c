@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 04:22:25 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:50:39 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,20 +77,14 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 	return (var);
 }
 
-/**
- * @brief Frees a t_mshell_var struct and its key/value.
- *
- * Used for safe cleanup of temporary key-value pairs.
- *
- * @param pair Pointer to the t_mshell_var to free.
- */
-void	free_pair_and_return_null(t_mshell_var *pair)
+void	free_pair(t_mshell_var **pair)
 {
-	if (!pair)
-		return ;
-	free(pair->key);
-	free(pair->value);
-	free(pair);
+	if (!pair || !*pair)
+		return;
+	free((*pair)->key);
+	free((*pair)->value);
+	free(*pair);
+	*pair = NULL;
 }
 
 /**
@@ -191,11 +185,7 @@ t_mshell_var	*split_key_value(char *kv_pair)
 		return (NULL);
 	if (!mshell_var->key || (ft_strchr(kv_pair, '=') && !mshell_var->value))
 	{
-		if (mshell_var->key)
-			free(mshell_var->key);
-		if (mshell_var->value)
-			free(mshell_var->value);
-		free(mshell_var);
+		free_pair(&mshell_var);
 		print_error("-minishell: split_key_value, strdup/substr failed\n");
 		return (NULL);
 	}

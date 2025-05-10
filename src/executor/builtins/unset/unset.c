@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:56 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:45:57 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:41:10 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ static uint8_t	remove_var_from_ht(t_mshell *mshell, char *key)
 	t_mshell_var	*prev;
 	t_mshell_var	*current;
 
+	if (!mshell || !mshell->hash_table || !key)
+		return (EXIT_FAILURE);
 	prev = NULL;
 	index = hash_function(key);
 	current = mshell->hash_table->buckets[index];

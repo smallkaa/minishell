@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:46:02 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/23 14:46:03 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:39:58 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ char	*ms_getenv(t_mshell *mshell, char *key)
 	unsigned int	index;
 	t_mshell_var	*curr;
 
+	if (!key || !mshell || !mshell->hash_table)
+		return (NULL);
 	index = hash_function(key);
 	curr = mshell->hash_table->buckets[index];
 	while (curr)
