@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 03:21:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:33:59 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 			free(mshell_var);
 			return (NULL);
 		}
-		mshell_var->value = ft_strdup(equal_sign + 1);
+		mshell_var->value = ft_strdup(equal_sign + 1); // tested
 		if (!mshell_var->value)
 		{
 			print_error("-minishell: mshell_var->key ft_strdup failed\n");
@@ -111,11 +111,12 @@ static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 	}
 	else
 	{
-		mshell_var->key = ft_strdup(kv_pair);
+		mshell_var->key = ft_strdup(kv_pair); // tested
 		if (!mshell_var->key)
 		{
+			print_error("-minishell: mshell_var->key ft_strdup failed\n");
 			free(mshell_var);
-			return ( NULL);
+			return (NULL);
 		}
 		mshell_var->value = NULL;
 	}

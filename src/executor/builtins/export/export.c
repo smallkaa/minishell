@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 10:18:23 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:26:18 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static t_mshell_var	*validate_export_pair(char *arg)
 	pair = split_key_value(arg);
 	if (!pair)
 	{
-		print_error("-minishell: export: memory allocation failed");
+		print_error("-minishell: export: memory allocation failed\n");
 		return (NULL);
 	}
 	if (!is_valid_varname(pair->key))
