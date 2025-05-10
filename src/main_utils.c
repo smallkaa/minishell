@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/08 18:19:33 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/10 05:56:44 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,29 +20,40 @@
  *
  * @return Pointer to the input string, or NULL if EOF (Ctrl+D) is received.
  */
+// char	*read_user_input(void)
+// {
+// 	char	*input;
+// 	char	*line;
+
+// 	if (isatty(STDIN_FILENO))
+// 	{
+// 		input = readline("minishell: ");
+// 		if (!input)
+// 			return (NULL);
+// 		if (*input)
+// 			add_history(input);
+// 	}
+// 	else
+// 	{
+// 		line = get_next_line(STDIN_FILENO);
+// 		if (!line)
+// 			return (NULL);
+// 		input = ft_strtrim(line, "\n");
+// 		free(line);
+// 		if (!input)
+// 			return (NULL);
+// 	}
+// 	return (input);
+// }
 char	*read_user_input(void)
 {
 	char	*input;
-	char	*line;
 
-	if (isatty(STDIN_FILENO))
-	{
 		input = readline("minishell: ");
 		if (!input)
 			return (NULL);
 		if (*input)
 			add_history(input);
-	}
-	else
-	{
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
-			return (NULL);
-		input = ft_strtrim(line, "\n");
-		free(line);
-		if (!input)
-			return (NULL);
-	}
 	return (input);
 }
 

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 09:49:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 04:56:12 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 07:11:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@
  * @param assigned Assignment flag.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-int	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
+int set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
-	t_mshell_var	*curr;
-	unsigned int	index;
+	t_mshell_var *curr;
+	unsigned int index;
 
 	if (!mshell || !key || !mshell->hash_table)
 	{
@@ -60,11 +60,11 @@ int	set_variable(t_mshell *mshell, char *key, char *value, int assigned)
  * @param assigned Assignment flag.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-int	insert_new_var(t_mshell *mshell, char *key,
-	char *value, int assigned)
+int insert_new_var(t_mshell *mshell, char *key,
+				   char *value, int assigned)
 {
-	t_mshell_var	*new_var;
-	unsigned int	index;
+	t_mshell_var *new_var;
+	unsigned int index;
 
 	if (!mshell || !mshell->hash_table || !key)
 	{
@@ -90,17 +90,21 @@ int	insert_new_var(t_mshell *mshell, char *key,
  * @param assigned 1 if value is assigned, 0 otherwise.
  * @return EXIT_SUCCESS or EXIT_FAILURE on allocation error.
  */
-int	update_existing_var(t_mshell_var *var, char *value, int assigned)
+int update_existing_var(t_mshell_var *var, char *value, int assigned)
 {
+	char	*dup;
+
 	if (value)
 	{
-		free(var->value);
-		var->value = ft_strdup(value); // tested
-		if (!var->value)
+		dup = ft_strdup(value);
+		if (!dup)
 		{
-			print_error("-minishell: update_existing_var, ft_strdup faild\n");
+			// free(value);
+			print_error("-minishell: update_existing_var, strdup failed\n");
 			return (EXIT_FAILURE);
 		}
+		free(var->value);
+		var->value = dup;
 	}
 	var->val_assigned = assigned;
 	return (EXIT_SUCCESS);

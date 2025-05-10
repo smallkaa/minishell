@@ -72,3 +72,4 @@ minishell
 42_minishell_tester_3/
 script-run-all-mand.sh
 minishell_test_log.txt
+funcheck/

@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 04:50:39 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 06:54:59 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ static t_mshell_var	*alloc_var_struct(char *key)
 		free(var);
 		return (NULL);
 	}
+	var->value = NULL;
+	var->val_assigned = 0;
+	var->next = NULL;
 	return (var);
 }
 

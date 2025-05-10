@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 05:12:25 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 06:16:52 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,29 @@
  * marked as assigned (i.e., exported with a value).
  */
 #include "minishell.h"
+
+/**
+ * @brief Frees a partially filled environment array.
+ *
+ * Used when building the env array fails partway through.
+ *
+ * @param env The environment array to free.
+ * @param count Number of filled entries in the array.
+ */
+void	free_partial_env(char **env, int count)
+{
+	int	i;
+
+	if (!env)
+		return;
+	i = 0;
+	while (i < count)
+	{
+		free(env[i]);
+		i++;
+	}
+	free(env);
+}
 
 /**
  * @brief Adds an assigned environment variable to the new environment array.
@@ -70,7 +93,10 @@ bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
 		if (current->val_assigned)
 		{
 			if (!add_env_entry(current, new_env, idx))
+			{
+
 				return (false);
+			}
 		}
 		current = current->next;
 	}
@@ -99,7 +125,10 @@ static bool	populate_env_array(t_mshell *mshell, char **new_env)
 	while (i < HASH_SIZE)
 	{
 		if (!process_env_bucket(mshell->hash_table->buckets[i], new_env, &idx))
+		{
+			free_partial_env(new_env, idx);
 			return (false);
+		}
 		i++;
 	}
 	new_env[idx] = NULL;
