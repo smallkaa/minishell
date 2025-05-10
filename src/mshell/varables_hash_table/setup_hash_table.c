@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 03:11:02 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:15:50 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
  * @param mshell Shell instance.
  * @param entry Key=value environment string.
  */
-static int	insert_env_var(t_mshell *mshell, char *entry)
+static int insert_env_var(t_mshell *mshell, char *entry)
 {
-	t_mshell_var	*tmp;
+	t_mshell_var *tmp;
 
 	tmp = split_key_value(entry);
 	if (!tmp)
@@ -40,9 +40,9 @@ static int	insert_env_var(t_mshell *mshell, char *entry)
  * @param minishell Shell instance.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-uint8_t	update_shlvl_setup_no_env(t_mshell *minishell)
+uint8_t update_shlvl_setup_no_env(t_mshell *minishell)
 {
-	char	*str_shlvl;
+	char *str_shlvl;
 
 	str_shlvl = ms_getenv(minishell, "SHLVL");
 	if (str_shlvl == NULL)
@@ -62,10 +62,10 @@ uint8_t	update_shlvl_setup_no_env(t_mshell *minishell)
  * @param mshell Shell instance.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-static int	add_oldpwd_from_home(t_mshell *mshell)
+static int add_oldpwd_from_home(t_mshell *mshell)
 {
-	char	*home;
-	char	working_dir[MS_PATHMAX];
+	char *home;
+	char working_dir[MS_PATHMAX];
 
 	home = ms_getenv(mshell, "HOME");
 	if (!home)
@@ -74,7 +74,7 @@ static int	add_oldpwd_from_home(t_mshell *mshell)
 		home = getcwd(working_dir, MS_PATHMAX);
 		if (!home)
 		{
-			print_error("-minishell: getcwd, ger working_dir failed\n");
+			print_error("-minishell: getcwd, get working_dir failed\n");
 			return (EXIT_FAILURE);
 		}
 		set_variable(mshell, "PWD", home, 1);
@@ -97,9 +97,9 @@ static int	add_oldpwd_from_home(t_mshell *mshell)
  * @param mshell Shell instance.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-static int	load_env_into_ht(t_mshell *mshell)
+static int load_env_into_ht(t_mshell *mshell)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (mshell->env[i])
@@ -118,10 +118,10 @@ static int	load_env_into_ht(t_mshell *mshell)
  *
  * @return Pointer to hash table, or NULL on failure.
  */
-static t_hash_tbl	*init_hash_tbl(void)
+static t_hash_tbl *init_hash_tbl(void)
 {
-	t_hash_tbl	*ht;
-	int			i;
+	t_hash_tbl *ht;
+	int i;
 
 	ht = malloc(sizeof(t_hash_tbl)); // tested
 	if (!ht)
@@ -141,7 +141,7 @@ static t_hash_tbl	*init_hash_tbl(void)
  * @param mshell Shell instance.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-int	setup_hash_table(t_mshell *mshell)
+int setup_hash_table(t_mshell *mshell)
 {
 	if (!mshell)
 	{

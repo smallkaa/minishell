@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 03:14:11 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:21:45 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 	t_mshell_var	*mshell_var;
 	char			*equal_sign;
 
-	mshell_var = malloc(sizeof(t_mshell_var)); // tested 
+	mshell_var = malloc(sizeof(t_mshell_var)); // tested
 	if (!mshell_var)
 	{
 		print_error("minishell: mshell_var malloc failed\n");
@@ -93,12 +93,30 @@ static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 	equal_sign = ft_strchr(kv_pair, '=');
 	if (equal_sign)
 	{
-		mshell_var->key = ft_substr(kv_pair, 0, equal_sign - kv_pair);
+		mshell_var->key = ft_substr(kv_pair, 0, equal_sign - kv_pair); // tested
+		if (!mshell_var->key)
+		{
+			print_error("-minishell: mshell_var->key ft_substr failed\n");
+			free(mshell_var);
+			return (NULL);
+		}
 		mshell_var->value = ft_strdup(equal_sign + 1);
+		if (!mshell_var->value)
+		{
+			print_error("-minishell: mshell_var->key ft_strdup failed\n");
+			free(mshell_var->key);
+			free(mshell_var);
+			return (NULL);
+		}
 	}
 	else
 	{
 		mshell_var->key = ft_strdup(kv_pair);
+		if (!mshell_var->key)
+		{
+			free(mshell_var);
+			return ( NULL);
+		}
 		mshell_var->value = NULL;
 	}
 	return (mshell_var);
