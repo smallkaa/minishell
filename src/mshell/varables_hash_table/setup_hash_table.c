@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 03:15:50 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:59:55 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static int insert_env_var(t_mshell *mshell, char *entry)
 		return (EXIT_FAILURE);
 	if (set_variable(mshell, tmp->key, tmp->value, 1) != EXIT_SUCCESS)
 	{
+		free_pair_and_return_null(tmp);
 		print_error("-minishell: failed to insert env var\n");
 		return (EXIT_FAILURE);
 	}

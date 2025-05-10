@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 10:19:37 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:35:36 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,23 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 static uint8_t	handle_cd_dash(t_cmd *cmd)
 {
 	char	*old_pwd;
+	char	*old_env;
 
-	old_pwd = ft_strdup(ms_getenv(cmd->minishell, "OLDPWD"));
+	old_env = ms_getenv(cmd->minishell, "OLDPWD");
+	if (!old_env)
+	{
+		print_error("-minishell: cd, OLDPWD not set\n");
+		return (EXIT_FAILURE);
+	}
+	old_pwd = ft_strdup(old_env);
 	if (!old_pwd)
-		return (error_return("cd: OLDPWD not set\n", EXIT_FAILURE));
+	{
+		print_error("-minishell: cd, strdup failed\n");
+		return (EXIT_FAILURE);
+	}
 	if (chdir(old_pwd) != 0)
 	{
-		print_error("minishell: cd: ");
+		print_error("-minishell: cd: ");
 		perror(old_pwd);
 		free(old_pwd);
 		return (EXIT_FAILURE);
@@ -83,7 +93,7 @@ static uint8_t	handle_cd_path(const char *path)
 {
 	if (chdir(path) != 0)
 	{
-		print_error("minishell: cd: ");
+		print_error("-minishell: cd: ");
 		perror(path);
 		return (EXIT_FAILURE);
 	}

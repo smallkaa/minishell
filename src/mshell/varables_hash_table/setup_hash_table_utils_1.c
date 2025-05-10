@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 03:33:59 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 04:22:25 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,34 @@
 #include "minishell.h"
 
 /**
- * @brief Allocates and initializes a new shell variable.
+ * @brief Allocates a new t_mshell_var and duplicates the key.
  *
- * Duplicates the key and value (if present), and sets flags and next pointer.
+ * @param key The variable name (non-null).
+ * @return A partially initialized t_mshell_var or NULL on failure.
+ */
+static t_mshell_var	*alloc_var_struct(char *key)
+{
+	t_mshell_var	*var;
+
+	var = malloc(sizeof(t_mshell_var)); // tested
+	if (!var)
+	{
+		print_error("-minishell: new_var malloc failed\n");
+		return (NULL);
+	}
+	var->key = ft_strdup(key); // tested
+	if (!var->key)
+	{
+		print_error("-minishell: new_var->key ft_strdup failed\n");
+		free(var);
+		return (NULL);
+	}
+	return (var);
+}
+
+/**
+ * @brief Creates and initializes a new shell variable with key
+ * and optional value.
  *
  * @param key Variable name (non-null).
  * @param value Variable value (can be NULL).
@@ -29,29 +54,27 @@
  */
 t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 {
-	t_mshell_var	*new_var;
+	t_mshell_var	*var;
 
-	new_var = malloc(sizeof(t_mshell_var));
-	if (!new_var)
-		return (print_error("Error: new_var malloc failed\n"), NULL);
-	new_var->key = ft_strdup(key);
-	if (!new_var->key)
-		return (free(new_var), NULL);
+	var = alloc_var_struct(key);
+	if (!var)
+		return (NULL);
 	if (value)
 	{
-		new_var->value = ft_strdup(value);
-		if (!new_var->value)
+		var->value = ft_strdup(value); // tested
+		if (!var->value)
 		{
-			free(new_var->key);
-			free(new_var);
+			print_error("-minishell: new_var->value ft_strdup failed\n");
+			free(var->key);
+			free(var);
 			return (NULL);
 		}
 	}
 	else
-		new_var->value = NULL;
-	new_var->val_assigned = assigned;
-	new_var->next = NULL;
-	return (new_var);
+		var->value = NULL;
+	var->val_assigned = assigned;
+	var->next = NULL;
+	return (var);
 }
 
 /**
@@ -71,56 +94,84 @@ void	free_pair_and_return_null(t_mshell_var *pair)
 }
 
 /**
+ * @brief Handles splitting and allocation when '=' is absent.
+ *
+ * @param kv_pair The input string to duplicate as key.
+ * @return A pointer to t_mshell_var or NULL on failure.
+ */
+static t_mshell_var	*split_without_equal(char *kv_pair)
+{
+	t_mshell_var	*mshell_var;
+
+	mshell_var = malloc(sizeof(t_mshell_var)); // tested
+	if (!mshell_var)
+	{
+		print_error("- minishell: mshell_var malloc failed\n");
+		return (NULL);
+	}
+	mshell_var->key = ft_strdup(kv_pair); // tested
+	if (!mshell_var->key)
+	{
+		print_error("-minishell: mshell_var->key ft_strdup failed\n");
+		free(mshell_var);
+		return (NULL);
+	}
+	mshell_var->value = NULL;
+	return (mshell_var);
+}
+
+/**
+ * @brief Handles splitting and allocation when '=' is present.
+ *
+ * @param kv_pair The original string.
+ * @param equal_sign Pointer to '=' inside kv_pair.
+ * @return A pointer to t_mshell_var or NULL on failure.
+ */
+static t_mshell_var	*split_with_equal(char *kv_pair, char *equal_sign)
+{
+	t_mshell_var	*mshell_var;
+
+	mshell_var = malloc(sizeof(t_mshell_var)); // tested
+	if (!mshell_var)
+	{
+		print_error("-minishell: mshell_var malloc failed\n");
+		return (NULL);
+	}
+	mshell_var->key = ft_substr(kv_pair, 0, equal_sign - kv_pair); // tested
+	if (!mshell_var->key)
+	{
+		print_error("-minishell: mshell_var->key ft_substr failed\n");
+		free(mshell_var);
+		return (NULL);
+	}
+	mshell_var->value = ft_strdup(equal_sign + 1); // tested
+	if (!mshell_var->value)
+	{
+		print_error("-minishell: mshell_var->value ft_strdup failed\n");
+		free(mshell_var->key);
+		free(mshell_var);
+		return (NULL);
+	}
+	return (mshell_var);
+}
+
+/**
  * @brief Splits a key=value string into a key and value.
  *
- * Allocates and initializes a t_mshell_var struct. Handles both
- * cases where '=' is present and absent. Only key is required.
+ * Delegates '=' and non-'=' handling to helper functions.
  *
  * @param kv_pair The input string to split.
  * @return A pointer to t_mshell_var or NULL on failure.
  */
 static t_mshell_var	*alloc_and_split_pair(char *kv_pair)
 {
-	t_mshell_var	*mshell_var;
 	char			*equal_sign;
 
-	mshell_var = malloc(sizeof(t_mshell_var)); // tested
-	if (!mshell_var)
-	{
-		print_error("minishell: mshell_var malloc failed\n");
-		return (NULL);
-	}
 	equal_sign = ft_strchr(kv_pair, '=');
 	if (equal_sign)
-	{
-		mshell_var->key = ft_substr(kv_pair, 0, equal_sign - kv_pair); // tested
-		if (!mshell_var->key)
-		{
-			print_error("-minishell: mshell_var->key ft_substr failed\n");
-			free(mshell_var);
-			return (NULL);
-		}
-		mshell_var->value = ft_strdup(equal_sign + 1); // tested
-		if (!mshell_var->value)
-		{
-			print_error("-minishell: mshell_var->key ft_strdup failed\n");
-			free(mshell_var->key);
-			free(mshell_var);
-			return (NULL);
-		}
-	}
+		return (split_with_equal(kv_pair, equal_sign));
 	else
-	{
-		mshell_var->key = ft_strdup(kv_pair); // tested
-		if (!mshell_var->key)
-		{
-			print_error("-minishell: mshell_var->key ft_strdup failed\n");
-			free(mshell_var);
-			return (NULL);
-		}
-		mshell_var->value = NULL;
-	}
-	return (mshell_var);
+		return (split_without_equal(kv_pair));
 }
 
 /**

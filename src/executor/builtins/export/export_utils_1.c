@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:29 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 10:14:35 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:44:49 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,14 +142,14 @@ int	handle_sorted_env(t_mshell *mshell)
 
 	if (!mshell || !mshell->hash_table)
 	{
-		print_error("minishell: export: no mshell or hash_table found\n");
+		print_error("-minishell: export: no mshell or hash_table found\n");
 		return (EXIT_FAILURE);
 	}
 	if (collect_keys(mshell->hash_table, &keys, &count) != EXIT_SUCCESS)
 		return (EXIT_FAILURE);
 	if (!keys)
 	{
-		print_error("minishell: export: keys memory allocation failed\n");
+		print_error("-minishell: export: keys memory allocation failed\n");
 		return (EXIT_FAILURE);
 	}
 	bubble_sort(keys, count);

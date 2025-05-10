@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 15:22:02 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 23:21:54 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:44:00 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	open_script_file(const char *file)
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
 	{
-		print_error("minishell: cannot open script file: ");
+		print_error("-minishell: cannot open script file: ");
 		perror(file);
 		return (-1);
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:24 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/04/25 12:51:02 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/10 03:44:37 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
  */
 static uint8_t	exit_numeric_error(char *arg)
 {
-	print_error("minishell: exit: ");
+	print_error("-minishell: exit: ");
 	print_error(arg);
 	print_error(": numeric argument required\n");
 	return (2);
