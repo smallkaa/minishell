@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 02:36:47 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 03:00:28 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,12 @@ static t_hash_tbl	*init_hash_tbl(void)
 	t_hash_tbl	*ht;
 	int			i;
 
-	ht = malloc(sizeof(t_hash_tbl));
+	ht = malloc(sizeof(t_hash_tbl)); // tested 
 	if (!ht)
-		return (print_error("-minishell: hash_table malloc failed\n"), NULL);
+	{
+		print_error("-minishell: hash_table malloc failed\n");
+		return (NULL);
+	}
 	i = 0;
 	while (i < HASH_SIZE)
 		ht->buckets[i++] = NULL;
@@ -132,6 +135,11 @@ static t_hash_tbl	*init_hash_tbl(void)
  */
 int	setup_hash_table(t_mshell *mshell)
 {
+	if (!mshell)
+	{
+		print_error("-minishell: no minishell structure\n");
+		return (EXIT_FAILURE);
+	}
 	mshell->hash_table = init_hash_tbl();
 	if (!mshell->hash_table)
 		return (EXIT_FAILURE);
