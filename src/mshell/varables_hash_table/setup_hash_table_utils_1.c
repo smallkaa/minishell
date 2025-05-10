@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 22:06:34 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 22:09:58 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static t_mshell_var	*alloc_var_struct(char *key)
 		return (NULL);
 	}
 	ft_memset(var, 0, sizeof(t_mshell_var));
-	dup = ft_strdup(key);
+	dup = ft_strdup(key); // tested FINAL
 	if (!dup)
 	{
 		print_error("-minishell: new_var->key ft_strdup failed\n");
@@ -66,7 +66,7 @@ t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 		return (NULL);
 	if (value)
 	{
-		dup = ft_strdup(value); //
+		dup = ft_strdup(value); // tested FINAL
 		if (!dup)
 		{
 			print_error("-minishell: new_var->value ft_strdup failed\n");
