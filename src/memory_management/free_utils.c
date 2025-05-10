@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:39:21 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 15:45:42 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 17:56:04 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,19 @@ void	free_str_array_range(char **arr, size_t count)
 		arr[i] = NULL;
 		i++;
 	}
+}
+
+/**
+ * @brief Frees a t_mshell_var and sets its pointer to NULL.
+ *
+ * @param pair Double pointer to the variable structure.
+ */
+void	free_pair(t_mshell_var **pair)
+{
+	if (!pair || !*pair)
+		return;
+	free((*pair)->key);
+	free((*pair)->value);
+	free(*pair);
+	*pair = NULL;
 }

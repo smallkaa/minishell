@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:08 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 05:18:32 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 18:39:23 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
  * @param var Pointer to the `t_mshell_var` structure containing key-value data.
  * @return A newly allocated string containing `KEY=VALUE`, or NULL on failure.
  */
-char	*create_env_entry(t_mshell_var *var)
+char	*create_env_entry(t_mshell_var *mshell_var)
 {
 	size_t	total_len;
 	char	*entry;
@@ -37,22 +37,22 @@ char	*create_env_entry(t_mshell_var *var)
 	int		len_key;
 	int		len_val;
 
-	if (!var || !var->key)
+	if (!mshell_var || !mshell_var->key)
 		return (NULL);
-	if (var->value)
-		val = var->value;
+	if (mshell_var->value)
+		val = mshell_var->value;
 	else
 		val = "";
-	len_key = ft_strlen(var->key);
+	len_key = ft_strlen(mshell_var->key);
 	len_val = ft_strlen(val);
 	total_len = len_key + len_val + 2;
-	entry = malloc(total_len * sizeof(char)); // tested
+	entry = malloc(total_len * sizeof(char)); // tested FINAL
 	if (!entry)
 	{
 		print_error("-minishell: create_env_entry, malloc failed\n");
 		return (NULL);
 	}
-	ft_strlcpy(entry, var->key, total_len);
+	ft_strlcpy(entry, mshell_var->key, total_len);
 	ft_strlcat(entry, "=", total_len);
 	ft_strlcat(entry, val, total_len);
 	return (entry);
@@ -66,17 +66,21 @@ char	*create_env_entry(t_mshell_var *var)
  * Iterates through the array, frees each `KEY=VALUE` string,
  * @param env The environment array to free.
  */
-void	free_old_env(char **env)
-{
-	int	i;
+// void	free_old_env(char **env)
+// {
+// 	int	i;
 
-	if (!env)
-		return ;
-	i = 0;
-	while (env[i])
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
-}
+// 	if (!env)
+// 		return ;
+// 	i = 0;
+// 	while (env[i])
+// 	{
+// 		free(env[i]);
+// 		i++;
+// 	}
+// 	free(env);
+// }
+
+
+
+

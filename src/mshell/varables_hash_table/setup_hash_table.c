@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 17:23:26 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 18:41:04 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ uint8_t update_shlvl_setup_no_env(t_mshell *minishell)
 	char *str_shlvl;
 
 	str_shlvl = ms_getenv(minishell, "SHLVL");
-	if (str_shlvl == NULL)
+	if (!str_shlvl)
 	{
 		if (set_variable(minishell, "SHLVL", "1", 1) != EXIT_SUCCESS)
 		{
@@ -57,17 +57,28 @@ uint8_t update_shlvl_setup_no_env(t_mshell *minishell)
 	return (EXIT_SUCCESS);
 }
 
-/**
- * @brief Ensures OLDPWD is initialized from HOME in the hash table.
- *
- * @param mshell Shell instance.
- * @return EXIT_SUCCESS or EXIT_FAILURE.
- */
-static int add_oldpwd_from_home(t_mshell *mshell)
+static int	set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
 {
-	char *home;
-	char working_dir[MS_PATHMAX];
+	if (set_variable(mshell, "PWD", working_dir, 1) != EXIT_SUCCESS)
+	{
+		print_error("-minishell: set PWD failed\n");
+		return (EXIT_FAILURE);
+	}
+	if (update_shlvl_setup_no_env(mshell) != EXIT_SUCCESS)
+	{
+		print_error("-minishell: update_shlvl_setup_no_env failed\n");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
 
+static int	add_oldpwd_from_home(t_mshell *mshell)
+{
+	char	*home;
+	char	working_dir[MS_PATHMAX];
+
+	if (!mshell)
+		return (EXIT_FAILURE);
 	home = ms_getenv(mshell, "HOME");
 	if (!home)
 	{
@@ -78,21 +89,11 @@ static int add_oldpwd_from_home(t_mshell *mshell)
 			print_error("-minishell: getcwd, get working_dir failed\n");
 			return (EXIT_FAILURE);
 		}
-		if (set_variable(mshell, "PWD", home, 1) != EXIT_SUCCESS)
-		{
-			print_error("-minishell: set PWD failed\n");
-			return (EXIT_FAILURE);
-		}
-		if (update_shlvl_setup_no_env(mshell) != EXIT_SUCCESS)
-		{
-			print_error("-minishell: update_shlvl_setup_no_env() failed\n");
-			return (EXIT_FAILURE);
-		}
-		return (EXIT_SUCCESS);
+		return (set_pwd_and_shlvl(mshell, home));
 	}
 	if (set_variable(mshell, "OLDPWD", home, 1) != EXIT_SUCCESS)
 	{
-		print_error("-minishell: load_env_into_ht, set_variable failed\n");
+		print_error("-minishell: add_oldpwd_from_home, set OLDPWD failed\n");
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

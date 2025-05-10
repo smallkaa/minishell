@@ -60,6 +60,7 @@ SRC_FILES := \
 	src/main_utils.c \
 	src/main_script_mode.c \
 	src/main_interactive_mode.c \
+	src/main_non_interactive_mode.c \
 	src/mshell/init_minishell.c \
 	src/mshell/find_binary_utils.c \
 	src/mshell/env/setup_env.c \

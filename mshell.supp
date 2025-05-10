@@ -124,6 +124,16 @@
    Memcheck:Leak
    match-leak-kinds: reachable
    fun:malloc
+   fun:update_temp_buf
+   fun:get_next_line
+   fun:run_non_interactive_command
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
    fun:make_variable_value
    obj:/usr/bin/bash
    fun:set_ppid

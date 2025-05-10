@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 09:49:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 07:11:55 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 17:42:00 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
  */
 int set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 {
-	t_mshell_var *curr;
+	t_mshell_var *mshell_var;
 	unsigned int index;
 
 	if (!mshell || !key || !mshell->hash_table)
@@ -39,12 +39,13 @@ int set_variable(t_mshell *mshell, char *key, char *value, int assigned)
 		return (EXIT_FAILURE);
 	}
 	index = hash_function(key);
-	curr = mshell->hash_table->buckets[index];
-	while (curr)
+	mshell_var = mshell->hash_table->buckets[index];
+	while (mshell_var)
 	{
-		if (ft_strcmp(curr->key, key) == 0)
-			return (update_existing_var(curr, value, assigned));
-		curr = curr->next;
+		if (ft_strcmp(mshell_var->key, key) == 0)
+			return (update_existing_var(mshell_var, value,
+				assigned));
+		mshell_var = mshell_var->next;
 	}
 	return (insert_new_var(mshell, key, value, assigned));
 }
@@ -90,22 +91,21 @@ int insert_new_var(t_mshell *mshell, char *key,
  * @param assigned 1 if value is assigned, 0 otherwise.
  * @return EXIT_SUCCESS or EXIT_FAILURE on allocation error.
  */
-int update_existing_var(t_mshell_var *var, char *value, int assigned)
+int update_existing_var(t_mshell_var *mshell_var, char *value, int assigned)
 {
 	char	*dup;
 
 	if (value)
 	{
-		dup = ft_strdup(value);
+		dup = ft_strdup(value); // tested FINAL
 		if (!dup)
 		{
-			// free(value);
 			print_error("-minishell: update_existing_var, strdup failed\n");
 			return (EXIT_FAILURE);
 		}
-		free(var->value);
-		var->value = dup;
+		free(mshell_var->value);
+		mshell_var->value = dup;
 	}
-	var->val_assigned = assigned;
+	mshell_var->val_assigned = assigned;
 	return (EXIT_SUCCESS);
 }

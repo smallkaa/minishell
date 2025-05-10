@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:46 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 17:23:06 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 18:41:51 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,5 @@ t_mshell	*init_mshell(char **envp)
 		free_minishell(&mshell);
 		return (NULL);
 	}
-	mshell->exit_status = 0;
-	mshell->syntax_exit_status = 0;
 	return (mshell);
 }

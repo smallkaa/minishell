@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 16:04:13 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 19:41:04 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,10 @@ bool			handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd,
 void			handle_signal_after_exec(t_mshell *mshell);
 bool			is_input_interactive(void);
 uint8_t			run_script_mode(t_mshell *mshell, const char *file);
+
+// running modes
 uint8_t			run_interactive_mode(t_mshell *mshell);
+uint8_t			run_non_interactive_mode(t_mshell *mshell);
 
 // init minishell
 t_mshell		*init_mshell(char **envp);
@@ -118,7 +121,6 @@ char			**setup_env(char **envp);
 char			**setup_builtin(void);
 char			*find_binary(t_cmd *cmd);
 char			*create_env_entry(t_mshell_var *var);
-void			free_old_env(char **env);
 
 // setup hash table
 int				setup_hash_table(t_mshell *mshell);

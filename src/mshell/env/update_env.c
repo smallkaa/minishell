@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 06:16:52 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 18:39:15 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,7 @@ bool	process_env_bucket(t_mshell_var *bucket, char **new_env, int *idx)
 		if (current->val_assigned)
 		{
 			if (!add_env_entry(current, new_env, idx))
-			{
-
 				return (false);
-			}
 		}
 		current = current->next;
 	}
@@ -180,7 +177,7 @@ int	update_env(t_mshell *mshell)
 	bool	populated;
 
 	count = count_exported_vars(mshell->hash_table);
-	new_env = malloc(sizeof(char *) * (count + 1)); // tested
+	new_env = malloc(sizeof(char *) * (count + 1)); // tested FINAL
 	if (!new_env)
 	{
 		print_error("-minishell: update_env: malloc failed\n");
@@ -189,11 +186,8 @@ int	update_env(t_mshell *mshell)
 	ft_memset(new_env, 0, sizeof(char *) * (count + 1));
 	populated = populate_env_array(mshell, new_env);
 	if (populated == false)
-	{
-		free_old_env(new_env);
 		return (EXIT_FAILURE);
-	}
-	free_old_env(mshell->env);
+	free_env(&mshell->env);
 	mshell->env = new_env;
 	return (EXIT_SUCCESS);
 }

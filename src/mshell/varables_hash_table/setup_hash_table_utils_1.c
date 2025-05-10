@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:18 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 17:06:48 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/10 17:55:57 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,20 @@ static t_mshell_var	*alloc_var_struct(char *key)
 {
 	t_mshell_var	*var;
 
-	var = malloc(sizeof(t_mshell_var)); // tested
+	var = malloc(sizeof(t_mshell_var)); // tested FINAL
 	if (!var)
 	{
 		print_error("-minishell: new_var malloc failed\n");
 		return (NULL);
 	}
-	var->key = ft_strdup(key); // tested
+	ft_memset(var, 0, sizeof(t_mshell_var));
+	var->key = ft_strdup(key); // tested FINAL
 	if (!var->key)
 	{
 		print_error("-minishell: new_var->key ft_strdup failed\n");
-		free(var);
+		free_ptr((void **)&var);
 		return (NULL);
 	}
-	var->value = NULL;
-	var->val_assigned = 0;
-	var->next = NULL;
 	return (var);
 }
 
@@ -57,43 +55,26 @@ static t_mshell_var	*alloc_var_struct(char *key)
  */
 t_mshell_var	*create_new_var(char *key, char *value, int assigned)
 {
-	t_mshell_var	*var;
+	t_mshell_var	*mshell_var;
 
-	var = alloc_var_struct(key);
-	if (!var)
+	mshell_var = alloc_var_struct(key);
+	if (!mshell_var)
 		return (NULL);
 	if (value)
 	{
-		var->value = ft_strdup(value); // tested
-		if (!var->value)
+		mshell_var->value = ft_strdup(value); // tested FINAL
+		if (!mshell_var->value)
 		{
 			print_error("-minishell: new_var->value ft_strdup failed\n");
-			free(var->key);
-			free(var);
+			free_pair(&mshell_var);
 			return (NULL);
 		}
 	}
-	else
-		var->value = NULL;
-	var->val_assigned = assigned;
-	var->next = NULL;
-	return (var);
+	mshell_var->val_assigned = assigned;
+	return (mshell_var);
 }
 
-/**
- * @brief Frees a t_mshell_var and sets its pointer to NULL.
- *
- * @param pair Double pointer to the variable structure.
- */
-void	free_pair(t_mshell_var **pair)
-{
-	if (!pair || !*pair)
-		return;
-	free((*pair)->key);
-	free((*pair)->value);
-	free(*pair);
-	*pair = NULL;
-}
+
 
 /**
  * @brief Allocates and zero-initializes a t_mshell_var.
