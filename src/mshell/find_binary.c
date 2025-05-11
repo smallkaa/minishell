@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:39 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/08 09:32:14 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/11 13:28:10 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static char	*handle_direct_path(t_cmd *cmd)
 {
 	char	*binary;
 
-	binary = ft_strdup(cmd->argv[0]);
+	binary = ft_strdup(cmd->argv[0]); // tested FINAL
 	return (binary);
 }
 
@@ -90,6 +90,7 @@ char	*find_binary(t_cmd *cmd)
 {
 	char	*binary;
 	char	*path_env;
+	char	*dup;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0] || ft_strlen(cmd->argv[0]) == 0)
 	{
@@ -104,9 +105,18 @@ char	*find_binary(t_cmd *cmd)
 	if (!path_env || path_env[0] == '\0')
 	{
 		if (access(cmd->argv[0], F_OK) == 0)
-			return (ft_strdup(cmd->argv[0]));
-		else
-			return (NULL);
+		{
+			dup = ft_strdup(cmd->argv[0]); // tested FINAL
+			if (!dup)
+			{
+				print_error("-minishell: ft_strdup failed in find_binary\n");
+				cmd->minishell->exit_status = 1;
+				return (NULL);
+			}
+			return (dup);
+		}
+		cmd->minishell->exit_status = 127;
+		return (NULL);
 	}
 	binary = handle_path_search(cmd);
 	return (binary);

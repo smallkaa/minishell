@@ -40,3 +40,7 @@ all errors
 valgrind --leak-check=full  --track-origins=yes  --trace-children=yes --gen-suppressions=all --show-leak-kinds=all --track-fds=yes --error-limit=no  ./minishell
 ```
 
+Find all memory allocation functions
+```bash
+grep -rnE '\b(malloc|calloc|ft_calloc|realloc|ft_realloc|strdup|ft_strdup|strndup|ft_strndup|ft_substr|asprintf|vasprintf)\b' ./src
+```

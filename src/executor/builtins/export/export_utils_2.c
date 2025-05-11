@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:45:34 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 16:10:13 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/11 13:30:31 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static bool	allocate_keys_array(t_hash_tbl *ht, char ***keys, int *count)
 	if (!ht || !keys || !count)
 		return (false);
 	*count = count_total_keys(ht);
-	*keys = malloc(sizeof(char *) * (*count));
+	*keys = malloc(sizeof(char *) * (*count)); // tested FINAL
 	if (!(*keys))
 	{
 		print_error("-minishell: export: key memory allocation failed\n");
@@ -92,6 +92,7 @@ static int	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 	t_mshell_var	*var;
 	int				i;
 	int				key_index;
+	char			*dup;
 
 	i = 0;
 	key_index = 0;
@@ -100,7 +101,15 @@ static int	fill_keys_from_hash(t_hash_tbl *ht, char **keys)
 		var = ht->buckets[i];
 		while (var)
 		{
-			keys[key_index++] = ft_strdup(var->key);
+			dup = ft_strdup(var->key); // tested FINAL
+			if (!dup)
+			{
+				print_error("-minishell: fill_keys_from_hash ft_strdup failed\n");
+				return (EXIT_FAILURE);
+			}
+			free(keys[key_index]);
+			keys[key_index] = dup;
+			key_index++;
 			var = var->next;
 		}
 		i++;
