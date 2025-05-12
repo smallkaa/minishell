@@ -874,3 +874,84 @@
    fun:xrealloc
    obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
 }
+
+{
+   <insert_a_suppression_name_here111>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/lib/aarch64-linux-gnu/libtinfo.so.6.2
+   fun:_nc_tiparm
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+   fun:rl_redisplay
+   fun:_rl_internal_char_cleanup
+   fun:readline_internal_char
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
+
+{
+   <insert_a_suppression_name_heresdfsd>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/lib/aarch64-linux-gnu/libtinfo.so.6.2
+   fun:_nc_tiparm
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+   fun:rl_redisplay
+   fun:_rl_internal_char_cleanup
+   fun:readline_internal_char
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_nc_doalloc
+   obj:/lib/aarch64-linux-gnu/libtinfo.so.6.2
+   fun:_nc_tiparm
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+   fun:rl_redisplay
+   fun:_rl_internal_char_cleanup
+   fun:readline_internal_char
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
+
+{
+   <weinsert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_nc_doalloc
+   obj:/lib/aarch64-linux-gnu/libtinfo.so.6.2
+   fun:_nc_tiparm
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+   fun:rl_redisplay
+   fun:_rl_internal_char_cleanup
+   fun:readline_internal_char
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
+{
+   <insdfsert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:xmalloc
+   fun:readline_internal_teardown
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}
