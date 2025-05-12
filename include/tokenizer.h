@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:40 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/25 13:47:48 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/12 13:00:50 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ typedef struct s_unsupported_cmd
 
 // Get the next token from the input
 // Get the next token from the input
-t_Token			get_next_token(t_Tokenizer *tokenizer);
+t_Token			get_next_token(t_Tokenizer *tokenizer, t_mshell *minishell);
 
 /**
  * @brief Parses a dollar-quoted string token ($\"...\").
@@ -79,7 +79,7 @@ t_Token			get_next_token(t_Tokenizer *tokenizer);
  * @return t_Token Parsed token.
  */
 t_Token			tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer,
-					int saw_space);
+					int saw_space, t_mshell *minishell);
 
 /**
  * @brief Parses a quoted string token (single or double).
@@ -88,7 +88,7 @@ t_Token			tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer,
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space);
+t_Token			tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell);
 
 /**
  * @brief Parses redirection tokens "<<" or ">>".
@@ -96,7 +96,7 @@ t_Token			tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space);
  * @param tokenizer Pointer to the tokenizer.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_redirection(t_Tokenizer *tokenizer);
+t_Token			tokenizer_parse_redirection(t_Tokenizer *tokenizer, t_mshell *minishell);
 
 /**
  * @brief Parses single-character operator tokens |, <, >, &.
@@ -104,7 +104,7 @@ t_Token			tokenizer_parse_redirection(t_Tokenizer *tokenizer);
  * @param tokenizer Pointer to the tokenizer.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_operator(t_Tokenizer *tokenizer);
+t_Token			tokenizer_parse_operator(t_Tokenizer *tokenizer, t_mshell *minishell);
 
 /**
  * @brief Parses an unquoted word token until special or whitespace.
@@ -113,7 +113,7 @@ t_Token			tokenizer_parse_operator(t_Tokenizer *tokenizer);
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space);
+t_Token			tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell);
 
 // Free resources used by a token
 void			free_token(t_Token *token);

@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 10:34:54 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/08 10:38:43 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/12 12:10:35 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 
 	exit_status = mshell->exit_status;
 	rl_event_hook = readline_interrupt_hook;
-	while (1)
+	while (!mshell->allocation_error)
 	{
 		if (handle_signal_interrupt(mshell, NULL))
 			continue ;
@@ -77,11 +77,12 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (handle_eof_input(input))
 			break ;
 		exit_status = process_input(mshell, input);
-		if (input)
-			free_ptr((void **)&input);
+//		if (input)
+//			free_ptr((void **)&input);
 		handle_signal_after_exec(mshell);
 		handle_newline_if_signal(mshell);
 	}
+	if(mshell->allocation_error) print_error("Allocation error!");
 	rl_event_hook = NULL;
 	return (exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:09:26 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 18:13:51 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/12 20:41:02 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,26 @@ t_TokenArray	*token_array_init(void)
 {
 	t_TokenArray	*array;
 
-	array = (t_TokenArray *)malloc(sizeof(t_TokenArray));
+	array = (t_TokenArray *)malloc(sizeof(t_TokenArray)); //PROTECTION = CHECKED
 	if (!array)
 	{
 		print_error("Failed to allocate token array\n");
-		exit(1);
+		return NULL;
 	}
 	array->capacity = 16;
-	array->tokens = (t_Token *)malloc(sizeof(t_Token) * array->capacity);
+	array->tokens = (t_Token *)malloc(sizeof(t_Token) * array->capacity); //PROTECTION = CHECKED
 	if (!array->tokens)
 	{
 		print_error("Failed to allocate tokens buffer\n");
 		free(array);
-		exit(1);
+		return NULL;
 	}
 	array->count = 0;
 	return (array);
 }
 
 // Add a token to the array
-void	token_array_add(t_TokenArray *array, t_Token token)
+void	token_array_add(t_TokenArray *array, t_Token token, t_mshell *minishell)
 {
 	int		old_capacity;
 	size_t	old_size;
@@ -52,8 +52,17 @@ void	token_array_add(t_TokenArray *array, t_Token token)
 		if (new_capacity < old_capacity)
 			new_capacity = INT_MAX;
 		new_size = (size_t)new_capacity * sizeof(t_Token);
-		new_tokens_ptr = (t_Token *)ft_realloc(array->tokens, old_size,
+		(void) new_size;
+		(void) old_size;
+		printf("\n in token_array_add");
+		new_tokens_ptr = (t_Token *)ft_realloc(array->tokens, old_size, // PROTECTION=CHEKCED
 				new_size);
+		new_tokens_ptr = NULL;
+		if(!new_tokens_ptr)
+		{
+			minishell->allocation_error = 1;
+			return ;
+		}
 		array->tokens = new_tokens_ptr;
 		array->capacity = new_capacity;
 	}

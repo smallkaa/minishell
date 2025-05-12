@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer6.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 21:16:21 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:45:27 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ static size_t	fill_buffer_with_word(t_Tokenizer *tokenizer, char *buffer,
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed word token.
  */
-t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space)
+t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell)
 {
 	t_Token	token;
 	size_t	index;
@@ -101,7 +101,7 @@ t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space)
 	if (index == 0 && is_quote_char(*tokenizer->input))
 	{
 		tokenizer->buffer[0] = '\0';
-		next = get_next_token(tokenizer);
+		next = get_next_token(tokenizer, minishell);
 		return (next);
 	}
 	tokenizer->buffer[index] = '\0';

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser5.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 13:45:00 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:37:45 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,46 @@
  * @param input User input string.
  * @return Pointer to a new t_TokenArray, or NULL on error.
  */
-static t_TokenArray	*tokenize_input(char *input)
+static t_TokenArray	*tokenize_input(char *input, t_mshell *mshell)
 {
 	t_Tokenizer		*tokenizer;
 	t_TokenArray	*tokens;
-	t_Token			token;
+	t_Token			current_token;
 
 	tokenizer = tokenizer_create(input);
 	if (!tokenizer)
+	{
+		mshell->allocation_error = true;
 		return (NULL);
+	}
 	tokens = token_array_init();
 	if (!tokens)
 	{
 		tokenizer_destroy(tokenizer);
+		mshell->allocation_error = true;
 		return (NULL);
 	}
 	while (1)
 	{
-		token = get_next_token(tokenizer);
-		if (token.type == TOKEN_EOF)
+		current_token = get_next_token(tokenizer, mshell);
+		if (mshell->allocation_error) { // Ошибка в get_next_token (например, ft_strdup для token.value)
+            free_token(&current_token); // Освобождаем значение текущего токена, если оно было выделено
+            break; 
+        }
+		if (current_token.type == TOKEN_EOF) {
+            free_token(&current_token); // На случай, если TOKEN_EOF может иметь value (хотя обычно нет)
+            break;
+        }
+        token_array_add(tokens, current_token, mshell); //
+        if (mshell->allocation_error) {
+			if (current_token.value) {
+				free(current_token.value);
+				current_token.value = NULL;
+			}
 			break ;
-		token_array_add(tokens, token);
-		token.value = NULL;
+		}
 	}
-	free_token(&token);
+	//free_token(&token);
 	tokenizer_destroy(tokenizer);
 	return (tokens);
 }
@@ -105,10 +121,20 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	t_cmd			*cmd;
 
 	debug_printf("\nTokenizing: %s\n\n", input);
-	tokens = tokenize_input(input);
-	if (!tokens)
-		return (NULL);
+	tokens = tokenize_input(input, minishell);
+	if (minishell->allocation_error)
+	{	
+		if (tokens) // Если tokens не NULL (т.е. token_array_init успел отработать)
+		{
+			token_array_free(tokens); // Освобождаем все, что было выделено для tokens
+		}
+		return (NULL); // Возвращаем NULL, так как произошла ошибка
+	}
 	expand_tokens(tokens, minishell);
+    if (minishell->allocation_error) {
+        token_array_free(tokens); //
+        return (NULL);
+    }
 	if (check_for_unsupported_syntax(minishell, input) != EXIT_SUCCESS)
 	{
 		token_array_free(tokens);

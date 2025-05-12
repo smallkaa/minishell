@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:18:10 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 12:25:47 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/12 13:00:37 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static void	tokenizer_skip_whitespace(t_Tokenizer *tokenizer, int *saw_space)
  * @param tokenizer Pointer to the tokenizer.
  * @return t_Token The next token.
  */
-t_Token	get_next_token(t_Tokenizer *tokenizer)
+t_Token	get_next_token(t_Tokenizer *tokenizer, t_mshell *mshell)
 {
 	t_Token	token;
 	int		saw_space;
@@ -85,13 +85,13 @@ t_Token	get_next_token(t_Tokenizer *tokenizer)
 		return (token);
 	}
 	if (*tokenizer->input == '$' && *(tokenizer->input + 1) == '"')
-		return (tokenizer_parse_special_dollar_quote(tokenizer, saw_space));
+		return (tokenizer_parse_special_dollar_quote(tokenizer, saw_space, mshell));
 	if (*tokenizer->input == '"' || *tokenizer->input == '\'')
-		return (tokenizer_parse_quoted(tokenizer, saw_space));
+		return (tokenizer_parse_quoted(tokenizer, saw_space, mshell));
 	if ((*tokenizer->input == '<' && *(tokenizer->input + 1) == '<')
 		|| (*tokenizer->input == '>' && *(tokenizer->input + 1) == '>'))
-		return (tokenizer_parse_redirection(tokenizer));
+		return (tokenizer_parse_redirection(tokenizer, mshell));
 	if (ft_is_special_char(*tokenizer->input))
-		return (tokenizer_parse_operator(tokenizer));
-	return (tokenizer_parse_word(tokenizer, saw_space));
+		return (tokenizer_parse_operator(tokenizer, mshell));
+	return (tokenizer_parse_word(tokenizer, saw_space, mshell));
 }
