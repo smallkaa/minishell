@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:39:21 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 17:56:04 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 14:06:05 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@
  */
 void	free_str_array_range(char **arr, size_t count)
 {
-	size_t	i = 0;
+	size_t	i;
 
+	i = 0;
 	if (!arr)
 		return ;
 	while (i < count)
@@ -43,7 +44,7 @@ void	free_str_array_range(char **arr, size_t count)
 void	free_pair(t_mshell_var **pair)
 {
 	if (!pair || !*pair)
-		return;
+		return ;
 	free((*pair)->key);
 	free((*pair)->value);
 	free(*pair);

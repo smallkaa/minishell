@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_minishell.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:41 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 22:06:16 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 14:05:30 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,8 @@ void	free_env(char ***env_ptr)
  */
 void	free_mshell_var(t_mshell_var *var)
 {
-
 	if (!var)
-	return ;
+		return ;
 	if (var->key)
 		free(var->key);
 	if (var->value)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   setup_env.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:49:47 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 15:48:53 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 12:42:14 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static char	**alloc_env_array(size_t count)
 {
 	char	**env;
 
-	env = malloc((count + 1) * sizeof(char *)); // tested FINAL
+	env = malloc((count + 1) * sizeof(char *));
 	if (!env)
 	{
 		print_error("-minishell: setup_env, env malloc failed\n");
@@ -75,7 +75,7 @@ static bool	copy_env_strings(char **dst, char **src, size_t count)
 	i = 0;
 	while (i < count)
 	{
-		dst[i] = ft_strdup(src[i]); // tested FINAL
+		dst[i] = ft_strdup(src[i]);
 		if (!dst[i])
 		{
 			print_error("-minishell: setup_env, strdup failed\n");
@@ -103,7 +103,7 @@ char	**setup_env(char **envp)
 	env = alloc_env_array(envp_len);
 	if (!env)
 		return (NULL);
-	if (!copy_env_strings(env, envp, envp_len)) // tested FINAL
+	if (!copy_env_strings(env, envp, envp_len))
 	{
 		free_env(&env);
 		return (NULL);

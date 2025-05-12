@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   find_binary.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:39 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/11 13:28:10 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 14:00:23 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static char	*handle_direct_path(t_cmd *cmd)
 {
 	char	*binary;
 
-	binary = ft_strdup(cmd->argv[0]); // tested FINAL
+	binary = ft_strdup(cmd->argv[0]);
 	return (binary);
 }
 
@@ -75,6 +75,35 @@ static char	*handle_path_search(t_cmd *cmd)
 }
 
 /**
+ * @brief Handles path resolution for binaries when PATH is empty or not found.
+ *
+ * If PATH is not set, we check if the command itself is directly executable.
+ * If yes, return a strdup of it. Otherwise, set exit_status to 127
+ * and return NULL.
+ *
+ * @param cmd Pointer to the command structure.
+ * @return Full path (heap-allocated) or NULL.
+ */
+static char	*handle_missing_path(t_cmd *cmd)
+{
+	char	*dup;
+
+	if (access(cmd->argv[0], F_OK) == 0)
+	{
+		dup = ft_strdup(cmd->argv[0]);
+		if (!dup)
+		{
+			print_error("-minishell: ft_strdup failed in find_binary\n");
+			cmd->minishell->exit_status = 1;
+			return (NULL);
+		}
+		return (dup);
+	}
+	cmd->minishell->exit_status = 127;
+	return (NULL);
+}
+
+/**
  * @brief Finds the full path to the binary to execute for a given command.
  *
  * Handles different cases:
@@ -90,7 +119,6 @@ char	*find_binary(t_cmd *cmd)
 {
 	char	*binary;
 	char	*path_env;
-	char	*dup;
 
 	if (!cmd || !cmd->argv || !cmd->argv[0] || ft_strlen(cmd->argv[0]) == 0)
 	{
@@ -103,21 +131,7 @@ char	*find_binary(t_cmd *cmd)
 		return (handle_direct_path(cmd));
 	path_env = ms_getenv(cmd->minishell, "PATH");
 	if (!path_env || path_env[0] == '\0')
-	{
-		if (access(cmd->argv[0], F_OK) == 0)
-		{
-			dup = ft_strdup(cmd->argv[0]); // tested FINAL
-			if (!dup)
-			{
-				print_error("-minishell: ft_strdup failed in find_binary\n");
-				cmd->minishell->exit_status = 1;
-				return (NULL);
-			}
-			return (dup);
-		}
-		cmd->minishell->exit_status = 127;
-		return (NULL);
-	}
+		return (handle_missing_path(cmd));
 	binary = handle_path_search(cmd);
 	return (binary);
 }

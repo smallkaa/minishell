@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   update_env_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:08 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 18:39:23 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 13:57:48 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,29 @@
  * and cleanup of dynamically allocated environment arrays.
  */
 #include "minishell.h"
+
+/**
+ * @brief Frees a partially filled environment array.
+ *
+ * Used when building the env array fails partway through.
+ *
+ * @param env The environment array to free.
+ * @param count Number of filled entries in the array.
+ */
+void	free_partial_env(char **env, int count)
+{
+	int	i;
+
+	if (!env)
+		return ;
+	i = 0;
+	while (i < count)
+	{
+		free(env[i]);
+		i++;
+	}
+	free(env);
+}
 
 /**
  * @brief Creates a formatted environment entry string.
@@ -46,7 +69,7 @@ char	*create_env_entry(t_mshell_var *mshell_var)
 	len_key = ft_strlen(mshell_var->key);
 	len_val = ft_strlen(val);
 	total_len = len_key + len_val + 2;
-	entry = malloc(total_len * sizeof(char)); // tested FINAL
+	entry = malloc(total_len * sizeof(char));
 	if (!entry)
 	{
 		print_error("-minishell: create_env_entry, malloc failed\n");
@@ -57,30 +80,3 @@ char	*create_env_entry(t_mshell_var *mshell_var)
 	ft_strlcat(entry, val, total_len);
 	return (entry);
 }
-
-/**
- * @brief Frees the memory allocated for an environment variable array.
- *
- * and then frees the array itself.
- *
- * Iterates through the array, frees each `KEY=VALUE` string,
- * @param env The environment array to free.
- */
-// void	free_old_env(char **env)
-// {
-// 	int	i;
-
-// 	if (!env)
-// 		return ;
-// 	i = 0;
-// 	while (env[i])
-// 	{
-// 		free(env[i]);
-// 		i++;
-// 	}
-// 	free(env);
-// }
-
-
-
-

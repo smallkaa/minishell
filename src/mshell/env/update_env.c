@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   update_env.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:13 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 18:39:15 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 13:57:40 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,29 +19,6 @@
  * marked as assigned (i.e., exported with a value).
  */
 #include "minishell.h"
-
-/**
- * @brief Frees a partially filled environment array.
- *
- * Used when building the env array fails partway through.
- *
- * @param env The environment array to free.
- * @param count Number of filled entries in the array.
- */
-void	free_partial_env(char **env, int count)
-{
-	int	i;
-
-	if (!env)
-		return;
-	i = 0;
-	while (i < count)
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
-}
 
 /**
  * @brief Adds an assigned environment variable to the new environment array.
@@ -177,7 +154,7 @@ int	update_env(t_mshell *mshell)
 	bool	populated;
 
 	count = count_exported_vars(mshell->hash_table);
-	new_env = malloc(sizeof(char *) * (count + 1)); // tested FINAL
+	new_env = malloc(sizeof(char *) * (count + 1));
 	if (!new_env)
 	{
 		print_error("-minishell: update_env: malloc failed\n");

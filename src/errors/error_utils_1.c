@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_utils_1.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:43:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/07 18:54:21 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 13:52:19 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ static void	build_missing_command_error(char *buf, t_cmd *cmd)
 	const char	*path;
 
 	buf[0] = '\0';
-	ft_strlcpy(buf, "minishell: ", ERROR_BUF_SIZE);
+	ft_strlcpy(buf, "-minishell: ", ERROR_BUF_SIZE);
 	ft_strlcat(buf, cmd->argv[0], ERROR_BUF_SIZE);
 	path = ms_getenv(cmd->minishell, "PATH");
 	if (ft_strchr(cmd->argv[0], '/') || !path || path[0] == '\0')

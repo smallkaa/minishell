@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 19:41:04 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 14:04:46 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,9 @@ int				insert_new_var(t_mshell *mshell, char *key,
 					char *value, int assigned);
 int				set_variable(t_mshell *mshell, char *key,
 					char *value, int assigned);
+uint8_t			update_shlvl_setup_no_env(t_mshell *minishell);
+int				insert_env_var(t_mshell *mshell, char *entry);
+t_mshell_var	*allocate_env_var(void);
 
 // parser
 t_cmd			*run_parser(t_mshell *shell, char *input);
@@ -173,6 +176,7 @@ void			free_hash_table(t_hash_tbl *hash_table);
 void			free_env(char ***env);
 void			free_ptr(void **ptr);
 void			free_str_array_range(char **arr, size_t count);
+void			free_partial_env(char **env, int count);
 
 int				readline_interrupt_hook(void);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_minishell.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:46 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 21:18:58 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 12:42:38 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static t_mshell	*allocate_minishell(void)
 {
 	t_mshell	*mshell;
 
-	mshell = malloc(sizeof(t_mshell)); // tested FINAL
+	mshell = malloc(sizeof(t_mshell));
 	if (!mshell)
 	{
 		print_error("-minishell: minishell malloc failed\n");
@@ -56,7 +56,7 @@ static char	**init_env(char **envp)
 {
 	char	**env;
 
-	if (!envp) // tested FINAL
+	if (!envp)
 	{
 		print_error("-minishell: init_env, no environ found\n");
 		return (NULL);
@@ -88,7 +88,6 @@ static int	setup_environment(t_mshell *mshell, char **envp)
 		return (EXIT_FAILURE);
 	if (setup_hash_table(mshell) == EXIT_FAILURE)
 	{
-		// free_env(&mshell->env);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

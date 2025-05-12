@@ -3,61 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   setup_hash_table.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:50:27 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/10 22:04:59 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/12 13:59:11 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/**
- * @brief Parses and inserts one env entry to hash table.
- *
- * @param mshell Shell instance.
- * @param entry Key=value environment string.
- */
-static int insert_env_var(t_mshell *mshell, char *entry)
-{
-	t_mshell_var *tmp;
-
-	tmp = split_key_value(entry);
-	if (!tmp)
-		return (EXIT_FAILURE);
-	if (set_variable(mshell, tmp->key, tmp->value, 1) != EXIT_SUCCESS)
-	{
-		free_pair(&tmp);
-		print_error("-minishell: failed to insert env var\n");
-		return (EXIT_FAILURE);
-	}
-	free_pair(&tmp);
-	return (EXIT_SUCCESS);
-}
-
-/**
- * @brief Initializes SHLVL to 1 if not already present in the environment.
- *
- * @param minishell Shell instance.
- * @return EXIT_SUCCESS or EXIT_FAILURE.
- */
-uint8_t update_shlvl_setup_no_env(t_mshell *minishell)
-{
-	char *str_shlvl;
-
-	str_shlvl = ms_getenv(minishell, "SHLVL");
-	if (!str_shlvl)
-	{
-		if (set_variable(minishell, "SHLVL", "1", 1) != EXIT_SUCCESS)
-		{
-			print_error("-minishell: update_shlvl, set_variable failed\n");
-			return (EXIT_FAILURE);
-		}
-	}
-	return (EXIT_SUCCESS);
-}
-
-static int set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
+static int	set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
 {
 	if (set_variable(mshell, "PWD", working_dir, 1) != EXIT_SUCCESS)
 	{
@@ -72,10 +27,10 @@ static int set_pwd_and_shlvl(t_mshell *mshell, char *working_dir)
 	return (EXIT_SUCCESS);
 }
 
-static int add_oldpwd_from_home(t_mshell *mshell)
+static int	add_oldpwd_from_home(t_mshell *mshell)
 {
-	char *home;
-	char working_dir[MS_PATHMAX];
+	char	*home;
+	char	working_dir[MS_PATHMAX];
 
 	if (!mshell)
 		return (EXIT_FAILURE);
@@ -107,9 +62,9 @@ static int add_oldpwd_from_home(t_mshell *mshell)
  * @param mshell Shell instance.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-static int load_env_into_ht(t_mshell *mshell)
+static int	load_env_into_ht(t_mshell *mshell)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (mshell->env[i])
@@ -128,12 +83,12 @@ static int load_env_into_ht(t_mshell *mshell)
  *
  * @return Pointer to hash table, or NULL on failure.
  */
-static t_hash_tbl *init_hash_tbl(void)
+static t_hash_tbl	*init_hash_tbl(void)
 {
-	t_hash_tbl *ht;
-	int i;
+	t_hash_tbl	*ht;
+	int			i;
 
-	ht = malloc(sizeof(t_hash_tbl)); // tested FINAL
+	ht = malloc(sizeof(t_hash_tbl));
 	if (!ht)
 	{
 		print_error("-minishell: hash_table malloc failed\n");
@@ -152,7 +107,7 @@ static t_hash_tbl *init_hash_tbl(void)
  * @param mshell Shell instance.
  * @return EXIT_SUCCESS or EXIT_FAILURE.
  */
-int setup_hash_table(t_mshell *mshell)
+int	setup_hash_table(t_mshell *mshell)
 {
 	if (!mshell)
 	{

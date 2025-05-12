@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/05/12 14:02:40 by imunaev-          #+#    #+#              #
+#    Updated: 2025/05/12 14:02:41 by imunaev-         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 # Detect OS
 UNAME := $(shell uname)
 BIGTEST ?= 0
@@ -69,6 +81,7 @@ SRC_FILES := \
 	src/mshell/find_binary.c \
 	src/mshell/varables_hash_table/setup_hash_table_utils_1.c \
 	src/mshell/varables_hash_table/setup_hash_table_utils_2.c \
+	src/mshell/varables_hash_table/setup_hash_table_utils_3.c \
 	src/mshell/varables_hash_table/setup_hash_table.c \
 	src/executor/executor.c \
 	src/executor/pipeline/pipe_utils.c \
