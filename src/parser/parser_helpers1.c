@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:56:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/05 21:47:47 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/13 16:09:47 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,17 @@ t_cmd	*create_empty_command(t_mshell *shell)
 {
 	t_cmd	*cmd;
 
-	cmd = ft_calloc(sizeof (t_cmd), 1);
+	cmd = ft_calloc(sizeof (t_cmd), 1); //PROTECTION = CHECKED
 	if (!cmd)
+	{
+		shell->allocation_error = true;
 		return (NULL);
-	cmd->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *));
+	}
+	cmd->argv = ft_calloc(MAX_ARGS + 1, sizeof(char *)); //PROTECTION = CHECKED
 	if (!cmd->argv)
 	{
 		free(cmd);
+		shell->allocation_error = true;
 		return (NULL);
 	}
 	cmd->minishell = shell;
