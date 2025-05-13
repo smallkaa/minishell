@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:09:26 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 11:37:13 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 15:30:31 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,10 @@ void	token_array_free(t_TokenArray *array)
 	if (!array)
 	{
 		return ;
+	}
+	if (!array->tokens) {
+		free(array); // Освобождаем саму структуру array
+		return;
 	}
 	i = 0;
 	while (i < array->count)

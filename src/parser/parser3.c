@@ -6,13 +6,13 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 12:12:46 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 15:51:30 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
+int	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 {
 	int	i;
 	int	j;
@@ -28,35 +28,66 @@ void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 		}
 		if (old_tokens->tokens[i].type != TOKEN_WORD)
 		{
-			process_non_word(new_tokens, &j, &old_tokens->tokens[i]);
+			if (process_non_word(new_tokens, &j, &old_tokens->tokens[i]))
+			{
+				new_tokens->count = j; // Обновляем count перед выходом
+				return 1; // Ошибка
+			}
 			i++;
 		}
 		else
-			process_word(new_tokens, old_tokens, &i, &j);
+		{
+			if(process_word(new_tokens, old_tokens, &i, &j))
+			{
+				new_tokens->count = j;
+				return 1;
+			}
+		}
 	}
 	new_tokens->count = j;
+	return 0;
 }
 
+// parser3.c (group_word_tokens)
 int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
 {
-	t_TokenArray	new_tokens;
+	t_TokenArray	new_tokens_array;
 	int				new_count;
+	int k;
 
 	if (!tokens || tokens->count <= 1)
 		return (0);
 	new_count = count_new_tokens(tokens);
-	new_tokens.tokens = malloc(sizeof(t_Token) * new_count); //PROTECTION = CHECKED
-	if (!new_tokens.tokens)
+	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count); 
+	if (!new_tokens_array.tokens)
 	{
 		msh->allocation_error = 1;
 		return (-1);
 	}
-	new_tokens.capacity = new_count;
-	fill_new_tokens(&new_tokens, tokens);
+	new_tokens_array.capacity = new_count;
+	new_tokens_array.count = 0;
+	if (fill_new_tokens(&new_tokens_array, tokens))
+	{
+		msh->allocation_error = true;
+		int k = 0;
+		while(k < new_tokens_array.count)
+		{
+			free_token(&new_tokens_array.tokens[k]);
+			k++;
+		}
+		free(new_tokens_array.tokens);
+		return (-1);
+	}
+    k = 0;
+    while(k < tokens->count)
+    {
+        free_token(&tokens->tokens[k]);
+        k++;
+    }
 	free(tokens->tokens);
-	tokens->tokens = new_tokens.tokens;
-	tokens->count = new_tokens.count;
-	tokens->capacity = new_tokens.capacity;
+	tokens->tokens = new_tokens_array.tokens;
+	tokens->count = new_tokens_array.count;
+	tokens->capacity = new_tokens_array.capacity;
 	return (0);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 16:47:26 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/13 15:53:48 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,39 @@ bool	is_skippable_token(t_Token *tok)
 		|| (tok->type == TOKEN_WORD && tok->value == NULL));
 }
 
-void	process_non_word(t_TokenArray *new_tokens, int *j, t_Token *tok)
+int	process_non_word(t_TokenArray *new_tokens, int *j, t_Token *old_tok)
 {
-	new_tokens->tokens[(*j)++] = *tok;
-}
+	t_Token	new_tok_instance; // Используем локальный экземпляр, чтобы не менять old_tok
 
-static void	init_wordinfo(t_wordinfo *info, t_Token *tok)
+	new_tok_instance.type = old_tok->type;
+	new_tok_instance.in_single_quotes = old_tok->in_single_quotes;
+	new_tok_instance.in_double_quotes = old_tok->in_double_quotes;
+	new_tok_instance.needs_join = old_tok->needs_join;
+	new_tok_instance.quote_style = old_tok->quote_style;
+	if (old_tok->value)
+	{
+		new_tok_instance.value = ft_strdup(old_tok->value); //PROTECTION = CHECKED
+		if (!new_tok_instance.value)
+			return 1;
+	}
+	else
+		new_tok_instance.value = NULL;
+	new_tokens->tokens[(*j)++] = new_tok_instance;
+	return 0; // Успех
+}
+// returns 1 in case of allocation error
+static int	init_wordinfo(t_wordinfo *info, t_Token *tok)
 {
-	info->grouped = ft_strdup(tok->value);
+	info->grouped = ft_strdup(tok->value); //PROTECTION = CHECKED
 	info->single_q = tok->in_single_quotes;
 	info->double_q = tok->in_double_quotes;
 	info->qstyle = tok->quote_style;
+	if(!info->grouped)
+		return 1;
+	return 0;
 }
-
-static void	join_word_tokens(t_wordinfo *info, t_TokenArray *tokens, int *i)
+// returns 1 in case of allocation error
+static int	join_word_tokens(t_wordinfo *info, t_TokenArray *tokens, int *i)
 {
 	while (*i < tokens->count
 		&& tokens->tokens[*i].type == TOKEN_WORD
@@ -43,8 +62,11 @@ static void	join_word_tokens(t_wordinfo *info, t_TokenArray *tokens, int *i)
 			(*i)++;
 			continue ;
 		}
-		info->tmp = ft_strjoin(info->grouped, tokens->tokens[*i].value);
+		info->tmp = ft_strjoin(info->grouped, tokens->tokens[*i].value); //PROTECTION = CHECKED
 		free(info->grouped);
+		info->grouped = NULL;
+		if(!info->tmp)
+			return 1;
 		info->grouped = info->tmp;
 		if (tokens->tokens[*i].in_single_quotes)
 			info->single_q = true;
@@ -52,27 +74,19 @@ static void	join_word_tokens(t_wordinfo *info, t_TokenArray *tokens, int *i)
 			info->double_q = true;
 		(*i)++;
 	}
+	return 0;
 }
-
-void	process_word(t_TokenArray *new_tokens,
+//returns 1 in case of alloc error
+int	process_word(t_TokenArray *new_tokens,
 	t_TokenArray *old_tokens, int *i, int *j)
 {
 	t_wordinfo	info;
-	int			k;
 
-	init_wordinfo(&info, &old_tokens->tokens[*i]);
+	if(init_wordinfo(&info, &old_tokens->tokens[*i]))
+		return 1;
 	(*i)++;
-	join_word_tokens(&info, old_tokens, i);
-	k = 0;
-	while (k < *i)
-	{
-		if (old_tokens->tokens[k].type == TOKEN_WORD)
-		{
-			free(old_tokens->tokens[k].value);
-			old_tokens->tokens[k].value = NULL;
-		}
-		k++;
-	}
+	if (join_word_tokens(&info, old_tokens, i))
+		return 1;
 	info.new_token = (t_Token){0};
 	info.new_token.type = TOKEN_WORD;
 	info.new_token.value = info.grouped;
@@ -80,4 +94,5 @@ void	process_word(t_TokenArray *new_tokens,
 	info.new_token.in_double_quotes = info.double_q;
 	info.new_token.quote_style = info.qstyle;
 	new_tokens->tokens[(*j)++] = info.new_token;
+	return 0;
 }
