@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 11:52:09 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:54:28 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,15 @@
  */
 char	*get_exit_code(t_mshell *minishell)
 {
-	return (ft_itoa(minishell->exit_status));
+	char	*exit_status;
+
+	exit_status = ft_itoa(minishell->exit_status);
+	if (!exit_status)
+	{
+		minishell->allocation_error = 1;
+		return (NULL);
+	}
+	return (exit_status);
 }
 
 /**
