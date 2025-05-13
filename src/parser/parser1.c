@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:09:26 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 11:35:58 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 11:37:13 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	token_array_add(t_TokenArray *array, t_Token token, t_mshell *minishell)
 		new_size = (size_t)new_capacity * sizeof(t_Token);
 		(void) new_size;
 		(void) old_size;
-		printf("\n in token_array_add");
 		new_tokens_ptr = (t_Token *)ft_realloc(array->tokens, old_size, // PROTECTION=CHEKCED
 				new_size);
 		if(!new_tokens_ptr)
