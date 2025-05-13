@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 18:08:59 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 18:19:11 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,19 @@ char	*get_env_value(const char *var, t_mshell *minishell)
 		return (get_exit_code(minishell));
 	value = ms_getenv(minishell, (char *)var);
 	if (value)
-		return (ft_strdup(value));
+		return (ft_strdup(value)); //PROTECTION see handle_dollar_var
 	if (!minishell->env)
-		return (ft_strdup(""));
+		return (ft_strdup(""));  //PROTECTION see handle_dollar_var
 	var_len = ft_strlen(var);
 	i = 0;
 	while (minishell->env[i])
 	{
 		if (ft_strncmp(minishell->env[i], var, var_len) == 0
 			&& minishell->env[i][var_len] == '=')
-			return (ft_strdup(minishell->env[i] + var_len + 1));
+			return (ft_strdup(minishell->env[i] + var_len + 1));  //PROTECTION see handle_dollar_var
 		i++;
 	}
-	return (ft_strdup(""));
+	return (ft_strdup(""));  //PROTECTION see handle_dollar_var
 }
 
 /**

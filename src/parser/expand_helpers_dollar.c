@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:15:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 17:54:53 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 18:18:09 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static void	handle_dollar_var(t_exp_ctx *ctx)
 	name = ft_substr(ctx->input, start, *ctx->i - start);
 	if (!name)
 		return ;
-	val = get_env_value(name, ctx->mshell);
+	val = get_env_value(name, ctx->mshell); //PROTECTION = CHECKED
 	free(name);
 	if (val)
 	{
