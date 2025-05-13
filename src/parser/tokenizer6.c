@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 20:45:27 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 11:43:14 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,12 @@ t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space, t_mshell *mi
 		return (next);
 	}
 	tokenizer->buffer[index] = '\0';
-	token.value = ft_strdup(tokenizer->buffer);
+	token.value = ft_strdup(tokenizer->buffer); //PROTECTION = CHECKED
 	if (!token.value)
+	{
+		minishell->allocation_error = true;
 		return ((t_Token){0});
+	}
 	token.quote_style = 0;
 	token.in_single_quotes = 0;
 	token.in_double_quotes = 0;
