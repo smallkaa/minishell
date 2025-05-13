@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 17:54:28 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/13 18:08:59 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*get_exit_code(t_mshell *minishell)
  * @param var        Name of the variable (NUL‐terminated).
  * @param minishell  Shell context with env and hash_table populated.
  * @return Allocated string: the variable's value, or "" if not found,
- *         or NULL if var == NULL or an allocation fails.
+ *         or NULL if allocation fails.
  */
 char	*get_env_value(const char *var, t_mshell *minishell)
 {
@@ -55,8 +55,6 @@ char	*get_env_value(const char *var, t_mshell *minishell)
 	size_t	var_len;
 	char	*value;
 
-	if (!var)
-		return (NULL);
 	if (ft_strcmp((char *)var, "?") == 0)
 		return (get_exit_code(minishell));
 	value = ms_getenv(minishell, (char *)var);

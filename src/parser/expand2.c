@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:52:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 17:40:35 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 17:41:54 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static char	*expand_env_variables_loop(const char *input, t_mshell *ms,
 
 	if (!input)
 		return (NULL);
-	result = ft_strdup("");
+	result = ft_strdup(""); //PROTECTION = CHECKED
 	if (!result)
 	{
 		ms->allocation_error = 1;

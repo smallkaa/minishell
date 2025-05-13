@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helpers_dollar.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:15:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 11:53:35 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:54:53 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,10 @@ static void	handle_dollar_var(t_exp_ctx *ctx)
 	{
 		*ctx->result = append_to_result(*ctx->result, val);
 		free(val);
+	}
+	else
+	{
+		ctx->mshell->allocation_error = 1;
 	}
 }
 
