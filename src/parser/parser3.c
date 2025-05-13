@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 15:51:30 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 16:15:00 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
 	if (!tokens || tokens->count <= 1)
 		return (0);
 	new_count = count_new_tokens(tokens);
-	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count); 
+	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count); //PROTECTION = CHECKED
 	if (!new_tokens_array.tokens)
 	{
 		msh->allocation_error = 1;
