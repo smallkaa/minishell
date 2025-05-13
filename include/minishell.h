@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 11:56:20 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/12 21:02:31 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 17:07:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ typedef struct s_mshell
 // run progrmm
 
 char			*read_user_input(void);
-bool			handle_null_command(t_mshell *mshell, char **input);
+bool			handle_null_command(t_mshell *mshell);
 bool			handle_signal_after_parse(t_mshell *mshell, t_cmd **cmd,
 					char **input);
 void			handle_signal_after_exec(t_mshell *mshell);

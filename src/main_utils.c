@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/10 19:25:47 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/13 17:07:09 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,13 @@ char	*read_user_input(void)
  * @param input Pointer to the user's input string to be freed.
  * @return true to indicate continuation of the interactive loop.
  */
-bool	handle_null_command(t_mshell *mshell, char **input_ptr)
+bool	handle_null_command(t_mshell *mshell)
 {
-	char	*input;
-
-	input = *input_ptr;
-	if (input)
-		free(input);
 	if (g_signal_flag)
 	{
 		mshell->exit_status = 130;
 		g_signal_flag = 0;
 	}
-	*input_ptr = NULL;
 	return (true);
 }
 

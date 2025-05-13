@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_interactive_mode.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 10:34:54 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/13 11:53:10 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 17:07:17 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static uint8_t	process_input(t_mshell *mshell, char *input)
 	if (ft_strlen(input) == 0)
 		return (mshell->exit_status);
 	cmd = run_parser(mshell, input);
-	if (!cmd && handle_null_command(mshell, &input))
+	if (!cmd && handle_null_command(mshell))
 		return (mshell->exit_status);
 	if (handle_signal_after_parse(mshell, &cmd, &input))
 		return (mshell->exit_status);
@@ -77,8 +77,8 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		if (handle_eof_input(input))
 			break ;
 		exit_status = process_input(mshell, input);
-//		if (input)
-//			free_ptr((void **)&input);
+		if (input)
+			free_ptr((void **)&input);
 		handle_signal_after_exec(mshell);
 		handle_newline_if_signal(mshell);
 	}
