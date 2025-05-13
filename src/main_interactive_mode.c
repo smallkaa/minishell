@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 10:34:54 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/12 12:10:35 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 11:53:10 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		handle_signal_after_exec(mshell);
 		handle_newline_if_signal(mshell);
 	}
-	if(mshell->allocation_error) print_error("Allocation error!");
+	if(mshell->allocation_error) print_error("Allocation error!\n");
 	rl_event_hook = NULL;
 	return (exit_status);
 }

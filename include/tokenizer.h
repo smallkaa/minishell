@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:40 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 13:00:50 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 11:58:49 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ char			*expand_env_variables(const char *input, t_mshell *minishell,
 void			print_token(t_Token token);
 void			explain_token(t_Token token);
 void			debug_print_parsed_commands(t_cmd *cmd);
-int				strip_words(t_TokenArray *tokens);
+int				strip_words(t_TokenArray *tokens , t_mshell *minishell);
 bool			is_in_single_quotes(char *str);
 bool			is_in_double_quotes(char *str);
 void			expand_tokens(t_TokenArray *tokens, t_mshell *ms);

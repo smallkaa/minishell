@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 20:37:45 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 12:02:35 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,17 +131,23 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 		return (NULL); // Возвращаем NULL, так как произошла ошибка
 	}
 	expand_tokens(tokens, minishell);
-    if (minishell->allocation_error) {
-        token_array_free(tokens); //
-        return (NULL);
-    }
+	if (minishell->allocation_error)
+	{
+		token_array_free(tokens);
+		return (NULL);
+	}
 	if (check_for_unsupported_syntax(minishell, input) != EXIT_SUCCESS)
 	{
 		token_array_free(tokens);
 		return (NULL);
 	}
 	group_word_tokens(tokens);
-	strip_words(tokens);
+	strip_words(tokens, minishell);
+	if (minishell->allocation_error)
+	{
+		token_array_free(tokens);
+		return (NULL);
+	}
 	cmd = create_command_from_tokens(minishell, tokens);
 	debug_print_tokens(tokens);
 	debug_print_parsed_commands(cmd);

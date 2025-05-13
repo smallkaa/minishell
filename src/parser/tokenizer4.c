@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer4.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:13 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/22 13:53:48 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/13 12:01:34 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ static char	*strip_quotes_simple(const char *str, int quote_style)
 		return (NULL);
 	len = ft_strlen(str);
 	if (quote_style == 1 && len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
-		return (ft_substr(str, 1, len - 2));
+		return (ft_substr(str, 1, len - 2)); //PROTECTION  see strip_words
 	if (quote_style == 2 && len >= 2 && str[0] == '"' && str[len - 1] == '"')
-		return (ft_substr(str, 1, len - 2));
-	return (ft_strdup(str));
+		return (ft_substr(str, 1, len - 2)); //PROTECTION  see strip_words
+	return (ft_strdup(str)); //PROTECTION  see strip_words
 }
 
 /**
@@ -85,7 +85,7 @@ static char	*strip_quotes_simple(const char *str, int quote_style)
  * @param tokens Array of tokens to process.
  * @return 0 on success, -1 on error.
  */
-int	strip_words(t_TokenArray *tokens)
+int	strip_words(t_TokenArray *tokens, t_mshell *msh)
 {
 	int		i;
 	char	*new_val;
@@ -103,7 +103,10 @@ int	strip_words(t_TokenArray *tokens)
 				continue ;
 			new_val = strip_quotes_simple(tok->value, tok->quote_style);
 			if (!new_val)
+			{
+				msh->allocation_error = 1;
 				return (-1);
+			}
 			free(tok->value);
 			tok->value = new_val;
 		}
