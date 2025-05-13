@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:52:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 15:11:21 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/13 17:40:35 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,46 +18,6 @@
 #include "libft.h"
 #include "minishell.h"
 #include "tokenizer.h"
-
-/**
- * @brief Handle escape sequences and return the escaped string.
- *
- * Supports: \n, \t, \\, \", \', \$, or a literal pass‐through. Advances `*i`.
- *
- * @param input    Input string containing the backslash.
- * @param i        Pointer to current index in input; will be incremented.
-
- * @param single_q Non‐zero if inside single quotes (only take 
- * literal backslash+char).
- * @return Allocated string of the escaped character(s), or NULL on failure.
- */
-char	*handle_escape(const char *input, size_t *i, int single_q)
-{
-	char	single_char[2];
-
-	(*i)++;
-	if (single_q)
-	{
-		single_char[0] = '\\';
-		single_char[1] = input[*i];
-		return (ft_strdup(single_char));
-	}
-	if (input[*i] == 'n')
-		return (ft_strdup("\n"));
-	if (input[*i] == 't')
-		return (ft_strdup("\t"));
-	if (input[*i] == '\\')
-		return (ft_strdup("\\"));
-	if (input[*i] == '"')
-		return (ft_strdup("\""));
-	if (input[*i] == '\'')
-		return (ft_strdup("\'"));
-	if (input[*i] == '$')
-		return (ft_strdup("$"));
-	single_char[0] = input[*i];
-	single_char[1] = '\0';
-	return (ft_strdup(single_char));
-}
 
 /**
  * @brief Process a single character or sequence for expansion.
@@ -117,7 +77,10 @@ static char	*expand_env_variables_loop(const char *input, t_mshell *ms,
 		return (NULL);
 	result = ft_strdup("");
 	if (!result)
+	{
+		ms->allocation_error = 1;
 		return (NULL);
+	}
 	i = 0;
 	ctx.input = input;
 	ctx.i = &i;

@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 12:06:44 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/13 16:12:15 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,26 @@ static t_TokenArray	*tokenize_input(char *input, t_mshell *mshell)
 	while (1)
 	{
 		current_token = get_next_token(tokenizer, mshell);
-		if (mshell->allocation_error) { // Ошибка в get_next_token (например, ft_strdup для token.value)
-            free_token(&current_token); // Освобождаем значение текущего токена, если оно было выделено
+		if (mshell->allocation_error)
+		{
+            free_token(&current_token);
             break; 
         }
 		if (current_token.type == TOKEN_EOF) {
-            free_token(&current_token); // На случай, если TOKEN_EOF может иметь value (хотя обычно нет)
+            free_token(&current_token);
             break;
         }
-        token_array_add(tokens, current_token, mshell); //
-        if (mshell->allocation_error) {
-			if (current_token.value) {
+        token_array_add(tokens, current_token, mshell);
+        if (mshell->allocation_error)
+		{
+			if (current_token.value)
+			{
 				free(current_token.value);
 				current_token.value = NULL;
 			}
 			break ;
 		}
 	}
-	//free_token(&token);
 	tokenizer_destroy(tokenizer);
 	return (tokens);
 }
