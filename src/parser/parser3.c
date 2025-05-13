@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 08:49:10 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/13 12:12:46 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 	new_tokens->count = j;
 }
 
-int	group_word_tokens(t_TokenArray *tokens)
+int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
 {
 	t_TokenArray	new_tokens;
 	int				new_count;
@@ -45,9 +45,12 @@ int	group_word_tokens(t_TokenArray *tokens)
 	if (!tokens || tokens->count <= 1)
 		return (0);
 	new_count = count_new_tokens(tokens);
-	new_tokens.tokens = malloc(sizeof(t_Token) * new_count);
+	new_tokens.tokens = malloc(sizeof(t_Token) * new_count); //PROTECTION = CHECKED
 	if (!new_tokens.tokens)
+	{
+		msh->allocation_error = 1;
 		return (-1);
+	}
 	new_tokens.capacity = new_count;
 	fill_new_tokens(&new_tokens, tokens);
 	free(tokens->tokens);
