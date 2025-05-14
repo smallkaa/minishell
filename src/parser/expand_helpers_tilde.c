@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helpers_tilde.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:10:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 11:54:45 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/14 13:52:46 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,10 @@ void	handle_tilde(t_exp_ctx *ctx)
 		{
 			*ctx->result = append_to_result(*ctx->result, home);
 			free(home);
+		}
+		else 
+		{
+			ctx->mshell->allocation_error = 1;
 		}
 	}
 }

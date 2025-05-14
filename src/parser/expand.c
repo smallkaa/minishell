@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 18:19:11 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 13:53:05 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,10 +140,10 @@ char	*expand_tilde(const char *input, size_t *i, t_mshell *mshell,
 	single_q = (quote_style == 1);
 	double_q = (quote_style == 2);
 	if (is_literal_tilde(input, i, single_q, double_q))
-		return (ft_strdup("~"));
+		return (ft_strdup("~")); //PROTECTION = CHECKED
 	home = ms_getenv(mshell, "HOME");
 	(*i)++;
 	if (!home || !*home)
-		return (ft_strdup("~"));
-	return (ft_strdup(home));
+		return (ft_strdup("~"));//PROTECTION = CHECKED
+	return (ft_strdup(home));//PROTECTION = CHECKED
 }
