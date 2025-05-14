@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:19:34 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/14 12:54:16 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 13:07:18 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,21 @@ static int	append_word_argument(t_cmd *current, char *value)
 static int	process_word_token(t_mshell *sh, t_list **cmd_list,
 	t_cmd **current, t_Token *token)
 {
+	t_list	*ptr;
+
 	if (!*current)
 	{
 		*current = create_empty_command(sh);
 		if (!*current)
-			return (free_cmd_list(cmd_list), -1);
-		ft_lstadd_back(cmd_list, ft_lstnew(*current));
+			return -1;
+		ptr = ft_lstnew(*current); //PROTECTION = CHECKED
+		if(!ptr)
+		{
+			sh->allocation_error = true;
+			free_cmd(current);
+			return (-1);
+		}
+		ft_lstadd_back(cmd_list, ptr);
 	}
 	return (sh->allocation_error = append_word_argument(*current, token->value));
 }
