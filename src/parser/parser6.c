@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:19:34 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/14 11:32:57 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 12:29:58 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ static int	append_word_argument(t_cmd *current, char *value)
 	if (i < MAX_ARGS)
 	{
 		current->argv[i + 1] = NULL;
-		current->argv[i] = ft_strdup(value);
+		current->argv[i] = ft_strdup(value); //PROTECTION - CHECKED
 		if(!current->argv[i])
 			return 1;
 	}
@@ -103,8 +103,8 @@ static int	parse_tokens(t_parse_ctx *ctx)
 		else if (is_input_redir(ctx->tokens->tokens[ctx->i].type)
 			|| is_output_redir(ctx->tokens->tokens[ctx->i].type))
 		{
-			if (handle_redir(ctx) != 0)
-				return (handle_redir(ctx));
+			if (handle_redir(ctx) != 0)   
+				return (handle_redir(ctx)); //TODO ДВА РАЗА ПРОВЕРКА!
 		}
 		else if (ctx->tokens->tokens[ctx->i].type == TOKEN_WORD)
 		{
@@ -158,7 +158,12 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 	ctx.current = &current;
 	init_parse_context(&ctx);
 	status = parse_tokens(&ctx);
-	if (status == ERROR_UNEXPECTED_TOKEN)
+    if (shell->allocation_error)
+    {
+        free_cmd_list(&cmd_list); // Освобождаем частично созданный список команд
+        return (NULL);
+    }
+	if (status == ERROR_UNEXPECTED_TOKEN) //TODO check if unexpected gives a leak
 		return (shell->exit_status = 2, NULL);
 	if (status < 0)
 		return (NULL);

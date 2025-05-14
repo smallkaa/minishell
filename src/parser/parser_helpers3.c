@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers3.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 11:44:08 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/14 12:35:16 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,20 @@
 static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
 	t_cmd	**current)
 {
+	t_list	*new;
+	
 	if (!*current)
 	{
 		*current = create_empty_command(shell);
 		if (!*current)
 			return (-1);
-		ft_lstadd_back(cmd_list, ft_lstnew(*current));
+		new = ft_lstnew(*current); //PROTECTION = CHECKED
+		if(!new)
+		{
+			shell->allocation_error = 1;
+			return (-1);
+		}
+		ft_lstadd_back(cmd_list, new);
 	}
 	return (0);
 }
@@ -36,12 +44,14 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 {
 	t_redir	*redir;
 
-	if (!token[1].value || token[1].type != TOKEN_WORD)
-	{
-		print_error("Syntax error: missing name for redirection\n");
-		return (-1);
-	}
-	redir = malloc(sizeof(t_redir));
+	//TO DELETE 
+	// if (!token[1].value || token[1].type != TOKEN_WORD)
+	// {
+	// 	print_error("Syntax error: missing name for redirection\n");
+	// 	return (-1);
+	// }
+
+	redir = malloc(sizeof(t_redir)); //PROTECTION = CHECKED
 	if (!redir)
 		return (-1);
 	redir->fd = -1;
@@ -49,14 +59,14 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		redir->type = R_INPUT;
 	else
 		redir->type = R_HEREDOC;
-	redir->filename = ft_strdup(token[1].value);
+	redir->filename = ft_strdup(token[1].value); //PROTECTION = CHECKED
 	if (!redir->filename)
 	{
 		free(redir);
 		return (-1);
 	}
 	redir->expand_in_heredoc = (token[1].quote_style == 0);
-	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir));
+	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir)); //TODO
 	return (0);
 }
 
@@ -78,25 +88,25 @@ static int	apply_output_redir(t_cmd **current, t_Token *token)
 {
 	t_redir	*redir;
 
-	if (!token[1].value || token[1].type != TOKEN_WORD)
-	{
-		print_error("Syntax error: missing name for redirection\n");
-		return (-1);
-	}
-	redir = malloc(sizeof(t_redir));
+	// if (!token[1].value || token[1].type != TOKEN_WORD)
+	// {
+	// 	print_error("Syntax error: missing name for redirection\n");
+	// 	return (-1);
+	// }
+	redir = malloc(sizeof(t_redir)); //PROTECTION = CHECKED
 	if (!redir)
 		return (-1);
 	if (token->type == TOKEN_REDIRECT_OUT)
 		redir->type = R_OUTPUT;
 	else
 		redir->type = R_APPEND;
-	redir->filename = ft_strdup(token[1].value);
+	redir->filename = ft_strdup(token[1].value); //PROTECTION = CHECKED
 	if (!redir->filename)
 	{
 		free(redir);
 		return (-1);
 	}
-	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir));
+	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir)); //TODO
 	return (0);
 }
 

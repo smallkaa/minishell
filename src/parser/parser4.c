@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 14:19:06 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 12:30:38 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int	process_redir_token(t_redir_ctx *ctx)
 	if (!is_valid_redir_target(ctx->tokens, *ctx->i))
 	{
 		print_error("syntax error near unexpected token\n");
-		free_cmd_list(ctx->cmd_list);
+		free_cmd_list(ctx->cmd_list); //TODO здесь не надо освобождать
 		return (ERROR_UNEXPECTED_TOKEN);
 	}
 	if (!*ctx->current)
@@ -34,7 +34,10 @@ static int	process_redir_token(t_redir_ctx *ctx)
 			return (-1);
 	}
 	if (apply_redirection(ctx, type) < 0)
+	{
+		ctx->shell->allocation_error = 1; 
 		return (-1);
+	}
 	*ctx->i += 2;
 	return (0);
 }
