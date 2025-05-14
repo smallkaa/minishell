@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/12 14:09:12 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/14 19:14:53 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /**
  * @file cd.c
- * @brief Functions for handling the `cd` built-in command in Minishell.
+ * @brief Functions for handling the cd built-in command in Minishell.
  */
 #include "minishell.h"
 
 /**
- * @brief Handles `cd` with no arguments or `cd ~`.
+ * @brief Handles cd with no arguments or cd ~.
  *
- * Changes directory to the `HOME` environment variable if it's set.
- * If `HOME` is not defined, it prints an error. On success, this updates
- * `PWD` and `OLDPWD` using the helper function.
+ * Changes directory to the HOME environment variable if it's set.
+ * If HOME is not defined, it prints an error. On success, this updates
+ * PWD and OLDPWD using the helper function.
  *
  * @param cmd Pointer to the current command structure.
- * @return `EXIT_SUCCESS` (0) on success,
- *         `EXIT_FAILURE` (1) on error (e.g., `HOME` not set or `chdir()` fails).
+ * @return EXIT_SUCCESS (0) on success,
+ *         EXIT_FAILURE (1) on error (e.g., HOME not set or chdir() fails).
  */
 static uint8_t	cd_no_args(t_cmd *cmd)
 {
@@ -37,7 +37,28 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 	ft_bzero(old_cwd, MS_PATHMAX);
 	home_path = ms_getenv(cmd->minishell, "HOME");
 	if (!home_path)
-		return (error_return("cd: HOME not set\n", EXIT_FAILURE));
+	{
+		print_error("-minishell: cd: HOME not set\n");
+		return (EXIT_FAILURE);
+	}
+	(void)get_directory(old_cwd, cmd);
+	if (chdir(home_path) != 0)
+		return (perror_return(cmd->argv[0], EXIT_FAILURE));
+	update_pwd_variables(cmd, old_cwd);
+	return (EXIT_SUCCESS);
+}
+
+static uint8_t	cd_tilda(t_cmd *cmd)
+{
+	char	old_cwd[MS_PATHMAX];
+	char	*home_path;
+
+	if (!cmd || !cmd->minishell)
+		return (EXIT_FAILURE);
+	ft_bzero(old_cwd, MS_PATHMAX);
+	home_path = ms_getenv(cmd->minishell, "HOME");
+	if (!home_path)
+		return (EXIT_SUCCESS);
 	(void)get_directory(old_cwd, cmd);
 	if (chdir(home_path) != 0)
 		return (perror_return(cmd->argv[0], EXIT_FAILURE));
@@ -46,13 +67,13 @@ static uint8_t	cd_no_args(t_cmd *cmd)
 }
 
 /**
- * @brief Handles `cd -` (switch to previous directory).
+ * @brief Handles cd - (switch to previous directory).
  *
- * Attempts to change to the directory stored in `OLDPWD`.
+ * Attempts to change to the directory stored in OLDPWD.
  * On success, prints the new directory path and updates environment.
  *
  * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on error.
+ * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
  */
 static uint8_t	handle_cd_dash(t_cmd *cmd)
 {
@@ -83,10 +104,10 @@ static uint8_t	handle_cd_dash(t_cmd *cmd)
 }
 
 /**
- * @brief Handles `cd <path>` by attempting to change directory.
+ * @brief Handles cd <path> by attempting to change directory.
  *
  * @param path The target directory path.
- * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on error.
+ * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
  */
 static uint8_t	handle_cd_path(const char *path)
 {
@@ -102,11 +123,11 @@ static uint8_t	handle_cd_path(const char *path)
 /**
  * @brief Main logic for changing directory and updating PWD/OLDPWD.
  *
- * Handles both `cd -` and `cd <path>` logic and updates the environment
+ * Handles both cd - and cd <path> logic and updates the environment
  * accordingly after a successful change.
  *
  * @param cmd Pointer to the command structure.
- * @return `EXIT_SUCCESS` on success, `EXIT_FAILURE` on error.
+ * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
  */
 static uint8_t	change_and_update_pwd(t_cmd *cmd)
 {
@@ -128,14 +149,14 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
 }
 
 /**
- * @brief Entry point for handling the `cd` built-in command in Minishell.
+ * @brief Entry point for handling the cd built-in command in Minishell.
  *
  * This function implements the logic and argument validation for all
- * valid `cd` usages:
- * - `cd` / `cd ~` → go to `$HOME`.
- * - `cd -`        → switch to `$OLDPWD`.
- * - `cd <path>`   → change to a specific path.
- * - `cd ..`       → change to the parent directory.
+ * valid cd usages:
+ * - cd / cd ~ → go to $HOME.
+ * - cd -        → switch to $OLDPWD.
+ * - cd <path>   → change to a specific path.
+ * - cd ..       → change to the parent directory.
  *
  * Handles edge cases:
  * - More than one argument → returns an error.
@@ -143,8 +164,8 @@ static uint8_t	change_and_update_pwd(t_cmd *cmd)
  *
  * @param cmd Pointer to the command structure containing user input and
  * shell state.
- * @return `EXIT_SUCCESS` (0) on success,
- *         `EXIT_FAILURE` (1) on failure or misuse.
+ * @return EXIT_SUCCESS (0) on success,
+ *         EXIT_FAILURE (1) on failure or misuse.
  */
 uint8_t	handle_cd(t_cmd *cmd)
 {
@@ -159,8 +180,10 @@ uint8_t	handle_cd(t_cmd *cmd)
 		else
 			exit_status = cd_no_args(cmd);
 	}
-	else if (!cmd->argv[1] || (cmd->argv[1][0] == '~' && !cmd->argv[1][1]))
+	else if (!cmd->argv[1])
 		exit_status = cd_no_args(cmd);
+	else if (cmd->argv[1][0] == '~' && !cmd->argv[1][1])
+		exit_status = cd_tilda(cmd);
 	else if (cmd->argv[2])
 		exit_status = cd_too_many_args();
 	else if (ft_strlen(cmd->argv[1]) == 0)
