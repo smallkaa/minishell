@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:19:34 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/08 14:20:07 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 11:32:57 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,25 @@ static void	finalize_commands(t_cmd *head)
 		cmd_ptr = cmd_ptr->next;
 	}
 }
+/**
+ * @brief Append an argument to an existing command.
+ */
+static int	append_word_argument(t_cmd *current, char *value)
+{
+	int	i;
+
+	i = 0;
+	while (current->argv[i])
+		++i;
+	if (i < MAX_ARGS)
+	{
+		current->argv[i + 1] = NULL;
+		current->argv[i] = ft_strdup(value);
+		if(!current->argv[i])
+			return 1;
+	}
+	return 0;
+}
 
 /**
  * @brief Processes a word token and adds it to the current command's argv.
@@ -55,18 +74,17 @@ static void	finalize_commands(t_cmd *head)
  * @param token The current word token to be processed.
  * @return 0 on success, -1 on error (e.g., memory allocation failure).
  */
-static int	process_word_token(t_mshell *shell, t_list **cmd_list,
+static int	process_word_token(t_mshell *sh, t_list **cmd_list,
 	t_cmd **current, t_Token *token)
 {
 	if (!*current)
 	{
-		*current = create_empty_command(shell);
+		*current = create_empty_command(sh);
 		if (!*current)
 			return (free_cmd_list(cmd_list), -1);
 		ft_lstadd_back(cmd_list, ft_lstnew(*current));
 	}
-	handle_word_token(shell, cmd_list, current, token->value);
-	return (0);
+	return (sh->allocation_error = append_word_argument(*current, token->value));
 }
 
 /**
