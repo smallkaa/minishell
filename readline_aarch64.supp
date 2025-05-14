@@ -955,3 +955,20 @@
    fun:run_interactive_mode
    fun:main
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:tsearch
+   obj:/lib/aarch64-linux-gnu/libtinfo.so.6.2
+   fun:_nc_tiparm
+   obj:/lib/aarch64-linux-gnu/libreadline.so.8.1
+   fun:rl_redisplay
+   fun:_rl_internal_char_cleanup
+   fun:readline_internal_char
+   fun:readline
+   fun:read_user_input
+   fun:run_interactive_mode
+   fun:main
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_tokens.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:54:54 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 15:12:32 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/14 13:35:51 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	is_single_quote_literal(t_Token *token)
 	return (0);
 }
 
-static int	handle_special_dollar_quote(t_Token *token)
+static int	handle_special_dollar_quote(t_Token *token, t_mshell *ms)
 {
 	size_t	len;
 	char	*content;
@@ -34,9 +34,12 @@ static int	handle_special_dollar_quote(t_Token *token)
 	len = ft_strlen(token->value);
 	if (len < 3 || token->value[len - 1] != '"')
 		return (0);
-	content = ft_substr(token->value, 2, len - 3);
+	content = ft_substr(token->value, 2, len - 3); //PROTECTION = CHEKCED
 	if (!content)
+	{
+		ms->allocation_error = 1;
 		return (0);
+	}
 	free(token->value);
 	token->value = content;
 	return (1);
@@ -56,7 +59,7 @@ static void	expand_token_value(t_Token *token, t_mshell *ms)
 
 	if (!token || !token->value || is_single_quote_literal(token))
 		return ;
-	if (handle_special_dollar_quote(token))
+	if (handle_special_dollar_quote(token, ms))
 		return ;
 	if (!needs_expansion(token->value))
 		return ;
