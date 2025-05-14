@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 10:34:54 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/13 17:07:17 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/14 17:05:06 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 	uint8_t	exit_status;
 
 	exit_status = mshell->exit_status;
-	rl_event_hook = readline_interrupt_hook;
+	rl_event_hook = readline_interrupt_hook; // not allowed
 	while (!mshell->allocation_error)
 	{
 		if (handle_signal_interrupt(mshell, NULL))
@@ -82,7 +82,8 @@ uint8_t	run_interactive_mode(t_mshell *mshell)
 		handle_signal_after_exec(mshell);
 		handle_newline_if_signal(mshell);
 	}
-	if(mshell->allocation_error) print_error("Allocation error!\n");
+	if (mshell->allocation_error)
+		print_error("Allocation error!\n");
 	rl_event_hook = NULL;
 	return (exit_status);
 }
