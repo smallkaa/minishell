@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 15:29:49 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/14 15:33:45 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		redir->type = R_INPUT;
 	else
 		redir->type = R_HEREDOC;
-	redir->filename = ft_strdup(token[1].value); //PROTECTION = CHECKED
+	redir->filename = ft_strdup(token[1].value); //PROTECTION = CHECKED XXX
 	if (!redir->filename)
 	{
 		free(redir);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 15:53:48 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 15:39:03 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	process_non_word(t_TokenArray *new_tokens, int *j, t_Token *old_tok)
 	new_tok_instance.quote_style = old_tok->quote_style;
 	if (old_tok->value)
 	{
-		new_tok_instance.value = ft_strdup(old_tok->value); //PROTECTION = CHECKED
+		new_tok_instance.value = ft_strdup(old_tok->value); //PROTECTION = CHECKED XXX
 		if (!new_tok_instance.value)
 			return 1;
 	}
@@ -41,7 +41,8 @@ int	process_non_word(t_TokenArray *new_tokens, int *j, t_Token *old_tok)
 // returns 1 in case of allocation error
 static int	init_wordinfo(t_wordinfo *info, t_Token *tok)
 {
-	info->grouped = ft_strdup(tok->value); //PROTECTION = CHECKED
+	info->grouped = ft_strdup(tok->value); //PROTECTION = CHECKED XXX
+	
 	info->single_q = tok->in_single_quotes;
 	info->double_q = tok->in_double_quotes;
 	info->qstyle = tok->quote_style;
