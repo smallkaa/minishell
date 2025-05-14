@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:15:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 14:00:02 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 14:08:01 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static int	handle_dollar_special(t_exp_ctx *ctx)
 		exit_code = get_exit_code(ctx->mshell);
 		if (exit_code)
 		{
-			*ctx->result = append_to_result(*ctx->result, exit_code);
+			*ctx->result = append_to_result(*ctx->result, exit_code, ctx->mshell);
 			free(exit_code);
 		}
 		(*ctx->i)++;
@@ -63,7 +63,7 @@ static void	handle_dollar_var(t_exp_ctx *ctx)
 	free(name);
 	if (val)
 	{
-		*ctx->result = append_to_result(*ctx->result, val);
+		*ctx->result = append_to_result(*ctx->result, val, ctx->mshell);
 		free(val);
 	}
 	else
@@ -85,7 +85,7 @@ static void	handle_dollar_digit(t_exp_ctx *ctx)
 	val = get_env_value(name, ctx->mshell);
 	if (val)
 	{
-		*ctx->result = append_to_result(*ctx->result, val);
+		*ctx->result = append_to_result(*ctx->result, val, ctx->mshell);
 		free(val);
 	}
 	(*ctx->i)++;

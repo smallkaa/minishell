@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:40 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 17:36:03 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 14:04:40 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ void			handle_tilde(t_exp_ctx *ctx);
 void			handle_dollar(t_exp_ctx *ctx);
 
 char			*get_env_value(const char *var, t_mshell *minishell);
-char			*append_to_result(char *result, const char *append);
+char			*append_to_result(char *result, const char *append, t_mshell *minishell);
 char			*expand_tilde(const char *input, size_t *i, t_mshell *mshell,
 					int quote_style);
 char			*get_exit_code(t_mshell *minishell);

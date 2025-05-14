@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helpers_quotes.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:00:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/04/23 11:54:17 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:09:03 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	append_char(t_exp_ctx *ctx, char c)
 
 	str[0] = c;
 	str[1] = '\0';
-	*ctx->result = append_to_result(*ctx->result, str);
+	*ctx->result = append_to_result(*ctx->result, str, ctx->mshell);
 }
 
 /*

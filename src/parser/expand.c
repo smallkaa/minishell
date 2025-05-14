@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 13:53:05 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 14:11:32 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,17 @@ char	*get_env_value(const char *var, t_mshell *minishell)
  * @param append Null‐terminated string to append.
  * @return Newly allocated concatenated string, or NULL on failure.
  */
-char	*append_to_result(char *result, const char *append)
+char	*append_to_result(char *result, const char *append, t_mshell *ms)
 {
 	char	*new_result;
 
 	if (!result || !append)
 		return (NULL);
-	new_result = ft_strjoin(result, append);
+	new_result = ft_strjoin(result, append); //PROTECTION = CHECKED
+	if(!new_result)
+	{
+		ms->allocation_error = 1;
+	}
 	free(result);
 	return (new_result);
 }
