@@ -6,7 +6,7 @@
 /*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:19 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 15:28:49 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/14 15:40:32 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,12 @@ t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer, t_mshell *mshell)
 		token.type = TOKEN_REDIRECT_OUT;
 	else if (*tokenizer->input == '&')
 		token.type = TOKEN_BACKGROUND;
-	// ! segfault
-	token.value = malloc(2); //PROTECTION=CHECKED 
+	token.value = malloc(2); //PROTECTION=CHECKED
 	if (!token.value)
+	{
 		mshell->allocation_error = true;
+		return token;
+	}
 	token.value[0] = *tokenizer->input++;
 	token.value[1] = '\0';
 	return (token);
