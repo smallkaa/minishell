@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 16:15:00 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 13:22:28 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,13 +108,22 @@ void	process_pipe_token(t_cmd **current, int *i)
 
 int	init_redir_command_if_needed(t_redir_ctx *ctx)
 {
+	t_list	*r_ptr;
+
 	*ctx->current = create_empty_command(ctx->shell);
 	if (!*ctx->current)
 	{
 		free_cmd_list(ctx->cmd_list);
 		return (-1);
 	}
-	ft_lstadd_back(ctx->cmd_list, ft_lstnew(*ctx->current));
+	r_ptr = ft_lstnew(*ctx->current); //PROTECTION = CHECKED
+	if(!r_ptr)
+	{
+		ctx->shell->allocation_error = 1;
+		free_cmd(ctx->current);
+		return (-1);
+	}
+	ft_lstadd_back(ctx->cmd_list, r_ptr);
 	return (0);
 }
 
