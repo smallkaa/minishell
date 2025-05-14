@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer1.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:12:47 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 12:12:11 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 15:30:50 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ t_Tokenizer	*tokenizer_create(const char *input)
 	t_Tokenizer	*tokenizer;
 	size_t		len;
 
-	tokenizer = malloc(sizeof(t_Tokenizer));//PROTECTION=CHECKED
+	tokenizer = malloc(sizeof(t_Tokenizer));//PROTECTION=CHECKED XXX
 	if (!tokenizer)
 		return (NULL);
 	len = ft_strlen(input);
 	tokenizer->input = input;
 	tokenizer->input_base = input;
 	tokenizer->buffer_size = len + 1;
-	tokenizer->buffer = malloc(tokenizer->buffer_size);//PROTECTION=CHECKED
+	tokenizer->buffer = malloc(tokenizer->buffer_size);//PROTECTION=CHECKED XXX
 	if (!tokenizer->buffer)
 	{
 		free(tokenizer);

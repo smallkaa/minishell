@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 13:22:28 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 15:30:26 by Ilia Munaev      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
 	if (!tokens || tokens->count <= 1)
 		return (0);
 	new_count = count_new_tokens(tokens);
-	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count); //PROTECTION = CHECKED
+	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count); //PROTECTION = CHECKED XXX
 	if (!new_tokens_array.tokens)
 	{
 		msh->allocation_error = 1;
