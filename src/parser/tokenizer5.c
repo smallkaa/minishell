@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:19 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 12:59:46 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 15:37:16 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,10 @@ t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer, t_mshell *mshell)
 		token.type = TOKEN_BACKGROUND;
 	token.value = malloc(2); //PROTECTION=CHECKED
 	if (!token.value)
+	{
 		mshell->allocation_error = true;
+		return token;
+	}
 	token.value[0] = *tokenizer->input++;
 	token.value[1] = '\0';
 	return (token);
