@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:15:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 18:18:09 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 14:00:02 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,12 @@ static void	handle_dollar_var(t_exp_ctx *ctx)
 	while (ctx->input[*ctx->i] && (ft_isalnum(ctx->input[*ctx->i])
 			|| ctx->input[*ctx->i] == '_'))
 		(*ctx->i)++;
-	name = ft_substr(ctx->input, start, *ctx->i - start);
+	name = ft_substr(ctx->input, start, *ctx->i - start); //PROTECTION = CHECKED
 	if (!name)
+	{
+		ctx->mshell->allocation_error = 1;
 		return ;
+	}
 	val = get_env_value(name, ctx->mshell); //PROTECTION = CHECKED
 	free(name);
 	if (val)
