@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:19:34 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/14 12:29:58 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 12:54:16 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ static int	process_word_token(t_mshell *sh, t_list **cmd_list,
  */
 static int	parse_tokens(t_parse_ctx *ctx)
 {
+	int	retval;
+
 	while (ctx->tokens && ctx->i < ctx->tokens->count)
 	{
 		if (ctx->tokens->tokens[ctx->i].type == TOKEN_PIPE)
@@ -103,8 +105,9 @@ static int	parse_tokens(t_parse_ctx *ctx)
 		else if (is_input_redir(ctx->tokens->tokens[ctx->i].type)
 			|| is_output_redir(ctx->tokens->tokens[ctx->i].type))
 		{
-			if (handle_redir(ctx) != 0)   
-				return (handle_redir(ctx)); //TODO ДВА РАЗА ПРОВЕРКА!
+			retval = handle_redir(ctx);
+			if (retval!= 0)   
+				return (retval);
 		}
 		else if (ctx->tokens->tokens[ctx->i].type == TOKEN_WORD)
 		{

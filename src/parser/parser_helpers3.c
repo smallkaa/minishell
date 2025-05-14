@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 12:35:16 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/14 12:52:17 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,7 @@ static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
 static int	apply_input_redir(t_cmd **current, t_Token *token)
 {
 	t_redir	*redir;
-
-	//TO DELETE 
-	// if (!token[1].value || token[1].type != TOKEN_WORD)
-	// {
-	// 	print_error("Syntax error: missing name for redirection\n");
-	// 	return (-1);
-	// }
+	t_list	*r_ptr;
 
 	redir = malloc(sizeof(t_redir)); //PROTECTION = CHECKED
 	if (!redir)
@@ -66,7 +60,14 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		return (-1);
 	}
 	redir->expand_in_heredoc = (token[1].quote_style == 0);
-	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir)); //TODO
+	r_ptr = ft_lstnew(redir); //PROTECTION = CHECKED
+	if(!r_ptr)
+	{
+		free(redir->filename);
+		free(redir);
+		return (-1);
+	}
+	ft_lstadd_back(&(*current)->redirs, r_ptr);
 	return (0);
 }
 
@@ -87,12 +88,8 @@ int	handle_input_redir(t_mshell *shell, t_list **cmd_list,
 static int	apply_output_redir(t_cmd **current, t_Token *token)
 {
 	t_redir	*redir;
+	t_list	*r_ptr;
 
-	// if (!token[1].value || token[1].type != TOKEN_WORD)
-	// {
-	// 	print_error("Syntax error: missing name for redirection\n");
-	// 	return (-1);
-	// }
 	redir = malloc(sizeof(t_redir)); //PROTECTION = CHECKED
 	if (!redir)
 		return (-1);
@@ -106,7 +103,14 @@ static int	apply_output_redir(t_cmd **current, t_Token *token)
 		free(redir);
 		return (-1);
 	}
-	ft_lstadd_back(&(*current)->redirs, ft_lstnew(redir)); //TODO
+	r_ptr = ft_lstnew(redir); //PROTECTION = CHECKED
+	if(!r_ptr)
+	{
+		free(redir->filename);
+		free(redir);
+		return (-1);
+	}
+	ft_lstadd_back(&(*current)->redirs, r_ptr);
 	return (0);
 }
 
