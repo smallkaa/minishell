@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/15 11:07:30 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 16:17:16 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,6 @@ char	*read_user_input(void)
 	if (isatty(STDIN_FILENO))
 	{
 		input = readline("minishell: ");
-		if (g_signal_flag)
-		{
-			if (input)
-			{
-				free(input);
-				input = NULL;
-			}
-			return (NULL);
-		}
 		if (!input)
 			return (NULL);
 		if (*input)
