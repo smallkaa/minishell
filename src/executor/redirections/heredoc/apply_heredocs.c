@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 12:23:28 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/08 12:38:41 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 20:39:55 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,12 @@ static bool	assign_heredoc_fd(t_cmd *cmd,
 		return (false);
 	if (redirection->fd == HEREDOC_INTERRUPTED)
 	{
+		if (isatty(STDOUT_FILENO) && isatty(STDIN_FILENO))
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			rl_replace_line("", 0);
+			rl_on_new_line();
+		}
 		g_signal_flag = 1;
 		redirection->fd = -1;
 		return (true);
