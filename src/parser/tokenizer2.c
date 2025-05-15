@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:18:10 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 13:00:37 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 11:23:02 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,8 @@ t_Token	get_next_token(t_Tokenizer *tokenizer, t_mshell *mshell)
 		return (token);
 	}
 	if (*tokenizer->input == '$' && *(tokenizer->input + 1) == '"')
-		return (tokenizer_parse_special_dollar_quote(tokenizer, saw_space, mshell));
+		return (tokenizer_parse_special_dollar_quote(tokenizer, saw_space,
+				mshell));
 	if (*tokenizer->input == '"' || *tokenizer->input == '\'')
 		return (tokenizer_parse_quoted(tokenizer, saw_space, mshell));
 	if ((*tokenizer->input == '<' && *(tokenizer->input + 1) == '<')
