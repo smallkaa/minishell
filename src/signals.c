@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 13:13:59 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 11:47:00 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/15 10:58:29 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,21 +27,14 @@ void	disable_echoctl(void)
 	}
 }
 
-int	readline_interrupt_hook(void)
-{
-	if (g_signal_flag)
-	{
-		rl_done = 1;
-		return (1);
-	}
-	return (0);
-}
-
 void	handle_sigint(int sig)
 {
 	(void)sig;
 	g_signal_flag = 1;
-	rl_done = 1;
+	write(STDOUT_FILENO, "\n", 1);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
 }
 
 // SIGQUIT (Ctrl-\) Handler - does nothing

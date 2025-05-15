@@ -6,21 +6,11 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:00:09 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/08 12:01:13 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 10:57:47 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	check_heredoc_interrupt_hook(void)
-{
-	if (g_signal_flag)
-	{
-		rl_replace_line("", 0);
-		rl_done = 1;
-	}
-	return (0);
-}
 
 /**
  * @brief Handles SIGINT in heredoc (child process).
@@ -29,10 +19,7 @@ void	heredoc_sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal_flag = 1;
-	rl_done = 1;
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
+	close(STDIN_FILENO);
 }
 
 static int	handle_expanded_line(int pipe_fd, char *line, t_mshell *mshell)
@@ -97,14 +84,12 @@ int	run_heredoc_child(int pipe_fd, const char *delim, t_mshell *mshell,
 	line = NULL;
 	status = EXIT_SUCCESS;
 	ctx = (t_heredoc_ctx){pipe_fd, delim, mshell, expand_flag, &total};
-	rl_event_hook = check_heredoc_interrupt_hook;
 	while (!g_signal_flag)
 	{
 		status = process_heredoc_line(&ctx, &line);
 		if (status != 0)
 			break ;
 	}
-	rl_event_hook = NULL;
 	if (line)
 		free(line);
 	if (g_signal_flag)

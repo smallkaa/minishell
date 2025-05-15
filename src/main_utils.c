@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 14:13:12 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/13 17:07:09 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/15 11:07:30 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,19 @@ char	*read_user_input(void)
 	char	*input;
 	char	*line;
 
+	input = NULL;
 	if (isatty(STDIN_FILENO))
 	{
 		input = readline("minishell: ");
+		if (g_signal_flag)
+		{
+			if (input)
+			{
+				free(input);
+				input = NULL;
+			}
+			return (NULL);
+		}
 		if (!input)
 			return (NULL);
 		if (*input)
@@ -45,17 +55,6 @@ char	*read_user_input(void)
 	}
 	return (input);
 }
-// char	*read_user_input(void)
-// {
-// 	char	*input;
-
-// 		input = readline("minishell: ");
-// 		if (!input)
-// 			return (NULL);
-// 		if (*input)
-// 			add_history(input);
-// 	return (input);
-// }
 
 /**
  * @brief Handle cleanup when the parser fails to produce a valid command.
