@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 15:46:43 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 20:08:49 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int					init_redir_command_if_needed(t_redir_ctx *ctx);
 int					apply_redirection(t_redir_ctx *ctx, t_TokenType type);
 t_TokenArray		*token_array_init(void);
 void				token_array_add(t_TokenArray *array, t_Token token, t_mshell *shell);
-void				token_array_free(t_TokenArray *array);
+void				*token_array_free(t_TokenArray *array);
 int					group_word_tokens(t_TokenArray *tokens, t_mshell *shell);
 t_cmd				*create_command_from_tokens(t_mshell *shell,
 						t_TokenArray *tokens);

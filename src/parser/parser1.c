@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:09:26 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 15:29:22 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/15 20:08:28 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,19 @@ t_TokenArray	*token_array_init(void)
 {
 	t_TokenArray	*array;
 
-	array = (t_TokenArray *)malloc(sizeof(t_TokenArray)); //PROTECTION = CHECKED XXX
+	array = (t_TokenArray *)malloc(sizeof(t_TokenArray));
 	if (!array)
 	{
 		print_error("Failed to allocate token array\n");
-		return NULL;
+		return (NULL);
 	}
 	array->capacity = 16;
-	array->tokens = (t_Token *)malloc(sizeof(t_Token) * array->capacity); //PROTECTION = CHECKED
+	array->tokens = (t_Token *)malloc(sizeof(t_Token) * array->capacity);
 	if (!array->tokens)
 	{
 		print_error("Failed to allocate tokens buffer\n");
 		free(array);
-		return NULL;
+		return (NULL);
 	}
 	array->count = 0;
 	return (array);
@@ -41,7 +41,6 @@ void	token_array_add(t_TokenArray *array, t_Token token, t_mshell *minishell)
 	int		old_capacity;
 	size_t	old_size;
 	int		new_capacity;
-	size_t	new_size;
 	t_Token	*new_tokens_ptr;
 
 	if (array->count >= array->capacity)
@@ -51,12 +50,9 @@ void	token_array_add(t_TokenArray *array, t_Token token, t_mshell *minishell)
 		new_capacity = old_capacity * 2;
 		if (new_capacity < old_capacity)
 			new_capacity = INT_MAX;
-		new_size = (size_t)new_capacity * sizeof(t_Token);
-		(void) new_size;
-		(void) old_size;
-		new_tokens_ptr = (t_Token *)ft_realloc(array->tokens, old_size, // PROTECTION=CHEKCED
-				new_size);
-		if(!new_tokens_ptr)
+		new_tokens_ptr = (t_Token *)ft_realloc(array->tokens, old_size,
+				(size_t)new_capacity * sizeof(t_Token));
+		if (!new_tokens_ptr)
 		{
 			minishell->allocation_error = 1;
 			return ;
@@ -69,17 +65,16 @@ void	token_array_add(t_TokenArray *array, t_Token token, t_mshell *minishell)
 }
 
 // Free token array resources
-void	token_array_free(t_TokenArray *array)
+void	*token_array_free(t_TokenArray *array)
 {
 	int	i;
 
 	if (!array)
+		return (NULL);
+	if (!array->tokens)
 	{
-		return ;
-	}
-	if (!array->tokens) {
-		free(array); // Освобождаем саму структуру array
-		return;
+		free(array);
+		return (NULL);
 	}
 	i = 0;
 	while (i < array->count)
@@ -89,6 +84,7 @@ void	token_array_free(t_TokenArray *array)
 	}
 	free(array->tokens);
 	free(array);
+	return (NULL);
 }
 
 static void	skip_joined_words(t_TokenArray *tokens, int *i)

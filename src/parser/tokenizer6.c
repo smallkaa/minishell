@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 11:43:14 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 19:41:25 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,8 @@ static size_t	fill_buffer_with_word(t_Tokenizer *tokenizer, char *buffer,
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed word token.
  */
-t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell)
+t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space,
+	t_mshell *minishell)
 {
 	t_Token	token;
 	size_t	index;
@@ -105,7 +106,7 @@ t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space, t_mshell *mi
 		return (next);
 	}
 	tokenizer->buffer[index] = '\0';
-	token.value = ft_strdup(tokenizer->buffer); //PROTECTION = CHECKED
+	token.value = ft_strdup(tokenizer->buffer);
 	if (!token.value)
 	{
 		minishell->allocation_error = true;

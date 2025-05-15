@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 16:12:15 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 20:15:01 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,16 @@ static t_TokenArray	*tokenize_input(char *input, t_mshell *mshell)
 		current_token = get_next_token(tokenizer, mshell);
 		if (mshell->allocation_error)
 		{
-            free_token(&current_token);
-            break; 
-        }
-		if (current_token.type == TOKEN_EOF) {
-            free_token(&current_token);
-            break;
-        }
-        token_array_add(tokens, current_token, mshell);
-        if (mshell->allocation_error)
+			free_token(&current_token);
+			break ;
+		}
+		if (current_token.type == TOKEN_EOF)
+		{
+			free_token(&current_token);
+			break ;
+		}
+		token_array_add(tokens, current_token, mshell);
+		if (mshell->allocation_error)
 		{
 			if (current_token.value)
 			{
@@ -125,36 +126,18 @@ t_cmd	*run_parser(t_mshell *minishell, char *input)
 	debug_printf("\nTokenizing: %s\n\n", input);
 	tokens = tokenize_input(input, minishell);
 	if (minishell->allocation_error)
-	{	
-		if (tokens) // Если tokens не NULL (т.е. token_array_init успел отработать)
-		{
-			token_array_free(tokens); // Освобождаем все, что было выделено для tokens
-		}
-		return (NULL); // Возвращаем NULL, так как произошла ошибка
-	}
+		return (token_array_free(tokens));
 	expand_tokens(tokens, minishell);
 	if (minishell->allocation_error)
-	{
-		token_array_free(tokens);
-		return (NULL);
-	}
+		return (token_array_free(tokens));
 	if (check_for_unsupported_syntax(minishell, input) != EXIT_SUCCESS)
-	{
-		token_array_free(tokens);
-		return (NULL);
-	}
+		return (token_array_free(tokens));
 	group_word_tokens(tokens, minishell);
 	if (minishell->allocation_error)
-	{
-		token_array_free(tokens);
-		return (NULL);
-	}
+		return (token_array_free(tokens));
 	strip_words(tokens, minishell);
 	if (minishell->allocation_error)
-	{
-		token_array_free(tokens);
-		return (NULL);
-	}
+		return (token_array_free(tokens));
 	cmd = create_command_from_tokens(minishell, tokens);
 	debug_print_tokens(tokens);
 	debug_print_parsed_commands(cmd);

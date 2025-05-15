@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:19:34 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/14 13:07:18 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 17:04:04 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,14 @@
  *
  * @param head The head of the command linked list.
  */
-static void	finalize_commands(t_cmd *head)
+static t_cmd	*finalize_commands(t_cmd *head)
 {
 	int		j;
 	t_cmd	*cmd_ptr;
+	t_cmd	*ohead;
 
 	cmd_ptr = head;
+	ohead = head;
 	while (cmd_ptr)
 	{
 		if (cmd_ptr->argv)
@@ -41,7 +43,9 @@ static void	finalize_commands(t_cmd *head)
 		cmd_ptr->origin_head = head;
 		cmd_ptr = cmd_ptr->next;
 	}
+	return (ohead);
 }
+
 /**
  * @brief Append an argument to an existing command.
  */
@@ -55,11 +59,11 @@ static int	append_word_argument(t_cmd *current, char *value)
 	if (i < MAX_ARGS)
 	{
 		current->argv[i + 1] = NULL;
-		current->argv[i] = ft_strdup(value); //PROTECTION - CHECKED
-		if(!current->argv[i])
-			return 1;
+		current->argv[i] = ft_strdup(value);
+		if (!current->argv[i])
+			return (1);
 	}
-	return 0;
+	return (0);
 }
 
 /**
@@ -83,9 +87,9 @@ static int	process_word_token(t_mshell *sh, t_list **cmd_list,
 	{
 		*current = create_empty_command(sh);
 		if (!*current)
-			return -1;
-		ptr = ft_lstnew(*current); //PROTECTION = CHECKED
-		if(!ptr)
+			return (-1);
+		ptr = ft_lstnew(*current);
+		if (!ptr)
 		{
 			sh->allocation_error = true;
 			free_cmd(current);
@@ -93,7 +97,8 @@ static int	process_word_token(t_mshell *sh, t_list **cmd_list,
 		}
 		ft_lstadd_back(cmd_list, ptr);
 	}
-	return (sh->allocation_error = append_word_argument(*current, token->value));
+	return (sh->allocation_error = append_word_argument(*current,
+			token->value));
 }
 
 /**
@@ -115,7 +120,7 @@ static int	parse_tokens(t_parse_ctx *ctx)
 			|| is_output_redir(ctx->tokens->tokens[ctx->i].type))
 		{
 			retval = handle_redir(ctx);
-			if (retval!= 0)   
+			if (retval != 0)
 				return (retval);
 		}
 		else if (ctx->tokens->tokens[ctx->i].type == TOKEN_WORD)
@@ -170,16 +175,15 @@ t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
 	ctx.current = &current;
 	init_parse_context(&ctx);
 	status = parse_tokens(&ctx);
-    if (shell->allocation_error)
-    {
-        free_cmd_list(&cmd_list); // Освобождаем частично созданный список команд
-        return (NULL);
-    }
-	if (status == ERROR_UNEXPECTED_TOKEN) //TODO check if unexpected gives a leak
+	if (shell->allocation_error)
+	{
+		free_cmd_list(&cmd_list);
+		return (NULL);
+	}
+	if (status == ERROR_UNEXPECTED_TOKEN)
 		return (shell->exit_status = 2, NULL);
 	if (status < 0)
 		return (NULL);
 	head = finalize_cmd_list(&cmd_list);
-	finalize_commands(head);
-	return (head);
+	return (finalize_commands(head));
 }

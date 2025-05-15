@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer5.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:19 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 15:40:32 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/15 19:53:22 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
  */
 
 #include "../include/minishell.h"
-#include <stdlib.h>
-#include <string.h>
 
 /**
  * @brief Parses redirection tokens "<<" or ">>".
@@ -34,16 +32,16 @@ t_Token	tokenizer_parse_redirection(t_Tokenizer *tokenizer, t_mshell *minishell)
 	{
 		tokenizer->input += 2;
 		token.type = TOKEN_HEREDOC;
-		token.value = ft_strdup("<<"); //PROTECTION CHECKED
-		if(!token.value)
+		token.value = ft_strdup("<<");
+		if (!token.value)
 			minishell->allocation_error = true;
 	}
 	else if (*tokenizer->input == '>' && *(tokenizer->input + 1) == '>')
 	{
 		tokenizer->input += 2;
 		token.type = TOKEN_APPEND_OUT;
-		token.value = ft_strdup(">>"); // PROTECTION = CHECKED
-		if(!token.value)
+		token.value = ft_strdup(">>");
+		if (!token.value)
 			minishell->allocation_error = true;
 	}
 	return (token);
@@ -68,11 +66,11 @@ t_Token	tokenizer_parse_operator(t_Tokenizer *tokenizer, t_mshell *mshell)
 		token.type = TOKEN_REDIRECT_OUT;
 	else if (*tokenizer->input == '&')
 		token.type = TOKEN_BACKGROUND;
-	token.value = malloc(2); //PROTECTION=CHECKED
+	token.value = malloc(2);
 	if (!token.value)
 	{
 		mshell->allocation_error = true;
-		return token;
+		return (token);
 	}
 	token.value[0] = *tokenizer->input++;
 	token.value[1] = '\0';
