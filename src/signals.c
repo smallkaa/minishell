@@ -6,7 +6,7 @@
 /*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 13:13:59 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/15 10:58:29 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/15 15:44:18 by Pavel Versh      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ void	handle_sigint(int sig)
 {
 	(void)sig;
 	g_signal_flag = 1;
+	rl_replace_line("", 0);
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
-	rl_replace_line("", 0);
 	rl_redisplay();
 }
 
@@ -46,12 +46,7 @@ void	handle_sigquit(int sig)
 // Function to setup signal handling
 void	setup_signal_handlers(void)
 {
-	struct sigaction	sa;
-
 	disable_echoctl();
-	sa.sa_handler = handle_sigint;
-	sa.sa_flags = SA_RESTART;
-	sigemptyset(&sa.sa_mask);
-	sigaction(SIGINT, &sa, NULL);
+	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
 }
