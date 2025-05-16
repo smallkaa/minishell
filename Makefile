@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+         #
+#    By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/12 14:02:40 by imunaev-          #+#    #+#              #
-#    Updated: 2025/05/12 14:02:41 by imunaev-         ###   ########.fr        #
+#    Updated: 2025/05/16 10:23:24 by pvershin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +50,7 @@ SRC_FILES := \
 	src/parser/tokenizer1.c \
 	src/parser/tokenizer5.c \
 	src/parser/parser5.c \
+	src/parser/parser7.c \
 	src/parser/expand2.c \
 	src/parser/expand_helpers_escape.c \
 	src/parser/parser_utils_token.c \

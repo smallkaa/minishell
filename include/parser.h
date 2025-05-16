@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/16 10:17:49 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:45:43 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,13 @@ int	handle_allocation_error(t_mshell *msh);
 int	cleanup_and_return_error(t_TokenArray *new_tokens_array, t_mshell *msh);
 void	replace_old_tokens(t_TokenArray *old, t_TokenArray *new_tokens_array);
 int	check_for_unsupported_syntax(t_mshell *shell, char *input);
+void	init_parse_context(t_parse_ctx *ctx);
+int	parse_tokens(t_parse_ctx *ctx);
+t_cmd	*finalize_commands(t_cmd *head);
+int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
+	t_cmd **current);
+int	apply_input_redir(t_cmd **current, t_Token *token);
+
 
 
 

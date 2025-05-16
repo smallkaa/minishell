@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser6.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 14:19:34 by Pavel Versh       #+#    #+#             */
-/*   Updated: 2025/05/15 17:04:04 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 10:26:40 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
  *
  * @param head The head of the command linked list.
  */
-static t_cmd	*finalize_commands(t_cmd *head)
+t_cmd	*finalize_commands(t_cmd *head)
 {
 	int		j;
 	t_cmd	*cmd_ptr;
@@ -108,7 +108,7 @@ static int	process_word_token(t_mshell *sh, t_list **cmd_list, t_cmd **current,
  * and current state.
  * @return 0 on success, -1 on failure.
  */
-static int	parse_tokens(t_parse_ctx *ctx)
+int	parse_tokens(t_parse_ctx *ctx)
 {
 	int	retval;
 
@@ -136,7 +136,7 @@ static int	parse_tokens(t_parse_ctx *ctx)
 	return (0);
 }
 
-static void	init_parse_context(t_parse_ctx *ctx)
+void	init_parse_context(t_parse_ctx *ctx)
 {
 	ctx->i = 0;
 	ctx->redir.shell = ctx->shell;
@@ -144,46 +144,4 @@ static void	init_parse_context(t_parse_ctx *ctx)
 	ctx->redir.cmd_list = ctx->cmd_list;
 	ctx->redir.current = ctx->current;
 	ctx->redir.i = &ctx->i;
-}
-
-/**
- * @brief Creates a linked list of command structures from a token array.
- *
- * Parses tokens into separate t_cmd commands:
- * - Splits on pipes (`|`)
- * - Handles redirections (`<`, `>`, `<<`, `>>`)
- * - Builds argv from words
- *
- * @param shell Minishell context.
- * @param tokens Array of tokens representing the parsed input line.
- * @return Pointer to the first command in the constructed linked list,
- * or NULL on error.
- */
-t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)
-{
-	t_list		*cmd_list;
-	t_cmd		*current;
-	t_cmd		*head;
-	t_parse_ctx	ctx;
-	int			status;
-
-	cmd_list = NULL;
-	current = NULL;
-	ctx.shell = shell;
-	ctx.tokens = tokens;
-	ctx.cmd_list = &cmd_list;
-	ctx.current = &current;
-	init_parse_context(&ctx);
-	status = parse_tokens(&ctx);
-	if (shell->allocation_error)
-	{
-		free_cmd_list(&cmd_list);
-		return (NULL);
-	}
-	if (status == ERROR_UNEXPECTED_TOKEN)
-		return (shell->exit_status = 2, NULL);
-	if (status < 0)
-		return (NULL);
-	head = finalize_cmd_list(&cmd_list);
-	return (finalize_commands(head));
 }

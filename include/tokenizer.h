@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:40 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 14:04:40 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 10:52:58 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,4 +186,6 @@ t_cmd			*create_empty_command(t_mshell *shell);
 int				known_unsupported_cmd(const char *cmd, const char **message);
 bool			ft_is_special_char(char c);
 void			classify_token_if_needed(t_Token *token, char *expanded);
+bool	is_quote_char(char c);
+bool	ft_is_special_char(char c);
 #endif

@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/16 09:43:06 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:45:30 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /**
  * @brief Ensure current command exists in list, add if missing.
  */
-static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
+int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
 		t_cmd **current)
 {
 	t_list	*new;
@@ -37,10 +37,16 @@ static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
 	return (0);
 }
 
+static int	free_and_minus_one(void *redir)
+{
+	free(redir);
+	return (-1);
+}
+
 /**
  * @brief Create and append an input redirection node.
  */
-static int	apply_input_redir(t_cmd **current, t_Token *token)
+int	apply_input_redir(t_cmd **current, t_Token *token)
 {
 	t_redir	*redir;
 	t_list	*r_ptr;
@@ -55,31 +61,16 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		redir->type = R_HEREDOC;
 	redir->filename = ft_strdup(token[1].value);
 	if (!redir->filename)
-	{
-		free(redir);
-		return (-1);
-	}
+		return (free_and_minus_one(redir));
 	redir->expand_in_heredoc = (token[1].quote_style == 0);
 	r_ptr = ft_lstnew(redir);
 	if (!r_ptr)
 	{
 		free(redir->filename);
-		free(redir);
-		return (-1);
+		return (free_and_minus_one(redir));
 	}
 	ft_lstadd_back(&(*current)->redirs, r_ptr);
 	return (0);
-}
-
-/**
- * @brief Handle input redirection tokens.
- */
-int	handle_input_redir(t_mshell *shell, t_list **cmd_list, t_cmd **current,
-		t_Token *token)
-{
-	if (ensure_current_cmd(shell, cmd_list, current) < 0)
-		return (-1);
-	return (apply_input_redir(current, token));
 }
 
 /**
