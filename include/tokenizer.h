@@ -6,7 +6,7 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:40 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/16 10:52:58 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:59:41 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ t_Token			tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer,
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell);
+t_Token			tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space,
+					t_mshell *minishell);
 
 /**
  * @brief Parses redirection tokens "<<" or ">>".
@@ -96,7 +97,8 @@ t_Token			tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space, t_mshell
  * @param tokenizer Pointer to the tokenizer.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_redirection(t_Tokenizer *tokenizer, t_mshell *minishell);
+t_Token			tokenizer_parse_redirection(t_Tokenizer *tokenizer,
+					t_mshell *minishell);
 
 /**
  * @brief Parses single-character operator tokens |, <, >, &.
@@ -104,7 +106,8 @@ t_Token			tokenizer_parse_redirection(t_Tokenizer *tokenizer, t_mshell *minishel
  * @param tokenizer Pointer to the tokenizer.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_operator(t_Tokenizer *tokenizer, t_mshell *minishell);
+t_Token			tokenizer_parse_operator(t_Tokenizer *tokenizer,
+					t_mshell *minishell);
 
 /**
  * @brief Parses an unquoted word token until special or whitespace.
@@ -113,7 +116,8 @@ t_Token			tokenizer_parse_operator(t_Tokenizer *tokenizer, t_mshell *minishell);
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed token.
  */
-t_Token			tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell);
+t_Token			tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space,
+					t_mshell *minishell);
 
 // Free resources used by a token
 void			free_token(t_Token *token);
@@ -123,7 +127,7 @@ char			*expand_env_variables(const char *input, t_mshell *minishell,
 void			print_token(t_Token token);
 void			explain_token(t_Token token);
 void			debug_print_parsed_commands(t_cmd *cmd);
-int				strip_words(t_TokenArray *tokens , t_mshell *minishell);
+int				strip_words(t_TokenArray *tokens, t_mshell *minishell);
 bool			is_in_single_quotes(char *str);
 bool			is_in_double_quotes(char *str);
 void			expand_tokens(t_TokenArray *tokens, t_mshell *ms);
@@ -177,7 +181,8 @@ void			handle_tilde(t_exp_ctx *ctx);
 void			handle_dollar(t_exp_ctx *ctx);
 
 char			*get_env_value(const char *var, t_mshell *minishell);
-char			*append_to_result(char *result, const char *append, t_mshell *minishell);
+char			*append_to_result(char *result, const char *append,
+					t_mshell *minishell);
 char			*expand_tilde(const char *input, size_t *i, t_mshell *mshell,
 					int quote_style);
 char			*get_exit_code(t_mshell *minishell);
@@ -186,6 +191,6 @@ t_cmd			*create_empty_command(t_mshell *shell);
 int				known_unsupported_cmd(const char *cmd, const char **message);
 bool			ft_is_special_char(char c);
 void			classify_token_if_needed(t_Token *token, char *expanded);
-bool	is_quote_char(char c);
-bool	ft_is_special_char(char c);
+bool			is_quote_char(char c);
+bool			ft_is_special_char(char c);
 #endif
