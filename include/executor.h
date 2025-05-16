@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:46:42 by imunaev-          #+#    #+#             */
-/*   Updated: 2025/05/16 10:57:18 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/16 11:07:07 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,8 @@ bool					get_directory(char *cwd, t_cmd *cmd);
 void					update_pwd_variables(t_cmd *cmd, char *old_cwd);
 uint8_t					cd_too_many_args(void);
 uint8_t					change_and_update_pwd(t_cmd *cmd);
+uint8_t					handle_cd_dash(t_cmd *cmd);
+uint8_t					handle_cd_path(const char *path);
 
 // redirections <, >, >>
 uint8_t					apply_redirections(t_cmd *cmd);

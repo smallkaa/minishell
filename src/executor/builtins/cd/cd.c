@@ -6,7 +6,7 @@
 /*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/16 10:56:55 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/16 11:06:56 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static uint8_t	cd_tilda(t_cmd *cmd)
  * @param cmd Pointer to the command structure.
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
  */
-static uint8_t	handle_cd_dash(t_cmd *cmd)
+uint8_t	handle_cd_dash(t_cmd *cmd)
 {
 	char	*old_pwd;
 	char	*old_env;
@@ -109,7 +109,7 @@ static uint8_t	handle_cd_dash(t_cmd *cmd)
  * @param path The target directory path.
  * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
  */
-static uint8_t	handle_cd_path(const char *path)
+uint8_t	handle_cd_path(const char *path)
 {
 	if (chdir(path) != 0)
 	{
