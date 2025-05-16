@@ -6,46 +6,23 @@
 /*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/16 09:43:47 by pvershin         ###   ########.fr       */
+/*   Updated: 2025/05/16 10:12:00 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
+void	replace_old_tokens(t_TokenArray *old, t_TokenArray *new_tokens_array)
 {
-	int	i;
-	int	j;
+	int	k;
 
-	i = 0;
-	j = 0;
-	while (i < old_tokens->count)
-	{
-		if (is_skippable_token(&old_tokens->tokens[i]))
-		{
-			i++;
-			continue ;
-		}
-		if (old_tokens->tokens[i].type != TOKEN_WORD)
-		{
-			if (process_non_word(new_tokens, &j, &old_tokens->tokens[i]))
-			{
-				new_tokens->count = j;
-				return (1);
-			}
-			i++;
-		}
-		else
-		{
-			if (process_word(new_tokens, old_tokens, &i, &j))
-			{
-				new_tokens->count = j;
-				return (1);
-			}
-		}
-	}
-	new_tokens->count = j;
-	return (0);
+	k = 0;
+	while (k < old->count)
+		free_token(&old->tokens[k++]);
+	free(old->tokens);
+	old->tokens = new_tokens_array->tokens;
+	old->count = new_tokens_array->count;
+	old->capacity = new_tokens_array->capacity;
 }
 
 // parser3.c (group_word_tokens)
@@ -53,42 +30,18 @@ int	group_word_tokens(t_TokenArray *tokens, t_mshell *msh)
 {
 	t_TokenArray	new_tokens_array;
 	int				new_count;
-	int				k;
-	int				k;
 
 	if (!tokens || tokens->count <= 1)
 		return (0);
 	new_count = count_new_tokens(tokens);
 	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count);
 	if (!new_tokens_array.tokens)
-	{
-		msh->allocation_error = 1;
-		return (-1);
-	}
+		return (handle_allocation_error(msh));
 	new_tokens_array.capacity = new_count;
 	new_tokens_array.count = 0;
 	if (fill_new_tokens(&new_tokens_array, tokens))
-	{
-		msh->allocation_error = true;
-		k = 0;
-		while (k < new_tokens_array.count)
-		{
-			free_token(&new_tokens_array.tokens[k]);
-			k++;
-		}
-		free(new_tokens_array.tokens);
-		return (-1);
-	}
-	k = 0;
-	while (k < tokens->count)
-	{
-		free_token(&tokens->tokens[k]);
-		k++;
-	}
-	free(tokens->tokens);
-	tokens->tokens = new_tokens_array.tokens;
-	tokens->count = new_tokens_array.count;
-	tokens->capacity = new_tokens_array.capacity;
+		return (cleanup_and_return_error(&new_tokens_array, msh));
+	replace_old_tokens(tokens, &new_tokens_array);
 	return (0);
 }
 

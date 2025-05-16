@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 21:20:20 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/15 20:08:49 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 10:17:49 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,13 @@ int					group_word_tokens(t_TokenArray *tokens, t_mshell *shell);
 t_cmd				*create_command_from_tokens(t_mshell *shell,
 						t_TokenArray *tokens);
 int					handle_redir(t_parse_ctx *ctx);
+int					fill_new_tokens(t_TokenArray *new_tokens,
+						t_TokenArray *old_tokens);
+int	handle_allocation_error(t_mshell *msh);
+int	cleanup_and_return_error(t_TokenArray *new_tokens_array, t_mshell *msh);
+void	replace_old_tokens(t_TokenArray *old, t_TokenArray *new_tokens_array);
+int	check_for_unsupported_syntax(t_mshell *shell, char *input);
+
+
 
 #endif
