@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 14:44:42 by Ilia Munaev       #+#    #+#             */
-/*   Updated: 2025/05/14 19:14:53 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/16 10:56:55 by imunaev-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,34 +117,6 @@ static uint8_t	handle_cd_path(const char *path)
 		perror(path);
 		return (EXIT_FAILURE);
 	}
-	return (EXIT_SUCCESS);
-}
-
-/**
- * @brief Main logic for changing directory and updating PWD/OLDPWD.
- *
- * Handles both cd - and cd <path> logic and updates the environment
- * accordingly after a successful change.
- *
- * @param cmd Pointer to the command structure.
- * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
- */
-static uint8_t	change_and_update_pwd(t_cmd *cmd)
-{
-	char	old_cwd[MS_PATHMAX];
-	uint8_t	status;
-
-	if (!cmd || !cmd->argv[1] || !cmd->minishell)
-		return (EXIT_FAILURE);
-	ft_bzero(old_cwd, MS_PATHMAX);
-	(void)get_directory(old_cwd, cmd);
-	if (ft_strcmp(cmd->argv[1], "-") == 0)
-		status = handle_cd_dash(cmd);
-	else
-		status = handle_cd_path(cmd->argv[1]);
-	if (status == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	update_pwd_variables(cmd, old_cwd);
 	return (EXIT_SUCCESS);
 }
 
