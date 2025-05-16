@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unsupported_cmd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imunaev- <imunaev-@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 12:44:42 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/06 14:59:26 by imunaev-         ###   ########.fr       */
+/*   Updated: 2025/05/16 09:41:27 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static const t_unsupported_cmd	*cmd_issues(void)
 	{"<<<<<<<<<", 2, "syntax error near unexpected token `<<<'\n"},
 	{"< < < < < <", 2, "syntax error near unexpected token `<'\n"},
 	{"| | |", 2, "syntax error near unexpected token `|'\n"},
-	{"||||||||", 2, "syntax error near unexpected token `||'\n"},	
+	{"||||||||", 2, "syntax error near unexpected token `||'\n"},
 	{"()", 2, "syntax error near unexpected token `)'\n"},
 	{"|||", 2, "syntax error near unexpected token `||'\n"},
 	{"||", 2, "syntax error near unexpected token `||'\n"},

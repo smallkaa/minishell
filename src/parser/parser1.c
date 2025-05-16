@@ -89,8 +89,7 @@ void	*token_array_free(t_TokenArray *array)
 
 static void	skip_joined_words(t_TokenArray *tokens, int *i)
 {
-	while (*i < tokens->count
-		&& tokens->tokens[*i].type == TOKEN_WORD
+	while (*i < tokens->count && tokens->tokens[*i].type == TOKEN_WORD
 		&& tokens->tokens[*i].needs_join == 0)
 	{
 		(*i)++;

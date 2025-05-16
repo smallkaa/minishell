@@ -87,7 +87,7 @@ static size_t	fill_buffer_with_word(t_Tokenizer *tokenizer, char *buffer,
  * @return t_Token Parsed word token.
  */
 t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space,
-	t_mshell *minishell)
+		t_mshell *minishell)
 {
 	t_Token	token;
 	size_t	index;

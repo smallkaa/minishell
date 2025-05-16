@@ -33,7 +33,7 @@ void	handle_tilde(t_exp_ctx *ctx)
 			*ctx->result = append_to_result(*ctx->result, home, ctx->mshell);
 			free(home);
 		}
-		else 
+		else
 		{
 			ctx->mshell->allocation_error = 1;
 		}

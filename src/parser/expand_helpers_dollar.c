@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helpers_dollar.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 15:15:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 14:08:01 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:42:17 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ static int	handle_dollar_special(t_exp_ctx *ctx)
 		exit_code = get_exit_code(ctx->mshell);
 		if (exit_code)
 		{
-			*ctx->result = append_to_result(*ctx->result, exit_code, ctx->mshell);
+			*ctx->result = append_to_result(*ctx->result, exit_code,
+					ctx->mshell);
 			free(exit_code);
 		}
 		(*ctx->i)++;
@@ -53,13 +54,13 @@ static void	handle_dollar_var(t_exp_ctx *ctx)
 	while (ctx->input[*ctx->i] && (ft_isalnum(ctx->input[*ctx->i])
 			|| ctx->input[*ctx->i] == '_'))
 		(*ctx->i)++;
-	name = ft_substr(ctx->input, start, *ctx->i - start); //PROTECTION = CHECKED
+	name = ft_substr(ctx->input, start, *ctx->i - start);
 	if (!name)
 	{
 		ctx->mshell->allocation_error = 1;
 		return ;
 	}
-	val = get_env_value(name, ctx->mshell); //PROTECTION = CHECKED
+	val = get_env_value(name, ctx->mshell);
 	free(name);
 	if (val)
 	{

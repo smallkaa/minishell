@@ -78,8 +78,8 @@ static int	append_word_argument(t_cmd *current, char *value)
  * @param token The current word token to be processed.
  * @return 0 on success, -1 on error (e.g., memory allocation failure).
  */
-static int	process_word_token(t_mshell *sh, t_list **cmd_list,
-	t_cmd **current, t_Token *token)
+static int	process_word_token(t_mshell *sh, t_list **cmd_list, t_cmd **current,
+		t_Token *token)
 {
 	t_list	*ptr;
 
@@ -104,7 +104,7 @@ static int	process_word_token(t_mshell *sh, t_list **cmd_list,
 /**
  * @brief Iterates through tokens and builds command list.
  *
- * @param ctx Full parser context with references to shell, tokens, 
+ * @param ctx Full parser context with references to shell, tokens,
  * and current state.
  * @return 0 on success, -1 on failure.
  */
@@ -125,8 +125,8 @@ static int	parse_tokens(t_parse_ctx *ctx)
 		}
 		else if (ctx->tokens->tokens[ctx->i].type == TOKEN_WORD)
 		{
-			if (process_word_token(ctx->shell, ctx->cmd_list,
-					ctx->current, &ctx->tokens->tokens[ctx->i]) < 0)
+			if (process_word_token(ctx->shell, ctx->cmd_list, ctx->current,
+					&ctx->tokens->tokens[ctx->i]) < 0)
 				return (-1);
 			ctx->i++;
 		}
@@ -156,7 +156,7 @@ static void	init_parse_context(t_parse_ctx *ctx)
  *
  * @param shell Minishell context.
  * @param tokens Array of tokens representing the parsed input line.
- * @return Pointer to the first command in the constructed linked list, 
+ * @return Pointer to the first command in the constructed linked list,
  * or NULL on error.
  */
 t_cmd	*create_command_from_tokens(t_mshell *shell, t_TokenArray *tokens)

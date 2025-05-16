@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser4.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:11:07 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 12:30:38 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:43:53 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
 /**
  * @brief Processes a redirection token and applies it to the current command.
  *
@@ -25,7 +26,7 @@ static int	process_redir_token(t_redir_ctx *ctx)
 	if (!is_valid_redir_target(ctx->tokens, *ctx->i))
 	{
 		print_error("syntax error near unexpected token\n");
-		free_cmd_list(ctx->cmd_list); //TODO здесь не надо освобождать
+		free_cmd_list(ctx->cmd_list);
 		return (ERROR_UNEXPECTED_TOKEN);
 	}
 	if (!*ctx->current)
@@ -35,7 +36,7 @@ static int	process_redir_token(t_redir_ctx *ctx)
 	}
 	if (apply_redirection(ctx, type) < 0)
 	{
-		ctx->shell->allocation_error = 1; 
+		ctx->shell->allocation_error = 1;
 		return (-1);
 	}
 	*ctx->i += 2;

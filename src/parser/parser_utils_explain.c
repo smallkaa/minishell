@@ -45,10 +45,10 @@ static void	handle_explain_default(char *color_code, int in_single_quote,
 
 static void	handle_explain_loop(const char *str)
 {
-	size_t			i;
-	int				in_single_quote;
-	int				in_double_quote;
-	char			color_code[10];
+	size_t	i;
+	int		in_single_quote;
+	int		in_double_quote;
+	char	color_code[10];
 
 	ft_strcpy(color_code, "\033[0m");
 	in_single_quote = 0;
@@ -63,8 +63,8 @@ static void	handle_explain_loop(const char *str)
 		else if (str[i] == '$' && (in_double_quote || !in_single_quote))
 			debug_printf("\033[32m$\033[0m");
 		else
-			handle_explain_default(color_code,
-				in_single_quote, in_double_quote, str[i]);
+			handle_explain_default(color_code, in_single_quote, in_double_quote,
+				str[i]);
 		i++;
 	}
 }

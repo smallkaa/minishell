@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:50:58 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 14:11:32 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:37:28 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,19 @@ char	*get_env_value(const char *var, t_mshell *minishell)
 		return (get_exit_code(minishell));
 	value = ms_getenv(minishell, (char *)var);
 	if (value)
-		return (ft_strdup(value)); //PROTECTION see handle_dollar_var
+		return (ft_strdup(value));
 	if (!minishell->env)
-		return (ft_strdup(""));  //PROTECTION see handle_dollar_var
+		return (ft_strdup(""));
 	var_len = ft_strlen(var);
 	i = 0;
 	while (minishell->env[i])
 	{
 		if (ft_strncmp(minishell->env[i], var, var_len) == 0
 			&& minishell->env[i][var_len] == '=')
-			return (ft_strdup(minishell->env[i] + var_len + 1));  //PROTECTION see handle_dollar_var
+			return (ft_strdup(minishell->env[i] + var_len + 1));
 		i++;
 	}
-	return (ft_strdup(""));  //PROTECTION see handle_dollar_var
+	return (ft_strdup(""));
 }
 
 /**
@@ -89,8 +89,8 @@ char	*append_to_result(char *result, const char *append, t_mshell *ms)
 
 	if (!result || !append)
 		return (NULL);
-	new_result = ft_strjoin(result, append); //PROTECTION = CHECKED
-	if(!new_result)
+	new_result = ft_strjoin(result, append);
+	if (!new_result)
 	{
 		ms->allocation_error = 1;
 	}
@@ -144,10 +144,10 @@ char	*expand_tilde(const char *input, size_t *i, t_mshell *mshell,
 	single_q = (quote_style == 1);
 	double_q = (quote_style == 2);
 	if (is_literal_tilde(input, i, single_q, double_q))
-		return (ft_strdup("~")); //PROTECTION = CHECKED
+		return (ft_strdup("~"));
 	home = ms_getenv(mshell, "HOME");
 	(*i)++;
 	if (!home || !*home)
-		return (ft_strdup("~"));//PROTECTION = CHECKED
-	return (ft_strdup(home));//PROTECTION = CHECKED
+		return (ft_strdup("~"));
+	return (ft_strdup(home));
 }

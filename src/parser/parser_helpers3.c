@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_helpers3.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:05:00 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 15:33:45 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:43:06 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
  * @brief Ensure current command exists in list, add if missing.
  */
 static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
-	t_cmd	**current)
+		t_cmd **current)
 {
 	t_list	*new;
 
@@ -26,8 +26,8 @@ static int	ensure_current_cmd(t_mshell *shell, t_list **cmd_list,
 		*current = create_empty_command(shell);
 		if (!*current)
 			return (-1);
-		new = ft_lstnew(*current); //PROTECTION = CHECKED
-		if(!new)
+		new = ft_lstnew(*current);
+		if (!new)
 		{
 			shell->allocation_error = 1;
 			return (-1);
@@ -45,7 +45,7 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 	t_redir	*redir;
 	t_list	*r_ptr;
 
-	redir = malloc(sizeof(t_redir)); //PROTECTION = CHECKED XXX
+	redir = malloc(sizeof(t_redir));
 	if (!redir)
 		return (-1);
 	redir->fd = -1;
@@ -53,15 +53,15 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 		redir->type = R_INPUT;
 	else
 		redir->type = R_HEREDOC;
-	redir->filename = ft_strdup(token[1].value); //PROTECTION = CHECKED XXX
+	redir->filename = ft_strdup(token[1].value);
 	if (!redir->filename)
 	{
 		free(redir);
 		return (-1);
 	}
 	redir->expand_in_heredoc = (token[1].quote_style == 0);
-	r_ptr = ft_lstnew(redir); //PROTECTION = CHECKED XXX
-	if(!r_ptr)
+	r_ptr = ft_lstnew(redir);
+	if (!r_ptr)
 	{
 		free(redir->filename);
 		free(redir);
@@ -74,8 +74,8 @@ static int	apply_input_redir(t_cmd **current, t_Token *token)
 /**
  * @brief Handle input redirection tokens.
  */
-int	handle_input_redir(t_mshell *shell, t_list **cmd_list,
-	t_cmd **current, t_Token *token)
+int	handle_input_redir(t_mshell *shell, t_list **cmd_list, t_cmd **current,
+		t_Token *token)
 {
 	if (ensure_current_cmd(shell, cmd_list, current) < 0)
 		return (-1);
@@ -90,21 +90,21 @@ static int	apply_output_redir(t_cmd **current, t_Token *token)
 	t_redir	*redir;
 	t_list	*r_ptr;
 
-	redir = malloc(sizeof(t_redir)); //PROTECTION = CHECKED XXX
+	redir = malloc(sizeof(t_redir));
 	if (!redir)
 		return (-1);
 	if (token->type == TOKEN_REDIRECT_OUT)
 		redir->type = R_OUTPUT;
 	else
 		redir->type = R_APPEND;
-	redir->filename = ft_strdup(token[1].value); //PROTECTION = CHECKED XXX
+	redir->filename = ft_strdup(token[1].value);
 	if (!redir->filename)
 	{
 		free(redir);
 		return (-1);
 	}
-	r_ptr = ft_lstnew(redir); //PROTECTION = CHECKED XXX
-	if(!r_ptr)
+	r_ptr = ft_lstnew(redir);
+	if (!r_ptr)
 	{
 		free(redir->filename);
 		free(redir);
@@ -117,8 +117,8 @@ static int	apply_output_redir(t_cmd **current, t_Token *token)
 /**
  * @brief Handle output redirection tokens.
  */
-int	handle_output_redir(t_mshell *shell, t_list **cmd_list,
-	t_cmd **current, t_Token *token)
+int	handle_output_redir(t_mshell *shell, t_list **cmd_list, t_cmd **current,
+		t_Token *token)
 {
 	if (ensure_current_cmd(shell, cmd_list, current) < 0)
 		return (-1);

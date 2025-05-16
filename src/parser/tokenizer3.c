@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer3.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:06 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/12 12:50:58 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:38:54 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ t_Token	tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer,
 		if (*tokenizer->input == '"')
 			tokenizer->buffer[index++] = *tokenizer->input++;
 		tokenizer->buffer[index] = '\0';
-		token.value = ft_strdup(tokenizer->buffer); //PROTECTION = CHECKED
-		if(!token.value)
+		token.value = ft_strdup(tokenizer->buffer);
+		if (!token.value)
 			mshell->allocation_error = true;
 		token.needs_join = saw_space;
 	}
@@ -62,7 +62,8 @@ t_Token	tokenizer_parse_special_dollar_quote(t_Tokenizer *tokenizer,
  * @param saw_space Indicates if token should be joined to previous.
  * @return t_Token Parsed token.
  */
-t_Token	tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space, t_mshell *minishell)
+t_Token	tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space,
+		t_mshell *minishell)
 {
 	t_Token	token;
 	size_t	index;
@@ -86,8 +87,8 @@ t_Token	tokenizer_parse_quoted(t_Tokenizer *tokenizer, int saw_space, t_mshell *
 	if (*tokenizer->input == quote)
 		tokenizer->input++;
 	tokenizer->buffer[index] = '\0';
-	token.value = ft_strdup(tokenizer->buffer); //PROTECTION = CHECKED
-	if(!token.value)
+	token.value = ft_strdup(tokenizer->buffer);
+	if (!token.value)
 		minishell->allocation_error = true;
 	token.needs_join = saw_space;
 	return (token);

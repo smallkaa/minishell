@@ -18,7 +18,7 @@ t_cmd	*create_empty_command(t_mshell *shell)
 {
 	t_cmd	*cmd;
 
-	cmd = ft_calloc(sizeof (t_cmd), 1);
+	cmd = ft_calloc(sizeof(t_cmd), 1);
 	if (!cmd)
 	{
 		shell->allocation_error = true;

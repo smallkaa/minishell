@@ -14,8 +14,8 @@
 
 bool	is_skippable_token(t_Token *tok)
 {
-	return (tok->type == TOKEN_EMPTY
-		|| (tok->type == TOKEN_WORD && tok->value == NULL));
+	return (tok->type == TOKEN_EMPTY || (tok->type == TOKEN_WORD
+			&& tok->value == NULL));
 }
 
 int	process_non_word(t_TokenArray *new_tokens, int *j, t_Token *old_tok)
@@ -54,8 +54,7 @@ static int	init_wordinfo(t_wordinfo *info, t_Token *tok)
 // returns 1 in case of allocation error
 static int	join_word_tokens(t_wordinfo *info, t_TokenArray *tokens, int *i)
 {
-	while (*i < tokens->count
-		&& tokens->tokens[*i].type == TOKEN_WORD
+	while (*i < tokens->count && tokens->tokens[*i].type == TOKEN_WORD
 		&& tokens->tokens[*i].type != TOKEN_EMPTY
 		&& tokens->tokens[*i].needs_join == 0)
 	{
@@ -79,9 +78,9 @@ static int	join_word_tokens(t_wordinfo *info, t_TokenArray *tokens, int *i)
 	return (0);
 }
 
-//returns 1 in case of alloc error
-int	process_word(t_TokenArray *new_tokens,
-	t_TokenArray *old_tokens, int *i, int *j)
+// returns 1 in case of alloc error
+int	process_word(t_TokenArray *new_tokens, t_TokenArray *old_tokens, int *i,
+		int *j)
 {
 	t_wordinfo	info;
 

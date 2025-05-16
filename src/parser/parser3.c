@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Ilia Munaev <ilyamunaev@gmail.com>         +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:10:38 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 15:30:26 by Ilia Munaev      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:43:47 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,35 +30,36 @@ int	fill_new_tokens(t_TokenArray *new_tokens, t_TokenArray *old_tokens)
 		{
 			if (process_non_word(new_tokens, &j, &old_tokens->tokens[i]))
 			{
-				new_tokens->count = j; // Обновляем count перед выходом
-				return 1; // Ошибка
+				new_tokens->count = j;
+				return (1);
 			}
 			i++;
 		}
 		else
 		{
-			if(process_word(new_tokens, old_tokens, &i, &j))
+			if (process_word(new_tokens, old_tokens, &i, &j))
 			{
 				new_tokens->count = j;
-				return 1;
+				return (1);
 			}
 		}
 	}
 	new_tokens->count = j;
-	return 0;
+	return (0);
 }
 
 // parser3.c (group_word_tokens)
-int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
+int	group_word_tokens(t_TokenArray *tokens, t_mshell *msh)
 {
 	t_TokenArray	new_tokens_array;
 	int				new_count;
-	int k;
+	int				k;
+	int				k;
 
 	if (!tokens || tokens->count <= 1)
 		return (0);
 	new_count = count_new_tokens(tokens);
-	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count); //PROTECTION = CHECKED XXX
+	new_tokens_array.tokens = malloc(sizeof(t_Token) * new_count);
 	if (!new_tokens_array.tokens)
 	{
 		msh->allocation_error = 1;
@@ -69,8 +70,8 @@ int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
 	if (fill_new_tokens(&new_tokens_array, tokens))
 	{
 		msh->allocation_error = true;
-		int k = 0;
-		while(k < new_tokens_array.count)
+		k = 0;
+		while (k < new_tokens_array.count)
 		{
 			free_token(&new_tokens_array.tokens[k]);
 			k++;
@@ -78,12 +79,12 @@ int	group_word_tokens(t_TokenArray *tokens, t_mshell * msh)
 		free(new_tokens_array.tokens);
 		return (-1);
 	}
-    k = 0;
-    while(k < tokens->count)
-    {
-        free_token(&tokens->tokens[k]);
-        k++;
-    }
+	k = 0;
+	while (k < tokens->count)
+	{
+		free_token(&tokens->tokens[k]);
+		k++;
+	}
 	free(tokens->tokens);
 	tokens->tokens = new_tokens_array.tokens;
 	tokens->count = new_tokens_array.count;
@@ -116,8 +117,8 @@ int	init_redir_command_if_needed(t_redir_ctx *ctx)
 		free_cmd_list(ctx->cmd_list);
 		return (-1);
 	}
-	r_ptr = ft_lstnew(*ctx->current); //PROTECTION = CHECKED
-	if(!r_ptr)
+	r_ptr = ft_lstnew(*ctx->current);
+	if (!r_ptr)
 	{
 		ctx->shell->allocation_error = 1;
 		free_cmd(ctx->current);
@@ -134,14 +135,14 @@ int	apply_redirection(t_redir_ctx *ctx, t_TokenType type)
 	token = &ctx->tokens->tokens[*ctx->i];
 	if (is_input_redir(type))
 	{
-		if (handle_input_redir(ctx->shell, ctx->cmd_list,
-				ctx->current, token) < 0)
+		if (handle_input_redir(ctx->shell, ctx->cmd_list, ctx->current,
+				token) < 0)
 			return (-1);
 	}
 	else
 	{
-		if (handle_output_redir(ctx->shell, ctx->cmd_list,
-				ctx->current, token) < 0)
+		if (handle_output_redir(ctx->shell, ctx->cmd_list, ctx->current,
+				token) < 0)
 			return (-1);
 	}
 	return (0);

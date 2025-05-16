@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_tokens.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:54:54 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/14 13:35:51 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:42:31 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	handle_special_dollar_quote(t_Token *token, t_mshell *ms)
 	len = ft_strlen(token->value);
 	if (len < 3 || token->value[len - 1] != '"')
 		return (0);
-	content = ft_substr(token->value, 2, len - 3); //PROTECTION = CHEKCED
+	content = ft_substr(token->value, 2, len - 3);
 	if (!content)
 	{
 		ms->allocation_error = 1;
@@ -47,8 +47,8 @@ static int	handle_special_dollar_quote(t_Token *token, t_mshell *ms)
 
 static int	needs_expansion(char *value)
 {
-	if (!ft_strchr(value, '$') && !ft_strchr(value, '~')
-		&& !ft_strchr(value, '\\'))
+	if (!ft_strchr(value, '$') && !ft_strchr(value, '~') && !ft_strchr(value,
+			'\\'))
 		return (0);
 	return (1);
 }

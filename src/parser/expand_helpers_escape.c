@@ -28,8 +28,8 @@ void	handle_backslash(t_exp_ctx *ctx)
 	}
 	(*ctx->i)++;
 	next = ctx->input[*ctx->i];
-	if (ctx->single_q || (next != '$' && next != '\\'
-			&& next != '"' && next != '\''))
+	if (ctx->single_q || (next != '$' && next != '\\' && next != '"'
+			&& next != '\''))
 	{
 		append_char(ctx, '\\');
 		append_char(ctx, next);

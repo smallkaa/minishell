@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 11:52:18 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 17:41:54 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:38:30 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static char	*expand_env_variables_loop(const char *input, t_mshell *ms,
 
 	if (!input)
 		return (NULL);
-	result = ft_strdup(""); //PROTECTION = CHECKED
+	result = ft_strdup("");
 	if (!result)
 	{
 		ms->allocation_error = 1;

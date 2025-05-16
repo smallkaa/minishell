@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer4.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Pavel Vershinin <pvershin@student.hive.    +#+  +:+       +#+        */
+/*   By: pvershin <pvershin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 13:19:13 by pvershin          #+#    #+#             */
-/*   Updated: 2025/05/13 12:01:34 by Pavel Versh      ###   ########.fr       */
+/*   Updated: 2025/05/16 09:39:12 by pvershin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ static char	*strip_quotes_simple(const char *str, int quote_style)
 		return (NULL);
 	len = ft_strlen(str);
 	if (quote_style == 1 && len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
-		return (ft_substr(str, 1, len - 2)); //PROTECTION  see strip_words
+		return (ft_substr(str, 1, len - 2));
 	if (quote_style == 2 && len >= 2 && str[0] == '"' && str[len - 1] == '"')
-		return (ft_substr(str, 1, len - 2)); //PROTECTION  see strip_words
-	return (ft_strdup(str)); //PROTECTION  see strip_words
+		return (ft_substr(str, 1, len - 2));
+	return (ft_strdup(str));
 }
 
 /**
