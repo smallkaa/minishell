@@ -106,6 +106,7 @@ t_Token	tokenizer_parse_word(t_Tokenizer *tokenizer, int saw_space,
 	size_t	index;
 
 	token = init_word_token(tokenizer, &index);
+	(void) token;
 	if (index == 0 && is_quote_char(*tokenizer->input))
 	{
 		tokenizer->buffer[0] = '\0';
