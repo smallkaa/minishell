@@ -1,3 +1,6 @@
+# Try it!
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/smallkaa/minishell)
+
 # Wiki Shell-Rebuild
 - [Home](https://github.com/iliamunaev/Shell-Rebuild/wiki): Basic commands for contributors
 
